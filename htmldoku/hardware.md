@@ -94,6 +94,17 @@ vcgencmd get_throttled
 
 ---
 
+## MIDI Controllers
+
+| Device | Type | Connection | Notes |
+|--------|------|------------|-------|
+| E-MU Xboard (25/49/61) | Keyboard controller | USB or MIDI DIN | 16 velocity-sensitive keys (25/49/61 key), aftertouch, pitch/mod wheels, 16 assignable CC knobs, 16 patches, 4 keyboard zones. Powers via USB, 6VDC adapter, or 3× AA batteries. Can act as USB-MIDI interface for a DAW. |
+| SMC-PAD | Pad controller | USB-C or Bluetooth 5.0 | 16 RGB velocity+aftertouch pads, 8 assignable 360° encoders, DAW transport (Play/Stop/Record), track navigation, note repeat with swing/sync/tap tempo. Also has 3.5mm MIDI OUT. Built-in 2000mAh battery. Requires BLE MIDI driver on Windows; natively supported on Mac/iOS/Android. |
+
+For MIDI routing and mapping these controllers in Zynthian, see [MIDI Setup](midi.md).
+
+---
+
 ## What's Next
 
 - [Getting Started](getting-started.md) — initial hardware connection

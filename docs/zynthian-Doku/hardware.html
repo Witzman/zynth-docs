@@ -115,6 +115,10 @@
 <pre><code class="language-bash">vcgencmd get_throttled
 # 0x0 = healthy; 0x50000 = past undervoltage event</code></pre>
 <hr>
+<h2 id="midi-controllers">MIDI Controllers</h2>
+<table><thead><tr><th>Device</th><th>Type</th><th>Connection</th><th>Notes</th></tr></thead><tbody><tr><td>E-MU Xboard (25/49/61)</td><td>Keyboard controller</td><td>USB or MIDI DIN</td><td>16 velocity-sensitive keys (25/49/61 key), aftertouch, pitch/mod wheels, 16 assignable CC knobs, 16 patches, 4 keyboard zones. Powers via USB, 6VDC adapter, or 3× AA batteries. Can act as USB-MIDI interface for a DAW.</td></tr><tr><td>SMC-PAD</td><td>Pad controller</td><td>USB-C or Bluetooth 5.0</td><td>16 RGB velocity+aftertouch pads, 8 assignable 360° encoders, DAW transport (Play/Stop/Record), track navigation, note repeat with swing/sync/tap tempo. Also has 3.5mm MIDI OUT. Built-in 2000mAh battery. Requires BLE MIDI driver on Windows; natively supported on Mac/iOS/Android.</td></tr></tbody></table>
+<p>For MIDI routing and mapping these controllers in Zynthian, see <a href="midi.html">MIDI Setup</a>.</p>
+<hr>
 <h2 id="whats-next">What's Next</h2>
 <ul><li><a href="getting-started.html">Getting Started</a> — initial hardware connection</li><li><a href="audio.html">Audio Setup</a> — audio device configuration</li><li><a href="troubleshooting.html">Troubleshooting</a> — display and power issues</li></ul>
 <hr>

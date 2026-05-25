@@ -25,6 +25,8 @@ Tutorial generator and teacher. Session rules, workflow, and writing rules in `M
 | Touchscreen | None |
 | Access methods | SSH · webconf (`http://zynthian.local`) · VNC |
 | SSH | `ssh root@zynthian.local` |
+| MIDI keyboard | E-MU Xboard (25/49/61 series) — USB/MIDI keyboard controller, 16 CC knobs, pitch/mod wheels, aftertouch |
+| MIDI pad controller | SMC-PAD — 16-pad USB/Bluetooth controller, 8 encoders, DAW transport, note repeat |
 
 All tutorial steps must be achievable via SSH, webconf, or VNC only. Never assume physical encoders, buttons, or touchscreen.
 
@@ -70,6 +72,8 @@ Read the relevant page **before drafting any tutorial step** on that topic.
 | Understanding Zynthian concepts | `~/zynth-docs/htmldoku/userguide.md` |
 | Synth engines, loading presets, engine params | `~/zynth-docs/htmldoku/synth-engines.md` |
 | MIDI controllers, routing | `~/zynth-docs/htmldoku/midi.md` |
+| E-MU Xboard controller details | `~/zynth/manuals/EMU Xboard 25_49_61 manual Eng.txt` |
+| SMC-PAD controller details | `~/zynth/manuals/SMC-PAD_ZE.txt` |
 | Audio device, JACK setup | `~/zynth-docs/htmldoku/audio.md` |
 | Snapshots, saving/restoring state | `~/zynth-docs/htmldoku/snapshots.md` |
 | Webconf interface reference | `~/zynth-docs/htmldoku/webconf.md` |
