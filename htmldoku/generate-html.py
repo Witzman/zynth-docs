@@ -23,6 +23,15 @@ SIDEBAR = [
         ("Getting Started", "getting-started.html"),
         ("FAQ", "faq.html"),
     ]),
+    ("Using the UI", [
+        ("UI Navigation", "ui-navigation.html"),
+        ("Chains & Routing", "chain-management.html"),
+        ("Control Screen", "control-screen.html"),
+        ("MIDI CC Learning", "midi-cc-learn.html"),
+        ("ZS3 Subsnapshots", "zs3-guide.html"),
+        ("Pattern Editor", "pattern-editor.html"),
+        ("Admin & System", "admin-guide.html"),
+    ]),
     ("Play & Create", [
         ("User Guide", "userguide.html"),
         ("Synth Engines", "synth-engines.html"),
@@ -39,6 +48,7 @@ SIDEBAR = [
     ]),
     ("Troubleshoot", [
         ("Troubleshooting", "troubleshooting.html"),
+        ("Performance", "performance-monitoring.html"),
     ]),
     ("Under the Hood", [
         ("Architecture", "architecture.html"),

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chains & Routing — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Using the UI</h3><ul>
+<li><a href="ui-navigation.html">UI Navigation</a></li>
+<li><a href="chain-management.html" aria-current="page"><strong>Chains & Routing</strong></a></li>
+<li><a href="control-screen.html">Control Screen</a></li>
+<li><a href="midi-cc-learn.html">MIDI CC Learning</a></li>
+<li><a href="zs3-guide.html">ZS3 Subsnapshots</a></li>
+<li><a href="pattern-editor.html">Pattern Editor</a></li>
+<li><a href="admin-guide.html">Admin & System</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+<li><a href="performance-monitoring.html">Performance</a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="chains--routing">Chains & Routing</h1>
+<p>A <strong>chain</strong> is the core unit of Zynthian: one MIDI input → one or more processors → one audio output. This page covers how to create, configure, and route chains.</p>
+<hr>
+<h2 id="chain-types">Chain Types</h2>
+<p>When you add a chain, you choose its type. Each type sets what kind of signal flows through it.</p>
+<table><thead><tr><th>Type</th><th>MIDI</th><th>Audio in</th><th>Audio out</th><th>Use for</th></tr></thead><tbody><tr><td><strong>Instrument</strong></td><td>Yes</td><td>No</td><td>Yes</td><td>Synth engines: FluidSynth, ZynAddSubFX, setBfree</td></tr><tr><td><strong>Audio Input</strong></td><td>No</td><td>From interface</td><td>Yes</td><td>Live audio with effects</td></tr><tr><td><strong>Clip Launcher</strong></td><td>No</td><td>No</td><td>Yes</td><td>Play back audio clips / loops</td></tr><tr><td><strong>MIDI</strong></td><td>Yes (thru)</td><td>No</td><td>No</td><td>MIDI processing tools</td></tr><tr><td><strong>MIDI + Audio</strong></td><td>Yes (thru)</td><td>Yes (thru)</td><td>Yes</td><td>Combined MIDI/audio processor</td></tr><tr><td><strong>Audio Generator</strong></td><td>No</td><td>No</td><td>Yes</td><td>Tone generators, file playback</td></tr><tr><td><strong>Special</strong></td><td>Yes (thru)</td><td>Yes (thru)</td><td>Yes</td><td>Catch-all for special engines</td></tr><tr><td><strong>Mixbus</strong></td><td>No</td><td>Yes (thru)</td><td>Yes</td><td>Group bus / send effects</td></tr></tbody></table>
+<p>Source: <a href="../zynthian-ui/zyngui/zynthian_gui_add_chain.py"><code>zyngui/zynthian_gui_add_chain.py:42</code></a></p>
+<blockquote><p>Clip Launcher is limited to 16 instances. The button is grayed out if this limit is reached.</p></blockquote>
+<hr>
+<h2 id="adding-a-chain">Adding a Chain</h2>
+<p><strong>From the mixer:</strong> tap the <strong>+</strong> button (rightmost empty strip or via chain_manager).</p>
+<p><strong>From chain_manager:</strong> tap <strong>Add chain</strong> button.</p>
+<p>The flow:</p>
+<pre><code>add_chain (pick type)
+    → engine category list
+        → engine list
+            → bank list
+                → preset list
+                    → control screen</code></pre>
+<ol><li><strong>Pick chain type</strong> — Instrument is the most common.</li><li><strong>Pick engine category</strong> — e.g. "Sound Synthesis", "LV2 Plugin", "Special".</li><li><strong>Pick engine</strong> — e.g. FluidSynth, ZynAddSubFX, setBfree, or a specific LV2 plugin.</li><li><strong>Pick bank</strong> — a collection of related presets (e.g. "Piano", "Strings").</li><li><strong>Pick preset</strong> — the specific sound (e.g. "Steinway Grand").</li><li><strong>Control screen opens</strong> — ready to play.</li></ol>
+<hr>
+<h2 id="chain-manager">Chain Manager</h2>
+<p>Access: Main Menu → <strong>Chain Manager</strong>, or SW1 bold press from chain_control.</p>
+<p>Shows a visual graph of all chains as columns. Each column has:</p>
+<ul><li>Chain name at the top</li><li>Processor nodes stacked vertically (MIDI-FX → synth engine → Audio-FX)</li><li>Connections between nodes shown as lines</li></ul>
+<p><strong>Selecting in chain_manager:</strong></p>
+<table><thead><tr><th>Action</th><th>Result</th></tr></thead><tbody><tr><td>Tap chain column header</td><td>Select that chain</td></tr><tr><td>Tap processor node</td><td>Enter chain_control for that processor</td></tr><tr><td>Long-press chain header</td><td>Chain options</td></tr><tr><td>Encoder 3</td><td>Scroll between chains</td></tr></tbody></table>
+<p><strong>Moving a chain:</strong> chain_options → <strong>Move chain</strong> — encoder 4 then repositions the chain left/right. Confirm with select.</p>
+<p>Source: <a href="../zynthian-ui/zyngui/zynthian_gui_chain_manager.py"><code>zyngui/zynthian_gui_chain_manager.py</code></a></p>
+<hr>
+<h2 id="chain-control">Chain Control</h2>
+<p>The <code>chain_control</code> screen is a compound view: a <strong>side chain graph</strong> on the left plus a <strong>subscreen</strong> on the right. The subscreen can show:</p>
+<table><thead><tr><th>Subscreen</th><th>What it shows</th></tr></thead><tbody><tr><td><code>control</code></td><td>Parameter knobs for the current processor</td></tr><tr><td><code>chain_options</code></td><td>Options for the current chain</td></tr><tr><td><code>midi_config</code></td><td>MIDI input / output routing</td></tr><tr><td><code>audio_out</code></td><td>Audio output routing</td></tr><tr><td><code>audio_in</code></td><td>Audio input routing</td></tr></tbody></table>
+<p>Toggle the side chain panel with <strong>SW3 short</strong> or by tapping the chain edge.</p>
+<p>When the side chain is visible, Encoder 2 navigates between processor nodes in the graph. Tap a node to switch the subscreen to that processor's controls.</p>
+<p>Source: <a href="../zynthian-ui/zyngui/zynthian_gui_chain_control.py"><code>zyngui/zynthian_gui_chain_control.py</code></a></p>
+<hr>
+<h2 id="chain-options">Chain Options</h2>
+<p>Long-press a chain in the chain_manager, or from chain_control → options subscreen.</p>
+<table><thead><tr><th>Option</th><th>What it does</th></tr></thead><tbody><tr><td>Clear MIDI Learn</td><td>Remove all CC bindings from all processors in this chain</td></tr><tr><td>Rename chain</td><td>Type a new name (keyboard screen)</td></tr><tr><td>Move chain</td><td>Reposition in mixer (encoder 4)</td></tr><tr><td>Add MIDI-FX processor</td><td>Append a MIDI effect at the end of the MIDI chain</td></tr><tr><td>Add Audio-FX processor</td><td>Append an audio effect at the end of the audio chain</td></tr><tr><td>Remove all MIDI-FX</td><td>Strip all MIDI effect processors</td></tr><tr><td>Remove all Audio-FX</td><td>Strip all audio effect processors</td></tr><tr><td>Remove chain</td><td>Delete chain and all its processors</td></tr><tr><td>Export chain as snapshot</td><td>Save this chain configuration as a <code>.zss</code> file</td></tr><tr><td>Insert new chain</td><td>Create a new chain immediately before this one</td></tr><tr><td>Remove ALL</td><td>Remove all chains / sequences (with confirmation)</td></tr></tbody></table>
+<p>Source: <a href="../zynthian-ui/zyngui/zynthian_gui_chain_options.py"><code>zyngui/zynthian_gui_chain_options.py</code></a></p>
+<hr>
+<h2 id="audio-routing">Audio Routing</h2>
+<p>By default, each chain's audio output goes to the main stereo mix. You can override this.</p>
+<p><strong>audio_out screen:</strong> select which JACK ports this chain feeds. Use for routing a chain to a mixbus instead of main out.</p>
+<p><strong>audio_in screen:</strong> for Audio Input and MIDI+Audio chains — select which JACK input ports feed into this chain.</p>
+<p>Both screens are accessible from chain_control → tap the chain graph edge to open the side panel → navigate to the routing node.</p>
+<hr>
+<h2 id="midi-config">MIDI Config</h2>
+<p>The <code>midi_config</code> subscreen shows MIDI input and output assignments for the chain:</p>
+<ul><li><strong>MIDI input:</strong> which MIDI channels / ports this chain listens to</li><li><strong>MIDI output:</strong> which ports this chain's MIDI thru sends to</li></ul>
+<p>Accessible from chain_control → side chain panel → MIDI input/output node.</p>
+<hr>
+<h2 id="example-keyboard-split--piano-low--strings-high">Example: Keyboard Split — Piano Low / Strings High</h2>
+<p>Two chains, both on MIDI channel 1, divided at C4:</p>
+<ol><li>Add Instrument chain → FluidSynth → "Piano" bank → "Steinway Grand" preset.</li><li>From chain_control → chain_options → <strong>Note Range</strong> → set Max to B3.</li><li>Add a second Instrument chain → ZynAddSubFX → "Strings" bank → any strings preset.</li><li>chain_options → <strong>Note Range</strong> → set Min to C4.</li></ol>
+<p>Both chains receive channel 1. ZynMidiRouter delivers notes to whichever chain's note range matches.</p>
+<hr>
+<h2 id="example-serial-audio-chain--synth--reverb">Example: Serial Audio Chain — Synth + Reverb</h2>
+<p>Add a reverb LV2 as an audio-FX on an existing instrument chain:</p>
+<ol><li>Select the FluidSynth chain in chain_manager.</li><li>chain_options → <strong>Add Audio-FX processor</strong>.</li><li>Engine category: LV2 Plugin → "Calf Reverb" (or any other reverb LV2).</li><li>The processor appears as a new node after the synth in the chain graph.</li><li>Control screen for the reverb shows Calf Reverb parameters (Room size, Diffusion, etc.).</li></ol>
+<p>The signal flow becomes: FluidSynth → Calf Reverb LV2 → main output.</p>
+<hr>
+<h2 id="whats-next">What's Next</h2>
+<ul><li><a href="control-screen.html">Control Screen</a> — adjust engine parameters</li><li><a href="midi-cc-learn.html">MIDI CC Learning</a> — bind physical knobs to parameters</li><li><a href="synth-engines.html">Synth Engines</a> — which engine to use</li></ul>
+<hr>
+<p><em>Version: 2026-05-25 — derived from <code>zyngui/zynthian_gui_add_chain.py</code>, <code>zyngui/zynthian_gui_chain_manager.py</code>, <code>zyngui/zynthian_gui_chain_options.py</code>, <code>zyngui/zynthian_gui_chain_control.py</code>.</em></p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

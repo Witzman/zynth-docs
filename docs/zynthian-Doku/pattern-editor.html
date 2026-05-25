@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pattern Editor — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Using the UI</h3><ul>
+<li><a href="ui-navigation.html">UI Navigation</a></li>
+<li><a href="chain-management.html">Chains & Routing</a></li>
+<li><a href="control-screen.html">Control Screen</a></li>
+<li><a href="midi-cc-learn.html">MIDI CC Learning</a></li>
+<li><a href="zs3-guide.html">ZS3 Subsnapshots</a></li>
+<li><a href="pattern-editor.html" aria-current="page"><strong>Pattern Editor</strong></a></li>
+<li><a href="admin-guide.html">Admin & System</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+<li><a href="performance-monitoring.html">Performance</a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="pattern-editor">Pattern Editor</h1>
+<p>The Pattern Editor is Zynthian's built-in step sequencer. It lets you program note patterns and CC automation directly on the device, without an external computer.</p>
+<hr>
+<h2 id="opening-the-pattern-editor">Opening the Pattern Editor</h2>
+<p><strong>From the launcher screen:</strong> each clip pad in the launcher represents one pattern. Tap a pad to select it, then open the pattern editor via the edit button (or long-press the pad).</p>
+<p><strong>From Admin:</strong> Admin → sequence / pattern editor (when available in the menu).</p>
+<p>The pattern editor opens in the <strong>notes view</strong> (<code>pated_notes</code>). Switch to CC view via the tab at the top.</p>
+<hr>
+<h2 id="notes-grid">Notes Grid</h2>
+<pre><code>     Step: 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16
+C5       [ ██          ]  [ █  ]                 [ ██████ ]
+B4              [ █  ]
+A4       [ ██████████████████████████████████████████████ ]
+G4                        [ ██  ]
+F4                                    [ ██  ]</code></pre>
+<ul><li><strong>Rows</strong> = pitch (note), highest at the top</li><li><strong>Columns</strong> = steps (time positions)</li><li><strong>Colored bars</strong> = notes, width = duration</li></ul>
+<p>The grid scrolls both horizontally (more steps) and vertically (more notes).</p>
+<h3 id="adding-and-removing-notes">Adding and Removing Notes</h3>
+<table><thead><tr><th>Action</th><th>Effect</th></tr></thead><tbody><tr><td>Tap empty cell</td><td>Add a note at that pitch and step</td></tr><tr><td>Tap existing note</td><td>Select it</td></tr><tr><td>Drag right on a note</td><td>Extend duration</td></tr><tr><td>Long-press a note</td><td>Open per-note parameter editor</td></tr><tr><td>Double-tap a note</td><td>Delete it</td></tr></tbody></table>
+<hr>
+<h2 id="per-note-parameters">Per-Note Parameters</h2>
+<p>Long-press any note to open the parameter editor. Parameters:</p>
+<table><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td><strong>Duration</strong></td><td>Length of the note in steps (1 = one step)</td></tr><tr><td><strong>Velocity</strong></td><td>Note-on velocity (1–127)</td></tr><tr><td><strong>Offset</strong></td><td>Nudge the note start within the step (for swing/groove)</td></tr><tr><td><strong>Stutter Speed</strong></td><td>How fast the note stutters (repeats within the step)</td></tr><tr><td><strong>Stutter VFX</strong></td><td>Velocity envelope for stutter: FLAT, FADE-IN, FADE-OUT</td></tr><tr><td><strong>Stutter Ramp</strong></td><td>Speed ramp for stutter: NONE, SPEED-UP, SPEED-DOWN</td></tr><tr><td><strong>Play Frequency</strong></td><td>How often this note plays: ALWAYS, PLAY/2, SKIP/2, PLAY/3…</td></tr><tr><td><strong>Play Chance</strong></td><td>Probability this note plays each time it is reached</td></tr><tr><td><strong>Stutter Frequency</strong></td><td>How often the stutter fires: same options as Play Frequency</td></tr><tr><td><strong>Stutter Chance</strong></td><td>Probability the stutter fires</td></tr></tbody></table>
+<p><strong>Play Frequency</strong> and <strong>Play Chance</strong> create rhythmic variation — a note set to PLAY/2 fires only on alternate passes through the pattern.</p>
+<p>Source: <a href="../zynthian-ui/zyngui/zynthian_gui_pated_notes.py"><code>zyngui/zynthian_gui_pated_notes.py:46</code></a></p>
+<hr>
+<h2 id="scale-and-chord-modes">Scale and Chord Modes</h2>
+<p>The pattern editor can restrict note entry to a musical scale, making it easier to compose in key.</p>
+<p><strong>Scale modes:</strong></p>
+<table><thead><tr><th>Scale</th><th>Intervals</th></tr></thead><tbody><tr><td>Major</td><td>C D E F G A B</td></tr><tr><td>Minor</td><td>C D Eb F G Ab Bb</td></tr></tbody></table>
+<p>When a scale is active, only scale notes are shown as rows, and new notes snap to the nearest scale degree.</p>
+<p><strong>Chord modes:</strong> instead of placing single notes, the editor places full chords:</p>
+<table><thead><tr><th>Mode</th><th>What gets placed</th></tr></thead><tbody><tr><td>Single note</td><td>One note</td></tr><tr><td>Chord</td><td>Selected chord type (see below)</td></tr><tr><td>Diatonic triads, major key</td><td>Triad built on the scale degree you tap</td></tr><tr><td>Diatonic 7ths, major key</td><td>7th chord on the scale degree</td></tr><tr><td>Diatonic triads, minor key</td><td>Triad in minor key</td></tr><tr><td>Diatonic 7ths, minor key</td><td>7th chord in minor key</td></tr></tbody></table>
+<p>Available chord types include: Major, Minor, Diminished, Augmented, Major 7th, Minor 7th, Dominant 7th, Half-Diminished 7th, and many extended chords (9th, 11th, 13th). Tap one cell — the full chord appears as a stack of simultaneous notes.</p>
+<hr>
+<h2 id="transport-controls">Transport Controls</h2>
+<p>The bottom of the pattern editor shows transport buttons:</p>
+<table><thead><tr><th>Button</th><th>Action</th></tr></thead><tbody><tr><td>Play/Pause</td><td>Start or pause pattern playback</td></tr><tr><td>Stop</td><td>Stop and return to step 1</td></tr><tr><td>Loop</td><td>Toggle loop mode (pattern repeats)</td></tr><tr><td>Metronome</td><td>Toggle click track</td></tr><tr><td>Tempo</td><td>BPM (same as global tempo)</td></tr></tbody></table>
+<p>Pattern playback is synchronized to the global clock. If other chains or sequences are running, the pattern editor follows the same tempo.</p>
+<hr>
+<h2 id="cc-automation-editor">CC Automation Editor</h2>
+<p>Switch to the CC tab at the top of the pattern editor (<code>pated_cc</code>).</p>
+<p>The CC editor shows the same step grid but rows represent CC numbers instead of pitches. Place a CC event at any step with any value — useful for automating filter sweeps, volume curves, or any parameter bound to a CC.</p>
+<table><thead><tr><th>Action</th><th>Effect</th></tr></thead><tbody><tr><td>Tap step on a CC row</td><td>Add a CC event</td></tr><tr><td>Drag up/down on a CC event</td><td>Adjust the CC value</td></tr><tr><td>Long-press a CC event</td><td>Set exact value</td></tr><tr><td>Double-tap</td><td>Delete the CC event</td></tr></tbody></table>
+<hr>
+<h2 id="copy--paste-patterns">Copy / Paste Patterns</h2>
+<p>Select a range of notes (touch and drag), then use the copy/paste buttons in the toolbar. Paste into the same pattern at a different step, or switch to another channel and paste there.</p>
+<hr>
+<h2 id="pattern-length">Pattern Length</h2>
+<p>The number of steps per pattern is configurable per pattern. Common lengths:</p>
+<ul><li>16 steps = 1 bar (at 4/4, 16th-note resolution)</li><li>32 steps = 2 bars</li><li>64 steps = 4 bars</li></ul>
+<p>Change the pattern length via the length control in the toolbar (encoder 4 or touch).</p>
+<hr>
+<h2 id="example-8-step-bass-line-on-setbfree-organ">Example: 8-Step Bass Line on setBfree Organ</h2>
+<ol><li>Add an Instrument chain → setBfree.</li><li>Open pattern editor for the setBfree clip.</li><li>Set pattern length to 8 steps.</li><li>Place notes on a minor pentatonic scale: A2 at steps 1, 2, 3; G2 at step 5; F2 at step 7.</li><li>Set velocities: step 1 = 100, others = 80 for accent on beat 1.</li><li>Press Play — the bass line loops over setBfree with the organ sound.</li></ol>
+<hr>
+<h2 id="example-drum-pattern--fluidsynth-gm-drums-on-channel-10">Example: Drum Pattern — FluidSynth GM Drums on Channel 10</h2>
+<p>GM drum map uses fixed notes for each drum:</p>
+<table><thead><tr><th>Note</th><th>MIDI#</th><th>Drum</th></tr></thead><tbody><tr><td>C2</td><td>36</td><td>Bass drum</td></tr><tr><td>D2</td><td>38</td><td>Snare</td></tr><tr><td>F#2</td><td>42</td><td>Hi-hat closed</td></tr><tr><td>A#2</td><td>46</td><td>Hi-hat open</td></tr><tr><td>C3</td><td>48</td><td>Tom hi</td></tr></tbody></table>
+<ol><li>Add Instrument chain → FluidSynth → General MIDI soundfont → assign to MIDI channel 10.</li><li>Open pattern editor, set to 16 steps.</li><li>Place bass drum (C2) at steps 1, 5, 9, 13.</li><li>Place snare (D2) at steps 5, 13.</li><li>Place closed hi-hat (F#2) every 2 steps.</li><li>Press Play — classic four-on-the-floor pattern.</li></ol>
+<hr>
+<h2 id="whats-next">What's Next</h2>
+<ul><li><a href="synth-engines.html">Synth Engines</a> — engines to pair with the sequencer</li><li><a href="chain-management.html">Chains & Routing</a> — set up the instrument chain</li><li><a href="snapshots.html">Snapshots</a> — save a complete sequenced setup</li></ul>
+<hr>
+<p><em>Version: 2026-05-25 — derived from <code>zyngui/zynthian_gui_pated_notes.py</code>, <code>zyngui/zynthian_gui_pated_cc.py</code>.</em></p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

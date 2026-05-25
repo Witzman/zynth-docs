@@ -63,18 +63,63 @@ JACK is the connective tissue [`zynthian-sys/etc/systemd/jack2.service`]. If JAC
 The main Zynthian screen shows:
 
 ```
-┌─────────────────────────────────┐
-│ [IP]  [CPU%]  [AUDIO]  [MIDI]   │  ← Status bar
-├─────────────────────────────────┤
-│                                 │
-│   Chain list / Active screen    │  ← Main area
-│                                 │
-├───────────┬───────────┬─────────┤
-│  [Chain]  │ [Preset]  │  [Mix]  │  ← Soft buttons (touchscreen)
-└───────────┴───────────┴─────────┘
+┌───────────────────────────────────────────┐
+│  192.168.1.5  │ CPU 32% │ ♩120 │ ↑↓  │ ↻ │  ← Status bar
+├───────────────────────────────────────────┤
+│                                           │
+│  Chain strips (mixer) or clip pads        │  ← Main area
+│                                           │
+│  [Chain 1] [Chain 2] [Chain 3] [Master]   │
+└───────────────────────────────────────────┘
 ```
 
-The status bar shows IP address, CPU usage, and MIDI/audio activity indicators.
+The status bar shows IP address, CPU%, tempo, MIDI/audio activity, and an update indicator (↻) when software updates are available.
+
+---
+
+## Main Menu
+
+Press **SW1 short** (V5) or long-press Back from most screens to open the Main Menu — a 3×3 grid of quick-access buttons:
+
+| Button | Opens | Use for |
+|--------|-------|---------|
+| Chain Manager | chain_manager | See and edit all chains in a graph |
+| Snapshots | snapshot | Load/save full setups |
+| ZS3 | zs3 | Recall sub-snapshots by Program Change |
+| Tempo | tempo | Set BPM or tap tempo |
+| Audio Player | audio_player | Play audio files through the system |
+| MIDI Player | midi_player | Play MIDI files through loaded chains |
+| Admin | admin | System settings, WiFi, Bluetooth, updates |
+| Soundcard Levels | alsa_mixer | ALSA hardware mixer controls |
+| Power | power | Shutdown / reboot |
+
+Source: [`zyngui/zynthian_gui_main_menu.py`](../zynthian-ui/zyngui/zynthian_gui_main_menu.py)
+
+---
+
+## Screen Map
+
+```mermaid
+flowchart TD
+    Root["mixer / launcher\n(root)"]
+    Root -->|"SW1 short"| MM[main_menu]
+    Root -->|"tap chain"| CC[chain_control]
+    MM --> ChM[chain_manager]
+    MM --> Snap[snapshot]
+    MM --> ZS3[zs3]
+    MM --> Admin[admin]
+    ChM --> CC
+    ChM --> AddCh[add_chain → engine → bank → preset]
+    AddCh --> CC
+    CC -->|"control subscreen"| Ctrl[control]
+    CC -->|"options subscreen"| ChOpt[chain_options]
+    CC -->|"MIDI subscreen"| MidiCfg[midi_config]
+    Ctrl -->|"Bold SW4"| XY[control_xy]
+    ZS3 -->|"Bold select"| ZS3Opt[zs3_options]
+    Admin --> Wifi[wifi]
+    Admin --> BLE[bluetooth]
+    Admin --> Bright[brightness_config]
+```
 
 ---
 
@@ -161,11 +206,13 @@ Recall a ZS3 via Program Change messages from a MIDI controller. Useful for swit
 
 ## What's Next
 
-- [Synth Engines](synth-engines.md) — which engines to use and when
-- [Recipes](recipes.md) — practical multi-engine setups
-- [Snapshots](snapshots.md) — saving and restoring setups
-- [MIDI Controllers](midi.md) — connecting physical instruments
-- [Webconf Reference](webconf.md) — all configuration options
+- [UI Navigation](ui-navigation.html) — screen map and navigation patterns
+- [Chains & Routing](chain-management.html) — add and configure chains
+- [Control Screen](control-screen.html) — adjust synth parameters
+- [Synth Engines](synth-engines.html) — which engines to use and when
+- [Recipes](recipes.html) — practical multi-engine setups
+- [Snapshots](snapshots.html) — saving and restoring setups
+- [MIDI Controllers](midi.html) — connecting physical instruments
 
 ---
 

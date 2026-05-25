@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZS3 Subsnapshots — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Using the UI</h3><ul>
+<li><a href="ui-navigation.html">UI Navigation</a></li>
+<li><a href="chain-management.html">Chains & Routing</a></li>
+<li><a href="control-screen.html">Control Screen</a></li>
+<li><a href="midi-cc-learn.html">MIDI CC Learning</a></li>
+<li><a href="zs3-guide.html" aria-current="page"><strong>ZS3 Subsnapshots</strong></a></li>
+<li><a href="pattern-editor.html">Pattern Editor</a></li>
+<li><a href="admin-guide.html">Admin & System</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+<li><a href="performance-monitoring.html">Performance</a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="zs3-subsnapshots">ZS3 Subsnapshots</h1>
+<p>A <strong>ZS3</strong> (Zynthian Sub-Snapshot) is a partial state save. Unlike a full snapshot (which captures everything), a ZS3 can capture specific chains and parameters — and it can be recalled instantly via MIDI Program Change during a live performance.</p>
+<hr>
+<h2 id="zs3-vs-snapshot">ZS3 vs Snapshot</h2>
+<table><thead><tr><th>Feature</th><th>Snapshot</th><th>ZS3</th></tr></thead><tbody><tr><td>Saves all chains</td><td>Yes</td><td>No — selective</td></tr><tr><td>Saves engine/preset</td><td>Yes</td><td>Optional</td></tr><tr><td>Saves parameters</td><td>Yes</td><td>Yes</td></tr><tr><td>Saves mixer levels</td><td>Yes</td><td>Optional</td></tr><tr><td>Recall method</td><td>Manual (screen/file)</td><td>Program Change or screen</td></tr><tr><td>Use case</td><td>Between songs</td><td>Between sections within a song</td></tr></tbody></table>
+<hr>
+<h2 id="zs3-screen">ZS3 Screen</h2>
+<p>Access: Main Menu → <strong>ZS3</strong> (or SW3 on V5 default mapping).</p>
+<p>The list shows:</p>
+<ol><li><strong>Save as new ZS3</strong> — captures current state as a new ZS3 entry.</li><li><strong>Default state</strong> (<code>zs3-0</code>) — the baseline state; always present.</li><li><strong>Saved ZS3s</strong> — all named ZS3 entries you have created.</li></ol>
+<p>Each entry shows its title and (if linked to Program Change) the PC number and channel.</p>
+<p><strong>Select (short press):</strong> load that ZS3 immediately — applies its saved parameters.</p>
+<p><strong>Bold press:</strong> open ZS3 options for that entry.</p>
+<p>Source: <a href="../zynthian-ui/zyngui/zynthian_gui_zs3.py"><code>zyngui/zynthian_gui_zs3.py</code></a></p>
+<hr>
+<h2 id="saving-a-zs3">Saving a ZS3</h2>
+<ol><li>Set up the state you want to capture (preset, volume, effects, etc.).</li><li>ZS3 screen → <strong>Save as new ZS3</strong>.</li><li>A keyboard screen appears — type a name (e.g. "Verse", "Chorus").</li><li>The new ZS3 appears in the list.</li></ol>
+<p>To <strong>update</strong> an existing ZS3 with the current state: bold-press the entry → <strong>Overwrite</strong>.</p>
+<hr>
+<h2 id="zs3-options">ZS3 Options</h2>
+<p>Bold-press any ZS3 entry to open options:</p>
+<table><thead><tr><th>Option</th><th>What it does</th></tr></thead><tbody><tr><td>Restore options</td><td>Choose which chains/processors are restored when loading</td></tr><tr><td>Overwrite</td><td>Replace this ZS3 with the current state</td></tr><tr><td>Rename</td><td>Change the title</td></tr><tr><td>Delete</td><td>Remove this ZS3</td></tr><tr><td>Program Change Number</td><td>Assign a MIDI PC number (0–127) to recall this ZS3</td></tr><tr><td>Program Change Channel</td><td>Restrict PC recall to a specific MIDI channel (1–16 or Any)</td></tr></tbody></table>
+<p>Source: <a href="../zynthian-ui/zyngui/zynthian_gui_zs3_options.py"><code>zyngui/zynthian_gui_zs3_options.py</code></a></p>
+<hr>
+<h2 id="restore-options">Restore Options</h2>
+<p>By default, loading a ZS3 restores all parameters it captured. The <strong>Restore options</strong> submenu lets you toggle which chains and processors are actually applied on recall.</p>
+<p>Each chain and processor shows a checkbox: ☑ = will be restored, ☐ = skip on recall.</p>
+<p><strong>Use case:</strong> you have a ZS3 that changes organ drawbars but you don't want it to reset the piano preset. Uncheck the piano chain — only the organ parameters apply.</p>
+<p>A <strong>Toggle All Mixer</strong> option toggles all audio mixer processors at once.</p>
+<hr>
+<h2 id="linking-zs3-to-midi-program-change">Linking ZS3 to MIDI Program Change</h2>
+<p>This is the key live performance feature — your foot switch or controller can jump to any ZS3 without touching the screen.</p>
+<h3 id="method-a-assign-via-zs3-options">Method A: Assign via ZS3 Options</h3>
+<ol><li>ZS3 screen → bold-press the ZS3 you want to link.</li><li>Options → <strong>Program Change Number</strong> → select 0–127.</li><li>Optionally: <strong>Program Change Channel</strong> → select a specific channel, or leave as "Any".</li><li>The ZS3 list entry now shows "→ PRG#N" (or "CH#N:PRG#N" for a specific channel).</li></ol>
+<p>From now on, when Zynthian receives PC#N on that channel, this ZS3 loads automatically.</p>
+<h3 id="method-b-midi-learn">Method B: MIDI Learn</h3>
+<ol><li>On the ZS3 screen, press the MIDI learn button (encoder select long-press, or the learn soft button).</li><li>Screen shows <strong>"Waiting for MIDI Program Change..."</strong></li><li>Send a Program Change from your controller.</li><li>The received PC number is assigned to the currently selected ZS3.</li></ol>
+<p>The learn mode is cancelled when you leave the ZS3 screen.</p>
+<hr>
+<h2 id="zs3-id-format">ZS3 ID Format</h2>
+<p>Internally, ZS3 entries use these ID formats:</p>
+<table><thead><tr><th>ID format</th><th>Meaning</th></tr></thead><tbody><tr><td><code>zs3-0</code></td><td>Default state (always present)</td></tr><tr><td><code>zs3-N</code></td><td>Named ZS3 without PC assignment</td></tr><tr><td><code>*/prog</code></td><td>Any channel, Program Change = prog</td></tr><tr><td><code>chan/prog</code></td><td>Specific channel <code>chan</code>, Program Change = prog</td></tr></tbody></table>
+<hr>
+<h2 id="example-live-song-arrangement">Example: Live Song Arrangement</h2>
+<p>Song: "Blue Sky" — three sections.</p>
+<ol><li>Set up the full live rig (piano chain + organ chain + drum chain).</li><li><strong>Save a snapshot</strong> as "Blue_Sky" for the whole song.</li><li>Adjust organ drawbars for the verse — save as ZS3 "Verse" → PC#0.</li><li>Pull out the chorus drawbars — save as ZS3 "Chorus" → PC#1.</li><li>Reduce organ volume for the bridge — save as ZS3 "Bridge" → PC#2.</li></ol>
+<p>During the performance, a foot switch sends PC#0 (verse), PC#1 (chorus), PC#2 (bridge) to instantly morph the rig between sections — no hands needed.</p>
+<hr>
+<h2 id="example-foot-switch-recall">Example: Foot Switch Recall</h2>
+<p>Hardware: sustain pedal or foot switch sending Program Change on channel 16.</p>
+<ol><li>ZS3 screen → bold-press target ZS3 → Program Change Number = 0, Channel = 16.</li><li>Press sustain pedal — ZS3 loads.</li><li>To step through multiple ZS3s sequentially, assign consecutive PC numbers and program your foot switch to increment.</li></ol>
+<hr>
+<h2 id="whats-next">What's Next</h2>
+<ul><li><a href="snapshots.html">Snapshots</a> — full-state saves between songs</li><li><a href="control-screen.html">Control Screen</a> — save parameters into a ZS3</li><li><a href="midi.html">MIDI Controllers</a> — configure your foot switch or controller</li></ul>
+<hr>
+<p><em>Version: 2026-05-25 — derived from <code>zyngui/zynthian_gui_zs3.py</code>, <code>zyngui/zynthian_gui_zs3_options.py</code>.</em></p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

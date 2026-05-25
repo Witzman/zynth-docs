@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UI Navigation & Screen Map — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Using the UI</h3><ul>
+<li><a href="ui-navigation.html" aria-current="page"><strong>UI Navigation</strong></a></li>
+<li><a href="chain-management.html">Chains & Routing</a></li>
+<li><a href="control-screen.html">Control Screen</a></li>
+<li><a href="midi-cc-learn.html">MIDI CC Learning</a></li>
+<li><a href="zs3-guide.html">ZS3 Subsnapshots</a></li>
+<li><a href="pattern-editor.html">Pattern Editor</a></li>
+<li><a href="admin-guide.html">Admin & System</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+<li><a href="performance-monitoring.html">Performance</a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="ui-navigation--screen-map">UI Navigation & Screen Map</h1>
+<p>This page explains how the Zynthian touch display is organized, how to reach any screen from any other, and the navigation patterns that apply everywhere.</p>
+<hr>
+<h2 id="root-screen-mixer-and-launcher">Root Screen: Mixer and Launcher</h2>
+<p>When Zynthian starts, the <strong>Mixer</strong> screen is the home view. It shows one vertical strip per chain — left-to-right across the display — with the master chain always at the far right.</p>
+<p>Each strip shows:</p>
+<ul><li>Chain name and engine type at the top</li><li>A vertical fader for volume</li><li>Level meters (DPM) when enabled</li><li>Mute / solo indicator</li></ul>
+<p>Below the chain strips, the screen can switch between two tab views:</p>
+<table><thead><tr><th>Tab</th><th>Shows</th><th>Switch</th></tr></thead><tbody><tr><td><strong>Mixer</strong></td><td>Volume faders and DPM meters for each chain</td><td>Tap mixer label</td></tr><tr><td><strong>Launcher</strong></td><td>Clip/sequence pads (rows = phrases) per chain</td><td>Tap launcher label</td></tr></tbody></table>
+<p>The mixer is the root — pressing Back from any screen eventually returns here.</p>
+<hr>
+<h2 id="status-bar">Status Bar</h2>
+<p>Runs across the top of every screen.</p>
+<pre><code>┌──────┬──────┬──────┬──────┬──────┬──────┐
+│ IP   │ CPU% │ ↑↓↑  │ 🔊   │ ♩    │ ↻    │
+└──────┴──────┴──────┴──────┴──────┴──────┘</code></pre>
+<table><thead><tr><th>Icon / Field</th><th>Meaning</th></tr></thead><tbody><tr><td>IP address</td><td>Current IP on <code>wlan0</code> or <code>eth0</code></td></tr><tr><td>CPU%</td><td>System CPU load — above 80% expect XRUNs</td></tr><tr><td>MIDI activity</td><td>Flashes on incoming MIDI</td></tr><tr><td>Audio activity</td><td>Flashes on audio output</td></tr><tr><td>Tempo</td><td>Current BPM (tap to change)</td></tr><tr><td>↻ / ⬇</td><td>Update available indicator</td></tr></tbody></table>
+<hr>
+<h2 id="main-menu">Main Menu</h2>
+<p>Accessed by: <strong>SW1 short press</strong> (V5), or <strong>long-press Back</strong> on most screens.</p>
+<p>A 3×3 grid of buttons:</p>
+<table><thead><tr><th>Button</th><th>Action</th></tr></thead><tbody><tr><td>Chain Manager</td><td>Open chain graph view for all chains</td></tr><tr><td>Snapshots</td><td>Browse, save, load snapshot files</td></tr><tr><td>ZS3</td><td>Browse and recall sub-snapshots</td></tr><tr><td>Tempo</td><td>Tap-tempo and BPM dial</td></tr><tr><td>Audio Player</td><td>Load and play audio files</td></tr><tr><td>MIDI Player</td><td>Play MIDI files through loaded chains</td></tr><tr><td>Admin</td><td>System and hardware settings</td></tr><tr><td>Soundcard Levels</td><td>ALSA mixer for the audio interface</td></tr><tr><td>Power</td><td>Shutdown or reboot</td></tr></tbody></table>
+<p>Source: <a href="../zynthian-ui/zyngui/zynthian_gui_main_menu.py"><code>zyngui/zynthian_gui_main_menu.py:38</code></a></p>
+<hr>
+<h2 id="complete-screen-map">Complete Screen Map</h2>
+<div class="mermaid">
+flowchart TD
+    Root["mixer / launcher\n(root screen)"]
+
+    Root -->|"SW1 short"| MM[main_menu]
+    Root -->|"tap chain"| CC[chain_control]
+    Root -->|"SW3 short"| CC
+
+    MM --> ChM[chain_manager]
+    MM --> Snap[snapshot]
+    MM --> ZS3[zs3]
+    MM --> Tempo[tempo]
+    MM --> AP[audio_player]
+    MM --> MP[midi_player / midi_recorder]
+    MM --> Admin[admin]
+    MM --> ALSA[alsa_mixer]
+    MM --> Pwr[power]
+
+    CC -->|"chain graph"| ChM
+    CC -->|"control subscreen"| Ctrl[control]
+    CC -->|"options subscreen"| ChOpt[chain_options]
+    CC -->|"MIDI in/out subscreen"| MidiCfg[midi_config]
+    CC -->|"audio subscreen"| AOut[audio_out / audio_in]
+
+    Ctrl -->|"MIDI learn mode"| CCLearn["CC learn (inline)"]
+    Ctrl -->|"Bold SW4"| CtrlXY[control_xy]
+
+    ChOpt -->|"Rename"| KB[keyboard]
+    ChOpt -->|"Export"| FileOpt[option → file_selector]
+
+    ChM -->|"tap chain"| CC
+    ChM -->|"Add chain"| AddCh[add_chain]
+    AddCh --> EngSel[engine selector]
+    EngSel --> Bank[bank]
+    Bank --> Preset[preset]
+    Preset --> Ctrl
+
+    ZS3 -->|"Bold select"| ZS3Opt[zs3_options]
+    ZS3Opt -->|"Restore options"| Option[option]
+
+    Admin --> Wifi[wifi]
+    Admin --> BLE[bluetooth]
+    Admin --> Bright[brightness_config]
+    Admin --> CV[cv_config]
+
+    Snap -->|"Bold select"| SnapOpt[snapshot_options]
+    Snap --> FileSelector[file_selector]
+</div>
+<hr>
+<h2 id="navigation-patterns">Navigation Patterns</h2>
+<h3 id="generic-selector-most-list-screens">Generic Selector (most list screens)</h3>
+<p>Zynthian uses a single list widget in most screens. The interaction model is the same everywhere:</p>
+<table><thead><tr><th>Action</th><th>Effect</th></tr></thead><tbody><tr><td>Encoder 3 rotate</td><td>Scroll list up/down</td></tr><tr><td>Encoder 3 push (short)</td><td>Select item</td></tr><tr><td>Encoder 3 push (bold)</td><td>Open options for selected item</td></tr><tr><td>Encoder 4 rotate</td><td>Adjust value (parameter screens)</td></tr><tr><td>Back (SW2 short)</td><td>Go to previous screen</td></tr><tr><td>SW1 short</td><td>Go to Main Menu</td></tr></tbody></table>
+<h3 id="touchscreen">Touchscreen</h3>
+<p>Tap any list item to select it. Long-press (hold ~300ms) to open options — equivalent to bold encoder press. On the mixer, tap a chain strip to enter chain_control for that chain.</p>
+<h3 id="v5-encoders">V5 Encoders</h3>
+<table><thead><tr><th>Encoder</th><th>Default function on most screens</th></tr></thead><tbody><tr><td>1 (leftmost)</td><td>Chain select — rotate to switch active chain</td></tr><tr><td>2</td><td>Parameter page or list scroll (context-dependent)</td></tr><tr><td>3</td><td>List navigation / item selection</td></tr><tr><td>4</td><td>Value adjustment</td></tr></tbody></table>
+<p>The exact function of each encoder changes per screen. The current assignment is shown in the four corners of the control screen.</p>
+<h3 id="soft-buttons-touchscreen-v5-style-footer">Soft Buttons (Touchscreen V5-style footer)</h3>
+<p>Not present on all hardware. On touch-only devices, three tap zones appear at the bottom of most screens:</p>
+<table><thead><tr><th>Zone</th><th>Typical function</th></tr></thead><tbody><tr><td>Left</td><td>Back / Cancel</td></tr><tr><td>Center</td><td>Select / Confirm</td></tr><tr><td>Right</td><td>Menu / Options</td></tr></tbody></table>
+<hr>
+<h2 id="screen-types">Screen Types</h2>
+<p>Zynthian has three screen classes:</p>
+<table><thead><tr><th>Type</th><th>Example screens</th><th>Navigation</th></tr></thead><tbody><tr><td><strong>Selector</strong></td><td>bank, preset, zs3, snapshot</td><td>Encoder 3 = scroll, push = select</td></tr><tr><td><strong>Grid</strong></td><td>main_menu, add_chain</td><td>Tap or encoder navigate cells</td></tr><tr><td><strong>Control</strong></td><td>control, control_xy</td><td>Encoders map to on-screen knobs</td></tr></tbody></table>
+<hr>
+<h2 id="going-back">Going Back</h2>
+<p>From any screen, press <strong>Back (SW2 short)</strong> to return to the previous screen. The navigation stack is linear — back always undoes one step. From the mixer root, Back has no effect (already home).</p>
+<hr>
+<h2 id="whats-next">What's Next</h2>
+<ul><li><a href="chain-management.html">Chains & Routing</a> — add and configure chains</li><li><a href="control-screen.html">Control Screen</a> — adjust synth parameters</li><li><a href="zs3-guide.html">ZS3 Subsnapshots</a> — live performance recall</li><li><a href="admin-guide.html">Admin & System</a> — WiFi, Bluetooth, updates</li></ul>
+<hr>
+<p><em>Version: 2026-05-25 — derived from <code>zyngui/zynthian_gui_main_menu.py</code>, <code>zyngui/zynthian_gui_mixer.py</code>, <code>zyngui/zynthian_gui_chain_control.py</code>.</em></p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Control Screen — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Using the UI</h3><ul>
+<li><a href="ui-navigation.html">UI Navigation</a></li>
+<li><a href="chain-management.html">Chains & Routing</a></li>
+<li><a href="control-screen.html" aria-current="page"><strong>Control Screen</strong></a></li>
+<li><a href="midi-cc-learn.html">MIDI CC Learning</a></li>
+<li><a href="zs3-guide.html">ZS3 Subsnapshots</a></li>
+<li><a href="pattern-editor.html">Pattern Editor</a></li>
+<li><a href="admin-guide.html">Admin & System</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+<li><a href="performance-monitoring.html">Performance</a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="the-control-screen">The Control Screen</h1>
+<p>The control screen is where you adjust synth engine parameters. It appears automatically after loading a preset and is the main view during performance.</p>
+<hr>
+<h2 id="layout">Layout</h2>
+<pre><code>┌──────────┬──────────┬──────────────────────────┐
+│          │          │  &gt; Global                │
+│ Knob 1   │ Knob 2   │    Volume        ████    │
+│ Volume   │ Pan      │    Pan           ████    │
+│          │          │  &gt; Filter                │
+├──────────┼──────────┤    Cutoff        ████    │
+│          │          │    Resonance     ████    │
+│ Knob 3   │ Knob 4   │  &gt; Envelope              │
+│ Cutoff   │ Resonance│    Attack        ████    │
+│          │          │    Release       ████    │
+└──────────┴──────────┴──────────────────────────┘</code></pre>
+<p><strong>Left side:</strong> 4 parameter knobs. Each knob shows:</p>
+<ul><li>Parameter name</li><li>Current value (text and arc indicator)</li><li>MIDI CC assignment (if learned)</li></ul>
+<p><strong>Right side:</strong> List of all parameter pages for the current processor. Highlighted page = what the 4 knobs are showing. Scroll this list to switch pages.</p>
+<hr>
+<h2 id="modes">Modes</h2>
+<p>The control screen has two modes, toggled by the select button (SW4):</p>
+<table><thead><tr><th>Mode</th><th>Encoders</th><th>What happens</th></tr></thead><tbody><tr><td><strong>Control mode</strong></td><td>Adjust parameter values</td><td>Encoder 1–4 move the 4 visible knobs</td></tr><tr><td><strong>Select mode</strong></td><td>Choose active processor</td><td>Encoder 3 scrolls the page list; push selects</td></tr></tbody></table>
+<p>In <strong>select mode</strong>, the side chain graph becomes visible (if in chain_control). Navigate to a different processor node to switch which processor's parameters are shown.</p>
+<hr>
+<h2 id="encoder-mapping">Encoder Mapping</h2>
+<p>In control mode, each encoder controls one on-screen knob:</p>
+<table><thead><tr><th>Encoder</th><th>Knob</th></tr></thead><tbody><tr><td>1 (leftmost)</td><td>Knob 1 (top-left)</td></tr><tr><td>2</td><td>Knob 2 (top-right)</td></tr><tr><td>3</td><td>Knob 3 (bottom-left) — also scrolls page list in select mode</td></tr><tr><td>4</td><td>Knob 4 (bottom-right)</td></tr></tbody></table>
+<p><strong>Fine adjustment:</strong> hold the encoder button while rotating for small incremental changes.</p>
+<hr>
+<h2 id="parameter-pages">Parameter Pages</h2>
+<p>Each engine exposes its parameters in groups called <strong>pages</strong>. A page holds up to 4 parameters — one per knob. To switch pages:</p>
+<ul><li><strong>Encoder 3 in select mode:</strong> scroll the right-hand list and push to select a page.</li><li><strong>Touch:</strong> tap any page name in the right-side list.</li></ul>
+<p>The number of pages depends on the engine. ZynAddSubFX has dozens; setBfree has two (drawbars, rotary).</p>
+<hr>
+<h2 id="midi-cc-learning">MIDI CC Learning</h2>
+<p>Bind a physical controller knob/fader to any parameter:</p>
+<ol><li>Navigate to the parameter you want to bind (it should be on one of the 4 visible knobs).</li><li><strong>Long-press</strong> that knob's encoder button (or touch the knob widget and long-press).</li><li>The knob highlights in orange — it's now waiting for a CC message.</li><li>Move the physical controller knob/slider you want to use.</li><li>The CC number is captured and the binding is saved.</li></ol>
+<p>To <strong>clear</strong> a CC binding: long-press the same knob again when no CC is coming in, or use chain_options → <strong>Clear MIDI Learn</strong> to remove all bindings from the chain.</p>
+<p>CC bindings are saved with snapshots and with ZS3 states.</p>
+<p>Source: <a href="../zynthian-ui/zyngui/zynthian_gui_control.py"><code>zyngui/zynthian_gui_control.py:42</code></a></p>
+<hr>
+<h2 id="control-xy-mode">Control XY Mode</h2>
+<p>The XY controller maps two parameters to a 2D touch pad — drag to control both simultaneously.</p>
+<p><strong>Activating XY mode:</strong></p>
+<ol><li>On the control screen, select a parameter for the X axis: long-press SW4 (bold select).</li><li>A second selection prompt appears for the Y axis.</li><li>The control_xy screen opens.</li></ol>
+<p><strong>In control_xy:</strong></p>
+<ul><li>Drag finger across the pad to move both parameters.</li><li>Crosshairs show current position.</li><li>Current X/Y values shown in top-left corner.</li><li>Encoders 3 and 4 also work: encoder 2 = Y axis, encoder 3 = X axis.</li><li><strong>Exit:</strong> tap the screen 3 times quickly, or press Back.</li></ul>
+<p>Source: <a href="../zynthian-ui/zyngui/zynthian_gui_control_xy.py"><code>zyngui/zynthian_gui_control_xy.py</code></a></p>
+<hr>
+<h2 id="widgets">Widgets</h2>
+<p>Some engines provide a <strong>custom widget</strong> instead of generic knobs. Examples:</p>
+<ul><li><strong>setBfree:</strong> drawbar widget — vertical fader bars for each drawbar</li><li><strong>ZynAddSubFX:</strong> standard knobs</li><li><strong>Jalv LV2:</strong> knobs mapped to whatever the plugin exposes</li></ul>
+<p>If a widget is active, the standard knobs are hidden and the widget fills the right half of the screen.</p>
+<hr>
+<h2 id="saving-parameter-state">Saving Parameter State</h2>
+<p>Control screen parameter values are saved in two ways:</p>
+<table><thead><tr><th>Method</th><th>When to use</th></tr></thead><tbody><tr><td><strong>Snapshot</strong></td><td>Full save — all chains, all parameters, all routing</td></tr><tr><td><strong>ZS3</strong></td><td>Partial save — specific parameters per chain; recalled by Program Change</td></tr></tbody></table>
+<p>To save current state: Main Menu → <strong>Snapshots</strong> → select slot → Save. Or use ZS3 screen for a quick sub-snapshot.</p>
+<hr>
+<h2 id="example-assign-filter-cutoff-to-mod-wheel-fluidsynth">Example: Assign Filter Cutoff to Mod Wheel (FluidSynth)</h2>
+<ol><li>Load FluidSynth with any preset.</li><li>Navigate to the "Filter" page in the control screen.</li><li>Knob 3 shows "Cutoff" — long-press encoder 3 to enter learn mode.</li><li>Move the mod wheel on your MIDI controller.</li><li>CC 1 (mod wheel) is now bound to Cutoff.</li></ol>
+<hr>
+<h2 id="example-map-4-zynaddsubfx-parameters-to-encoders">Example: Map 4 ZynAddSubFX Parameters to Encoders</h2>
+<ol><li>Load ZynAddSubFX with any preset.</li><li>Go to the "Part Effects" page — shows Reverb Send, Chorus Send, Bandwidth, Modulation.</li><li>Long-press each encoder in sequence and move a physical knob for each.</li><li>Now 4 physical knobs directly control those 4 synth parameters.</li><li>Save as a ZS3 to recall this mapping quickly.</li></ol>
+<hr>
+<h2 id="whats-next">What's Next</h2>
+<ul><li><a href="midi-cc-learn.html">MIDI CC Learning</a> — full CC routing and profile management</li><li><a href="zs3-guide.html">ZS3 Subsnapshots</a> — save and recall parameter states</li><li><a href="chain-management.html">Chains & Routing</a> — add effects to a chain</li></ul>
+<hr>
+<p><em>Version: 2026-05-25 — derived from <code>zyngui/zynthian_gui_control.py</code>, <code>zyngui/zynthian_gui_control_xy.py</code>, <code>zyngui/zynthian_gui_chain_control.py</code>.</em></p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

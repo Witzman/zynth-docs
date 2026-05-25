@@ -65,11 +65,38 @@ Zynthian supports QMidiNet (for network MIDI across devices on the same LAN). En
 
 ---
 
+## MIDI CC Learning
+
+Zynthian can bind any physical controller knob or slider to any synth parameter via MIDI CC Learn:
+
+1. Open the control screen for the chain you want to control.
+2. Long-press the encoder for the parameter you want to bind (hold ~600ms — knob highlights orange).
+3. Move the physical knob/fader on your MIDI controller.
+4. The CC number is captured and the binding is active.
+
+CC bindings are saved with snapshots. See [MIDI CC Learning](midi-cc-learn.html) for the full workflow including range editing, CC routing, and MIDI profiles.
+
+---
+
+## MIDI Config Screen
+
+The `midi_config` subscreen (accessible from chain_control → side chain panel → MIDI node) shows per-chain MIDI routing:
+
+- **MIDI input:** which ports and channels this chain listens to
+- **MIDI output:** which ports this chain's MIDI thru sends to
+- **CC routing:** which CCs are passed through to the engine
+
+Open from chain_control: tap the chain panel edge to show the side graph → navigate to the MIDI input/output node → tap to open the config subscreen.
+
+---
+
 ## MIDI Filtering and CC Mapping
 
 Open `http://zynthian.local` → **MIDI** → **CC** to map incoming MIDI CC messages to Zynthian controls. Useful for assigning knobs on a controller to synth parameters.
 
 Program Change (PC) messages switch presets. Bank Select (CC 0/32) switches banks.
+
+**Program Change for ZS3:** when enabled (Admin → MIDI), PC messages recall ZS3 sub-snapshots instead of switching presets. See [ZS3 Subsnapshots](zs3-guide.html).
 
 ---
 
@@ -93,9 +120,12 @@ amidi -p hw:X,0,0 -d    # replace X with card number
 
 ## What's Next
 
-- [Synth Engines](synth-engines.md) — choose an engine to play
-- [Snapshots](snapshots.md) — save the routing setup
-- [Audio Setup](audio.md) — configure audio output
+- [Synth Engines](synth-engines.html) — choose an engine to play
+- [Snapshots](snapshots.html) — save the routing setup
+- [Audio Setup](audio.html) — configure audio output
+- [MIDI CC Learning](midi-cc-learn.html) — bind controller knobs to synth parameters
+- [ZS3 Subsnapshots](zs3-guide.html) — recall states via Program Change
+- [Admin & System](admin-guide.html) — Bluetooth pairing via the UI
 
 ---
 

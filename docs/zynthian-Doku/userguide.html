@@ -37,6 +37,15 @@
 <li><a href="getting-started.html">Getting Started</a></li>
 <li><a href="faq.html">FAQ</a></li>
 </ul></div>
+<div class="track"><h3>Using the UI</h3><ul>
+<li><a href="ui-navigation.html">UI Navigation</a></li>
+<li><a href="chain-management.html">Chains & Routing</a></li>
+<li><a href="control-screen.html">Control Screen</a></li>
+<li><a href="midi-cc-learn.html">MIDI CC Learning</a></li>
+<li><a href="zs3-guide.html">ZS3 Subsnapshots</a></li>
+<li><a href="pattern-editor.html">Pattern Editor</a></li>
+<li><a href="admin-guide.html">Admin & System</a></li>
+</ul></div>
 <div class="track"><h3>Play & Create</h3><ul>
 <li><a href="userguide.html" aria-current="page"><strong>User Guide</strong></a></li>
 <li><a href="synth-engines.html">Synth Engines</a></li>
@@ -53,6 +62,7 @@
 </ul></div>
 <div class="track"><h3>Troubleshoot</h3><ul>
 <li><a href="troubleshooting.html">Troubleshooting</a></li>
+<li><a href="performance-monitoring.html">Performance</a></li>
 </ul></div>
 <div class="track"><h3>Under the Hood</h3><ul>
 <li><a href="architecture.html">Architecture</a></li>
@@ -102,16 +112,43 @@ flowchart LR
 <hr>
 <h2 id="navigation-screen-layout">Navigation: Screen Layout</h2>
 <p>The main Zynthian screen shows:</p>
-<pre><code>┌─────────────────────────────────┐
-│ [IP]  [CPU%]  [AUDIO]  [MIDI]   │  ← Status bar
-├─────────────────────────────────┤
-│                                 │
-│   Chain list / Active screen    │  ← Main area
-│                                 │
-├───────────┬───────────┬─────────┤
-│  [Chain]  │ [Preset]  │  [Mix]  │  ← Soft buttons (touchscreen)
-└───────────┴───────────┴─────────┘</code></pre>
-<p>The status bar shows IP address, CPU usage, and MIDI/audio activity indicators.</p>
+<pre><code>┌───────────────────────────────────────────┐
+│  192.168.1.5  │ CPU 32% │ ♩120 │ ↑↓  │ ↻ │  ← Status bar
+├───────────────────────────────────────────┤
+│                                           │
+│  Chain strips (mixer) or clip pads        │  ← Main area
+│                                           │
+│  [Chain 1] [Chain 2] [Chain 3] [Master]   │
+└───────────────────────────────────────────┘</code></pre>
+<p>The status bar shows IP address, CPU%, tempo, MIDI/audio activity, and an update indicator (↻) when software updates are available.</p>
+<hr>
+<h2 id="main-menu">Main Menu</h2>
+<p>Press <strong>SW1 short</strong> (V5) or long-press Back from most screens to open the Main Menu — a 3×3 grid of quick-access buttons:</p>
+<table><thead><tr><th>Button</th><th>Opens</th><th>Use for</th></tr></thead><tbody><tr><td>Chain Manager</td><td>chain_manager</td><td>See and edit all chains in a graph</td></tr><tr><td>Snapshots</td><td>snapshot</td><td>Load/save full setups</td></tr><tr><td>ZS3</td><td>zs3</td><td>Recall sub-snapshots by Program Change</td></tr><tr><td>Tempo</td><td>tempo</td><td>Set BPM or tap tempo</td></tr><tr><td>Audio Player</td><td>audio_player</td><td>Play audio files through the system</td></tr><tr><td>MIDI Player</td><td>midi_player</td><td>Play MIDI files through loaded chains</td></tr><tr><td>Admin</td><td>admin</td><td>System settings, WiFi, Bluetooth, updates</td></tr><tr><td>Soundcard Levels</td><td>alsa_mixer</td><td>ALSA hardware mixer controls</td></tr><tr><td>Power</td><td>power</td><td>Shutdown / reboot</td></tr></tbody></table>
+<p>Source: <a href="../zynthian-ui/zyngui/zynthian_gui_main_menu.py"><code>zyngui/zynthian_gui_main_menu.py</code></a></p>
+<hr>
+<h2 id="screen-map">Screen Map</h2>
+<div class="mermaid">
+flowchart TD
+    Root["mixer / launcher\n(root)"]
+    Root -->|"SW1 short"| MM[main_menu]
+    Root -->|"tap chain"| CC[chain_control]
+    MM --> ChM[chain_manager]
+    MM --> Snap[snapshot]
+    MM --> ZS3[zs3]
+    MM --> Admin[admin]
+    ChM --> CC
+    ChM --> AddCh[add_chain → engine → bank → preset]
+    AddCh --> CC
+    CC -->|"control subscreen"| Ctrl[control]
+    CC -->|"options subscreen"| ChOpt[chain_options]
+    CC -->|"MIDI subscreen"| MidiCfg[midi_config]
+    Ctrl -->|"Bold SW4"| XY[control_xy]
+    ZS3 -->|"Bold select"| ZS3Opt[zs3_options]
+    Admin --> Wifi[wifi]
+    Admin --> BLE[bluetooth]
+    Admin --> Bright[brightness_config]
+</div>
 <hr>
 <h2 id="v5-hardware-controls">V5 Hardware Controls</h2>
 <p>On a V5 kit, the four rotary encoders each control a layer of the UI:</p>
@@ -146,7 +183,7 @@ flowchart LR
 <p>Recall a ZS3 via Program Change messages from a MIDI controller. Useful for switching between song arrangements without stopping audio.</p>
 <hr>
 <h2 id="whats-next">What's Next</h2>
-<ul><li><a href="synth-engines.html">Synth Engines</a> — which engines to use and when</li><li><a href="recipes.html">Recipes</a> — practical multi-engine setups</li><li><a href="snapshots.html">Snapshots</a> — saving and restoring setups</li><li><a href="midi.html">MIDI Controllers</a> — connecting physical instruments</li><li><a href="webconf.html">Webconf Reference</a> — all configuration options</li></ul>
+<ul><li><a href="ui-navigation.html">UI Navigation</a> — screen map and navigation patterns</li><li><a href="chain-management.html">Chains & Routing</a> — add and configure chains</li><li><a href="control-screen.html">Control Screen</a> — adjust synth parameters</li><li><a href="synth-engines.html">Synth Engines</a> — which engines to use and when</li><li><a href="recipes.html">Recipes</a> — practical multi-engine setups</li><li><a href="snapshots.html">Snapshots</a> — saving and restoring setups</li><li><a href="midi.html">MIDI Controllers</a> — connecting physical instruments</li></ul>
 <hr>
 <p><em>Version: 2026-05-25 — derived from <code>zynthian-ui/zyngine/</code>, <code>zynthian-ui/zyngui/</code>, <code>zynthian-sys/config/zynthian_envars_V5.sh</code>.</em></p>
 </article>

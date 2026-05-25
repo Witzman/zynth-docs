@@ -37,6 +37,15 @@
 <li><a href="getting-started.html">Getting Started</a></li>
 <li><a href="faq.html">FAQ</a></li>
 </ul></div>
+<div class="track"><h3>Using the UI</h3><ul>
+<li><a href="ui-navigation.html">UI Navigation</a></li>
+<li><a href="chain-management.html">Chains & Routing</a></li>
+<li><a href="control-screen.html">Control Screen</a></li>
+<li><a href="midi-cc-learn.html">MIDI CC Learning</a></li>
+<li><a href="zs3-guide.html">ZS3 Subsnapshots</a></li>
+<li><a href="pattern-editor.html">Pattern Editor</a></li>
+<li><a href="admin-guide.html">Admin & System</a></li>
+</ul></div>
 <div class="track"><h3>Play & Create</h3><ul>
 <li><a href="userguide.html">User Guide</a></li>
 <li><a href="synth-engines.html">Synth Engines</a></li>
@@ -53,6 +62,7 @@
 </ul></div>
 <div class="track"><h3>Troubleshoot</h3><ul>
 <li><a href="troubleshooting.html">Troubleshooting</a></li>
+<li><a href="performance-monitoring.html">Performance</a></li>
 </ul></div>
 <div class="track"><h3>Under the Hood</h3><ul>
 <li><a href="architecture.html">Architecture</a></li>
@@ -97,9 +107,20 @@ bluetoothctl connect XX:XX:XX:XX:49:23:90</code></pre>
 <h2 id="network-midi">Network MIDI</h2>
 <p>Zynthian supports QMidiNet (for network MIDI across devices on the same LAN). Enable it via webconf: <strong>MIDI</strong> → <strong>Network</strong> → enable QMidiNet.</p>
 <hr>
+<h2 id="midi-cc-learning">MIDI CC Learning</h2>
+<p>Zynthian can bind any physical controller knob or slider to any synth parameter via MIDI CC Learn:</p>
+<ol><li>Open the control screen for the chain you want to control.</li><li>Long-press the encoder for the parameter you want to bind (hold ~600ms — knob highlights orange).</li><li>Move the physical knob/fader on your MIDI controller.</li><li>The CC number is captured and the binding is active.</li></ol>
+<p>CC bindings are saved with snapshots. See <a href="midi-cc-learn.html">MIDI CC Learning</a> for the full workflow including range editing, CC routing, and MIDI profiles.</p>
+<hr>
+<h2 id="midi-config-screen">MIDI Config Screen</h2>
+<p>The <code>midi_config</code> subscreen (accessible from chain_control → side chain panel → MIDI node) shows per-chain MIDI routing:</p>
+<ul><li><strong>MIDI input:</strong> which ports and channels this chain listens to</li><li><strong>MIDI output:</strong> which ports this chain's MIDI thru sends to</li><li><strong>CC routing:</strong> which CCs are passed through to the engine</li></ul>
+<p>Open from chain_control: tap the chain panel edge to show the side graph → navigate to the MIDI input/output node → tap to open the config subscreen.</p>
+<hr>
 <h2 id="midi-filtering-and-cc-mapping">MIDI Filtering and CC Mapping</h2>
 <p>Open <code>http://zynthian.local</code> → <strong>MIDI</strong> → <strong>CC</strong> to map incoming MIDI CC messages to Zynthian controls. Useful for assigning knobs on a controller to synth parameters.</p>
 <p>Program Change (PC) messages switch presets. Bank Select (CC 0/32) switches banks.</p>
+<p><strong>Program Change for ZS3:</strong> when enabled (Admin → MIDI), PC messages recall ZS3 sub-snapshots instead of switching presets. See <a href="zs3-guide.html">ZS3 Subsnapshots</a>.</p>
 <hr>
 <h2 id="troubleshooting-midi">Troubleshooting MIDI</h2>
 <p><strong>Controller not detected:</strong></p>
@@ -111,7 +132,7 @@ aconnect -l</code></pre>
 <p><strong>Bluetooth device disconnects repeatedly:</strong> The BLE MIDI reconnection is handled by <code>bluetoothctl</code> autoconnect. Run <code>bluetoothctl trust XX:XX:XX:XX:XX:XX</code> if not already done.</p>
 <hr>
 <h2 id="whats-next">What's Next</h2>
-<ul><li><a href="synth-engines.html">Synth Engines</a> — choose an engine to play</li><li><a href="snapshots.html">Snapshots</a> — save the routing setup</li><li><a href="audio.html">Audio Setup</a> — configure audio output</li></ul>
+<ul><li><a href="synth-engines.html">Synth Engines</a> — choose an engine to play</li><li><a href="snapshots.html">Snapshots</a> — save the routing setup</li><li><a href="audio.html">Audio Setup</a> — configure audio output</li><li><a href="midi-cc-learn.html">MIDI CC Learning</a> — bind controller knobs to synth parameters</li><li><a href="zs3-guide.html">ZS3 Subsnapshots</a> — recall states via Program Change</li><li><a href="admin-guide.html">Admin & System</a> — Bluetooth pairing via the UI</li></ul>
 <hr>
 <p><em>Version: 2026-05-25 — derived from <code>zynthian-ui/zyngui/zynthian_gui_bluetooth.py</code>, <code>zynthian-webconf/lib/midi_config_handler.py</code>.</em></p>
 </article>

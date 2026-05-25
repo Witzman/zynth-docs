@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Performance & CPU Management — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Using the UI</h3><ul>
+<li><a href="ui-navigation.html">UI Navigation</a></li>
+<li><a href="chain-management.html">Chains & Routing</a></li>
+<li><a href="control-screen.html">Control Screen</a></li>
+<li><a href="midi-cc-learn.html">MIDI CC Learning</a></li>
+<li><a href="zs3-guide.html">ZS3 Subsnapshots</a></li>
+<li><a href="pattern-editor.html">Pattern Editor</a></li>
+<li><a href="admin-guide.html">Admin & System</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+<li><a href="performance-monitoring.html" aria-current="page"><strong>Performance</strong></a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="performance--cpu-management">Performance & CPU Management</h1>
+<p>Running multiple synth engines simultaneously on a Raspberry Pi requires attention to CPU budget. This page explains how to read the performance indicators and tune your setup for stability.</p>
+<hr>
+<h2 id="status-bar-cpu-indicator">Status Bar CPU Indicator</h2>
+<p>The status bar at the top of every screen shows a CPU percentage. This is the total system CPU load across all cores.</p>
+<table><thead><tr><th>Range</th><th>Meaning</th><th>Action</th></tr></thead><tbody><tr><td>0–50%</td><td>Comfortable</td><td>No action needed</td></tr><tr><td>50–75%</td><td>Moderate</td><td>Monitor, avoid adding heavy engines</td></tr><tr><td>75–85%</td><td>High</td><td>Risk of XRUNs under heavy MIDI load</td></tr><tr><td>85–100%</td><td>Critical</td><td>Expect audio glitches; reduce load</td></tr></tbody></table>
+<p>On Pi 4 (4 cores), CPU% reflects the sum across all 4 cores divided by 4. A 4-chain setup can saturate one core at 25% total — misleading. Watch individual JACK client CPU in <code>htop</code> if you suspect one engine is a bottleneck.</p>
+<hr>
+<h2 id="dpm--digital-peak-meters">DPM — Digital Peak Meters</h2>
+<p>The mixer shows vertical level meters (DPM) for each chain when enabled. These are <strong>pre-clipping indicators</strong> — the bar should not reach the top red zone.</p>
+<table><thead><tr><th>Meter zone</th><th>Meaning</th></tr></thead><tbody><tr><td>Green (bottom 2/3)</td><td>Safe level</td></tr><tr><td>Yellow (upper third)</td><td>Approaching 0 dBFS</td></tr><tr><td>Red (top)</td><td>Clipping — reduce volume</td></tr></tbody></table>
+<p><strong>Enable/disable DPM:</strong> Admin → AUDIO → <strong>Mixer Peak Meters</strong> (toggles <code>enable_dpm</code>). Disabling DPM saves a small amount of CPU.</p>
+<hr>
+<h2 id="jack-xrun-indicator">JACK XRUN Indicator</h2>
+<p>An <strong>XRUN</strong> (under-run or over-run) occurs when the CPU cannot process an audio buffer in time. The result is an audible click or dropout.</p>
+<p>The status bar shows an XRUN counter (often a small ✕ icon with a count). If this increments during performance, the CPU cannot keep up.</p>
+<p><strong>Immediate response to XRUNs:</strong></p>
+<ol><li>Check CPU% — is it above 80%?</li><li>Check temperature: <code>ssh root@zynthian.local "vcgencmd measure_temp"</code> — above 80°C throttles the Pi.</li><li>Reduce polyphony on the heaviest engine (ZynAddSubFX part settings).</li><li>Increase JACK buffer size (webconf → Audio → Period Size).</li></ol>
+<p><strong>JACK config</strong> (from <code>zynthian_envars.sh</code>):</p>
+<pre><code class="language-bash">JACKD_OPTIONS="-P 70 -t 2000 -s a -d alsa -d hw:S2 -r 44100 -p 256 -n 3"</code></pre>
+<ul><li><code>-p 256</code> = 256 frames per period ≈ 5.8ms latency at 44100 Hz</li><li><code>-p 512</code> = 512 frames ≈ 11.6ms — use if XRUNs persist</li></ul>
+<hr>
+<h2 id="engine-cpu-cost-pi-4-approximate">Engine CPU Cost (Pi 4, approximate)</h2>
+<table><thead><tr><th>Engine</th><th>Polyphony</th><th>Approximate CPU per chain</th></tr></thead><tbody><tr><td>ZynAddSubFX</td><td>8–64 voices</td><td>8–25%</td></tr><tr><td>FluidSynth</td><td>64–256 voices</td><td>3–8%</td></tr><tr><td>setBfree</td><td>Continuous</td><td>5–10%</td></tr><tr><td>LinuxSampler</td><td>64 voices</td><td>2–5% (disk I/O bound)</td></tr><tr><td>Sfizz</td><td>64 voices</td><td>3–7%</td></tr><tr><td>Aeolus</td><td>Continuous</td><td>8–15%</td></tr><tr><td>LV2 (simple plugin)</td><td>N/A</td><td>1–3%</td></tr><tr><td>LV2 (convolution reverb)</td><td>N/A</td><td>10–30%</td></tr><tr><td>Audio Player</td><td>N/A</td><td>1–3%</td></tr><tr><td>SooperLooper</td><td>N/A</td><td>3–6%</td></tr></tbody></table>
+<p>These are rough estimates. Actual cost depends on preset complexity (ZynAddSubFX varies enormously), sample file size (LinuxSampler), and IR length (convolution reverbs).</p>
+<hr>
+<h2 id="polyphony-limits">Polyphony Limits</h2>
+<table><thead><tr><th>Pi Model</th><th>Safe simultaneous voices (ZynAddSubFX)</th></tr></thead><tbody><tr><td>Pi 3</td><td>16–24</td></tr><tr><td>Pi 4</td><td>32–64</td></tr><tr><td>Pi 5</td><td>64–128</td></tr></tbody></table>
+<p>For FluidSynth, set <code>ZYNTHIAN_SYNTH_POLYPHONY</code> in <code>zynthian_envars.sh</code> (default 64). Reducing to 32 saves CPU with minimal audible difference in most setups.</p>
+<hr>
+<h2 id="temperature-monitoring">Temperature Monitoring</h2>
+<p>Raspberry Pi 4 throttles at 80°C and hard-throttles at 85°C, causing XRUNs and sluggish UI.</p>
+<p><strong>Check temperature:</strong></p>
+<pre><code class="language-bash">ssh root@zynthian.local "vcgencmd measure_temp"
+# → temp=55.2'C</code></pre>
+<p><strong>Check throttle state:</strong></p>
+<pre><code class="language-bash">ssh root@zynthian.local "vcgencmd get_throttled"
+# → throttled=0x0   (OK)
+# → throttled=0x50000  (was throttled, now OK)
+# → throttled=0x5      (currently throttled!)</code></pre>
+<p>The Zynthian case with heatsink keeps the Pi 4 below 65°C in normal use. Convolution reverbs or many simultaneous LV2 chains can push it higher.</p>
+<p><strong>Webconf dashboard</strong> shows CPU and temperature at <code>http://zynthian.local</code> → Dashboard tab.</p>
+<hr>
+<h2 id="optimization-strategies">Optimization Strategies</h2>
+<p><strong>Quick wins:</strong></p>
+<table><thead><tr><th>Strategy</th><th>Savings</th></tr></thead><tbody><tr><td>Disable DPM meters</td><td>~2%</td></tr><tr><td>Reduce ZynAddSubFX polyphony from 64 to 32</td><td>5–15%</td></tr><tr><td>Use Audio Player instead of live ZynAddSubFX for pads</td><td>10–20%</td></tr><tr><td>Increase JACK buffer from 256 to 512</td><td>Eliminates XRUNs at cost of +6ms latency</td></tr><tr><td>Disable unused chains (mute vs stop)</td><td>Mute saves nothing; remove unused chains entirely</td></tr><tr><td>Use setBfree instead of ZynAddSubFX organ</td><td>setBfree ~5%, ZynAddSubFX organ ~15%</td></tr></tbody></table>
+<p><strong>Structural approaches:</strong></p>
+<ul><li>Pre-render complex pads as audio files, play them back via Audio Player.</li><li>Use LV2 reverb/delay only on the main mixbus (one reverb shared by all chains) instead of per-chain reverb.</li><li>On Pi 4, limit to 3–4 simultaneous synth engines plus effects.</li></ul>
+<hr>
+<h2 id="example-stable-4-chain-live-setup-on-pi-4-at-buffer-256">Example: Stable 4-Chain Live Setup on Pi 4 at Buffer 256</h2>
+<table><thead><tr><th>Chain</th><th>Engine</th><th>Polyphony</th><th>CPU est.</th></tr></thead><tbody><tr><td>Piano</td><td>FluidSynth (Steinway)</td><td>64</td><td>5%</td></tr><tr><td>Organ</td><td>setBfree</td><td>continuous</td><td>7%</td></tr><tr><td>Lead</td><td>ZynAddSubFX (Simple Lead)</td><td>16</td><td>8%</td></tr><tr><td>Drums</td><td>FluidSynth GM drums</td><td>32</td><td>3%</td></tr><tr><td>Reverb bus</td><td>Calf Reverb LV2</td><td>—</td><td>2%</td></tr></tbody></table>
+<p>Total: ~25% CPU, comfortable headroom for MIDI processing and UI.</p>
+<pre><code class="language-bash">JACKD_OPTIONS="-P 70 -t 2000 -s a -d alsa -d hw:S2 -r 44100 -p 256 -n 3"</code></pre>
+<hr>
+<h2 id="whats-next">What's Next</h2>
+<ul><li><a href="audio.html">Audio Setup</a> — configure JACK buffer size in webconf</li><li><a href="synth-engines.html">Synth Engines</a> — per-engine CPU notes</li><li><a href="troubleshooting.html">Troubleshooting</a> — diagnosing XRUNs and glitches</li></ul>
+<hr>
+<p><em>Version: 2026-05-25 — derived from <code>zyngui/zynthian_gui_admin.py</code>, <code>zyngui/zynthian_gui_mixer.py</code>, <code>zynthian-sys/config/zynthian_envars_V5.sh</code>.</em></p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
