@@ -20,9 +20,10 @@ For users who have a working Zynthian and want to make music.
 
 | Page | What it answers |
 |------|----------------|
-| [Synth Engines](synth-engines.md) | Which engines are available, how to load and switch presets |
+| [Synth Engines](synth-engines.md) | Which engines are available, when to use each, key parameters |
 | [MIDI Controllers](midi.md) | Connect USB and Bluetooth MIDI controllers, configure MIDI routing |
 | [Snapshots](snapshots.md) | Save and restore complete setups, use the snapshot library |
+| [Common Setups (Recipes)](recipes.md) | Layered piano+strings, Hammond organ, live looper, drums+bass+lead |
 
 ### Configure
 For users who want to tune audio, MIDI, and system settings.
@@ -31,21 +32,25 @@ For users who want to tune audio, MIDI, and system settings.
 |------|----------------|
 | [Audio Setup](audio.md) | Select audio device, configure JACK, tune buffer size |
 | [Webconf Reference](webconf.md) | All webconf sections explained |
+| [Configuration Reference](configuration-reference.md) | All `zynthian_envars.sh` variables annotated |
+| [LV2 Plugins](lv2-plugins.md) | Install, manage, and use LV2 plugins |
 
 ### Troubleshoot
 When something doesn't work.
 
 | Page | What it answers |
 |------|----------------|
-| [Troubleshooting](troubleshooting.md) | Black screen, no sound, JACK errors, SD card corruption, USB audio issues |
+| [FAQ](faq.md) | Quick answers — no sound, MIDI not responding, display black, webconf down |
+| [Troubleshooting](troubleshooting.md) | Step-by-step diagnosis: JACK errors, SD card corruption, USB audio, display |
 
 ### Under the Hood
 For curious users and developers.
 
 | Page | What it answers |
 |------|----------------|
-| [Architecture](architecture.md) | Boot sequence, systemd services, three-repo structure |
+| [Architecture](architecture.md) | Boot sequence, systemd services, three-repo structure, MIDI routing |
 | [Glossary](glossary.md) | Technical terms explained |
+| [Co-developing with Claude](codevelop.md) | This project's Claude Code workflow |
 
 ---
 

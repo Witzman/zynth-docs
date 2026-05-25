@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zynthian — User Guide — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html" aria-current="page"><strong>Overview</strong></a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="zynthian--user-guide">Zynthian — User Guide</h1>
+<p>Zynthian is an open-source synthesizer platform running on Raspberry Pi. This guide covers everything a new user needs to get started and become productive.</p>
+<hr>
+<h2 id="guide-tracks">Guide Tracks</h2>
+<h3 id="get-started">Get Started</h3>
+<p>For users who just received hardware or flashed a fresh SD card.</p>
+<table><thead><tr><th>Page</th><th>What it answers</th></tr></thead><tbody><tr><td><a href="getting-started.html">Getting Started</a></td><td>Flash SD card, first boot, connect to the device, set up audio and display</td></tr><tr><td><a href="userguide.html">Understanding Zynthian</a></td><td>What Zynthian is, how to think about chains, engines, and snapshots</td></tr><tr><td><a href="hardware.html">Hardware Setup</a></td><td>Display options, wiring layouts, supported hardware variants</td></tr></tbody></table>
+<h3 id="play--create">Play & Create</h3>
+<p>For users who have a working Zynthian and want to make music.</p>
+<table><thead><tr><th>Page</th><th>What it answers</th></tr></thead><tbody><tr><td><a href="synth-engines.html">Synth Engines</a></td><td>Which engines are available, when to use each, key parameters</td></tr><tr><td><a href="midi.html">MIDI Controllers</a></td><td>Connect USB and Bluetooth MIDI controllers, configure MIDI routing</td></tr><tr><td><a href="snapshots.html">Snapshots</a></td><td>Save and restore complete setups, use the snapshot library</td></tr><tr><td><a href="recipes.html">Common Setups (Recipes)</a></td><td>Layered piano+strings, Hammond organ, live looper, drums+bass+lead</td></tr></tbody></table>
+<h3 id="configure">Configure</h3>
+<p>For users who want to tune audio, MIDI, and system settings.</p>
+<table><thead><tr><th>Page</th><th>What it answers</th></tr></thead><tbody><tr><td><a href="audio.html">Audio Setup</a></td><td>Select audio device, configure JACK, tune buffer size</td></tr><tr><td><a href="webconf.html">Webconf Reference</a></td><td>All webconf sections explained</td></tr><tr><td><a href="configuration-reference.html">Configuration Reference</a></td><td>All <code>zynthian_envars.sh</code> variables annotated</td></tr><tr><td><a href="lv2-plugins.html">LV2 Plugins</a></td><td>Install, manage, and use LV2 plugins</td></tr></tbody></table>
+<h3 id="troubleshoot">Troubleshoot</h3>
+<p>When something doesn't work.</p>
+<table><thead><tr><th>Page</th><th>What it answers</th></tr></thead><tbody><tr><td><a href="faq.html">FAQ</a></td><td>Quick answers — no sound, MIDI not responding, display black, webconf down</td></tr><tr><td><a href="troubleshooting.html">Troubleshooting</a></td><td>Step-by-step diagnosis: JACK errors, SD card corruption, USB audio, display</td></tr></tbody></table>
+<h3 id="under-the-hood">Under the Hood</h3>
+<p>For curious users and developers.</p>
+<table><thead><tr><th>Page</th><th>What it answers</th></tr></thead><tbody><tr><td><a href="architecture.html">Architecture</a></td><td>Boot sequence, systemd services, three-repo structure, MIDI routing</td></tr><tr><td><a href="glossary.html">Glossary</a></td><td>Technical terms explained</td></tr><tr><td><a href="codevelop.html">Co-developing with Claude</a></td><td>This project's Claude Code workflow</td></tr></tbody></table>
+<hr>
+<p><em>Version: 2026-05-25.</em></p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

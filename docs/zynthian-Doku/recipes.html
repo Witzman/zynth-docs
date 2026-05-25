@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Common Setups (Recipes) — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html" aria-current="page"><strong>Common Setups</strong></a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="common-setups-recipes">Common Setups (Recipes)</h1>
+<p>Step-by-step walkthroughs for the most useful Zynthian configurations. Each recipe names the engines and settings involved.</p>
+<hr>
+<h2 id="recipe-1--layered-piano--strings">Recipe 1 — Layered Piano + Strings</h2>
+<p><strong>Goal:</strong> Play a piano sound on the bottom half of a keyboard, strings on the top half, both on the same MIDI channel. Classic split-layer setup.</p>
+<p><strong>Engines needed:</strong> FluidSynth (piano), ZynAddSubFX or LinuxSampler (strings).</p>
+<p><strong>Steps:</strong></p>
+<ol><li>Start Zynthian. If any chains exist, Admin → Clean All.</li><li>Main screen → <strong>+</strong> (Add Chain) → select <strong>FluidSynth</strong>.</li><li>In FluidSynth: load a soundfont (e.g. <code>GeneralUser GS</code> or <code>Yamaha C5 Grand</code>). Select the Acoustic Piano preset.</li><li>Add a second chain: Main screen → <strong>+</strong> → select <strong>ZynAddSubFX</strong>.</li><li>In ZynAddSubFX: navigate to Bank → select <code>Strings</code> → load any string ensemble preset.</li><li>Set both chains to MIDI channel 1 (or Omni).</li><li>For the split: tap chain 1 (Piano) → options → <strong>Note Range</strong> → set High Note to B3 (MIDI note 59).</li><li>Tap chain 2 (Strings) → options → <strong>Note Range</strong> → set Low Note to C4 (MIDI note 60).</li><li>Play — piano on lower half, strings on upper.</li><li>Save: Admin → Snapshots → Save As → name it <code>Piano+Strings</code>.</li></ol>
+<p><strong>Tips:</strong> Adjust relative volumes with the mixer (Main → Mixer, or encoder 4 on V5).</p>
+<hr>
+<h2 id="recipe-2--hammond-organ-with-rotary-speaker">Recipe 2 — Hammond Organ with Rotary Speaker</h2>
+<p><strong>Goal:</strong> Full Hammond B3 organ with Leslie rotary speaker simulation. The classic rock/jazz organ.</p>
+<p><strong>Engines needed:</strong> setBfree.</p>
+<p><strong>Steps:</strong></p>
+<ol><li>Add Chain → select <strong>setBfree</strong>.</li><li>setBfree loads with a default organ preset. The drawbars are the 9 fundamental registers (16', 5⅓', 8', 4', 2⅔', 2', 1⅗', 1⅓', 1').</li><li>Navigate engine parameters (encoder 3 on V5, or tap the engine name):</li></ol>
+<p>- <strong>Drawbars</strong>: control tone color. Classic rock setting: <code>888000000</code>. - <strong>Rotary</strong>: enable Leslie speaker simulation. - <strong>Rotary Speed</strong>: toggle between Slow/Fast (CC 64 = sustain pedal, or assign a button).</p>
+<ol><li>For authentic expression: CC 11 (Expression) controls the volume swell. Assign your controller's expression pedal to CC 11.</li><li>For rotary on/off with foot switch: webconf → MIDI → CC → map CC 64 to <code>Rotary Toggle</code>.</li></ol>
+<p><strong>Tips:</strong> setBfree responds on all 16 MIDI channels simultaneously (each channel = one manual). Channel 1 = lower manual, channel 2 = upper manual, channel 3 = pedal bass.</p>
+<hr>
+<h2 id="recipe-3--live-looper">Recipe 3 — Live Looper</h2>
+<p><strong>Goal:</strong> Record a live audio loop and layer on top of it. Useful for solo performance.</p>
+<p><strong>Engines needed:</strong> SooperLooper + any instrument engine.</p>
+<p><strong>Steps:</strong></p>
+<ol><li>Add your instrument chain (e.g. FluidSynth piano on MIDI channel 1).</li><li>Add a second chain → select <strong>SooperLooper</strong>.</li><li>SooperLooper chain captures audio from the instrument chain's output. Set its audio input to the instrument's JACK output in webconf → JACK routing, or use the Zynthian audio mixer to route it.</li><li>Assign record/play/stop controls:</li></ol>
+<p>- webconf → MIDI → CC → map a CC to <code>SooperLooper Record</code> (starts recording on first press, stops on second press, starts playback). - Alternatively: on V5 hardware, switch 9 short-press = TOGGLE_RECORD by default.</p>
+<ol><li>Performance flow:</li></ol>
+<p>- Play your instrument. - Press Record → play a phrase → press Record again (overdub mode starts). - Press Play to loop without overdub. - Press Undo to remove last overdub. - Press Stop → Clear to reset.</p>
+<p><strong>Tips:</strong> SooperLooper can run multiple loop slots. Each slot = a separate <code>+ chain</code> instance.</p>
+<hr>
+<h2 id="recipe-4--multi-engine-drum-kit">Recipe 4 — Multi-Engine Drum Kit</h2>
+<p><strong>Goal:</strong> Drums from FluidSynth (or LinuxSampler) on channel 10, bass on channel 2, lead synth on channel 3. Standard General MIDI layout.</p>
+<p><strong>Engines needed:</strong> FluidSynth (drums + bass), ZynAddSubFX (lead).</p>
+<p><strong>Steps:</strong></p>
+<ol><li>Add Chain → FluidSynth → load a General MIDI soundfont (e.g. <code>FluidR3_GM.sf2</code>).</li><li>Set this chain to MIDI channel 10.</li><li>In FluidSynth, navigate to Bank 128 (percussion) → select <code>Standard Drum Kit</code>.</li><li>Add second chain → FluidSynth → same soundfont.</li><li>Set to MIDI channel 2 → navigate to Acoustic Bass or Electric Bass preset.</li><li>Add third chain → ZynAddSubFX → set to MIDI channel 3 → load a lead synth preset.</li><li>From a DAW or sequencer, send:</li></ol>
+<p>- Drums on MIDI ch 10 - Bass on MIDI ch 2 - Lead on MIDI ch 3</p>
+<ol><li>Save as snapshot.</li></ol>
+<p><strong>Tips:</strong> Use webconf → MIDI → Ports to confirm your DAW's MIDI output port is active.</p>
+<hr>
+<h2 id="recipe-5--headless-operation-no-display">Recipe 5 — Headless Operation (No Display)</h2>
+<p><strong>Goal:</strong> Run Zynthian with only SSH/webconf access — no monitor needed.</p>
+<p><strong>Steps:</strong></p>
+<ol><li>Connect Pi to your network via Ethernet (most reliable) or configure WiFi via webconf first.</li><li>In webconf → Hardware → Wiring: set layout to <code>TOUCH_ONLY</code>. This disables GPIO encoder scanning.</li><li>All control is via <code>http://zynthian.local</code>:</li></ol>
+<p>- Load presets from Presets page. - Load/save snapshots from Snapshots page. - Adjust audio settings as usual.</p>
+<ol><li>MIDI controllers still work over USB.</li><li>Optional: enable VNC in webconf → System → VNC for a remote desktop view of the Zynthian UI.</li></ol>
+<p><strong>Tips:</strong> <code>ssh root@zynthian.local</code> always works. The webconf auto-starts on every boot.</p>
+<hr>
+<h2 id="recipe-6--lv2-plugin-chain-effects">Recipe 6 — LV2 Plugin Chain (Effects)</h2>
+<p><strong>Goal:</strong> Add a reverb or compressor LV2 effect to a synth chain.</p>
+<p><strong>Engines needed:</strong> Any synth + Jalv (LV2 host).</p>
+<p><strong>Steps:</strong></p>
+<ol><li>Add your instrument chain (e.g. ZynAddSubFX).</li><li>Add a second chain → <strong>Jalv</strong> → navigate to the LV2 plugin list.</li><li>Find a reverb plugin (e.g. <code>Calf Reverb</code>, <code>ZaMultiCompX2</code>, <code>LSP Reverb</code>).</li><li>Load it. The plugin appears as a chain with JACK audio ports.</li><li>Route the instrument chain's output to the LV2 chain's input via the Zynthian audio mixer or JACK routing.</li></ol>
+<blockquote><p><strong>Note:</strong> LV2 plugin availability depends on what is installed on the OS image. Run <code>ls /usr/lib/lv2/</code> to see installed plugins. Use webconf → Engines to regenerate the plugin cache after installing new ones. [low]</p></blockquote>
+<p><strong>Tips:</strong> Install additional LV2 plugins with <code>apt install lv2-*</code> via SSH and regenerate cache.</p>
+<hr>
+<h2 id="recipe-7--midi-recording">Recipe 7 — MIDI Recording</h2>
+<p><strong>Goal:</strong> Record a MIDI performance and play it back.</p>
+<p><strong>Steps:</strong></p>
+<ol><li>Ensure a MIDI controller is connected and a chain is active.</li><li>On the Zynthian screen: navigate to <strong>MIDI Recorder</strong> (Admin → MIDI Recorder, or switch 11 bold on V5).</li><li>Press Record. Play your performance.</li><li>Press Stop.</li><li>Press Play to hear it back — the MIDI file plays through the active chains.</li><li>Save: MIDI Recorder → Save. File goes to <code>/zynthian/zynthian-my-data/midi/</code>.</li></ol>
+<p><strong>Tips:</strong> Transfer recordings via SFTP to your computer: <code>sftp root@zynthian.local</code>, navigate to <code>/zynthian/zynthian-my-data/midi/</code>.</p>
+<hr>
+<h2 id="whats-next">What's Next</h2>
+<ul><li><a href="synth-engines.html">Synth Engines</a> — full engine reference</li><li><a href="snapshots.html">Snapshots</a> — save any recipe as a snapshot</li><li><a href="troubleshooting.html">Troubleshooting</a> — when something doesn't work</li></ul>
+<hr>
+<p><em>Version: 2026-05-25</em></p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

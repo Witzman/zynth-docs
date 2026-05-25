@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Co-developing Zynthian with Claude — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html" aria-current="page"><strong>Co-developing</strong></a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="co-developing-zynthian-with-claude">Co-developing Zynthian with Claude</h1>
+<p>This page describes the workflow used to develop and maintain this Zynthian project collaboratively with Claude Code. The same pattern applies to working on any of the three repositories.</p>
+<hr>
+<h2 id="project-layout">Project Layout</h2>
+<pre><code>~/zynth/                       ← project root (NOT a git repo)
+    zynthian-sys/              ← system scripts, config, hardware detection
+    zynthian-ui/               ← Python UI + synth engines
+    zynthian-webconf/          ← web configuration interface
+    MD/   →  symlink           ← ~/zynth-docs/MD/
+    CLAUDE.md  →  symlink      ← ~/zynth-docs/MD/CLAUDE.md
+
+~/zynth-docs/                  ← git repo: this documentation
+    MD/                        ← session tracking files
+    htmldoku/                  ← documentation source (.md files)
+    docs/zynthian-Doku/        ← rendered HTML</code></pre>
+<p>The symlinks ensure <code>CLAUDE.md</code> and <code>MD/</code> are visible from <code>~/zynth/</code> regardless of which repo directory is active. Claude Code reads <code>CLAUDE.md</code> automatically when opened from <code>~/zynth/</code>.</p>
+<hr>
+<h2 id="session-workflow">Session Workflow</h2>
+<h3 id="1--orient">1 — Orient</h3>
+<p>Claude reads <code>CLAUDE.md</code> automatically. Also read <code>MD/inwork.md</code> at session start. This takes under 10 seconds and prevents Claude from proposing work that is already done or conflicting with in-progress items.</p>
+<p>At session start Claude groups <code>inwork.md</code> items by readiness:</p>
+<ul><li><code>[~]</code> in development</li><li><code>[t]</code> in testing on Pi</li><li><code>[&gt;]</code> needs PR</li></ul>
+<p>Select one item before proceeding.</p>
+<h3 id="2--discover">2 — Discover</h3>
+<p>Before touching any code, read the relevant <code>htmldoku/</code> page. This prevents proposing changes that conflict with documented behavior. Then <code>grep</code> the relevant <code>zyngui/</code> or <code>zyngine/</code> file for the actual implementation.</p>
+<pre><code class="language-bash"># Find where an engine is implemented
+grep -l "class zynthian_engine_fluidsynth" ~/zynth/zynthian-ui/zyngine/*.py
+
+# Find a specific function
+grep -n "def get_preset_list" ~/zynth/zynthian-ui/zyngine/zynthian_engine_fluidsynth.py</code></pre>
+<h3 id="3--consult">3 — Consult</h3>
+<p>Before implementing, Claude presents a sign-off card:</p>
+<pre><code>Task:           &lt;what we're doing&gt;
+Files affected: &lt;list&gt;
+Test method:    SSH verify | webconf check | both
+Proceed? ✓ / ✗</code></pre>
+<p>This is the right moment to redirect if the scope is wrong.</p>
+<h3 id="4--implement">4 — Implement</h3>
+<p>One task per session. Log adjacent bugs in <code>MD/bugs.md</code> and finish the current task first.</p>
+<p>Python rules: PEP 8, 120-char line limit, no <code>print()</code> (use <code>logging</code>), synth engines inherit from <code>zynthian_engine</code> base class, GUI screens inherit from <code>zynthian_gui_base</code>.</p>
+<h3 id="5--test">5 — Test</h3>
+<pre><code class="language-bash"># Restart the changed service on Pi
+ssh root@zynthian.local "systemctl restart zynthian"
+ssh root@zynthian.local "systemctl restart zynthian-webconf"
+
+# Check status
+ssh root@zynthian.local "systemctl status zynthian --no-pager"
+ssh root@zynthian.local "journalctl -u zynthian -n 30 --no-pager"
+
+# Check JACK is still healthy
+ssh root@zynthian.local "systemctl status jack2 --no-pager"</code></pre>
+<p>Manual verify: open <code>http://zynthian.local</code> and exercise the changed feature.</p>
+<h3 id="6--wrap-up">6 — Wrap Up</h3>
+<ul><li>Move item in <code>MD/inwork.md</code> to <code>MD/done.md</code></li><li>Update <code>MD/bugs.md</code> / <code>MD/decisions.md</code> if needed</li><li>If documentation needs updating: edit <code>htmldoku/*.md</code>, run the generator, commit both</li></ul>
+<pre><code class="language-bash">cd ~/zynth-docs
+# edit htmldoku/somefile.md
+python3 htmldoku/generate-html.py
+git add htmldoku/somefile.md docs/zynthian-Doku/somefile.html
+git commit -m "docs: ..."</code></pre>
+<hr>
+<h2 id="documentation-generation">Documentation Generation</h2>
+<pre><code class="language-bash">cd ~/zynth-docs
+python3 htmldoku/generate-html.py
+# → generates docs/zynthian-Doku/*.html
+# → copies style.css, search.js, ui.js
+# → builds search-index.json
+# → copies readme.html → index.html</code></pre>
+<p>Open <code>docs/zynthian-Doku/index.html</code> in a browser to preview locally.</p>
+<p>To add a new documentation page:</p>
+<ol><li>Create <code>htmldoku/newpage.md</code></li><li>Add an entry to <code>SIDEBAR</code> in <code>htmldoku/generate-html.py</code></li><li>Run the generator</li><li>Add links from related pages to <code>newpage.md</code></li></ol>
+<hr>
+<h2 id="md-tracking-files">MD/ Tracking Files</h2>
+<table><thead><tr><th>File</th><th>Purpose</th></tr></thead><tbody><tr><td><code>CLAUDE.md</code></td><td>Always-loaded session primer. Contains project layout, key files, documentation lookup, session workflow.</td></tr><tr><td><code>inwork.md</code></td><td>Sprint board — active tasks with <code>[~]</code>/<code>[t]</code>/<code>[&gt;]</code> status.</td></tr><tr><td><code>bugs.md</code></td><td>Known bugs with priority. Format: <code>## BUG-NNN — title</code>.</td></tr><tr><td><code>decisions.md</code></td><td>Architecture Decision Records. Format: <code>## ADR-NNN — title</code>.</td></tr><tr><td><code>todo.md</code></td><td>Backlog items.</td></tr><tr><td><code>done.md</code></td><td>Completed items (moved from inwork).</td></tr><tr><td><code>sparring.md</code></td><td>Design review protocol — read before first Python task of each session.</td></tr><tr><td><code>commands.md</code></td><td>Shell command reference for SSH operations.</td></tr></tbody></table>
+<hr>
+<h2 id="confidence-markers">Confidence Markers</h2>
+<p>Documentation pages can mark uncertain content with <code>[low]</code>:</p>
+<pre><code class="language-markdown">The reverb plugin requires at least 256MB free RAM to run smoothly. [low]</code></pre>
+<p>The generator renders <code>[low]</code> text in a muted style. Use it for:</p>
+<ul><li>Wiki-derived information not verified against the code</li><li>Version-dependent behavior</li><li>Hardware-specific observations from a single device</li></ul>
+<hr>
+<h2 id="sparring-protocol">Sparring Protocol</h2>
+<p>For tasks touching Python code (engines, GUI screens), read <code>MD/sparring.md</code> at session start. It defines the layer taxonomy and design principles checklist used to review proposed changes before implementing.</p>
+<p>Key layers:</p>
+<ul><li><strong>Config</strong> — <code>zynthian_envars.sh</code>, wiring profiles</li><li><strong>Script</strong> — <code>zynthian-sys/sbin/</code></li><li><strong>Engine</strong> — <code>zyngine/zynthian_engine_*.py</code></li><li><strong>GUI</strong> — <code>zyngui/zynthian_gui_*.py</code></li><li><strong>Webconf</strong> — <code>zynthian-webconf/lib/*_handler.py</code></li></ul>
+<p>Changes should stay within one layer. Cross-layer changes need explicit justification in <code>decisions.md</code>.</p>
+<hr>
+<h2 id="whats-next">What's Next</h2>
+<ul><li><a href="architecture.html">Architecture</a> — system layout and boot sequence</li><li><a href="getting-started.html">Getting Started</a> — first hardware setup</li><li><a href="webconf.html">Webconf Reference</a> — configuration interface</li></ul>
+<hr>
+<p><em>Version: 2026-05-25</em></p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

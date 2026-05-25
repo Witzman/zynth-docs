@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Troubleshooting — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html" aria-current="page"><strong>Troubleshooting</strong></a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="troubleshooting">Troubleshooting</h1>
+<p>Common problems and fixes organized by symptom. Check <a href="architecture.html">Architecture</a> if you need to understand <em>why</em> something works the way it does.</p>
+<hr>
+<h2 id="no-display--black-screen">No Display / Black Screen</h2>
+<p><strong>Problem:</strong> HDMI cable plugged in, Pi powered on, but screen is black or shows no signal.</p>
+<p><strong>Most likely cause:</strong> Wrong HDMI port. Pi 4 has two HDMI ports. Use <strong>HDMI0</strong> (the port closest to the USB-C power connector).</p>
+<p><strong>Fix:</strong> Unplug HDMI and replug into HDMI0 (no reboot needed).</p>
+<p>If the correct port is already in use and still no signal:</p>
+<pre><code class="language-bash"># Check /boot/firmware/config.txt (NOT /boot/config.txt on newer Pi OS)
+grep -E "hdmi_force|hdmi_drive|hdmi_group|hdmi_mode" /boot/firmware/config.txt</code></pre>
+<p>For old TVs, add these lines to <code>/boot/firmware/config.txt</code>:</p>
+<pre><code class="language-ini">hdmi_force_hotplug=1
+hdmi_drive=2
+hdmi_group=1
+hdmi_mode=4</code></pre>
+<p>Reboot after editing.</p>
+<hr>
+<h2 id="zynthian-ui-shows-error-splash--red-error-screen">Zynthian UI Shows Error Splash / Red "Error" Screen</h2>
+<p><strong>Problem:</strong> The Zynthian UI loads but shows a dude picture and red "error" text. Audio/MIDI counters run in the top bar.</p>
+<p><strong>Cause:</strong> JACK audio server is not running. The UI requires JACK before it can start engines.</p>
+<p><strong>Diagnose:</strong></p>
+<pre><code class="language-bash">systemctl status jack2 --no-pager
+journalctl -u jack2 -n 30 --no-pager</code></pre>
+<p><strong>Fix depends on what <code>journalctl</code> shows:</strong></p>
+<table><thead><tr><th>JACK Log Line</th><th>Meaning</th><th>Fix</th></tr></thead><tbody><tr><td><code>ALSA: cannot configure capture channel</code></td><td>Sample rate mismatch</td><td>Set 44100 Hz in webconf → Hardware → Audio</td></tr><tr><td><code>usb_set_interface failed (-32)</code></td><td>USB device issue</td><td>Move USB audio to USB 2.0 (black) port</td></tr><tr><td><code>Cannot open device</code></td><td>Card name wrong or device missing</td><td>Check <code>aplay -l</code>; set correct card in webconf</td></tr><tr><td><code>Failed to open server</code></td><td>Generic JACK start fail</td><td>See USB audio section below</td></tr></tbody></table>
+<hr>
+<h2 id="no-sound--jack-not-starting">No Sound / JACK Not Starting</h2>
+<h3 id="usb-audio-device-fails-to-open">USB Audio Device Fails to Open</h3>
+<p><strong>Symptom:</strong> <code>journalctl -u jack2</code> shows <code>usb_set_interface failed (-32)</code> or <code>Broken pipe</code>.</p>
+<p><strong>Fix 1 — Use USB 2.0 port:</strong> Some USB audio devices fail on USB 3.0 (blue) ports. Move the device to a USB 2.0 (black) port on the Pi.</p>
+<p><strong>Fix 2 — Add skip_validation quirk:</strong></p>
+<pre><code class="language-bash"># Get vendor:product IDs
+lsusb | grep -i audio
+
+# Add quirk (replace VVVV:PPPP with your device)
+echo 'options snd-usb-audio vid=0xVVVV pid=0xPPPP skip_validation=y' &gt;&gt; /etc/modprobe.d/usb-audio.conf
+rmmod snd-usb-audio &amp;&amp; modprobe snd-usb-audio</code></pre>
+<p><strong>Fix 3 — Sample rate mismatch:</strong> Some USB devices only support 44100 Hz. If <code>aplay -l</code> shows the device but JACK fails:</p>
+<ol><li>Open webconf → <strong>Hardware</strong> → <strong>Audio</strong></li><li>Set Sample Rate to <strong>44100</strong></li><li>Save and reboot</li></ol>
+<h3 id="verify-audio-before-starting-jack">Verify audio before starting JACK:</h3>
+<pre><code class="language-bash">aplay -l                          # list all devices
+speaker-test -D hw:S2 -c 2 -r 44100 -t sine   # replace S2 with your card name</code></pre>
+<hr>
+<h2 id="audio-card-not-found-after-reboot">Audio Card Not Found After Reboot</h2>
+<p><strong>Symptom:</strong> <code>aplay -l</code> shows a different card number or hex name after reboot.</p>
+<p><strong>Cause:</strong> USB card numbers (<code>hw:0</code>, <code>hw:1</code>) change between reboots. Zynthian uses the ALSA card name (<code>hw:S2</code>) for stability.</p>
+<p><strong>Check current card name:</strong></p>
+<pre><code class="language-bash">aplay -l | grep -i card
+cat /proc/asound/cards</code></pre>
+<p>If the name changed (e.g. from <code>S2</code> to <code>U0x41e0x323d</code>), verify the device is in the same USB port and the udev rule is applied. Replug into the same physical USB port and reboot.</p>
+<hr>
+<h2 id="webconf-not-loading">Webconf Not Loading</h2>
+<p><strong>Symptom:</strong> Browser shows connection refused or timeout at <code>http://zynthian.local</code>.</p>
+<p><strong>Check service status:</strong></p>
+<pre><code class="language-bash">systemctl status zynthian-webconf --no-pager
+journalctl -u zynthian-webconf -n 30 --no-pager</code></pre>
+<p><strong>Common cause — libzyncore.so missing:</strong></p>
+<pre><code>ImportError: libzyncore.so: cannot open shared object file</code></pre>
+<p>Fix: rebuild the native library:</p>
+<pre><code class="language-bash">cd /zynthian/zyncoder
+mkdir -p build &amp;&amp; cd build
+cmake .. &amp;&amp; make -j4</code></pre>
+<p>Then restart webconf:</p>
+<pre><code class="language-bash">systemctl restart zynthian-webconf</code></pre>
+<p><strong>Second common cause — port conflict:</strong> Check if port 80 is occupied:</p>
+<pre><code class="language-bash">ss -tlnp | grep :80</code></pre>
+<hr>
+<h2 id="zynthian-not-reachable-by-hostname-zynthianlocal">Zynthian Not Reachable by Hostname (zynthian.local)</h2>
+<p><strong>Problem:</strong> <code>ssh root@zynthian.local</code> or <code>http://zynthian.local</code> fails to resolve.</p>
+<p><strong>Cause:</strong> mDNS (Avahi) not working on your network or OS.</p>
+<p><strong>Try by IP address instead:</strong></p>
+<pre><code class="language-bash"># On the Pi (if you can reach it):
+hostname -I
+
+# Or check your router DHCP table for a device named "zynthian"</code></pre>
+<p><strong>On Windows:</strong> Install Bonjour or use the IP directly. mDNS requires Bonjour to resolve <code>.local</code> names.</p>
+<p><strong>On Linux:</strong> Install <code>avahi-daemon</code> if not present.</p>
+<hr>
+<h2 id="sd-card-corruption">SD Card Corruption</h2>
+<p><strong>Symptom:</strong> Random crashes, filesystem errors in <code>dmesg</code>, services fail to start after updates, UI freezes.</p>
+<p><strong>Diagnose:</strong></p>
+<pre><code class="language-bash">dmesg | grep -E "EXT4|mmcblk|I/O error"</code></pre>
+<p>If you see <code>EXT4-fs error: checksumming directory block</code> or <code>I/O error on mmcblk0p2</code>, the SD card is corrupted or failing.</p>
+<p><strong>Fix:</strong> Reflash with a quality SD card. Avoid budget/unbranded cards. Recommended: SanDisk Ultra, Samsung EVO.</p>
+<blockquote><p><strong>Warning:</strong> Do not run <code>raspi-config --expand-rootfs</code> on poor-quality SD cards. The filesystem expansion during first boot can corrupt the card under write stress.</p></blockquote>
+<p><strong>Prevention:</strong></p>
+<ul><li>Use a quality card (Class 10 / A1 rated)</li><li>Check <code>vcgencmd get_throttled</code> — undervoltage causes SD corruption:</li></ul>
+<p>``<code>bash vcgencmd get_throttled # 0x0 = healthy; 0x50000 = past undervoltage </code>``</p>
+<ul><li>Use a 5V/3A USB-C power supply on Pi 4</li></ul>
+<hr>
+<h2 id="midi-controller-not-responding">MIDI Controller Not Responding</h2>
+<p><strong>Controller not detected:</strong></p>
+<pre><code class="language-bash">dmesg | grep -i "usb\|midi" | tail -10
+aconnect -l</code></pre>
+<p>If device appears in <code>dmesg</code> but not <code>aconnect -l</code>:</p>
+<ul><li>Try a different USB cable (data cable, not charge-only)</li><li>Some devices need the MIDI class driver: <code>modprobe snd-usb-midi</code></li></ul>
+<p><strong>Notes play but wrong engine responds:</strong></p>
+<ul><li>Check MIDI channel: chain → options → <strong>MIDI Channel</strong></li><li>Use MIDI monitor to see what's arriving:</li></ul>
+<p>``<code>bash amidi -p hw:X,0,0 -d   # replace X with card number </code>``</p>
+<p><strong>All notes stuck / no note-off:</strong></p>
+<pre><code class="language-bash"># Send all-notes-off on all channels
+for ch in $(seq 0 15); do amidi -p hw:X,0,0 -S "B${ch}7B00"; done</code></pre>
+<hr>
+<h2 id="bluetooth-midi-pairing-fails">Bluetooth MIDI Pairing Fails</h2>
+<p><strong>Error:</strong> <code>[bluetooth]# pair XX:XX:XX:XX:XX:XX</code> returns <code>AuthenticationCanceled</code>.</p>
+<p><strong>Cause:</strong> Device timed out of pairing mode before the <code>pair</code> command completed.</p>
+<p><strong>Fix:</strong> Put the BLE MIDI device into pairing mode <em>immediately</em> before running <code>pair</code>. Type the <code>pair</code> command first (don't press Enter), activate pairing mode on the device, then press Enter within 3 seconds.</p>
+<pre><code class="language-bash">bluetoothctl
+power on
+scan on
+# Wait for device to appear, then:
+pair XX:XX:XX:XX:XX:XX   # device must be in pairing mode RIGHT NOW
+trust XX:XX:XX:XX:XX:XX
+connect XX:XX:XX:XX:XX:XX</code></pre>
+<hr>
+<h2 id="undervoltage--power-issues">Undervoltage / Power Issues</h2>
+<p><strong>Symptom:</strong> Lightning bolt icon on screen, random reboots, USB device instability.</p>
+<pre><code class="language-bash">vcgencmd get_throttled
+# 0x0 = healthy
+# 0x50000 = past undervoltage event</code></pre>
+<p>Use a <strong>5V / 3A USB-C</strong> supply. Cheap phone chargers often drop below 4.8V under Pi 4 load.</p>
+<hr>
+<h2 id="first-boot-never-completes">First Boot Never Completes</h2>
+<p><strong>Symptom:</strong> Pi has been running for 10+ minutes, webconf still not accessible, no activity.</p>
+<p><strong>Check first_boot service:</strong></p>
+<pre><code class="language-bash">systemctl status first_boot --no-pager
+journalctl -u first_boot -n 50 --no-pager</code></pre>
+<p>First boot runs: hardware autoconfig → ALSA fix → SSH key regen → WiFi AP creation → LV2 cache rebuild → filesystem expand → reboot. LV2 cache rebuild can take 5–10 minutes on Pi 3.</p>
+<p>If service shows <code>failed</code>, check the journal for the specific step that failed. Most common cause: SD card write error during filesystem expand.</p>
+<hr>
+<h2 id="whats-next">What's Next</h2>
+<ul><li><a href="hardware.html">Hardware Setup</a> — display and audio hardware reference</li><li><a href="audio.html">Audio Setup</a> — JACK configuration details</li><li><a href="architecture.html">Architecture</a> — understand the system components</li></ul>
+<hr>
+<p><em>Version: 2026-05-25 — derived from <code>zynthian-sys/sbin/</code>, <code>zynthian-sys/etc/systemd/</code>, field experience.</em></p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

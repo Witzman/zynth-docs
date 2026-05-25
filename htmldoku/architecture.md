@@ -41,15 +41,24 @@ graph TD
 
 ### First Boot (one-time only)
 
-`first_boot.service` runs as a one-shot systemd unit:
+`first_boot.service` [`zynthian-sys/etc/systemd/first_boot.service`] runs as a one-shot systemd unit. The service script is `first_boot.sh` [`zynthian-sys/sbin/first_boot.sh`].
 
-1. **Hardware autodetect** — `zynthian_autoconfig.py` scans i2c bus for known chips (PCM1863, PCM5242, RV3028, TPA6130, MCP23017). Selects matching hardware profile (V5, Z2, HifiBerry, etc.) and writes `zynthian_envars.sh`.
-2. **Fix ALSA mixer controls** — `fix_soundcard_mixer_ctrls.py` sets sane defaults for the detected audio device.
-3. **SSH key regeneration** — deletes and recreates host keys so each Pi has unique identity.
-4. **WiFi access point** — creates a `ZynthianAP` hotspot so you can connect without a router.
-5. **LV2 cache rebuild** — `jalv --scan` catalogs all installed LV2 plugins; takes 5–10 minutes.
-6. **Filesystem expand** — `raspi-config --expand-rootfs` grows the root partition to fill the SD card.
-7. **Reboot** — service disables itself, Pi reboots into normal mode.
+```mermaid
+sequenceDiagram
+    participant Pi as Pi (first_boot.service)
+    participant I2C as i2c bus
+    participant FS as Filesystem
+
+    Pi->>I2C: scan for PCM1863/PCM5242/RV3028/TPA6130/MCP23017
+    I2C-->>Pi: chip map → board profile (V5/Z2/HifiBerry)
+    Pi->>FS: write zynthian_envars.sh
+    Pi->>Pi: fix_soundcard_mixer_ctrls.py — set ALSA defaults
+    Pi->>Pi: regen SSH host keys (unique per device)
+    Pi->>Pi: create ZynthianAP WiFi hotspot
+    Pi->>Pi: jalv --scan — rebuild LV2 plugin cache (5-10 min)
+    Pi->>FS: raspi-config --expand-rootfs
+    Pi->>Pi: disable first_boot.service, reboot
+```
 
 After first boot, `first_boot.service` is disabled permanently.
 
@@ -186,6 +195,28 @@ JACKD_OPTIONS="-P 70 -t 2000 -s a -d alsa -d hw:S2 -r 44100 -p 256 -n 3"
 - MIDI outputs / THRU
 
 The router applies channel filtering — chain 1 receives channel 1, chain 2 receives channel 2, etc. — unless a chain is set to Omni.
+
+```mermaid
+flowchart TD
+    USB[USB MIDI Controller]
+    BLE[Bluetooth MIDI]
+    DIN[DIN-5 MIDI IN]
+    NET[Network MIDI / QMidiNet]
+
+    USB --> Router[ZynMidiRouter\nnative C / zyncoder]
+    BLE --> Router
+    DIN --> Router
+    NET --> Router
+
+    Router -->|ch 1 filter| E1[Engine Chain 1]
+    Router -->|ch 2 filter| E2[Engine Chain 2]
+    Router -->|ch N filter| EN[Engine Chain N]
+    Router -->|THRU| DOUT[DIN-5 MIDI OUT]
+
+    E1 --> Jack[JACK audio]
+    E2 --> Jack
+    EN --> Jack
+```
 
 ---
 

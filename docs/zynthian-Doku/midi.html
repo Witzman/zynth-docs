@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIDI Controllers — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html" aria-current="page"><strong>MIDI Controllers</strong></a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="midi-controllers">MIDI Controllers</h1>
+<p>Zynthian accepts MIDI from USB devices, Bluetooth LE MIDI, DIN-5 ports (on Zynthian kit hardware), and networked MIDI. This page explains how to connect each type.</p>
+<hr>
+<h2 id="usb-midi-controllers">USB MIDI Controllers</h2>
+<p>USB MIDI is plug-and-play. Connect a USB keyboard, pad controller, or interface to any USB port on the Pi. Zynthian detects it automatically on boot and on hot-plug.</p>
+<p>To verify detection, SSH in and run:</p>
+<pre><code class="language-bash">aconnect -l</code></pre>
+<p>The controller appears as a MIDI client (e.g. <code>client 32: 'SINCO' [type=kernel,card=4]</code>). Zynthian's ZynMidiRouter connects all detected MIDI inputs to the active chains automatically [<code>zynthian-ui/zyngine/zynthian_engine_midi_control.py</code>].</p>
+<p>To configure which ports route where, open <code>http://zynthian.local</code> → <strong>MIDI</strong> → <strong>Ports</strong>. Enable each port you want active.</p>
+<hr>
+<h2 id="midi-channel-routing">MIDI Channel Routing</h2>
+<p>By default, MIDI channel 1 drives the first chain, channel 2 the second, and so on. You can change channel assignments per chain in the UI:</p>
+<ol><li>Tap the chain in the layer view.</li><li>Open chain options → <strong>MIDI Channel</strong>.</li><li>Select the incoming channel (or <strong>Omni</strong> to respond to all channels).</li></ol>
+<hr>
+<h2 id="bluetooth-midi">Bluetooth MIDI</h2>
+<p>Bluetooth MIDI uses the BLE MIDI profile. Zynthian supports it via the system bluetooth service.</p>
+<p><strong>Pair a BLE MIDI device:</strong></p>
+<pre><code class="language-bash">systemctl start bluetooth
+bluetoothctl power on
+bluetoothctl scan on
+# Put your device in pairing mode — it appears as:
+# [NEW] Device XX:XX:XX:XX:XX:XX DeviceName
+bluetoothctl pair XX:XX:XX:XX:XX:XX
+bluetoothctl trust XX:XX:XX:XX:XX:XX
+bluetoothctl connect XX:XX:XX:XX:49:23:90</code></pre>
+<p>After pairing, check <code>aconnect -l</code> for the device's MIDI port. Some BLE MIDI devices disconnect immediately after pairing and reconnect when you play — this is normal.</p>
+<blockquote><p><strong>Note:</strong> Bluetooth MIDI pairing can fail with <code>AuthenticationCanceled</code> if the device times out. Put the device in pairing mode immediately before running <code>pair</code>. The <code>trust</code> command ensures automatic reconnection on future boots.</p></blockquote>
+<hr>
+<h2 id="din-5-midi-hardware-kit-only">DIN-5 MIDI (Hardware Kit Only)</h2>
+<p>Zynthian kit hardware includes physical DIN-5 MIDI IN/THRU/OUT ports connected to the Pi's UART. These work out of the box on official kits. On a custom build, enable the MIDI UART in webconf: <strong>Hardware</strong> → <strong>MIDI Options</strong> → enable MIDI DIN.</p>
+<hr>
+<h2 id="network-midi">Network MIDI</h2>
+<p>Zynthian supports QMidiNet (for network MIDI across devices on the same LAN). Enable it via webconf: <strong>MIDI</strong> → <strong>Network</strong> → enable QMidiNet.</p>
+<hr>
+<h2 id="midi-filtering-and-cc-mapping">MIDI Filtering and CC Mapping</h2>
+<p>Open <code>http://zynthian.local</code> → <strong>MIDI</strong> → <strong>CC</strong> to map incoming MIDI CC messages to Zynthian controls. Useful for assigning knobs on a controller to synth parameters.</p>
+<p>Program Change (PC) messages switch presets. Bank Select (CC 0/32) switches banks.</p>
+<hr>
+<h2 id="troubleshooting-midi">Troubleshooting MIDI</h2>
+<p><strong>Controller not detected:</strong></p>
+<pre><code class="language-bash">dmesg | grep -i "usb\|midi" | tail -10
+aconnect -l</code></pre>
+<p>If the device shows in <code>dmesg</code> but not <code>aconnect -l</code>, it may need a driver or udev quirk.</p>
+<p><strong>Notes play but wrong engine responds:</strong> Check the MIDI channel setting on the chain versus what channel the controller sends on. Use a MIDI monitor to verify:</p>
+<pre><code class="language-bash">amidi -p hw:X,0,0 -d    # replace X with card number</code></pre>
+<p><strong>Bluetooth device disconnects repeatedly:</strong> The BLE MIDI reconnection is handled by <code>bluetoothctl</code> autoconnect. Run <code>bluetoothctl trust XX:XX:XX:XX:XX:XX</code> if not already done.</p>
+<hr>
+<h2 id="whats-next">What's Next</h2>
+<ul><li><a href="synth-engines.html">Synth Engines</a> — choose an engine to play</li><li><a href="snapshots.html">Snapshots</a> — save the routing setup</li><li><a href="audio.html">Audio Setup</a> — configure audio output</li></ul>
+<hr>
+<p><em>Version: 2026-05-25 — derived from <code>zynthian-ui/zyngui/zynthian_gui_bluetooth.py</code>, <code>zynthian-webconf/lib/midi_config_handler.py</code>.</em></p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

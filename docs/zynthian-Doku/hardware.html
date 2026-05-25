@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hardware Setup — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html" aria-current="page"><strong>Hardware Setup</strong></a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="hardware-setup">Hardware Setup</h1>
+<p>Zynthian runs on Raspberry Pi with a variety of display, audio, and control configurations. This page describes supported hardware and how to configure it.</p>
+<hr>
+<h2 id="supported-raspberry-pi-models">Supported Raspberry Pi Models</h2>
+<table><thead><tr><th>Model</th><th>Support</th><th>Notes</th></tr></thead><tbody><tr><td>Pi 4 (2/4/8 GB)</td><td>Full</td><td>Recommended. Strong CPU for multiple synth chains.</td></tr><tr><td>Pi 5</td><td>Full</td><td>Supported; use the V5_pi5 env config.</td></tr><tr><td>Pi 3B+</td><td>Good</td><td>Lighter on CPU; fewer simultaneous engines.</td></tr><tr><td>Pi Zero 2W</td><td>Limited</td><td>Possible but constrained by CPU/RAM.</td></tr></tbody></table>
+<hr>
+<h2 id="official-hardware-kits">Official Hardware Kits</h2>
+<p>Zynthian sells complete kits (<a href="https://shop.zynthian.org">shop.zynthian.org</a>):</p>
+<p><strong>V5 Kit:</strong> Raspberry Pi 4 + ZynADAC audio codec (PCM5242/PCM1863) + TPA6130 headphone amp + 3.5" touchscreen + 4 rotary encoders + MIDI DIN ports. Detected automatically by <code>zynthian_autoconfig.py</code> scanning i2c addresses [<code>zynthian-sys/sbin/zynthian_autoconfig.py:19-35</code>].</p>
+<p><strong>Z2 Kit:</strong> Raspberry Pi 4 + ZynADAC + touch display. Similar configuration to V5 with a different board revision.</p>
+<hr>
+<h2 id="diy--custom-builds">DIY / Custom Builds</h2>
+<p>Any Pi with a compatible audio device and a display works. Minimum requirements:</p>
+<ul><li>Raspberry Pi 3/4/5</li><li>Audio: USB audio device or I2S HAT (HifiBerry DAC+, ZynADAC)</li><li>Display: HDMI monitor, official Zynthian screen, or no display (headless with webconf only)</li></ul>
+<p>Set the wiring layout in webconf → <strong>Hardware</strong> → <strong>Wiring</strong> to <code>TOUCH_ONLY</code> if you have no physical encoders.</p>
+<hr>
+<h2 id="display-options">Display Options</h2>
+<table><thead><tr><th>Type</th><th>Configuration</th></tr></thead><tbody><tr><td>HDMI TV / Monitor</td><td>Set wiring to <code>TOUCH_ONLY</code>; configure <code>hdmi_force_hotplug=1</code> in <code>/boot/firmware/config.txt</code> if not auto-detected</td></tr><tr><td>ZynScreen 3.5</td><td>Select in webconf → Display</td></tr><tr><td>PiScreen 3.5</td><td>Select in webconf → Display</td></tr><tr><td>Waveshare (various)</td><td>Select matching model in webconf → Display</td></tr><tr><td>No display (headless)</td><td>Use webconf only; set wiring to <code>TOUCH_ONLY</code></td></tr></tbody></table>
+<p>For HDMI on old TVs: add <code>hdmi_force_hotplug=1</code>, <code>hdmi_drive=2</code>, <code>hdmi_group=1</code>, <code>hdmi_mode=4</code> to <code>/boot/firmware/config.txt</code>. Connect to <strong>HDMI0</strong> (closest to USB-C on Pi 4).</p>
+<hr>
+<h2 id="audio-hardware">Audio Hardware</h2>
+<table><thead><tr><th>Device</th><th>Type</th><th>ALSA Name</th></tr></thead><tbody><tr><td>ZynADAC (PCM5242+PCM1863)</td><td>I2S HAT</td><td>Detected by autoconfig</td></tr><tr><td>HifiBerry DAC+</td><td>I2S HAT</td><td><code>HifiBerry</code></td></tr><tr><td>USB Sound Blaster Play! 2</td><td>USB</td><td><code>S2</code> (after udev rule)</td></tr><tr><td>Generic USB audio</td><td>USB</td><td>Varies; check with <code>aplay -l</code></td></tr><tr><td>bcm2835 headphones</td><td>Built-in</td><td><code>Headphones</code></td></tr></tbody></table>
+<p>For USB audio devices with <code>usb_set_interface failed</code> errors, add a <code>snd-usb-audio</code> quirk — see <a href="audio.html">Audio Setup</a>.</p>
+<hr>
+<h2 id="hardware-autodetection">Hardware Autodetection</h2>
+<p>On first boot, <code>zynthian_autoconfig.py</code> scans the i2c bus for known chips and selects the matching hardware profile [<code>zynthian-sys/sbin/zynthian_autoconfig.py:42-120</code>]:</p>
+<table><thead><tr><th>i2c Chips Found</th><th>Board</th></tr></thead><tbody><tr><td>PCM1863@0x4A + PCM5242@0x4D + RV3028@0x52 + TPA6130@0x60 + MCP23017@0x20/0x21</td><td>V5</td></tr><tr><td>PCM1863@0x4A + PCM5242@0x4D + RV3028@0x52 + MCP23017@0x20/0x21</td><td>Z2</td></tr><tr><td>PCM5242@0x4D</td><td>HifiBerry DAC+</td></tr></tbody></table>
+<p>If autodetection selects the wrong profile, override in webconf → <strong>Hardware</strong> → <strong>Wiring</strong>.</p>
+<hr>
+<h2 id="power-supply">Power Supply</h2>
+<p>The Pi 4 requires a <strong>5V / 3A USB-C</strong> supply. Insufficient power causes:</p>
+<ul><li>Undervoltage (lightning bolt icon on screen)</li><li>Random SD card corruption</li><li>USB device instability</li></ul>
+<p>Check throttle status via SSH:</p>
+<pre><code class="language-bash">vcgencmd get_throttled
+# 0x0 = healthy; 0x50000 = past undervoltage event</code></pre>
+<hr>
+<h2 id="whats-next">What's Next</h2>
+<ul><li><a href="getting-started.html">Getting Started</a> — initial hardware connection</li><li><a href="audio.html">Audio Setup</a> — audio device configuration</li><li><a href="troubleshooting.html">Troubleshooting</a> — display and power issues</li></ul>
+<hr>
+<p><em>Version: 2026-05-25 — derived from <code>zynthian-sys/sbin/zynthian_autoconfig.py</code>, <code>zynthian-sys/config/wiring-profiles/</code>, <code>zynthian-webconf/lib/hwoptions_config_handler.py</code>.</em></p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

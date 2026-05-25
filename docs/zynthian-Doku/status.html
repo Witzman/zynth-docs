@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sprint Board — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html" aria-current="page"><strong>Sprint Board</strong></a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<style>
+.sb-section { margin-bottom: 2rem; }
+.sb-section h2 { font-size: 1.15rem; color: #9adaba; margin-bottom: 0.75rem; }
+.sb-items { display: flex; flex-direction: column; gap: 0.35rem; }
+.sb-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.4rem 0.6rem;
+  border: 1px solid rgba(61,184,122,0.14); border-radius: 2px;
+  background: rgba(61,184,122,0.03); }
+.sb-badge { flex-shrink: 0; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; padding: 0.18rem 0.5rem; border-radius: 2px; margin-top: 0.1rem; }
+.status-done     { background: rgba(61,184,122,0.18); color: #5dda9a; }
+.status-pr       { background: rgba(255,200,80,0.18); color: #ffc850; }
+.status-testing  { background: rgba(80,160,255,0.18); color: #60b0ff; }
+.status-partial  { background: rgba(200,120,60,0.18); color: #e8904a; }
+.status-started  { background: rgba(180,90,220,0.18); color: #c870e0; }
+.status-todo     { background: rgba(140,140,140,0.14); color: #8a9a8a; }
+.sb-text { color: #b8d0b8; font-size: 0.9rem; line-height: 1.5; }
+.sb-stats { margin-bottom: 1.5rem; padding: 0.75rem 1rem; background: rgba(61,184,122,0.05);
+  border: 1px solid rgba(61,184,122,0.18); border-radius: 2px;
+  display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.85rem; }
+.sb-stat { color: #9adaba; }
+.sb-stat span { color: #3db87a; font-weight: 700; font-size: 1rem; }
+
+</style>
+<h1 id="sprint-board">Sprint Board</h1>
+<div class="sb-stats"><div class="sb-stat">Active <span>0</span></div><div class="sb-stat">Needs PR <span>0</span></div><div class="sb-stat">Todo <span>8</span></div><div class="sb-stat">Done <span>3</span></div></div>
+<div class="sb-section"><h2>In Work</h2><div class="sb-items">
+<div class="sb-item"><span class="sb-badge status-todo">Todo</span><span class="sb-text">Documentation first draft complete `main`</span></div>
+</div></div>
+<div class="sb-section"><h2>Backlog</h2><div class="sb-items">
+<div class="sb-item"><span class="sb-badge status-todo">Todo</span><span class="sb-text">Add screenshots to getting-started.md</span></div>
+<div class="sb-item"><span class="sb-badge status-todo">Todo</span><span class="sb-text">Expand synth-engines.md with preset examples</span></div>
+<div class="sb-item"><span class="sb-badge status-todo">Todo</span><span class="sb-text">Add MIDI controller compatibility list</span></div>
+<div class="sb-item"><span class="sb-badge status-todo">Todo</span><span class="sb-text">Document snapshot file format</span></div>
+<div class="sb-item"><span class="sb-badge status-todo">Todo</span><span class="sb-text">Document Bluetooth MIDI pairing procedure for common devices</span></div>
+<div class="sb-item"><span class="sb-badge status-todo">Todo</span><span class="sb-text">Add udev rules reference for USB audio quirks</span></div>
+<div class="sb-item"><span class="sb-badge status-todo">Todo</span><span class="sb-text">Document webconf hardware profiles in detail</span></div>
+</div></div>
+<div class="sb-section"><h2>Done</h2><div class="sb-items">
+<div class="sb-item"><span class="sb-badge status-done">Done</span><span class="sb-text">Initialize zynth-docs repository</span></div>
+<div class="sb-item"><span class="sb-badge status-done">Done</span><span class="sb-text">Create CLAUDE.md session primer</span></div>
+<div class="sb-item"><span class="sb-badge status-done">Done</span><span class="sb-text">Generate first-draft documentation from repositories + wiki</span></div>
+</div></div>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

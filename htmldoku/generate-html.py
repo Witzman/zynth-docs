@@ -21,22 +21,30 @@ SIDEBAR = [
     ("Get Started", [
         ("Overview", "readme.html"),
         ("Getting Started", "getting-started.html"),
+        ("FAQ", "faq.html"),
     ]),
     ("Play & Create", [
         ("User Guide", "userguide.html"),
         ("Synth Engines", "synth-engines.html"),
         ("Snapshots", "snapshots.html"),
+        ("Common Setups", "recipes.html"),
     ]),
     ("Configure", [
         ("Audio Setup", "audio.html"),
         ("MIDI Controllers", "midi.html"),
         ("Hardware Setup", "hardware.html"),
         ("Webconf Reference", "webconf.html"),
+        ("Config Reference", "configuration-reference.html"),
+        ("LV2 Plugins", "lv2-plugins.html"),
     ]),
-    ("Troubleshoot & Learn", [
+    ("Troubleshoot", [
         ("Troubleshooting", "troubleshooting.html"),
+    ]),
+    ("Under the Hood", [
         ("Architecture", "architecture.html"),
         ("Glossary", "glossary.html"),
+        ("Co-developing", "codevelop.html"),
+        ("Sprint Board", "status.html"),
     ]),
 ]
 
@@ -946,6 +954,121 @@ UI_JS = """\
 
 
 # ---------------------------------------------------------------------------
+# Status board — generated from MD/inwork.md, todo.md, done.md
+# ---------------------------------------------------------------------------
+
+_STATUS_MAP = {
+    'x': ('status-done',     'Done'),
+    '>': ('status-pr',       'Needs PR'),
+    't': ('status-testing',  'Testing'),
+    '~': ('status-partial',  'In Progress'),
+    '/': ('status-started',  'Started'),
+    ' ': ('status-todo',     'Todo'),
+}
+
+_STATUS_CSS = """\
+.sb-section { margin-bottom: 2rem; }
+.sb-section h2 { font-size: 1.15rem; color: #9adaba; margin-bottom: 0.75rem; }
+.sb-items { display: flex; flex-direction: column; gap: 0.35rem; }
+.sb-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.4rem 0.6rem;
+  border: 1px solid rgba(61,184,122,0.14); border-radius: 2px;
+  background: rgba(61,184,122,0.03); }
+.sb-badge { flex-shrink: 0; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; padding: 0.18rem 0.5rem; border-radius: 2px; margin-top: 0.1rem; }
+.status-done     { background: rgba(61,184,122,0.18); color: #5dda9a; }
+.status-pr       { background: rgba(255,200,80,0.18); color: #ffc850; }
+.status-testing  { background: rgba(80,160,255,0.18); color: #60b0ff; }
+.status-partial  { background: rgba(200,120,60,0.18); color: #e8904a; }
+.status-started  { background: rgba(180,90,220,0.18); color: #c870e0; }
+.status-todo     { background: rgba(140,140,140,0.14); color: #8a9a8a; }
+.sb-text { color: #b8d0b8; font-size: 0.9rem; line-height: 1.5; }
+.sb-stats { margin-bottom: 1.5rem; padding: 0.75rem 1rem; background: rgba(61,184,122,0.05);
+  border: 1px solid rgba(61,184,122,0.18); border-radius: 2px;
+  display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.85rem; }
+.sb-stat { color: #9adaba; }
+.sb-stat span { color: #3db87a; font-weight: 700; font-size: 1rem; }
+"""
+
+
+def _parse_md_items(md_path):
+    """Parse a tracking MD file → [(section, status_cls, status_label, text), ...]"""
+    if not md_path.exists():
+        return []
+    items = []
+    current_section = "General"
+    for line in md_path.read_text(encoding="utf-8").splitlines():
+        h = re.match(r'^#{1,3}\s+(.+)', line)
+        if h:
+            current_section = h.group(1).strip()
+            continue
+        m = re.match(r'^- \[([x>t~ /])\] (.*)', line)
+        if not m:
+            continue
+        char = m.group(1)
+        text = re.sub(r'\*\*\[[^\]]+\]\*\*', '', m.group(2)).strip()
+        cls, label = _STATUS_MAP.get(char, ('status-todo', 'Todo'))
+        items.append((current_section, cls, label, text))
+    return items
+
+
+def build_status_html():
+    """Generate status.html from MD/inwork.md, todo.md, and done.md."""
+    md_dir = REPO_ROOT / "MD"
+
+    inwork_items = _parse_md_items(md_dir / "inwork.md")
+    todo_items   = _parse_md_items(md_dir / "todo.md")
+    done_items   = _parse_md_items(md_dir / "done.md")
+
+    all_items = inwork_items + todo_items + done_items
+    n_done    = sum(1 for _, cls, _, _ in all_items if cls == 'status-done')
+    n_active  = sum(1 for _, cls, _, _ in all_items if cls in ('status-partial', 'status-testing', 'status-started'))
+    n_pr      = sum(1 for _, cls, _, _ in all_items if cls == 'status-pr')
+    n_todo    = sum(1 for _, cls, _, _ in all_items if cls == 'status-todo')
+
+    p = []
+    p.append('<h1 id="sprint-board">Sprint Board</h1>')
+    p.append(f'<div class="sb-stats">'
+             f'<div class="sb-stat">Active <span>{n_active}</span></div>'
+             f'<div class="sb-stat">Needs PR <span>{n_pr}</span></div>'
+             f'<div class="sb-stat">Todo <span>{n_todo}</span></div>'
+             f'<div class="sb-stat">Done <span>{n_done}</span></div>'
+             f'</div>')
+
+    def _render_section(title, items):
+        if not items:
+            return
+        p.append(f'<div class="sb-section"><h2>{_html.escape(title)}</h2><div class="sb-items">')
+        for section, cls, label, text in items:
+            p.append(
+                f'<div class="sb-item">'
+                f'<span class="sb-badge {cls}">{label}</span>'
+                f'<span class="sb-text">{_html.escape(text)}</span>'
+                f'</div>'
+            )
+        p.append('</div></div>')
+
+    _render_section("In Work", inwork_items)
+    _render_section("Backlog", todo_items)
+    _render_section("Done", done_items)
+
+    if not any([inwork_items, todo_items, done_items]):
+        p.append('<p>No tracking files found in MD/. Add items to <code>MD/inwork.md</code> to populate this board.</p>')
+
+    content = '\n'.join(p)
+    sidebar_html = build_sidebar('status.html')
+    extra_css = f'<style>\n{_STATUS_CSS}\n</style>'
+
+    full_html = HTML_TEMPLATE.format(
+        title='Sprint Board',
+        mermaid_cdn=MERMAID_CDN,
+        sidebar=sidebar_html,
+        content=extra_css + '\n' + content,
+    )
+    (OUT_DIR / 'status.html').write_text(full_html, encoding='utf-8')
+    print(f"  status.html  ({len(inwork_items)} active · {len(todo_items)} todo · {len(done_items)} done)")
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -997,6 +1120,7 @@ def main():
 
     (OUT_DIR / "search.js").write_text(SEARCH_JS, encoding="utf-8")
     (OUT_DIR / "ui.js").write_text(UI_JS, encoding="utf-8")
+    build_status_html()
     build_search_index(OUT_DIR)
 
     print(f"\nDone. {len(converted)} pages → {OUT_DIR}/index.html")

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synth Engines — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html" aria-current="page"><strong>Synth Engines</strong></a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="synth-engines">Synth Engines</h1>
+<p>Zynthian ships with a large collection of synthesis engines and audio processors. Each engine is a separate program managed by the <code>zyngine</code> layer [<code>zynthian-ui/zyngine/zynthian_engine_*.py</code>]. This page lists the available engines, explains when to use each, and covers key parameters.</p>
+<hr>
+<h2 id="how-engines-work">How Engines Work</h2>
+<p>When you add a chain and select an engine, Zynthian starts the engine as a subprocess, connects it to JACK audio, and exposes its presets in the UI. The engine runs until the chain is removed or the snapshot changes. Multiple chains can run different engines simultaneously, subject to CPU limits.</p>
+<p>Presets are organized into <strong>banks</strong>. A bank is a folder of preset files on disk — for FluidSynth, a <code>.sf2</code> soundfont file; for ZynAddSubFX, a folder of <code>.xmz</code> patches. Browse banks and presets from the chain's selector screen.</p>
+<hr>
+<h2 id="zynaddsubfx">ZynAddSubFX</h2>
+<p><strong>Type:</strong> Polyphonic additive / subtractive / PAD synthesizer. <strong>Engine file:</strong> <code>zynthian_engine_zynaddsubfx.py</code> [<code>zynthian-ui/zyngine/zynthian_engine_zynaddsubfx.py</code>]</p>
+<p>The flagship Zynthian engine. Three synthesis modules work simultaneously within one patch: subtractive (SUB), additive (ADD), and PAD synthesis. Patches can combine all three for extremely complex, evolving timbres.</p>
+<p><strong>Best for:</strong> Rich strings, brass, pads, evolving textures, electronic sounds. The preset library covers hundreds of instruments from orchestral to experimental.</p>
+<p><strong>Key parameters:</strong></p>
+<table><thead><tr><th>CC</th><th>Parameter</th></tr></thead><tbody><tr><td>1</td><td>Modulation wheel — typically assigned to vibrato or filter mod</td></tr><tr><td>7</td><td>Volume</td></tr><tr><td>11</td><td>Expression</td></tr><tr><td>74</td><td>Filter cutoff (on most patches)</td></tr><tr><td>71</td><td>Filter resonance</td></tr></tbody></table>
+<p><strong>CPU note:</strong> ZynAddSubFX is CPU-intensive with large polyphony counts. On Pi 3, limit to 4–6 voices per patch. On Pi 4, 16+ voices are stable.</p>
+<p><strong>Preset banks location:</strong> <code>/zynthian/zynthian-data/presets/zynaddsubfx/</code></p>
+<hr>
+<h2 id="fluidsynth">FluidSynth</h2>
+<p><strong>Type:</strong> SF2 soundfont sampler. <strong>Engine file:</strong> <code>zynthian_engine_fluidsynth.py</code> [<code>zynthian-ui/zyngine/zynthian_engine_fluidsynth.py</code>]</p>
+<p>FluidSynth plays back sample-based instruments from SF2 soundfont files. Zynthian ships with several soundfonts including GeneralUser GS (128 General MIDI instruments + drums), and supports uploading custom <code>.sf2</code> files via webconf → Presets.</p>
+<p><strong>Best for:</strong> Realistic acoustic instruments, General MIDI playback, piano, strings, brass, drums, ethnic instruments.</p>
+<p><strong>Key parameters:</strong></p>
+<table><thead><tr><th>CC</th><th>Parameter</th></tr></thead><tbody><tr><td>7</td><td>Volume</td></tr><tr><td>10</td><td>Pan</td></tr><tr><td>11</td><td>Expression</td></tr><tr><td>64</td><td>Sustain pedal</td></tr><tr><td>91</td><td>Reverb send level</td></tr><tr><td>93</td><td>Chorus send level</td></tr></tbody></table>
+<p><strong>Upload soundfonts:</strong> webconf → Presets → upload <code>.sf2</code> file → appears as a new bank.</p>
+<p><strong>Reverb/chorus:</strong> Disabled by default. Enable via engine controls (navigate engine parameters, enable "Reverb Active" and set Room Size/Damping).</p>
+<p><strong>SF2 files location:</strong> <code>/zynthian/zynthian-my-data/soundfonts/sf2/</code></p>
+<hr>
+<h2 id="setbfree">setBfree</h2>
+<p><strong>Type:</strong> Tonewheel organ emulator (Hammond B3/C3 simulation with Leslie speaker). <strong>Engine file:</strong> <code>zynthian_engine_setbfree.py</code> [<code>zynthian-ui/zyngine/zynthian_engine_setbfree.py</code>]</p>
+<p>setBfree is a physically-modelled Hammond organ. It simulates all 91 tonewheels, the percussion (click), key click, preamp, and a full rotary speaker (Leslie) simulation.</p>
+<p><strong>Best for:</strong> Rock organ, gospel, jazz organ. The default setup is an excellent Hammond B3 with a rotating speaker.</p>
+<p><strong>Key parameters:</strong></p>
+<table><thead><tr><th>CC</th><th>Parameter</th><th>Notes</th></tr></thead><tbody><tr><td>1–9</td><td>Drawbars (16', 5⅓', 8', 4', 2⅔', 2', 1⅗', 1⅓', 1')</td><td>0=off, 127=full</td></tr><tr><td>64</td><td>Sustain pedal</td><td>Rotary speed fast/slow toggle</td></tr><tr><td>11</td><td>Expression (swell)</td><td>Volume swell pedal</td></tr></tbody></table>
+<p><strong>MIDI channels:</strong></p>
+<ul><li>Channel 1 → lower manual</li><li>Channel 2 → upper manual</li><li>Channel 3 → pedal bass</li></ul>
+<p><strong>Classic drawbar settings:</strong></p>
+<ul><li>Full organ: <code>88 8888 888</code> (all drawbars at max)</li><li>Gospel lead: <code>80 8800 000</code></li><li>Rock: <code>88 8800 000</code></li><li>Jazz mellow: <code>00 7800 000</code></li></ul>
+<hr>
+<h2 id="linuxsampler">LinuxSampler</h2>
+<p><strong>Type:</strong> GIG and SFZ high-quality sampler. <strong>Engine file:</strong> <code>zynthian_engine_linuxsampler.py</code> [<code>zynthian-ui/zyngine/zynthian_engine_linuxsampler.py</code>]</p>
+<p>LinuxSampler plays Gigasampler (<code>.gig</code>) and SFZ format sample libraries. It is designed for professional sample libraries with round-robin, velocity layers, and release samples.</p>
+<p><strong>Best for:</strong> High-quality orchestral libraries (Sonatina, Versilian, Salamander Piano), commercial sample libraries.</p>
+<p><strong>Key parameters:</strong> Same as SF2 (CC 7 volume, CC 11 expression, CC 64 sustain). Specific articulation CCs depend on the library.</p>
+<p><strong>Sample libraries location:</strong> <code>/zynthian/zynthian-my-data/soundfonts/gig/</code> (GIG) or <code>/zynthian/zynthian-my-data/soundfonts/sfz/</code> (SFZ)</p>
+<p><strong>CPU note:</strong> LinuxSampler streams samples from disk. SD card read speed matters — use a quality card.</p>
+<hr>
+<h2 id="sfizz">Sfizz</h2>
+<p><strong>Type:</strong> SFZ sampler (lighter alternative to LinuxSampler). <strong>Engine file:</strong> <code>zynthian_engine_sfizz.py</code> [<code>zynthian-ui/zyngine/zynthian_engine_sfizz.py</code>]</p>
+<p>Sfizz is a modern, efficient SFZ player. More compatible with extended SFZ 2.0 features than LinuxSampler, with lower CPU/memory overhead.</p>
+<p><strong>Best for:</strong> SFZ instruments, Salamander Piano, Versilian Studios VSCO, freely-available SFZ libraries.</p>
+<p><strong>SFZ files location:</strong> <code>/zynthian/zynthian-my-data/soundfonts/sfz/</code></p>
+<hr>
+<h2 id="aeolus">Aeolus</h2>
+<p><strong>Type:</strong> Pipe organ synthesizer (additive synthesis, not samples). <strong>Engine file:</strong> <code>zynthian_engine_aeolus.py</code> [<code>zynthian-ui/zyngine/zynthian_engine_aeolus.py</code>]</p>
+<p>Aeolus synthesizes pipe organ sounds from scratch using physically-modelled resonators. Unlike setBfree (Hammond), Aeolus sounds like a classical pipe organ — flutes, strings, principals, reeds.</p>
+<p><strong>Best for:</strong> Classical pipe organ, church organ, baroque organ. Distinct from setBfree — no rock organ sound.</p>
+<p><strong>Key parameters:</strong> Stop registration (which pipes are active) is set via MIDI program changes or the UI stop controls.</p>
+<hr>
+<h2 id="pianoteq">Pianoteq</h2>
+<p><strong>Type:</strong> Physical modelling piano (commercial — trial/licensed). <strong>Engine file:</strong> <code>zynthian_engine_pianoteq.py</code> [<code>zynthian-ui/zyngine/zynthian_engine_pianoteq.py</code>]</p>
+<p>Pianoteq models piano acoustics from first principles — string vibration, soundboard resonance, hammer felt, pedal mechanics. Produces a very realistic piano feel with much lower disk/RAM requirements than sample-based pianos.</p>
+<p><strong>Best for:</strong> Best-quality piano when a Pianoteq license is available. Trial version runs with limitations (some notes silenced). Commercial licenses available at <a href="https://www.modartt.com/">modartt.com</a>.</p>
+<p><strong>Key parameters:</strong> Pianoteq exposes ~50 physical parameters: hammer hardness, string length, soundboard resonance, unison width, etc. All are accessible via the engine control screen.</p>
+<p><strong>Installation:</strong> The <code>pianoteq</code> binary must be present at <code>/zynthian/zynthian-sw/pianoteq/</code>. The license file goes in the same directory.</p>
+<hr>
+<h2 id="audioplayer-zynsampler">AudioPlayer (ZynSampler)</h2>
+<p><strong>Type:</strong> Audio file player. <strong>Engine file:</strong> <code>zynthian_engine_audioplayer.py</code> [<code>zynthian-ui/zyngine/zynthian_engine_audioplayer.py</code>]</p>
+<p>Plays audio files (WAV, FLAC, OGG, MP3) from the Zynthian file system. Useful for backing tracks, sample pads, or live audio playback triggered by MIDI notes.</p>
+<p><strong>Best for:</strong> Background loops, sample playback, stem tracks for live performance.</p>
+<p><strong>Files location:</strong> <code>/zynthian/zynthian-my-data/audio/</code></p>
+<p><strong>Controls:</strong> MIDI note triggers playback. File assignment to notes is configured in the engine's mapping screen.</p>
+<hr>
+<h2 id="lv2-plugins-via-jalv">LV2 Plugins (via Jalv)</h2>
+<p>LV2 plugins are the largest category. Zynthian runs them through a customized Jalv host [<code>zynthian-ui/zyngine/zynthian_engine_jalv.py</code>]. They appear in the engine selector grouped by plugin type.</p>
+<p>See <a href="lv2-plugins.html">LV2 Plugins</a> for installation and management.</p>
+<p><strong>Notable LV2 synths available in ZynthianOS:</strong></p>
+<table><thead><tr><th>Plugin</th><th>Type</th><th>Notes</th></tr></thead><tbody><tr><td>Dexed</td><td>FM synthesizer</td><td>Yamaha DX7 emulator; 32-voice, very CPU-efficient</td></tr><tr><td>OB-Xd</td><td>Analog subtractive</td><td>Oberheim OB-X emulation</td></tr><tr><td>Vitalium</td><td>Wavetable</td><td>Open-source Vital; complex modulation</td></tr><tr><td>Surge XT</td><td>Multi-synthesis</td><td>Advanced FM/wavetable/subtractive + modulation</td></tr><tr><td>TAL NoizeMaker</td><td>Virtual analog</td><td>Simple, clean VA synth</td></tr><tr><td>Odin 2</td><td>Semi-modular</td><td>With built-in sequencer/arpeggiator</td></tr></tbody></table>
+<p><strong>Notable LV2 effects:</strong></p>
+<table><thead><tr><th>Plugin</th><th>Type</th><th>CC mapping</th></tr></thead><tbody><tr><td>Calf Reverb</td><td>Reverb</td><td>Room size, damping, wet/dry</td></tr><tr><td>Calf Compressor</td><td>Dynamics</td><td>Threshold, ratio, attack, release</td></tr><tr><td>ZaMultiCompX2</td><td>Multiband comp</td><td>3-band dynamics</td></tr><tr><td>LSP Parametric EQ</td><td>EQ</td><td>8-band parametric</td></tr><tr><td>Guitarix</td><td>Amp sim</td><td>Guitar amp + cabinet emulation</td></tr></tbody></table>
+<hr>
+<h2 id="mod-ui">MOD-UI</h2>
+<p><strong>Type:</strong> MOD Devices plugin host with browser-based pedalboard. <strong>Engine file:</strong> <code>zynthian_engine_modui.py</code> [<code>zynthian-ui/zyngine/zynthian_engine_modui.py</code>]</p>
+<p>MOD-UI runs a pedalboard-style effects chain editor in a web browser. Access via <code>http://zynthian.local:8888</code> when the MOD-UI chain is active. Drag-and-drop LV2 plugins onto the pedalboard and connect them visually.</p>
+<p><strong>Best for:</strong> Complex effects chains, guitar processing, signal routing that would be tedious in the standard Zynthian UI.</p>
+<hr>
+<h2 id="sooperlooper">SooperLooper</h2>
+<p><strong>Type:</strong> Real-time audio looper. <strong>Engine file:</strong> <code>zynthian_engine_sooperlooper.py</code> [<code>zynthian-ui/zyngine/zynthian_engine_sooperlooper.py</code>]</p>
+<p>SooperLooper records and layers live audio loops. Multiple loop slots can be stacked. See <a href="recipes.html">Recipes</a> for a live looper setup walkthrough.</p>
+<p><strong>Key MIDI control:</strong></p>
+<table><thead><tr><th>CC / Note</th><th>Function</th></tr></thead><tbody><tr><td>Toggle Record</td><td>CC 30 (configurable): starts recording; second press stops recording and starts playback</td></tr><tr><td>Toggle Play</td><td>Play/pause current loop</td></tr><tr><td>Undo</td><td>Remove last overdub</td></tr><tr><td>Mute</td><td>Mute/unmute loop</td></tr></tbody></table>
+<hr>
+<h2 id="pure-data">Pure Data</h2>
+<p><strong>Type:</strong> Run Pd patches as instruments or effects. <strong>Engine file:</strong> <code>zynthian_engine_puredata.py</code> [<code>zynthian-ui/zyngine/zynthian_engine_puredata.py</code>]</p>
+<p>Pure Data patches are <code>.pd</code> files. Upload a patch to <code>/zynthian/zynthian-my-data/presets/puredata/</code> and it appears as a preset in the PureData engine. [low]</p>
+<hr>
+<h2 id="midi-control--sysex">MIDI Control / SysEx</h2>
+<p><strong>Engine file:</strong> <code>zynthian_engine_midi_control.py</code>, <code>zynthian_engine_sysex.py</code> [<code>zynthian-ui/zyngine/</code>]</p>
+<p>Virtual engines for MIDI routing and SysEx message handling. <code>MIDI Control</code> generates outgoing MIDI messages in response to chain controls. <code>SysEx</code> sends and receives SysEx from external hardware.</p>
+<hr>
+<h2 id="choosing-an-engine">Choosing an Engine</h2>
+<table><thead><tr><th>Need</th><th>Engine</th></tr></thead><tbody><tr><td>Realistic piano</td><td>FluidSynth (Salamander SF2) or Pianoteq (licensed)</td></tr><tr><td>Hammond organ</td><td>setBfree</td></tr><tr><td>Pipe organ</td><td>Aeolus</td></tr><tr><td>Orchestral strings/brass</td><td>LinuxSampler or Sfizz (with Sonatina/Versilian)</td></tr><tr><td>FM synthesis (DX7)</td><td>Dexed (LV2)</td></tr><tr><td>Complex pads / textures</td><td>ZynAddSubFX</td></tr><tr><td>Wavetable / modern synth</td><td>Surge XT or Vitalium (LV2)</td></tr><tr><td>General MIDI playback</td><td>FluidSynth (GeneralUser GS soundfont)</td></tr><tr><td>Audio effects</td><td>Calf, LSP, or Guitarix (LV2)</td></tr><tr><td>Live looping</td><td>SooperLooper</td></tr><tr><td>Complex effects chain</td><td>MOD-UI</td></tr></tbody></table>
+<hr>
+<h2 id="loading-presets">Loading Presets</h2>
+<ol><li>Main screen → <strong>+</strong> (Add Chain).</li><li>Select <strong>Add Synth Engine</strong> (or <strong>Add Audio Effect</strong> for effects).</li><li>Browse and select an engine.</li><li>The bank list appears. Select a bank.</li><li>Select a preset.</li></ol>
+<p>The engine starts and MIDI notes on the selected channel trigger that engine.</p>
+<hr>
+<h2 id="whats-next">What's Next</h2>
+<ul><li><a href="lv2-plugins.html">LV2 Plugins</a> — installing and managing LV2 plugins</li><li><a href="recipes.html">Recipes</a> — common multi-engine setups</li><li><a href="midi.html">MIDI Controllers</a> — connect a keyboard to play presets</li><li><a href="snapshots.html">Snapshots</a> — save your engine/preset setup</li></ul>
+<hr>
+<p><em>Version: 2026-05-25 — derived from <code>zynthian-ui/zyngine/zynthian_engine_</em>.py</code>.*</p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

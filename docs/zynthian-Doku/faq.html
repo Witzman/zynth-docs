@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FAQ — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html" aria-current="page"><strong>FAQ</strong></a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="faq">FAQ</h1>
+<p>Quick answers to common questions. For deeper diagnosis, see <a href="troubleshooting.html">Troubleshooting</a>.</p>
+<hr>
+<h2 id="sound">Sound</h2>
+<p><strong>Why do I hear no sound?</strong> JACK is not running. Check <code>systemctl status jack2</code> via SSH. Most common causes: wrong sample rate (set 44100 Hz for USB audio in webconf → Hardware → Audio), USB device plugged into a USB 3.0 (blue) port (move it to USB 2.0 black port), or wrong audio device selected in webconf. See <a href="audio.html">Audio Setup</a>.</p>
+<p><strong>Audio works but cuts out with clicks/pops.</strong> JACK XRUNs — buffer underrun caused by CPU overload or too-small buffer. Increase buffer size from 256 to 512 in webconf → Hardware → Audio. Check <code>journalctl -u jack2 -f | grep -i xrun</code>.</p>
+<p><strong>Volume is very low.</strong> Check the ALSA mixer: <code>alsamixer -c S2</code> (replace S2 with your card name). Some USB devices default to 50% gain. Also check webconf → Hardware → Audio Options for input/output gain settings.</p>
+<p><strong>I hear hum / background noise.</strong> Using built-in headphone jack (<code>bcm2835 Headphones</code>) — it has higher noise than any external audio device. Use a USB audio device or I2S HAT for clean audio.</p>
+<p><strong>Sound is distorted at high volumes.</strong> Input or output gain too high in ALSA mixer. Lower the gain: <code>alsamixer -c S2</code>. Also check engine volume in the Zynthian mixer (Main screen → Mixer).</p>
+<hr>
+<h2 id="midi">MIDI</h2>
+<p><strong>My USB MIDI controller is not responding.</strong> Check <code>aconnect -l</code> via SSH — does the device appear? If not, check <code>dmesg | grep -i midi | tail -10</code>. Try a different USB cable (charge-only cables have no data lines). Verify MIDI channel: tap the chain → options → MIDI Channel. Use <code>amidi -p hw:X,0,0 -d</code> to see raw MIDI data.</p>
+<p><strong>Controller shows in <code>aconnect</code> but notes don't trigger.</strong> MIDI channel mismatch. Chain defaults to channel 1. Check what channel your controller sends on (usually shown in the controller's settings). Set the chain to <strong>Omni</strong> to respond to all channels temporarily.</p>
+<p><strong>MIDI controller worked, then stopped after reboot.</strong> Port number may have changed. USB MIDI ports are numbered by insertion order. Zynthian's autoconnect re-wires on each boot, but if you have multiple devices, unplug others to isolate.</p>
+<p><strong>Bluetooth MIDI won't pair — "AuthenticationCanceled".</strong> Device timed out. Pre-type the <code>pair XX:XX:XX:XX:XX:XX</code> command, activate pairing mode on the BLE device immediately, then press Enter within 3 seconds. See <a href="midi.html">MIDI Controllers</a>.</p>
+<p><strong>Program Change messages don't switch presets.</strong> PC messages switch presets within the current bank. Use Bank Select (CC 0 + CC 32) first if you need a different bank, then send PC.</p>
+<hr>
+<h2 id="display">Display</h2>
+<p><strong>Screen is black / no signal.</strong> Pi 4 has two HDMI ports. Use <strong>HDMI0</strong> — the port closest to the USB-C power connector. Replug (no reboot needed).</p>
+<p><strong>Screen shows "error" with a character image and red text.</strong> JACK is not running. See "Why do I hear no sound?" above.</p>
+<p><strong>UI shows a white and blue area only (no menus).</strong> Zynthian UI is loading. Wait 30–60 seconds after first boot. If it stays like this, check <code>systemctl status zynthian --no-pager</code> via SSH.</p>
+<p><strong>Touch input not working on HDMI TV.</strong> HDMI TVs have no touch capability. Set wiring layout to <code>TOUCH_ONLY</code> in webconf → Hardware → Wiring, and use a USB mouse.</p>
+<hr>
+<h2 id="system">System</h2>
+<p><strong>webconf is not loading at <code>http://zynthian.local</code>.</strong> Check <code>systemctl status zynthian-webconf --no-pager</code> via SSH. Most common cause: <code>libzyncore.so</code> missing. Fix: <code>cd /zynthian/zyncoder &amp;amp;&amp;amp; mkdir -p build &amp;amp;&amp;amp; cd build &amp;amp;&amp;amp; cmake .. &amp;amp;&amp;amp; make -j4</code>, then restart webconf.</p>
+<p><strong><code>zynthian.local</code> hostname doesn't resolve.</strong> On Windows, install Bonjour or use the IP address directly. Find the IP on your router's DHCP page, or read it from the Zynthian screen top bar.</p>
+<p><strong>webconf password is wrong.</strong> Default password: <code>opensynth</code>. If changed and forgotten: SSH in as root (password <code>opensynth</code>) and reset via webconf → System → Security.</p>
+<p><strong>SD card keeps corrupting.</strong> Poor-quality SD card. Use SanDisk Ultra or Samsung EVO. Check power: <code>vcgencmd get_throttled</code> — <code>0x50000</code> means past undervoltage. Use a 5V/3A USB-C supply.</p>
+<p><strong>Software update hangs.</strong> Check <code>journalctl -u zynthian-webconf -f</code> — update runs via webconf. If it hangs on a specific repo, SSH in and run <code>update_zynthian.sh</code> manually.</p>
+<p><strong>Zynthian loses state after power-off.</strong> By design — use snapshots to save state. If you want a specific state to load on every boot, save it as <code>last_state</code> (Snapshots → Save As → <code>last_state</code>). See <a href="snapshots.html">Snapshots</a>.</p>
+<hr>
+<h2 id="engines">Engines</h2>
+<p><strong>Engine won't load / shows error.</strong> Usually a missing dependency. Check <code>journalctl -u zynthian -n 50 --no-pager | grep -i error</code>. For LV2 plugins, run webconf → Engines → Regenerate Cache.</p>
+<p><strong>ZynAddSubFX has no sound after loading a preset.</strong> Check MIDI channel assignment and that the engine's JACK port is connected. Restart zynautoconnect: restart zynthian service.</p>
+<p><strong>FluidSynth sounds thin / no reverb.</strong> Reverb and chorus are disabled by default. In the engine controls (turn encoder 3 on V5 to navigate parameters), enable reverb and set room size.</p>
+<p><strong>Pianoteq won't start.</strong> Requires a valid license. The <code>pianoteq</code> binary must be present at <code>/zynthian/zynthian-sw/pianoteq/</code>. Check <code>ls /zynthian/zynthian-sw/</code> and that the license file exists.</p>
+<hr>
+<h2 id="whats-next">What's Next</h2>
+<ul><li><a href="troubleshooting.html">Troubleshooting</a> — step-by-step diagnosis</li><li><a href="audio.html">Audio Setup</a> — JACK configuration</li><li><a href="midi.html">MIDI Controllers</a> — controller connection</li></ul>
+<hr>
+<p><em>Version: 2026-05-25</em></p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

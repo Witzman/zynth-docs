@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Getting Started with Zynthian — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html" aria-current="page"><strong>Getting Started</strong></a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="getting-started-with-zynthian">Getting Started with Zynthian</h1>
+<p>This tutorial walks you from a blank SD card to a working Zynthian box producing sound. Each step must succeed before moving to the next.</p>
+<hr>
+<h2 id="what-you-need">What You Need</h2>
+<p>Before starting, gather:</p>
+<ul><li>Raspberry Pi 4 (Pi 3/5 also supported)</li><li>MicroSD card, 16 GB minimum (32 GB recommended; Samsung or SanDisk Endurance class)</li><li>USB-C power supply, 5V / 3A minimum</li><li>HDMI cable + TV or monitor (connect to <strong>HDMI0</strong> — the port closest to USB-C power)</li><li>USB keyboard and mouse (optional but useful for initial setup)</li><li>USB or Bluetooth audio device, or a HAT soundcard</li></ul>
+<hr>
+<h2 id="step-1--flash-the-sd-card">Step 1 — Flash the SD Card</h2>
+<p>Download the latest ZynthianOS image from <code>https://os.zynthian.org/zynthianos-last-stable.zip</code>. Unzip it to get a <code>.img</code> file.</p>
+<p>Flash the image using <a href="https://www.raspberrypi.com/software/">Raspberry Pi Imager</a> or <a href="https://etcher.balena.io/">balenaEtcher</a>. Write to the SD card — this takes 5–10 minutes.</p>
+<blockquote><p><strong>SD card quality matters.</strong> Budget cards (Intenso, generic) fail under the heavy random-write load of first boot. Use Samsung Endurance Pro or SanDisk Endurance if the default card causes filesystem errors (<code>EXT4-fs error</code> in <code>dmesg</code>).</p></blockquote>
+<hr>
+<h2 id="step-2--first-boot">Step 2 — First Boot</h2>
+<p>Insert the SD card and power on the Pi. First boot takes <strong>10–15 minutes</strong> and reboots once automatically. During this time the system:</p>
+<ol><li>Runs hardware autodetection (i2c scan for DAC, ADC, GPIO expanders)</li><li>Regenerates SSH/SSL keys (unique per device)</li><li>Creates a WiFi access point named <code>Zynthian</code></li><li>Regenerates the LV2 plugin cache</li><li>Expands the root filesystem to fill the SD card</li><li>Reboots into the normal UI</li></ol>
+<p>Do not power off during first boot.</p>
+<hr>
+<h2 id="step-3--access-the-device">Step 3 — Access the Device</h2>
+<p>After the reboot you can reach Zynthian three ways:</p>
+<p><strong>Browser (recommended):</strong> Open <code>http://zynthian.local</code> in any browser on the same network. The webconf dashboard appears. Default password: <code>opensynth</code>.</p>
+<p><strong>SSH:</strong> <code>ssh root@zynthian.local</code> — password <code>opensynth</code>. If <code>.local</code> doesn't resolve, find the IP from your router or use the WiFi hotspot address <code>192.168.11.1</code>.</p>
+<p><strong>WiFi hotspot:</strong> If no cable is connected, Zynthian creates its own WiFi network named <code>Zynthian</code>. Connect to it, then open <code>http://zynthian.local</code>.</p>
+<hr>
+<h2 id="step-4--connect-your-display">Step 4 — Connect Your Display</h2>
+<p>Plug HDMI into <strong>HDMI0</strong> (the port closest to the USB-C power connector on Pi 4). Zynthian defaults to 1280×720. If the screen stays black, add HDMI force settings via SSH [<code>zynthian-sys/sbin/config-on-boot.sh:1-30</code>]:</p>
+<pre><code class="language-bash">cat &gt;&gt; /boot/firmware/config.txt &lt;&lt; 'EOF'
+hdmi_force_hotplug=1
+hdmi_drive=2
+hdmi_group=1
+hdmi_mode=4
+EOF
+reboot</code></pre>
+<p>For old 720p TVs, <code>hdmi_mode=4</code> (720p) works. For very old 480p displays, try <code>hdmi_mode=1</code>.</p>
+<hr>
+<h2 id="step-5--configure-audio">Step 5 — Configure Audio</h2>
+<p>Open <code>http://zynthian.local</code> → <strong>Hardware</strong> → <strong>Audio</strong>. Select your audio device from the <strong>Soundcard</strong> dropdown.</p>
+<p><strong>USB audio devices</strong> appear by their ALSA name (e.g. <code>Sound Blaster Play! 2</code> shows as <code>S2</code>). Set sample rate to <strong>44100</strong> for most USB devices — check <code>cat /proc/asound/card*/stream0</code> via SSH to confirm what your device supports.</p>
+<p><strong>Built-in headphone jack</strong> is available as <code>Headphones</code> but delivers lower quality than a dedicated soundcard.</p>
+<p>Click Save, then Reboot.</p>
+<hr>
+<h2 id="step-6--verify-audio">Step 6 — Verify Audio</h2>
+<p>After reboot, check JACK is running via SSH:</p>
+<pre><code class="language-bash">systemctl status jack2 --no-pager</code></pre>
+<p>The status should show <code>active (running)</code> with your chosen audio device. If JACK fails, check the troubleshooting page.</p>
+<hr>
+<h2 id="step-7--load-a-synth-and-play">Step 7 — Load a Synth and Play</h2>
+<p>On the Zynthian screen, click an empty layer slot → select an engine (start with <strong>ZynAddSubFX</strong> or <strong>FluidSynth</strong>) → select a preset. Use the on-screen keyboard or connect a USB MIDI keyboard to play.</p>
+<hr>
+<h2 id="whats-next">What's Next</h2>
+<ul><li><a href="userguide.html">Understanding Zynthian</a> — learn about chains, engines, and snapshots</li><li><a href="audio.html">Audio Setup</a> — tune JACK buffer size and latency</li><li><a href="midi.html">MIDI Controllers</a> — connect a physical keyboard or pad controller</li><li><a href="troubleshooting.html">Troubleshooting</a> — if anything above didn't work</li></ul>
+<hr>
+<p><em>Version: 2026-05-25 — derived from <code>zynthian-sys/scripts/first_boot.sh</code> and <code>zynthian-sys/sbin/config-on-boot.sh</code>.</em></p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

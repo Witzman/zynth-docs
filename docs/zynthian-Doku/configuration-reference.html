@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Configuration Reference — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html" aria-current="page"><strong>Config Reference</strong></a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="configuration-reference">Configuration Reference</h1>
+<p>All Zynthian configuration lives in <code>/zynthian/config/zynthian_envars.sh</code> (auto-generated on first boot from a hardware profile, then editable via webconf). This page documents the most important variables.</p>
+<p>The file is sourced by <code>config-on-boot.sh</code> [<code>zynthian-sys/sbin/config-on-boot.sh</code>] on every boot before JACK starts. Changes made in webconf are written here and take effect after reboot.</p>
+<p>To override on boot without changing the profile, put overrides in <code>/boot/zynthian_envars.sh</code> — <code>config-on-boot.sh</code> sources this file first if it exists.</p>
+<hr>
+<h2 id="system">System</h2>
+<table><thead><tr><th>Variable</th><th>Default (V5)</th><th>Description</th></tr></thead><tbody><tr><td><code>ZYNTHIAN_KIT_VERSION</code></td><td><code>V5</code></td><td>Hardware kit identifier. Set by autoconfig. Do not change manually.</td></tr><tr><td><code>ZYNTHIAN_OVERCLOCKING</code></td><td><code>Maximum</code></td><td>Pi CPU overclock profile. <code>Maximum</code> raises clock speed for better DSP performance on Pi 4.</td></tr><tr><td><code>ZYNTHIAN_WIFI_MODE</code></td><td><code>off</code></td><td><code>off</code>, <code>hotspot</code>, or <code>managed</code>. <code>hotspot</code> creates a <code>ZynthianAP</code> access point.</td></tr><tr><td><code>ZYNTHIAN_LIMIT_USB_SPEED</code></td><td><code>0</code></td><td>Set <code>1</code> to force USB 2.0 speed on all ports. Workaround for devices with USB 3.0 issues.</td></tr><tr><td><code>ZYNTHIAN_DISABLE_OTG</code></td><td><code>0</code></td><td>Set <code>1</code> to disable USB OTG port (Pi 4 USB-C).</td></tr><tr><td><code>BOOTLOG</code></td><td><code>0</code></td><td>Set <code>1</code> to keep full boot log visible on screen.</td></tr></tbody></table>
+<hr>
+<h2 id="audio">Audio</h2>
+<table><thead><tr><th>Variable</th><th>Default (V5)</th><th>Description</th></tr></thead><tbody><tr><td><code>SOUNDCARD_NAME</code></td><td><code>V5 ADAC</code></td><td>Human-readable audio device name shown in webconf.</td></tr><tr><td><code>SOUNDCARD_CONFIG</code></td><td><code>dtoverlay=hifiberry-dacplusadcpro\n...</code></td><td>Device tree overlay string added to <code>/boot/firmware/config.txt</code>.</td></tr><tr><td><code>JACKD_OPTIONS</code></td><td><code>-P 70 -s -S -d alsa -d hw:sndrpihifiberry -r 48000 -p 256 -n 2 -o 2 -i 2</code></td><td>Full jackd command line. Key flags:</td></tr><tr><td></td><td></td><td><code>-d hw:NAME</code> — ALSA card name to use</td></tr><tr><td></td><td></td><td><code>-r RATE</code> — sample rate (44100 or 48000)</td></tr><tr><td></td><td></td><td><code>-p SIZE</code> — buffer frames (128/256/512)</td></tr><tr><td></td><td></td><td><code>-n PERIODS</code> — periods per cycle (2 or 3)</td></tr><tr><td></td><td></td><td><code>-o OUTPUTS</code> — number of output channels</td></tr><tr><td></td><td></td><td><code>-i INPUTS</code> — number of input channels</td></tr><tr><td><code>ZYNTHIAN_DISABLE_RBPI_AUDIO</code></td><td><code>0</code></td><td>Set <code>1</code> to disable the built-in headphone jack in ALSA (prevents it from appearing as <code>hw:0</code>).</td></tr><tr><td><code>ZYNTHIAN_RBPI_HEADPHONES</code></td><td><code>0</code></td><td>Set <code>1</code> to route audio through the built-in headphone jack. Not recommended for performance use.</td></tr></tbody></table>
+<hr>
+<h2 id="display">Display</h2>
+<table><thead><tr><th>Variable</th><th>Description</th></tr></thead><tbody><tr><td><code>DISPLAY_NAME</code></td><td>Display model name. Matches an entry in the webconf display list.</td></tr><tr><td><code>DISPLAY_CONFIG</code></td><td>Device tree overlay config lines for the display.</td></tr><tr><td><code>DISPLAY_WIDTH</code> / <code>DISPLAY_HEIGHT</code></td><td>Resolution in pixels.</td></tr><tr><td><code>DISPLAY_ROTATION</code></td><td><code>Normal</code>, <code>Inverted</code>, <code>Left</code>, <code>Right</code>.</td></tr><tr><td><code>FRAMEBUFFER</code></td><td>Linux framebuffer device (e.g. <code>/dev/fb0</code>, <code>/dev/fb1</code>).</td></tr><tr><td><code>DISPLAY_KERNEL_OPTIONS</code></td><td>Added to kernel command line (e.g. <code>video=DSI-1:800x480@60</code>).</td></tr></tbody></table>
+<hr>
+<h2 id="wiring">Wiring</h2>
+<table><thead><tr><th>Variable</th><th>Description</th></tr></thead><tbody><tr><td><code>ZYNTHIAN_WIRING_LAYOUT</code></td><td>Hardware wiring profile. Common values: <code>V5</code>, <code>Z2</code>, <code>TOUCH_ONLY</code>, <code>PROTOTYPE-4</code>.</td></tr><tr><td><code>ZYNTHIAN_WIRING_ENCODER_A</code> / <code>_B</code></td><td>GPIO pin numbers for encoder signals (only needed for custom wiring).</td></tr><tr><td><code>ZYNTHIAN_WIRING_SWITCHES</code></td><td>GPIO pin list for button inputs.</td></tr><tr><td><code>ZYNTHIAN_WIRING_MCP23017_I2C_ADDRESS</code></td><td>I2C address of MCP23017 GPIO expander (V5: <code>0x20,0x21</code>).</td></tr><tr><td><code>ZYNTHIAN_WIRING_LAYOUT_CUSTOM_PROFILE</code></td><td>Which wiring-profile directory to load for custom switch mappings.</td></tr><tr><td><code>ZYNTHIAN_WIRING_CUSTOM_SWITCH_NN__UI_SHORT</code></td><td>What UI action a short-press of switch NN triggers.</td></tr><tr><td><code>ZYNTHIAN_WIRING_CUSTOM_SWITCH_NN__UI_LONG</code></td><td>What UI action a long-press triggers (≥ <code>ZYNTHIAN_UI_SWITCH_LONG_MS</code>).</td></tr><tr><td><code>ZYNTHIAN_WIRING_CUSTOM_SWITCH_NN__UI_BOLD</code></td><td>What UI action a bold-press triggers (≥ <code>ZYNTHIAN_UI_SWITCH_BOLD_MS</code>).</td></tr><tr><td><code>ZYNTHIAN_WIRING_CUSTOM_SWITCH_NN__MIDI_CHAN</code></td><td>MIDI channel for switch MIDI output (<code>Active</code> = current chain channel).</td></tr><tr><td><code>ZYNTHIAN_WIRING_CUSTOM_SWITCH_NN__MIDI_NUM</code></td><td>MIDI CC number for switch output.</td></tr><tr><td><code>ZYNTHIAN_WIRING_CUSTOM_SWITCH_NN__MIDI_VAL</code></td><td>MIDI CC value for switch output.</td></tr></tbody></table>
+<p><strong>Common UI_SHORT/UI_LONG actions:</strong></p>
+<table><thead><tr><th>Action</th><th>Effect</th></tr></thead><tbody><tr><td><code>MENU</code></td><td>Open main menu</td></tr><tr><td><code>BACK</code></td><td>Go back / close</td></tr><tr><td><code>SCREEN_ADMIN</code></td><td>Open Admin screen</td></tr><tr><td><code>SCREEN_AUDIO_MIXER</code></td><td>Open ALSA mixer</td></tr><tr><td><code>SCREEN_SNAPSHOT</code></td><td>Open Snapshot screen</td></tr><tr><td><code>SCREEN_LAUNCHER</code></td><td>Open screen launcher</td></tr><tr><td><code>TOGGLE_RECORD</code></td><td>Start/stop MIDI recording</td></tr><tr><td><code>TOGGLE_PLAY</code></td><td>Play/stop MIDI playback</td></tr><tr><td><code>ALL_NOTES_OFF</code></td><td>Send all-notes-off on all channels</td></tr><tr><td><code>ALL_SOUNDS_OFF</code></td><td>Kill all audio immediately</td></tr><tr><td><code>POWER_OFF</code></td><td>Shutdown the Pi</td></tr><tr><td><code>PROGRAM_CHANGE N</code></td><td>Send Program Change message N on active chain</td></tr><tr><td><code>PRESET_FAV</code></td><td>Toggle preset as favourite</td></tr><tr><td><code>CHAIN_CONTROL</code></td><td>Open chain control screen</td></tr><tr><td><code>BANK_PRESET</code></td><td>Open bank/preset screen</td></tr></tbody></table>
+<hr>
+<h2 id="ui">UI</h2>
+<table><thead><tr><th>Variable</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>ZYNTHIAN_UI_RESTORE_LAST_STATE</code></td><td><code>1</code></td><td>Auto-load <code>last_state.zss</code> on startup. Set <code>0</code> to start empty.</td></tr><tr><td><code>ZYNTHIAN_UI_SNAPSHOT_MIXER_SETTINGS</code></td><td><code>1</code></td><td>Include mixer levels in snapshots.</td></tr><tr><td><code>ZYNTHIAN_UI_SWITCH_BOLD_MS</code></td><td><code>300</code></td><td>Milliseconds for a button press to register as "bold".</td></tr><tr><td><code>ZYNTHIAN_UI_SWITCH_LONG_MS</code></td><td><code>2000</code></td><td>Milliseconds for a button press to register as "long".</td></tr><tr><td><code>ZYNTHIAN_UI_ENABLE_CURSOR</code></td><td><code>0</code></td><td>Show mouse cursor. Set <code>1</code> when using a mouse on HDMI.</td></tr><tr><td><code>ZYNTHIAN_UI_POWER_SAVE_MINUTES</code></td><td><code>10</code></td><td>Screen blank after N minutes idle. <code>0</code> = disable.</td></tr><tr><td><code>ZYNTHIAN_UI_MULTICHANNEL_RECORDER</code></td><td><code>1</code></td><td>Record each chain to a separate audio file.</td></tr><tr><td><code>ZYNTHIAN_UI_VISIBLE_MIXER_STRIPS</code></td><td><code>0</code></td><td>How many mixer strips to show (<code>0</code> = auto).</td></tr><tr><td><code>ZYNTHIAN_UI_TOUCH_NAVIGATION</code></td><td>``</td><td>Set to enable touch navigation mode.</td></tr><tr><td><code>ZYNTHIAN_VNCSERVER_ENABLED</code></td><td><code>0</code></td><td>Enable VNC server on port 5900. Set <code>1</code> and reboot.</td></tr><tr><td><code>ZYNTHIAN_MIDI_PLAY_LOOP</code></td><td><code>1</code></td><td>Loop MIDI playback.</td></tr><tr><td><code>ZYNTHIAN_UI_COLOR_BG</code></td><td><code>#000000</code></td><td>UI background color (hex).</td></tr><tr><td><code>ZYNTHIAN_UI_COLOR_TX</code></td><td><code>#ffffff</code></td><td>UI text color.</td></tr><tr><td><code>ZYNTHIAN_UI_COLOR_ON</code></td><td><code>#ff0000</code></td><td>UI "active" accent color.</td></tr><tr><td><code>ZYNTHIAN_UI_FONT_FAMILY</code></td><td><code>Audiowide</code></td><td>UI font family.</td></tr><tr><td><code>ZYNTHIAN_UI_FONT_SIZE</code></td><td><code>16</code></td><td>UI base font size in pixels.</td></tr></tbody></table>
+<hr>
+<h2 id="midi">MIDI</h2>
+<table><thead><tr><th>Variable</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>ZYNTHIAN_SCRIPT_MIDI_PROFILE</code></td><td><code>/zynthian/config/midi-profiles/default.sh</code></td><td>Path to MIDI routing profile script.</td></tr><tr><td><code>ZYNTHIAN_USB_MIDI_BY_PORT</code></td><td><code>0</code></td><td>Set <code>1</code> to identify USB MIDI devices by port number (stable) rather than device name.</td></tr></tbody></table>
+<hr>
+<h2 id="directory-paths">Directory Paths</h2>
+<p>All paths are set in the envars file and should not be changed without understanding the full dependency chain.</p>
+<table><thead><tr><th>Variable</th><th>Value</th><th>Purpose</th></tr></thead><tbody><tr><td><code>ZYNTHIAN_DIR</code></td><td><code>/zynthian</code></td><td>Root of all Zynthian repos and data</td></tr><tr><td><code>ZYNTHIAN_UI_DIR</code></td><td><code>/zynthian/zynthian-ui</code></td><td>UI source</td></tr><tr><td><code>ZYNTHIAN_SYS_DIR</code></td><td><code>/zynthian/zynthian-sys</code></td><td>System scripts</td></tr><tr><td><code>ZYNTHIAN_DATA_DIR</code></td><td><code>/zynthian/zynthian-data</code></td><td>Read-only factory data (soundfonts, snapshots)</td></tr><tr><td><code>ZYNTHIAN_MY_DATA_DIR</code></td><td><code>/zynthian/zynthian-my-data</code></td><td>User data (snapshots, recordings, uploads)</td></tr><tr><td><code>LV2_PATH</code></td><td>Multiple paths</td><td>Where JACK/jalv searches for LV2 plugins</td></tr></tbody></table>
+<hr>
+<h2 id="applying-changes">Applying Changes</h2>
+<p>Most variables can be changed in webconf — it writes the envars file and prompts for reboot.</p>
+<p>To change directly via SSH:</p>
+<pre><code class="language-bash"># Edit the file
+nano /zynthian/config/zynthian_envars.sh
+
+# Reboot to apply
+reboot</code></pre>
+<p>JACK-related changes (sample rate, buffer size, card name) always require a reboot. UI color/font changes take effect on zynthian service restart without full reboot:</p>
+<pre><code class="language-bash">systemctl restart zynthian</code></pre>
+<hr>
+<h2 id="whats-next">What's Next</h2>
+<ul><li><a href="hardware.html">Hardware Setup</a> — hardware-specific env vars</li><li><a href="audio.html">Audio Setup</a> — JACKD_OPTIONS tuning</li><li><a href="webconf.html">Webconf Reference</a> — GUI for most of these settings</li></ul>
+<hr>
+<p><em>Version: 2026-05-25 — derived from <code>zynthian-sys/config/zynthian_envars_V5.sh</code>, <code>zynthian-sys/sbin/config-on-boot.sh</code>.</em></p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

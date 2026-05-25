@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glossary — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html" aria-current="page"><strong>Glossary</strong></a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="glossary">Glossary</h1>
+<p>Key terms used throughout this documentation.</p>
+<hr>
+<h2 id="a">A</h2>
+<p><strong>ALSA</strong> — Advanced Linux Sound Architecture. The Linux kernel's audio subsystem. Zynthian uses ALSA as the hardware interface below JACK. Card names like <code>hw:S2</code> are ALSA identifiers.</p>
+<p><strong>Aeolus</strong> — Software pipe organ engine. Simulates organ pipes with additive synthesis. See <a href="synth-engines.html">Synth Engines</a>.</p>
+<p><strong>aconnect</strong> — ALSA command-line tool to list and connect MIDI ports. <code>aconnect -l</code> shows all available MIDI clients.</p>
+<p><strong>AudioPlayer</strong> — Zynthian engine for playing audio files (WAV, MP3, OGG) from a chain.</p>
+<hr>
+<h2 id="b">B</h2>
+<p><strong>Bank</strong> — A collection of presets grouped together within an engine. For FluidSynth, a bank is a MIDI bank number within a soundfont. For ZynAddSubFX, a bank is a folder of <code>.xiz</code> preset files.</p>
+<p><strong>BLE MIDI</strong> — Bluetooth Low Energy MIDI. The MIDI profile used by wireless MIDI controllers. Pairs via <code>bluetoothctl</code>. See <a href="midi.html">MIDI Controllers</a>.</p>
+<p><strong>Buffer size</strong> — Number of audio frames JACK processes per cycle. Lower buffer = lower latency + higher CPU. Higher buffer = more stable + higher latency. Typical values: 128, 256, 512 frames.</p>
+<hr>
+<h2 id="c">C</h2>
+<p><strong>Chain</strong> — One engine instance with its MIDI input channel and audio output assignment. You can run multiple chains simultaneously (e.g. piano on channel 1, organ on channel 2). Managed by <code>zynthian_chain_manager.py</code>.</p>
+<p><strong>CC</strong> — MIDI Control Change. 7-bit messages (CC 0–127) used to send continuous controller data (knob turns, pedal position, modulation wheel). Webconf lets you map CC numbers to Zynthian parameters.</p>
+<hr>
+<h2 id="d">D</h2>
+<p><strong>DIN-5 MIDI</strong> — The classic 5-pin MIDI connector. Available on official Zynthian kits (V5, Z2). Must be enabled in webconf → Hardware → MIDI Options on custom builds.</p>
+<hr>
+<h2 id="e">E</h2>
+<p><strong>Engine</strong> — A synthesizer or audio processor that Zynthian loads into a chain. Examples: ZynAddSubFX, FluidSynth, setBfree, Jalv (LV2), LinuxSampler. See <a href="synth-engines.html">Synth Engines</a>.</p>
+<hr>
+<h2 id="f">F</h2>
+<p><strong>FluidSynth</strong> — Software MIDI synthesizer that plays SF2 soundfonts. Good for realistic piano, strings, drums. See <a href="synth-engines.html">Synth Engines</a>.</p>
+<hr>
+<h2 id="h">H</h2>
+<p><strong>HifiBerry DAC+</strong> — A popular I2S audio HAT for Raspberry Pi. Supported natively by Zynthian; detected by <code>zynthian_autoconfig.py</code>.</p>
+<hr>
+<h2 id="i">I</h2>
+<p><strong>I2S</strong> — Inter-IC Sound. Digital audio interface used by audio HATs (HifiBerry, ZynADAC) connected to the Pi's GPIO header.</p>
+<hr>
+<h2 id="j">J</h2>
+<p><strong>JACK</strong> — JACK Audio Connection Kit. Low-latency audio server used by Zynthian to route audio between engines and the output device. Runs as <code>jack2.service</code>. Must be running before Zynthian can produce sound.</p>
+<p><strong>Jalv</strong> — LV2 plugin host. Zynthian uses it to run any LV2 plugin as an engine. The <code>zynthian_engine_jalv.py</code> wrapper starts jalv as a subprocess.</p>
+<hr>
+<h2 id="l">L</h2>
+<p><strong>Layer</strong> — Older Zynthian terminology for what is now called a "chain". The UI may still use "layer" in some places.</p>
+<p><strong>Latency</strong> — Time between playing a note and hearing sound. Measured in milliseconds. Determined by buffer size ÷ sample rate. At 256 frames / 44100 Hz ≈ 5.8ms.</p>
+<p><strong>last_state.zss</strong> — Special snapshot file. If present in the snapshots directory, Zynthian loads it automatically on startup. See <a href="snapshots.html">Snapshots</a>.</p>
+<p><strong>libzyncore.so</strong> — Compiled shared library from the <code>zyncoder</code> C project. Required by both <code>zynthian-ui</code> and <code>zynthian-webconf</code>. If missing, neither service can start.</p>
+<p><strong>LinuxSampler</strong> — High-quality sampler engine. Supports GIG and SFZ format sample libraries.</p>
+<p><strong>LV2</strong> — A standard plugin format for Linux audio. Many synthesizers and effects are available as LV2 plugins. Zynthian runs them via Jalv.</p>
+<hr>
+<h2 id="m">M</h2>
+<p><strong>mDNS</strong> — Multicast DNS. Allows <code>zynthian.local</code> hostname resolution without a static IP. Requires Bonjour (Windows) or Avahi (Linux).</p>
+<p><strong>MOD-UI</strong> — Web-based pedalboard interface from MOD Devices. Zynthian includes a <code>modui</code> engine type.</p>
+<hr>
+<h2 id="o">O</h2>
+<p><strong>Omni</strong> — MIDI channel mode where a chain responds to all 16 MIDI channels instead of just one.</p>
+<hr>
+<h2 id="p">P</h2>
+<p><strong>PC</strong> (Program Change) — MIDI message for switching presets. PC 0–127 selects a preset within the current bank.</p>
+<p><strong>Pianoteq</strong> — Commercial physical modeling piano plugin. Zynthian supports it if you have a license. See <a href="synth-engines.html">Synth Engines</a>.</p>
+<p><strong>Preset</strong> — A saved configuration of an engine's parameters. Loading a preset switches timbre/sound. Presets live inside banks.</p>
+<hr>
+<h2 id="q">Q</h2>
+<p><strong>QMidiNet</strong> — Network MIDI protocol. Lets multiple devices share MIDI over a LAN. Enable in webconf → MIDI → Network.</p>
+<hr>
+<h2 id="s">S</h2>
+<p><strong>Sample rate</strong> — Number of audio samples per second. Common values: 44100 Hz (CD standard), 48000 Hz (professional standard). Must match what your audio device supports.</p>
+<p><strong>setBfree</strong> — Tonewheel organ emulator. Simulates the Hammond B3 organ with rotary speaker simulation. See <a href="synth-engines.html">Synth Engines</a>.</p>
+<p><strong>SF2</strong> — SoundFont 2. File format for sample-based instruments (.sf2 files). Loaded by FluidSynth.</p>
+<p><strong>SFZ</strong> — Open sample format. Used by LinuxSampler and Sfizz.</p>
+<p><strong>Sfizz</strong> — SFZ sample player. See <a href="synth-engines.html">Synth Engines</a>.</p>
+<p><strong>Snapshot</strong> — A complete saved state of Zynthian: all chains, engines, presets, MIDI assignments, mixer levels. Stored as a <code>.zss</code> file. See <a href="snapshots.html">Snapshots</a>.</p>
+<p><strong>SooperLooper</strong> — Audio looper engine. Records and plays back live audio loops.</p>
+<hr>
+<h2 id="u">U</h2>
+<p><strong>USB Audio</strong> — Audio device connected via USB. Plug-and-play on Linux. Selected by card name (<code>hw:S2</code>) in JACK configuration.</p>
+<hr>
+<h2 id="v">V</h2>
+<p><strong>V5</strong> — The current official Zynthian hardware kit. Raspberry Pi 4 + ZynADAC audio codec + TPA6130 headphone amp + 3.5" touchscreen + 4 rotary encoders + MIDI DIN.</p>
+<hr>
+<h2 id="w">W</h2>
+<p><strong>Webconf</strong> — The web configuration interface at <code>http://zynthian.local</code>. Used to configure audio, MIDI, display, and perform software updates. See <a href="webconf.html">Webconf Reference</a>.</p>
+<p><strong>Wiring profile</strong> — A configuration that maps GPIO pins to physical controls (encoders, buttons, LEDs). <code>TOUCH_ONLY</code> is used for setups with no physical encoders (mouse/touchscreen only).</p>
+<hr>
+<h2 id="x">X</h2>
+<p><strong>XRUN</strong> — An audio buffer underrun or overrun in JACK. Sounds as a click or glitch. Caused by CPU overload or too-small buffer size. Monitor with <code>journalctl -u jack2 -f | grep -i xrun</code>.</p>
+<hr>
+<h2 id="z">Z</h2>
+<p><strong>Z2</strong> — An older official Zynthian hardware kit. Raspberry Pi 4 + ZynADAC + touch display.</p>
+<p><strong>ZynADAC</strong> — Official Zynthian audio codec board. Uses PCM5242 (DAC) + PCM1863 (ADC) chips. Detected automatically by <code>zynthian_autoconfig.py</code>.</p>
+<p><strong>ZynAddSubFX</strong> — The flagship Zynthian synthesizer engine. Additive + subtractive + FM synthesis with a large preset library. See <a href="synth-engines.html">Synth Engines</a>.</p>
+<p><strong>zyncoder</strong> — C library compiled into <code>libzyncore.so</code>. Handles hardware encoder reading, MIDI routing, and chain management at the native layer.</p>
+<p><strong>ZynMidiRouter</strong> — Native C module (part of zyncoder) that routes MIDI between inputs and engines.</p>
+<p><strong>zynthian-sys</strong> — The system repository. Contains boot scripts, systemd units, hardware config. See <a href="architecture.html">Architecture</a>.</p>
+<p><strong>zynthian-ui</strong> — The UI repository. Contains the Zynthian application (GUI + engines).</p>
+<p><strong>zynthian-webconf</strong> — The webconf repository. Contains the web configuration interface.</p>
+<p><strong>ZynScreen</strong> — Official Zynthian 3.5" touchscreen display.</p>
+<p><strong>ZSS</strong> — Zynthian Snapshot (file extension). Human-readable YAML format. See <a href="snapshots.html">Snapshots</a>.</p>
+<hr>
+<p><em>Version: 2026-05-25</em></p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

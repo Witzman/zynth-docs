@@ -77,14 +77,18 @@ git commit -m "docs: ..."
 |------|------|
 | First boot, SD flash, initial access | `~/zynth-docs/htmldoku/getting-started.md` |
 | Understanding Zynthian concepts | `~/zynth-docs/htmldoku/userguide.md` |
-| Synth engines, loading presets | `~/zynth-docs/htmldoku/synth-engines.md` |
+| Synth engines, loading presets, engine params | `~/zynth-docs/htmldoku/synth-engines.md` |
 | MIDI controllers, routing | `~/zynth-docs/htmldoku/midi.md` |
 | Audio device, JACK setup | `~/zynth-docs/htmldoku/audio.md` |
 | Snapshots, saving/restoring state | `~/zynth-docs/htmldoku/snapshots.md` |
 | Webconf interface reference | `~/zynth-docs/htmldoku/webconf.md` |
 | Display, wiring, hardware variants | `~/zynth-docs/htmldoku/hardware.md` |
+| Common user setups (layering, looper, etc.) | `~/zynth-docs/htmldoku/recipes.md` |
 | Troubleshooting errors | `~/zynth-docs/htmldoku/troubleshooting.md` |
+| Quick Q&A / FAQ | `~/zynth-docs/htmldoku/faq.md` |
 | System architecture, boot sequence | `~/zynth-docs/htmldoku/architecture.md` |
+| All env vars / configuration variables | `~/zynth-docs/htmldoku/configuration-reference.md` |
+| LV2 plugin install and management | `~/zynth-docs/htmldoku/lv2-plugins.md` |
 
 Then grep the relevant engine/GUI file before proposing changes.
 

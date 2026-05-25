@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Understanding Zynthian — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html" aria-current="page"><strong>User Guide</strong></a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="understanding-zynthian">Understanding Zynthian</h1>
+<p>This page explains how Zynthian thinks about music-making — the mental model behind chains, engines, snapshots, and the signal flow. Read this before diving into individual features.</p>
+<hr>
+<h2 id="what-zynthian-is">What Zynthian Is</h2>
+<p>Zynthian is a self-contained music computer built on Raspberry Pi. It runs a collection of free Linux synthesizer engines (ZynAddSubFX, FluidSynth, setBfree, and many LV2 plugins) inside a unified interface that handles MIDI routing, audio mixing, and state management.</p>
+<p>Unlike a plugin host on a desktop computer, Zynthian is designed to work without a screen, without a desktop OS, and without a keyboard and mouse — though all of those can be attached. The physical Zynthian box typically has four rotary encoders, a small touchscreen, and audio I/O. The web interface at <code>http://zynthian.local</code> provides full configuration from any browser on the network.</p>
+<hr>
+<h2 id="chains-and-engines">Chains and Engines</h2>
+<p>The core unit in Zynthian is a <strong>chain</strong>: a path from a MIDI input through a synthesizer engine (or effect processor) to an audio output. Each chain runs one engine. Multiple chains can run simultaneously on separate MIDI channels — piano on channel 1, organ on channel 2, drums on channel 10.</p>
+<p>An <strong>engine</strong> is the sound-making component of a chain. A <strong>preset</strong> is a saved engine configuration — a specific instrument sound. Presets are organized into <strong>banks</strong>.</p>
+<pre><code>Chain = MIDI channel + Engine + Preset + Audio output assignment</code></pre>
+<div class="mermaid">
+flowchart LR
+    MIDI[MIDI Input<br/>USB / BLE / DIN] --> Router[ZynMidiRouter]
+    Router -->|ch 1| Chain1[Chain 1<br/>FluidSynth Piano]
+    Router -->|ch 2| Chain2[Chain 2<br/>setBfree Organ]
+    Router -->|ch 10| Chain3[Chain 3<br/>FluidSynth Drums]
+    Chain1 --> Mixer[ZynMixer]
+    Chain2 --> Mixer
+    Chain3 --> Mixer
+    Mixer --> Out[Audio Output]
+</div>
+<hr>
+<h2 id="signal-flow">Signal Flow</h2>
+<p>MIDI arrives from any connected controller and is routed by the ZynMidiRouter [<code>zynthian-ui/zyngine/zynthian_engine_midi_control.py</code>] to chains by channel number. Each chain's engine produces audio that flows through the JACK audio graph to the output device. The ZynMixer provides per-chain volume, pan, and mute/solo.</p>
+<p>The full software stack:</p>
+<pre><code>Hardware controller → USB/BLE/DIN → ZynMidiRouter
+                                          ↓ (per channel)
+                               Engine subprocess (JACK client)
+                                          ↓
+                               ZynMixer (JACK client)
+                                          ↓
+                               ALSA hw:CardName (JACK output)
+                                          ↓
+                               Speaker / Headphones</code></pre>
+<p>JACK is the connective tissue [<code>zynthian-sys/etc/systemd/jack2.service</code>]. If JACK is not running, no sound is possible — all engines require it.</p>
+<hr>
+<h2 id="navigation-screen-layout">Navigation: Screen Layout</h2>
+<p>The main Zynthian screen shows:</p>
+<pre><code>┌─────────────────────────────────┐
+│ [IP]  [CPU%]  [AUDIO]  [MIDI]   │  ← Status bar
+├─────────────────────────────────┤
+│                                 │
+│   Chain list / Active screen    │  ← Main area
+│                                 │
+├───────────┬───────────┬─────────┤
+│  [Chain]  │ [Preset]  │  [Mix]  │  ← Soft buttons (touchscreen)
+└───────────┴───────────┴─────────┘</code></pre>
+<p>The status bar shows IP address, CPU usage, and MIDI/audio activity indicators.</p>
+<hr>
+<h2 id="v5-hardware-controls">V5 Hardware Controls</h2>
+<p>On a V5 kit, the four rotary encoders each control a layer of the UI:</p>
+<table><thead><tr><th>Encoder</th><th>Default Function</th></tr></thead><tbody><tr><td>1 (leftmost)</td><td>Chain select — cycles through chains</td></tr><tr><td>2</td><td>Bank select — cycles through preset banks</td></tr><tr><td>3</td><td>Preset select — cycles through presets</td></tr><tr><td>4</td><td>Volume / parameter value</td></tr><tr><td>Any encoder push</td><td>Select / confirm</td></tr></tbody></table>
+<p><strong>Button press durations on V5:</strong></p>
+<table><thead><tr><th>Duration</th><th>Name</th><th>Threshold</th></tr></thead><tbody><tr><td>Tap (< 300ms)</td><td>Short</td><td><code>ZYNTHIAN_UI_SWITCH_BOLD_MS</code></td></tr><tr><td>Hold (300ms–2s)</td><td>Bold</td><td><code>ZYNTHIAN_UI_SWITCH_BOLD_MS</code> to <code>_LONG_MS</code></td></tr><tr><td>Long hold (> 2s)</td><td>Long</td><td><code>ZYNTHIAN_UI_SWITCH_LONG_MS</code></td></tr></tbody></table>
+<p>Short/Bold/Long triggers different actions per switch. These are configurable via <code>ZYNTHIAN_WIRING_CUSTOM_SWITCH_NN__UI_SHORT/BOLD/LONG</code> in the envars file [<code>zynthian-sys/config/zynthian_envars_V5.sh</code>].</p>
+<p><strong>Common V5 button actions (default profile):</strong></p>
+<table><thead><tr><th>Switch</th><th>Short</th><th>Bold</th><th>Long</th></tr></thead><tbody><tr><td>SW1</td><td>MENU</td><td>SCREEN_ADMIN</td><td>POWER_OFF</td></tr><tr><td>SW2</td><td>SCREEN_AUDIO_MIXER</td><td>SCREEN_ALSA_MIXER</td><td>ALL_SOUNDS_OFF</td></tr><tr><td>SW3</td><td>CHAIN_CONTROL</td><td>BANK_PRESET</td><td>PRESET_FAV</td></tr><tr><td>SW4</td><td>SCREEN_ZS3</td><td>SCREEN_SNAPSHOT</td><td>—</td></tr></tbody></table>
+<hr>
+<h2 id="midi-channel-routing">MIDI Channel Routing</h2>
+<p>By default:</p>
+<ul><li>Chain 1 → MIDI channel 1</li><li>Chain 2 → MIDI channel 2</li><li>(and so on)</li></ul>
+<p>To change: tap the chain → chain options → <strong>MIDI Channel</strong>.</p>
+<p>Set a chain to <strong>Omni</strong> to respond to all MIDI channels simultaneously.</p>
+<p>Use a <strong>Note Range</strong> (chain options → Note Range) to split a keyboard: e.g. Piano below C4, Organ above C4.</p>
+<hr>
+<h2 id="snapshots">Snapshots</h2>
+<p>A <strong>snapshot</strong> saves the complete Zynthian state: all chains, their engines, presets, MIDI routing, and mixer settings. One <code>.zss</code> file = one complete live setup. Load a snapshot to instantly switch between setups.</p>
+<p>The special file <code>last_state.zss</code> is auto-loaded on every boot. Save to it to make a setup permanent.</p>
+<p>Snapshots live in <code>/zynthian/zynthian-my-data/snapshots/</code>. See <a href="snapshots.html">Snapshots</a> for the full workflow.</p>
+<hr>
+<h2 id="touch-vs-encoders-vs-web">Touch vs. Encoders vs. Web</h2>
+<p>Zynthian supports three interaction modes simultaneously:</p>
+<p><strong>Touchscreen:</strong> tap chains, select engines, navigate menus directly. Most operations reachable in 2–3 taps.</p>
+<p><strong>Rotary encoders (V5 kit):</strong> four encoders navigate menus and adjust parameters without looking at the screen. Push to select. Most useful during a live performance.</p>
+<p><strong>Web interface (<code>http://zynthian.local</code>):</strong> full configuration from any browser. Required for initial audio/display setup and for tasks not exposed on the touchscreen (MIDI port configuration, software updates). See <a href="webconf.html">Webconf Reference</a>.</p>
+<hr>
+<h2 id="zs3--zynthian-subsnapshots">ZS3 — Zynthian Subsnapshots</h2>
+<p>ZS3 (Zynthian SubSnapshot 3) lets you store and recall partial state changes within a running performance — different from a full snapshot. ZS3 can save:</p>
+<ul><li>MIDI channel assignments per chain</li><li>Engine parameters</li><li>Mixer levels</li></ul>
+<p>Recall a ZS3 via Program Change messages from a MIDI controller. Useful for switching between song arrangements without stopping audio.</p>
+<hr>
+<h2 id="whats-next">What's Next</h2>
+<ul><li><a href="synth-engines.html">Synth Engines</a> — which engines to use and when</li><li><a href="recipes.html">Recipes</a> — practical multi-engine setups</li><li><a href="snapshots.html">Snapshots</a> — saving and restoring setups</li><li><a href="midi.html">MIDI Controllers</a> — connecting physical instruments</li><li><a href="webconf.html">Webconf Reference</a> — all configuration options</li></ul>
+<hr>
+<p><em>Version: 2026-05-25 — derived from <code>zynthian-ui/zyngine/</code>, <code>zynthian-ui/zyngui/</code>, <code>zynthian-sys/config/zynthian_envars_V5.sh</code>.</em></p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

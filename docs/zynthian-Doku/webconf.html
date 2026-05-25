@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Webconf Reference — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html" aria-current="page"><strong>Webconf Reference</strong></a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="webconf-reference">Webconf Reference</h1>
+<p>The webconf tool at <code>http://zynthian.local</code> (default password: <code>opensynth</code>) is the primary configuration interface. This page describes each section.</p>
+<hr>
+<h2 id="dashboard">Dashboard</h2>
+<p>The main dashboard shows system status: CPU usage, memory, temperature, JACK status, and connected MIDI devices. It also provides quick links to the most common configuration sections.</p>
+<p>The dashboard is implemented in <code>zynthian-webconf/lib/dashboard_handler.py</code>.</p>
+<hr>
+<h2 id="hardware">Hardware</h2>
+<h3 id="audio">Audio</h3>
+<p>Select the audio device (soundcard), sample rate, JACK buffer size, and number of periods. Changes require a reboot. See <a href="audio.html">Audio Setup</a> for guidance on values.</p>
+<p>Handler: <code>zynthian-webconf/lib/audio_config_handler.py</code>.</p>
+<h3 id="display">Display</h3>
+<p>Set the display type (HDMI, touchscreen model, framebuffer device) and resolution. For HDMI TVs, <code>HDMI</code> mode is standard. For official Zynthian screens, select the matching model (e.g. <code>ZynScreen 3.5</code>).</p>
+<p>Handler: <code>zynthian-webconf/lib/display_config_handler.py</code>.</p>
+<h3 id="wiring">Wiring</h3>
+<p>Select the hardware wiring layout — which GPIO pins correspond to which controls (encoders, buttons, LEDs). Use <code>TOUCH_ONLY</code> for a Pi with no physical controllers (mouse/touchscreen only).</p>
+<p>Wiring profiles are defined in <code>zynthian-sys/config/wiring-profiles/</code>.</p>
+<h3 id="hardware-options">Hardware Options</h3>
+<p>Additional hardware settings: MIDI DIN enable, CV/gate ports, fan control, RTC module. Handler: <code>zynthian-webconf/lib/hwoptions_config_handler.py</code>.</p>
+<hr>
+<h2 id="midi">MIDI</h2>
+<h3 id="ports">Ports</h3>
+<p>Lists all detected MIDI ports (USB, Bluetooth, network). Toggle each port active/inactive. Active ports are routed to the ZynMidiRouter.</p>
+<h3 id="cc-routing">CC Routing</h3>
+<p>Map incoming MIDI CC messages to internal controls. Assign a CC number to a Zynthian parameter.</p>
+<h3 id="profiles">Profiles</h3>
+<p>Save and load MIDI routing configurations as profiles.</p>
+<p>Handler: <code>zynthian-webconf/lib/midi_config_handler.py</code>.</p>
+<hr>
+<h2 id="engines">Engines</h2>
+<p>Shows installed LV2 plugins and native engines. Use this page to regenerate the engine cache after installing new plugins.</p>
+<p>Handler: <code>zynthian-webconf/lib/engines_handler.py</code>.</p>
+<hr>
+<h2 id="presets">Presets</h2>
+<p>Browse and manage preset banks for FluidSynth soundfonts and other engines. Upload new <code>.sf2</code> files here.</p>
+<p>Handler: <code>zynthian-webconf/lib/presets_config_handler.py</code>.</p>
+<hr>
+<h2 id="snapshots">Snapshots</h2>
+<p>List, load, save, delete, and download snapshots. Uploading a <code>.zss</code> file here adds it to the snapshot library.</p>
+<hr>
+<h2 id="system">System</h2>
+<h3 id="software-update">Software Update</h3>
+<p>Pulls the latest code from all three repositories and restarts services. Equivalent to running <code>update_zynthian.sh</code> via SSH.</p>
+<h3 id="reboot--shutdown">Reboot / Shutdown</h3>
+<p>Clean reboot or shutdown of the Pi.</p>
+<h3 id="security">Security</h3>
+<p>Change the webconf password. Note: this is separate from the SSH root password.</p>
+<p>Handler: <code>zynthian-webconf/lib/security_config_handler.py</code>.</p>
+<h3 id="wifi">Wifi</h3>
+<p>Configure WiFi networks. All WiFi management is done here — not via system config files directly.</p>
+<p>Handler: <code>zynthian-webconf/lib/wifi_config_handler.py</code>.</p>
+<hr>
+<h2 id="remote-access">Remote Access</h2>
+<ul><li><strong>SSH:</strong> <code>ssh root@zynthian.local</code> — password <code>opensynth</code> (default)</li><li><strong>SFTP:</strong> Same credentials, same host — use any SFTP client to transfer files</li><li><strong>VNC:</strong> Available on port 5900 if enabled in webconf</li><li><strong>Browser:</strong> <code>http://zynthian.local</code> — webconf on port 80</li></ul>
+<hr>
+<h2 id="whats-next">What's Next</h2>
+<ul><li><a href="hardware.html">Hardware Setup</a> — wiring and display options</li><li><a href="audio.html">Audio Setup</a> — audio device configuration</li><li><a href="midi.html">MIDI Controllers</a> — port configuration</li></ul>
+<hr>
+<p><em>Version: 2026-05-25 — derived from <code>zynthian-webconf/lib/</code>, <code>zynthian-webconf/zynthian_webconf.py</code>.</em></p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Architecture — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html" aria-current="page"><strong>Architecture</strong></a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="architecture">Architecture</h1>
+<p>Zynthian is a three-repository system. This page explains how the repos relate to each other, how the system boots, and which service does what.</p>
+<hr>
+<h2 id="repository-map">Repository Map</h2>
+<pre><code>/zynthian/
+├── zynthian-sys/         ← system layer: boot scripts, config, hardware detection
+├── zynthian-ui/          ← application layer: GUI + synth engines
+├── zynthian-webconf/     ← web interface: configuration via browser
+└── zyncoder/             ← native C library (compiled separately; not a separate repo)
+    └── build/
+        └── libzyncore.so ← required by zynthian-ui and zynthian-webconf</code></pre>
+<p>All three repos live under <code>/zynthian/</code>. The compiled <code>libzyncore.so</code> is a shared dependency — both <code>zynthian-ui</code> and <code>zynthian-webconf</code> import it at startup.</p>
+<hr>
+<h2 id="layer-diagram">Layer Diagram</h2>
+<div class="mermaid">
+graph TD
+    A[Hardware: Pi 4/5 + I2S HAT or USB audio + display] --> B[zynthian-sys: boot scripts & config]
+    B --> C[JACK2: audio server]
+    B --> D[zynthian-ui: GUI + engines]
+    B --> E[zynthian-webconf: web config]
+    C --> D
+    F[zyncoder/libzyncore.so] --> D
+    F --> E
+    D --> G[ALSA → audio output]
+    D --> H[ZynMidiRouter → MIDI I/O]
+</div>
+<hr>
+<h2 id="boot-sequence">Boot Sequence</h2>
+<h3 id="first-boot-one-time-only">First Boot (one-time only)</h3>
+<p><code>first_boot.service</code> [<code>zynthian-sys/etc/systemd/first_boot.service</code>] runs as a one-shot systemd unit. The service script is <code>first_boot.sh</code> [<code>zynthian-sys/sbin/first_boot.sh</code>].</p>
+<div class="mermaid">
+sequenceDiagram
+    participant Pi as Pi (first_boot.service)
+    participant I2C as i2c bus
+    participant FS as Filesystem
+
+    Pi->>I2C: scan for PCM1863/PCM5242/RV3028/TPA6130/MCP23017
+    I2C-->>Pi: chip map → board profile (V5/Z2/HifiBerry)
+    Pi->>FS: write zynthian_envars.sh
+    Pi->>Pi: fix_soundcard_mixer_ctrls.py — set ALSA defaults
+    Pi->>Pi: regen SSH host keys (unique per device)
+    Pi->>Pi: create ZynthianAP WiFi hotspot
+    Pi->>Pi: jalv --scan — rebuild LV2 plugin cache (5-10 min)
+    Pi->>FS: raspi-config --expand-rootfs
+    Pi->>Pi: disable first_boot.service, reboot
+</div>
+<p>After first boot, <code>first_boot.service</code> is disabled permanently.</p>
+<h3 id="every-boot">Every Boot</h3>
+<pre><code>multi-user.target
+    └── zynthian-config-on-boot.service   (runs config-on-boot.sh)
+         └── jack2.service                (JACK audio server)
+              ├── zynthian.service         (startx → zynthian_main.py)
+              └── zynthian-webconf.service (Tornado web server on port 80)</code></pre>
+<p><code>config-on-boot.sh</code> checks for a <code>/boot/zynthian_envars.sh</code> override and applies any pending software updates. After finishing, it starts JACK.</p>
+<p>JACK must be running before either the UI or webconf can start (both are <code>Requires=jack2.service</code>).</p>
+<hr>
+<h2 id="zynthian-sys">zynthian-sys</h2>
+<p><strong>Role:</strong> System glue. Does not contain synth logic.</p>
+<p>Key files:</p>
+<table><thead><tr><th>File</th><th>Purpose</th></tr></thead><tbody><tr><td><code>sbin/first_boot.sh</code></td><td>One-time first-boot setup</td></tr><tr><td><code>sbin/config-on-boot.sh</code></td><td>Per-boot config check and update</td></tr><tr><td><code>sbin/zynthian_autoconfig.py</code></td><td>Hardware detection via i2c scan</td></tr><tr><td><code>sbin/fix_soundcard_mixer_ctrls.py</code></td><td>Set audio device mixer defaults</td></tr><tr><td><code>etc/systemd/*.service</code></td><td>All systemd unit files</td></tr><tr><td><code>config/zynthian_envars_V5.sh</code></td><td>Environment variables for V5 hardware</td></tr><tr><td><code>config/wiring-profiles/</code></td><td>GPIO wiring layouts for different control panels</td></tr></tbody></table>
+<p>Environment variables from <code>zynthian_envars.sh</code> (auto-generated by autoconfig) control everything downstream: audio device, display type, wiring layout, MIDI DIN enable.</p>
+<hr>
+<h2 id="zynthian-ui">zynthian-ui</h2>
+<p><strong>Role:</strong> The Zynthian application. Runs inside X11 (started by <code>startx ./zynthian.sh</code>).</p>
+<p>Key subpackages:</p>
+<table><thead><tr><th>Path</th><th>Role</th></tr></thead><tbody><tr><td><code>zynthian_main.py</code></td><td>Entry point; initializes chains, MIDI router, GUI</td></tr><tr><td><code>zyngui/</code></td><td>All GUI screens (<code>zynthian_gui_*.py</code>)</td></tr><tr><td><code>zyngine/</code></td><td>Engine wrappers for each synth</td></tr><tr><td><code>zynautoconnect/</code></td><td>JACK and ALSA MIDI auto-connection daemon</td></tr></tbody></table>
+<h3 id="engine-architecture">Engine Architecture</h3>
+<p>Each synth engine is a Python class in <code>zyngine/</code> that wraps an external process:</p>
+<pre><code>zynthian_engine_fluidsynth.py → runs fluidsynth subprocess
+zynthian_engine_zynaddsubfx.py → runs zynaddsubfx subprocess
+zynthian_engine_jalv.py → runs jalv (LV2 host) subprocess
+... etc.</code></pre>
+<p>The engine class handles: starting the subprocess, sending parameter changes, loading banks/presets, stopping.</p>
+<p><code>zynthian_chain_manager.py</code> manages chains. Each chain is one engine instance with MIDI routing and audio output assignments. Multiple chains run simultaneously — the chain manager handles start/stop/routing.</p>
+<h3 id="libzyncoreso-dependency">libzyncore.so Dependency</h3>
+<p><code>zyngine/zynthian_chain_manager.py</code> imports <code>lib_zyncore</code> at module load time:</p>
+<pre><code class="language-python">from zynlibs.zyncore import lib_zyncore</code></pre>
+<p><code>lib_zyncore</code> is the Python binding to <code>libzyncore.so</code>, the compiled C library from <code>zyncoder/</code>. If this <code>.so</code> is missing, the entire UI fails to start, and webconf also fails (since it imports from <code>zyngui</code>).</p>
+<p><strong>Rebuild if missing:</strong></p>
+<pre><code class="language-bash">cd /zynthian/zyncoder
+mkdir -p build &amp;&amp; cd build
+cmake .. &amp;&amp; make -j4</code></pre>
+<hr>
+<h2 id="zynthian-webconf">zynthian-webconf</h2>
+<p><strong>Role:</strong> Configuration web interface. Tornado-based HTTP server on port 80.</p>
+<p>Key files:</p>
+<table><thead><tr><th>File</th><th>Role</th></tr></thead><tbody><tr><td><code>zynthian_webconf.py</code></td><td>Tornado app entry point</td></tr><tr><td><code>lib/audio_config_handler.py</code></td><td>Audio device selection</td></tr><tr><td><code>lib/midi_config_handler.py</code></td><td>MIDI port config</td></tr><tr><td><code>lib/hwoptions_config_handler.py</code></td><td>Hardware options</td></tr><tr><td><code>lib/display_config_handler.py</code></td><td>Display settings</td></tr><tr><td><code>lib/dashboard_handler.py</code></td><td>System status dashboard</td></tr><tr><td><code>lib/wifi_config_handler.py</code></td><td>WiFi management</td></tr><tr><td><code>lib/security_config_handler.py</code></td><td>Password management</td></tr></tbody></table>
+<p>Webconf reads and writes <code>zynthian_envars.sh</code> for most settings. Changes take effect after reboot (for hardware settings) or service restart (for MIDI/software settings).</p>
+<hr>
+<h2 id="jack-and-audio-routing">JACK and Audio Routing</h2>
+<p>JACK is the audio backend. All engines connect to JACK, and JACK routes audio to the ALSA hardware device.</p>
+<pre><code>Engine (FluidSynth) → JACK port → ZynMixer → JACK port → ALSA hw:S2 → speaker</code></pre>
+<p><code>zynautoconnect</code> runs as a thread inside zynthian-ui and automatically wires new JACK clients to the right ports based on chain configuration.</p>
+<p><strong>JACK is configured by</strong> <code>zynthian_envars.sh</code>:</p>
+<pre><code class="language-bash">JACKD_OPTIONS="-P 70 -t 2000 -s a -d alsa -d hw:S2 -r 44100 -p 256 -n 3"</code></pre>
+<ul><li><code>-d hw:S2</code> — use ALSA card named <code>S2</code></li><li><code>-r 44100</code> — 44100 Hz sample rate</li><li><code>-p 256</code> — 256 frames per period (latency)</li><li><code>-n 3</code> — 3 periods per cycle</li></ul>
+<hr>
+<h2 id="midi-routing">MIDI Routing</h2>
+<p><code>ZynMidiRouter</code> is a native C module (part of <code>zyncoder</code>) that handles MIDI routing between:</p>
+<ul><li>External MIDI inputs (USB, BLE, DIN-5, network)</li><li>Synth engine MIDI inputs (one per chain)</li><li>MIDI outputs / THRU</li></ul>
+<p>The router applies channel filtering — chain 1 receives channel 1, chain 2 receives channel 2, etc. — unless a chain is set to Omni.</p>
+<div class="mermaid">
+flowchart TD
+    USB[USB MIDI Controller]
+    BLE[Bluetooth MIDI]
+    DIN[DIN-5 MIDI IN]
+    NET[Network MIDI / QMidiNet]
+
+    USB --> Router[ZynMidiRouter\nnative C / zyncoder]
+    BLE --> Router
+    DIN --> Router
+    NET --> Router
+
+    Router -->|ch 1 filter| E1[Engine Chain 1]
+    Router -->|ch 2 filter| E2[Engine Chain 2]
+    Router -->|ch N filter| EN[Engine Chain N]
+    Router -->|THRU| DOUT[DIN-5 MIDI OUT]
+
+    E1 --> Jack[JACK audio]
+    E2 --> Jack
+    EN --> Jack
+</div>
+<hr>
+<h2 id="whats-next">What's Next</h2>
+<ul><li><a href="getting-started.html">Getting Started</a> — practical first-time setup</li><li><a href="troubleshooting.html">Troubleshooting</a> — when things go wrong</li><li><a href="webconf.html">Webconf Reference</a> — configuration interface</li></ul>
+<hr>
+<p><em>Version: 2026-05-25 — derived from <code>zynthian-sys/sbin/</code>, <code>zynthian-ui/zyngine/</code>, <code>zynthian-webconf/zynthian_webconf.py</code>.</em></p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

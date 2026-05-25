@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LV2 Plugins — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html" aria-current="page"><strong>LV2 Plugins</strong></a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="lv2-plugins">LV2 Plugins</h1>
+<p>LV2 is a standard plugin format for Linux audio. Zynthian runs LV2 plugins as synth engines or effects via the <code>jalv</code> host. This page covers installing, managing, and using LV2 plugins.</p>
+<hr>
+<h2 id="how-zynthian-uses-lv2">How Zynthian Uses LV2</h2>
+<p>Zynthian wraps each LV2 plugin in <code>zynthian_engine_jalv.py</code>. When you select an LV2 plugin as a chain engine, Zynthian:</p>
+<ol><li>Starts <code>jalv</code> as a subprocess with the plugin URI</li><li>Connects jalv's MIDI input to the chain's MIDI channel</li><li>Connects jalv's audio output to the JACK audio mixer</li><li>Exposes the plugin's LV2 ports as Zynthian controls (encoders/knobs)</li></ol>
+<p>LV2 plugins include both <strong>instruments</strong> (synthesizers, samplers) and <strong>effects</strong> (reverb, EQ, compressor).</p>
+<hr>
+<h2 id="what-plugins-are-installed">What Plugins Are Installed?</h2>
+<pre><code class="language-bash"># List all installed LV2 bundles
+ls /usr/lib/lv2/
+
+# List individual plugins with full names
+jalv --list | sort</code></pre>
+<p>The webconf Engines page shows all detected plugins. If a plugin is installed but not visible, regenerate the cache: <strong>Engines</strong> → <strong>Regenerate LV2 Cache</strong>.</p>
+<p>The LV2 search path (from <code>zynthian_envars.sh</code>):</p>
+<pre><code class="language-bash">/usr/lib/lv2
+/usr/lib/arm-linux-gnueabihf/lv2
+/usr/local/lib/lv2
+/zynthian/zynthian-plugins/lv2
+/zynthian/zynthian-data/presets/lv2
+/zynthian/zynthian-my-data/presets/lv2</code></pre>
+<hr>
+<h2 id="installing-lv2-plugins">Installing LV2 Plugins</h2>
+<h3 id="from-the-zynthian-os-package-repositories">From the Zynthian OS Package Repositories</h3>
+<p>ZynthianOS is based on Debian. Many LV2 plugins are available as packages:</p>
+<pre><code class="language-bash"># Search for LV2 packages
+apt search lv2 | grep -v "^Sorting\|^Full Text"
+
+# Common useful packages
+apt install calf-plugins          # Calf reverb, chorus, EQ, compressor
+apt install mda-lv2               # MDA piano, synths, effects
+apt install zam-plugins           # ZaMultiCompX2, ZaMaximX2
+apt install lsp-plugins           # LSP reverb, parametric EQ, compressor
+apt install guitarix              # Guitarix guitar effects as LV2
+apt install setBfree              # setBfree organ (if not present)
+apt install swh-plugins           # Steve Harris LV2 collection</code></pre>
+<p>After installing:</p>
+<pre><code class="language-bash"># Regenerate Zynthian's LV2 cache
+systemctl restart zynthian
+# or via webconf → Engines → Regenerate LV2 Cache</code></pre>
+<h3 id="manual-install-custom-plugins">Manual Install (Custom Plugins)</h3>
+<p>Copy the <code>.lv2</code> bundle directory to a path in <code>LV2_PATH</code>:</p>
+<pre><code class="language-bash"># Example: copy a downloaded plugin
+cp -r ~/MyPlugin.lv2 /zynthian/zynthian-my-data/presets/lv2/
+
+# Verify jalv can find it
+jalv --list | grep "MyPlugin"</code></pre>
+<h3 id="via-zynthian-recipes">Via Zynthian Recipes</h3>
+<p>Zynthian includes install scripts for common plugins in <code>/zynthian/zynthian-sys/scripts/recipes/</code>. These handle dependencies and configuration:</p>
+<pre><code class="language-bash">ls /zynthian/zynthian-sys/scripts/recipes/ | grep -i lv2</code></pre>
+<hr>
+<h2 id="plugin-presets">Plugin Presets</h2>
+<p>LV2 plugins can have their own preset system (stored as <code>.ttl</code> files in the bundle). Zynthian exposes these as "banks" in the chain's bank/preset navigation.</p>
+<p>Presets are stored in:</p>
+<ul><li><code>/zynthian/zynthian-data/presets/lv2/</code> — factory presets (read-only)</li><li><code>/zynthian/zynthian-my-data/presets/lv2/</code> — user presets</li></ul>
+<p>To save a custom preset from the UI:</p>
+<ul><li>Navigate to the plugin's control screen → options → <strong>Save Preset</strong>.</li></ul>
+<hr>
+<h2 id="plugin-controls">Plugin Controls</h2>
+<p>LV2 plugin parameters (ports) are automatically mapped to Zynthian controls:</p>
+<ul><li>On V5: encoder 3 navigates parameters, encoder 4 adjusts value</li><li>On touchscreen: tap a parameter in the control grid</li><li>Via MIDI: webconf → MIDI → CC → map CC to a specific parameter</li></ul>
+<p>Parameter ranges, defaults, and units come from the plugin's LV2 metadata (<code>.ttl</code> file).</p>
+<hr>
+<h2 id="recommended-plugins">Recommended Plugins</h2>
+<table><thead><tr><th>Plugin</th><th>Package</th><th>Use</th></tr></thead><tbody><tr><td>Calf Reverb</td><td><code>calf-plugins</code></td><td>High-quality hall/room reverb</td></tr><tr><td>Calf Compressor</td><td><code>calf-plugins</code></td><td>Transparent compressor for dynamics</td></tr><tr><td>ZaMultiCompX2</td><td><code>zam-plugins</code></td><td>Multiband compressor</td></tr><tr><td>LSP Parametric EQ</td><td><code>lsp-plugins</code></td><td>High-quality parametric EQ</td></tr><tr><td>MDA Piano</td><td><code>mda-lv2</code></td><td>Lightweight electric piano</td></tr><tr><td>MDA ePiano</td><td><code>mda-lv2</code></td><td>Wurlitzer-style electric piano</td></tr><tr><td>Guitarix (Amp Sim)</td><td><code>guitarix</code></td><td>Guitar amp and cabinet simulation</td></tr><tr><td>setBfree</td><td><code>setbfree</code></td><td>Tonewheel organ (see <a href="synth-engines.html">Synth Engines</a>)</td></tr><tr><td>Helm</td><td>(manual)</td><td>Polyphonic FM/subtractive synth [low]</td></tr><tr><td>Surge XT</td><td>(manual)</td><td>Advanced hybrid synthesizer [low]</td></tr></tbody></table>
+<blockquote><p><strong>Note:</strong> Helm and Surge XT may require manual compilation on ARM. Performance varies by Pi model. [low]</p></blockquote>
+<hr>
+<h2 id="troubleshooting-lv2">Troubleshooting LV2</h2>
+<p><strong>Plugin not visible in Zynthian after installing:</strong></p>
+<pre><code class="language-bash"># Check it's in the LV2 path
+jalv --list | grep "plugin-name"
+# If found, regenerate cache:
+systemctl restart zynthian</code></pre>
+<p><strong>Plugin crashes / jalv exits immediately:</strong></p>
+<pre><code class="language-bash"># Test directly
+jalv "http://plugin.uri/" 2&gt;&amp;1 | head -20</code></pre>
+<p>Check if plugin requires specific sample rates or channel counts that don't match current JACK config.</p>
+<p><strong>Plugin loads but produces no sound:</strong> Verify JACK connections: <code>jack_lsp -c</code> shows all ports and connections. The plugin's audio output must be connected to the JACK mixer input.</p>
+<p><strong>Plugin controls don't respond to encoders:</strong> The plugin may expose many ports. Navigate with encoder 3 until you find the relevant parameter. Parameter names come directly from the plugin's LV2 metadata.</p>
+<hr>
+<h2 id="whats-next">What's Next</h2>
+<ul><li><a href="synth-engines.html">Synth Engines</a> — all native Zynthian engines including Jalv</li><li><a href="audio.html">Audio Setup</a> — JACK configuration</li><li><a href="configuration-reference.html">Configuration Reference</a> — LV2_PATH variable</li></ul>
+<hr>
+<p><em>Version: 2026-05-25 — derived from <code>zynthian-ui/zyngine/zynthian_engine_jalv.py</code>, <code>zynthian-sys/config/zynthian_envars_V5.sh</code>.</em></p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

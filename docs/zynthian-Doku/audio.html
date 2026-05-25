@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Audio Setup — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html" aria-current="page"><strong>Audio Setup</strong></a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="audio-setup">Audio Setup</h1>
+<p>Zynthian uses JACK as its audio engine. This page covers selecting an audio device, configuring JACK, and tuning latency.</p>
+<hr>
+<h2 id="choosing-an-audio-device">Choosing an Audio Device</h2>
+<p>Open <code>http://zynthian.local</code> → <strong>Hardware</strong> → <strong>Audio</strong>. The <strong>Soundcard</strong> dropdown lists all detected audio devices. Select your device and click Save, then Reboot.</p>
+<p>Available device types:</p>
+<table><thead><tr><th>Type</th><th>Notes</th></tr></thead><tbody><tr><td><strong>USB Audio</strong></td><td>Plug-and-play. Appears by ALSA name. Sample rate must match device capability.</td></tr><tr><td><strong>HifiBerry DAC+</strong></td><td>I2S HAT, high quality. Detected automatically by <code>zynthian_autoconfig.py</code>.</td></tr><tr><td><strong>ZynADAC</strong></td><td>Official Zynthian audio HAT — best quality option.</td></tr><tr><td><strong>bcm2835 Headphones</strong></td><td>Built-in 3.5mm jack. Works but lower quality and higher noise than a dedicated device.</td></tr></tbody></table>
+<hr>
+<h2 id="jack-configuration">JACK Configuration</h2>
+<p>JACK parameters are set in webconf → <strong>Hardware</strong> → <strong>Audio</strong> and written to the environment [<code>zynthian-sys/config/zynthian_envars_V5.sh</code>]:</p>
+<table><thead><tr><th>Parameter</th><th>Recommended</th><th>Effect</th></tr></thead><tbody><tr><td><strong>Sample rate</strong></td><td>44100 (USB) / 48000 (HAT)</td><td>Must match device capability</td></tr><tr><td><strong>Buffer size</strong></td><td>256</td><td>Lower = less latency; higher = more stable</td></tr><tr><td><strong>Periods</strong></td><td>3</td><td>Number of JACK periods per cycle</td></tr></tbody></table>
+<p>JACK starts as <code>jack2.service</code> [<code>zynthian-sys/etc/systemd/jack2.service</code>] and must be running before the Zynthian UI starts.</p>
+<hr>
+<h2 id="checking-jack-status">Checking JACK Status</h2>
+<pre><code class="language-bash">ssh root@zynthian.local
+systemctl status jack2 --no-pager
+journalctl -u jack2 -n 20 --no-pager</code></pre>
+<p>A healthy JACK log shows:</p>
+<pre><code>configuring for 44100Hz, period = 512 frames
+ALSA: use 3 periods for capture
+ALSA: use 3 periods for playback</code></pre>
+<p>If JACK fails to start, the Zynthian UI shows an error splash screen and no sound is possible.</p>
+<hr>
+<h2 id="usb-audio-device-name-stability">USB Audio Device Name Stability</h2>
+<p>USB audio card numbers (<code>hw:0</code>, <code>hw:1</code> etc.) change between reboots if devices are plugged in a different order. Zynthian identifies cards by name (<code>hw:S2</code>, <code>hw:U0x41e0x323d</code>) to avoid this problem [<code>zynthian-sys/sbin/fix_soundcard_mixer_ctrls.py</code>].</p>
+<p>If a USB device enumerates with an unstable name (long hex string like <code>U0x41e0x323d</code>), create a udev rule or use the <code>snd-usb-audio</code> quirk to assign a stable name. This happens automatically after the device is selected in webconf and the system is rebooted.</p>
+<hr>
+<h2 id="usb-audio-broken-pipe--interface-errors">USB Audio Broken Pipe / Interface Errors</h2>
+<p>Some USB audio devices fail with <code>usb_set_interface failed (-32)</code> or <code>ALSA: cannot configure capture channel</code>. These are known Linux USB audio issues with specific devices.</p>
+<p>Fix: add the <code>skip_validation</code> quirk for your device:</p>
+<pre><code class="language-bash">echo 'options snd-usb-audio vid=0xVVVV pid=0xPPPP skip_validation=y' &gt;&gt; /etc/modprobe.d/usb-audio.conf
+rmmod snd-usb-audio &amp;&amp; modprobe snd-usb-audio</code></pre>
+<p>Replace <code>VVVV</code> and <code>PPPP</code> with your device's vendor and product IDs from <code>lsusb</code>. Confirm the fix with <code>speaker-test -D hw:DeviceName -c 2 -r 44100 -t sine</code>.</p>
+<hr>
+<h2 id="latency-tuning">Latency Tuning</h2>
+<p>Lower buffer size reduces latency but increases CPU load and XRUN risk. Start at 512 and reduce if the system is stable:</p>
+<ul><li><strong>512 frames at 44100 Hz</strong> ≈ 11.6ms round-trip (good for most use)</li><li><strong>256 frames at 44100 Hz</strong> ≈ 5.8ms (low latency; needs stable USB/HAT device)</li><li><strong>128 frames</strong> — only stable with I2S HATs on Pi 4</li></ul>
+<p>Monitor XRUNs in the JACK log:</p>
+<pre><code class="language-bash">journalctl -u jack2 -f | grep -i xrun</code></pre>
+<hr>
+<h2 id="whats-next">What's Next</h2>
+<ul><li><a href="getting-started.html">Getting Started</a> — initial audio device selection</li><li><a href="troubleshooting.html">Troubleshooting</a> — JACK errors and no-sound situations</li><li><a href="hardware.html">Hardware Setup</a> — I2S HAT installation</li></ul>
+<hr>
+<p><em>Version: 2026-05-25 — derived from <code>zynthian-sys/etc/systemd/jack2.service</code>, <code>zynthian-webconf/lib/audio_config_handler.py</code>.</em></p>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
