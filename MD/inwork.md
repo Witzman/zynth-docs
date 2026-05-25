@@ -9,6 +9,7 @@ Status: `[~]` drafting · `[t]` user testing · `[>]` ready to publish · `[ ]` 
 ## Tutorials
 
 - [~] **SMC-PAD Launcher Control** — 16 pads trigger 4×4 sequencer grid via MIDI master channel + CUIA TOGGLE_SEQ
+- [~] **ESI U46DJ USB Audio Setup** — connect U46DJ to Zynthian, configure at 44.1 kHz (4in/6out), verify output + inputs
 
 
 ## Documentation Updates
@@ -19,28 +20,4 @@ Status: `[~]` drafting · `[t]` user testing · `[>]` ready to publish · `[ ]` 
 
 ## Future Tutorial Candidates
 
-### Getting Started / UI
-
-- [ ] Getting started with Zynthian via VNC — navigate UI without physical hardware
-- [ ] Webconf hardware profiles — what they do and how to configure them
-
-### Synth Engines
-
-- [ ] ZynAddSubFX first sound — load preset, hear output via SSH/VNC
-- [ ] Synth engine overview with preset examples
-
-### MIDI
-
-- [ ] MIDI controller compatibility — connecting and mapping common controllers
-- [ ] Bluetooth MIDI pairing — step-by-step for common devices
-- [x] EMU CC knobs via MIDI Learn — published as `project-emu-cc-learn.md`
-
-### Audio
-
-- [ ] USB audio setup and udev quirks
-- [ ] Snapshot workflow — save and restore Zynthian state
-
-### Documentation Pages (extend existing)
-
-- [ ] Add screenshots to getting-started page
-- [ ] Expand synth-engines page with preset walkthrough
+<!-- none -->

@@ -57,6 +57,8 @@ SIDEBAR = [
         ("Maschine MK2 Controller", "project-maschine-mk2.html"),
         ("MIDI Channel Routing", "project-midi-channel-routing.html"),
         ("EMU CC Knob Mapping", "project-emu-cc-learn.html"),
+        ("SMC-PAD Launcher Control", "project-smc-pad-launcher.html"),
+        ("ESI U46DJ Audio Setup", "project-u46dj-audio-setup.html"),
     ]),
     ("Under the Hood", [
         ("Architecture", "architecture.html"),
