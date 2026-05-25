@@ -98,12 +98,93 @@
 <main>
 <article>
 <h1 id="generative-drone-synth">Generative Drone Synth</h1>
-<p><em>Blueprint in progress.</em></p>
+<p><strong>Goal:</strong> Build a self-evolving ambient drone using ZynAddSubFX — LFOs slowly mutate timbre without input, SMC-PAD pads shift root note, 8 knobs shape the texture in real time. <strong>Prerequisites:</strong> Zynthian booted with audio output working (U46DJ or similar). SMC-PAD connected and visible in webconf MIDI ports. <strong>Access:</strong> VNC · Webconf · SSH</p>
 <hr>
-<h2 id="overview">Overview</h2>
-<p><em>Details coming soon.</em></p>
+<h2 id="part-1--patch-self-evolving-drone-draft">Part 1 — Patch: Self-Evolving Drone <code>[draft]</code></h2>
+<p>Load a ZynAddSubFX pad preset with slow internal LFOs, confirm the timbre evolves on its own when a note is held.</p>
+<h3 id="step-1--add-a-zynaddsubfx-chain">Step 1 — Add a ZynAddSubFX chain</h3>
+<p>In the Zynthian VNC UI, tap <strong>+</strong> (bottom-left) → <strong>Add Synth Engine</strong> → <strong>ZynAddSubFX</strong>.</p>
+<p><strong>Verify:</strong> A new chain appears with ZynAddSubFX loaded.</p>
+<h3 id="step-2--select-a-pads-or-ether-preset">Step 2 — Select a Pads or Ether preset</h3>
+<p>Tap the chain to open the bank selector. Browse to a bank named <strong>Pads</strong>, <strong>Ether</strong>, <strong>Ambient</strong>, or <strong>Choir</strong>. Select any preset that suggests long, evolving sound — names like "Slow Pad", "Space", "Atmosphere", "Warm Strings" are good candidates.</p>
+<p>If unsure: start with the bank <strong>Pads</strong> → <strong>Warm Pad</strong> or any preset with "Pad" or "Space" in its name.</p>
+<p><strong>Verify:</strong> Engine loads with the chosen preset name visible.</p>
+<h3 id="step-3--hold-a-note-and-listen">Step 3 — Hold a note and listen</h3>
+<p>On the E-MU Xboard keyboard, press and hold a single note (e.g. middle C). Hold it for 10–20 seconds.</p>
+<p><strong>Verify:</strong> The timbre slowly shifts — filter opens and closes, volume breathes, or harmonics emerge and fade. This is the LFO modulation working. If the sound is static, go to Step 4. If it evolves, skip to Step 5.</p>
+<h3 id="step-4--if-static-increase-lfo-depth-in-vnc">Step 4 — (If static) Increase LFO depth in VNC</h3>
+<p>If the held note sounds unchanging, navigate to the engine parameters in VNC:</p>
+<ol><li>Tap the chain control screen.</li><li>Navigate to the <strong>Amplitude LFO</strong> section.</li><li>Increase <strong>Depth</strong> to 40–60 and <strong>Freq</strong> to a slow value (0.3–0.8 Hz).</li><li>Navigate to <strong>Filter LFO</strong>.</li><li>Increase <strong>Depth</strong> to 30–50 and set <strong>Freq</strong> to a slightly different value from the amplitude LFO (e.g. 0.5 Hz) — the offset creates beating between the two modulations.</li></ol>
+<p><strong>Verify:</strong> Holding a note now produces an audibly evolving texture.</p>
+<h3 id="step-5--set-voice-mode-to-monophonic">Step 5 — Set voice mode to monophonic</h3>
+<p>A drone changes root note cleanly when only one note sounds at a time. Send a MIDI mono mode command via SSH:</p>
+<p>First find the ZynAddSubFX MIDI channel:</p>
+<pre><code class="language-bash">ssh root@zynthian.local
+aconnect -l</code></pre>
+<p>Note the channel your ZynAddSubFX chain is on (default: channel 1). Then send CC 126 (mono on) to it:</p>
+<pre><code class="language-bash">amidi -p hw:$(aconnect -l | grep -i "Through\|ZynMidi" | head -1 | grep -oP 'client \K[0-9]+'),0,0 -S "B0 7E 01"</code></pre>
+<p><code>B0</code> = CC on channel 1, <code>7E</code> = CC 126 (mono on), <code>01</code> = 1 voice.</p>
+<p>If the chain is on channel 2, change <code>B0</code> to <code>B1</code>.</p>
+<p><strong>Verify:</strong> Playing two pads in sequence causes the first note to stop immediately when the second is pressed — one note at a time.</p>
+<h3 id="step-6--save-a-snapshot">Step 6 — Save a snapshot</h3>
+<p>In webconf → <strong>Snapshots</strong>, click <strong>Save</strong> and name it <code>drone-v1</code>.</p>
+<p><strong>Verify:</strong> Snapshot appears in the list.</p>
 <hr>
-<p><em>Version: 2026-05-25</em></p>
+<h2 id="part-2--control-smc-pad-pads-and-playstop-draft">Part 2 — Control: SMC-PAD Pads and PLAY/STOP <code>[draft]</code></h2>
+<p>Confirm SMC-PAD is routed, check what PLAY/STOP send, implement drone start/stop, and map pads to root note changes.</p>
+<h3 id="step-1--enable-smc-pad-in-webconf">Step 1 — Enable SMC-PAD in webconf</h3>
+<p>Open <code>http://zynthian.local</code> → <strong>MIDI → Ports</strong>. Find the SMC-PAD port and enable it.</p>
+<p><strong>Verify:</strong> SMC-PAD port is toggled on.</p>
+<h3 id="step-2--check-what-playstop-buttons-send">Step 2 — Check what PLAY/STOP buttons send</h3>
+<p>The SMC-PAD manual states PLAY/STOP are DAW transport buttons — their exact MIDI output in Performance preset must be confirmed before mapping.</p>
+<pre><code class="language-bash">ssh root@zynthian.local
+amidi -p hw:$(aconnect -l | grep -i "SMC\|SINCO" | grep -oP 'client \K[0-9]+' | head -1),0,0 -d &amp;</code></pre>
+<p>This streams raw MIDI from the SMC-PAD. Now press the <strong>PLAY</strong> button, then the <strong>STOP</strong> button. Note the hex bytes that appear. Press Ctrl+C to stop.</p>
+<p><strong>Possible outputs:</strong></p>
+<table><thead><tr><th>Output</th><th>What it means</th></tr></thead><tbody><tr><td><code>FA</code></td><td>MIDI Real-Time Start — not directly CC-Learnable</td></tr><tr><td><code>FC</code></td><td>MIDI Real-Time Stop — not directly CC-Learnable</td></tr><tr><td><code>Bn XX YY</code></td><td>CC message on channel n+1, CC number XX, value YY — CC-Learnable</td></tr></tbody></table>
+<p><strong>Verify:</strong> You can read the hex output for both PLAY and STOP.</p>
+<h3 id="step-3a--if-playstop-send-cc-map-via-cc-learn">Step 3A — If PLAY/STOP send CC: map via CC Learn</h3>
+<p>If PLAY sends a CC (e.g. <code>B0 72 7F</code>):</p>
+<p>In VNC, navigate to any parameter knob, long-press it (~600ms) until it turns orange, then press PLAY. Zynthian captures the CC.</p>
+<p>Map PLAY → CC 64 value 127 (sustain hold on) and STOP → CC 64 value 0 (sustain off) via webconf → <strong>MIDI → CC</strong>. This makes PLAY hold the current note indefinitely and STOP release it.</p>
+<p>Skip to Step 4.</p>
+<h3 id="step-3b--if-playstop-send-midi-real-time-use-two-pads-instead">Step 3B — If PLAY/STOP send MIDI real-time: use two pads instead</h3>
+<p>MIDI real-time messages (FA/FC) bypass the MIDI CC router and cannot be CC-Learned in Zynthian. Use two SMC-PAD pads as start/stop instead:</p>
+<ul><li><strong>Pad 13</strong> (default note D#3): remap to send CC 64 value 127 via the SMC-PAD companion app — or use as a held note (sustain pedal equivalent)</li><li><strong>Pad 14</strong> (default note E3): remap to send CC 123 (All Notes Off)</li></ul>
+<p>If you do not have access to the SMC-PAD companion app (Android/iOS only):</p>
+<p>Use Pad 13 normally — hold it to sustain a note. The note sustains for as long as you press the pad. ZynAddSubFX's long release envelope takes over when you release, fading slowly.</p>
+<p><strong>Verify:</strong> Pressing a pad starts the drone sound. Releasing causes a slow fade (not a cut — this is the LFO-driven release).</p>
+<h3 id="step-4--play-pads-as-root-note-changes">Step 4 — Play pads as root note changes</h3>
+<p>In Performance preset, SMC-PAD pads 1–16 send MIDI notes. Each pad is a different pitch. With monophonic mode active (Part 1 Step 5), pressing a pad silences the current drone and starts a new one on the new pitch.</p>
+<p>Press pads 1–8 slowly in sequence. The drone shifts pitch with each press.</p>
+<p><strong>Verify:</strong> Each pad triggers a distinct drone pitch. The LFO texture continues evolving on the new pitch.</p>
+<h3 id="step-5--shift-the-octave-range">Step 5 — Shift the octave range</h3>
+<p>The SMC-PAD pads default to a mid-range note set. For a deeper drone, shift octaves down:</p>
+<p>Press <strong>Shift + Pad 15</strong> to move pads down one octave. Repeat for a lower register. Press <strong>Shift + Pad 15 + Pad 16</strong> to reset to default.</p>
+<p><strong>Verify:</strong> Pads produce lower pitches suitable for a bass drone.</p>
+<hr>
+<h2 id="part-3--shape-8-knobs-to-parameters-draft">Part 3 — Shape: 8 Knobs to Parameters <code>[draft]</code></h2>
+<p>Map the 8 SMC-PAD encoders to key ZynAddSubFX parameters for live textural control.</p>
+<h3 id="step-1--open-the-chain-control-screen-in-vnc">Step 1 — Open the chain control screen in VNC</h3>
+<p>Tap the ZynAddSubFX chain to open its parameter control screen. Parameter knobs are visible — Filter Cutoff, Resonance, Amplitude, etc.</p>
+<p><strong>Verify:</strong> Control screen shows knobs for the engine parameters.</p>
+<h3 id="step-2--map-knob-1--filter-cutoff">Step 2 — Map Knob 1 → Filter Cutoff</h3>
+<p>Long-press the <strong>Filter Cutoff</strong> parameter knob in VNC (~600ms) until it turns orange. Turn <strong>SMC-PAD Knob 1</strong>. Zynthian captures the CC.</p>
+<p><strong>Verify:</strong> Turning Knob 1 now opens and closes the filter.</p>
+<h3 id="step-3--map-remaining-knobs">Step 3 — Map remaining knobs</h3>
+<p>Repeat the long-press → turn knob process for each remaining parameter. Suggested mapping for a drone context:</p>
+<table><thead><tr><th>SMC-PAD Knob</th><th>Suggested Parameter</th><th>Effect</th></tr></thead><tbody><tr><td>1</td><td>Filter Cutoff (CC 74)</td><td>Opens/closes texture brightness</td></tr><tr><td>2</td><td>Filter Resonance (CC 71)</td><td>Adds / removes filter peak</td></tr><tr><td>3</td><td>Amplitude LFO Depth</td><td>Breathing intensity</td></tr><tr><td>4</td><td>Amplitude LFO Freq</td><td>Breath speed</td></tr><tr><td>5</td><td>Filter LFO Depth</td><td>Filter sweep depth</td></tr><tr><td>6</td><td>Filter LFO Freq</td><td>Filter movement speed</td></tr><tr><td>7</td><td>Reverb / Effect Level</td><td>Space — wet/dry</td></tr><tr><td>8</td><td>Volume (CC 7)</td><td>Overall level</td></tr></tbody></table>
+<p>Map each one: long-press target parameter in VNC → turn the SMC-PAD knob.</p>
+<p><strong>Verify:</strong> Each knob produces an audible change when turned while a drone note is held.</p>
+<h3 id="step-4--test-the-full-setup">Step 4 — Test the full setup</h3>
+<p>Hold a drone note (pad or PLAY depending on Step 3A/3B above). Slowly turn each knob and confirm the expected parameter changes. Press a different pad to shift root note. Confirm drone continues evolving.</p>
+<p><strong>Verify:</strong> All 8 knobs respond. Root note changes cleanly. LFO texture continues without interruption.</p>
+<h3 id="step-5--save-final-snapshot">Step 5 — Save final snapshot</h3>
+<p>In webconf → <strong>Snapshots</strong>, overwrite or save a new snapshot named <code>drone-final</code>. CC bindings are stored with the snapshot.</p>
+<p><strong>Verify:</strong> Snapshot saved. Reload it and confirm bindings survive.</p>
+<hr>
+<h2 id="going-further">Going Further</h2>
+<ul><li>Use the KNOB BANK button on the SMC-PAD to switch to a second set of 8 CC bindings — 16 total parameters under knob control</li><li>Add a Calf Reverb or LSP Reverb LV2 effect chain after ZynAddSubFX for deeper space</li><li>Add a second ZynAddSubFX chain on a different MIDI channel and use SMC-PAD Pad Bank 2 to play a harmony layer</li><li>Explore ZynAddSubFX PAD synth module — "Bandwidth" and "Overtones" parameters create complex spectral drones</li><li>Use Note Repeat on the SMC-PAD with Latch enabled to auto-repeat the held pad note at a slow rate</li></ul>
 </article>
 </main>
 <div id="toc-column"></div>
