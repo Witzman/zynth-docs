@@ -123,18 +123,18 @@ State which page(s) you read before presenting any tutorial content.
 
 The `htmldoku/*.md` source files are the edit target and are read by Claude for token efficiency (MD is ~30–40% smaller than rendered HTML). They are never the final artifact.
 
-**Rule: rendered HTML must always match the source MD.** Any edit to an `htmldoku/*.md` file requires running the generator before the session ends. Never commit a source change without committing the corresponding rendered HTML.
+**Rule: rendered HTML must always match the source MD.** Any edit to an `htmldoku/*.md` file — including adding a new page — requires running the generator and committing **all** changed HTML immediately. Never defer to end of session.
+
+The generator rewrites every page's sidebar. Committing only the new page's HTML leaves every other page with a stale sidebar. Always commit the full `docs/zynthian-Doku/` output.
 
 ```bash
-# After any htmldoku/*.md edit:
+# After any htmldoku/*.md edit or generate-html.py change:
 cd ~/zynth-docs
 python3 htmldoku/generate-html.py
-git add htmldoku/<page>.md docs/zynthian-Doku/<page>.html
+git add htmldoku/<page>.md docs/zynthian-Doku/
 git commit -m "docs: ..."
 git push
 ```
-
-If multiple pages were edited in one session, run the generator once at the end and commit all changed pairs together.
 
 ---
 
