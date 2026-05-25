@@ -8,7 +8,7 @@ Status: `[~]` drafting · `[t]` user testing · `[>]` ready to publish · `[ ]` 
 
 ## Tutorials
 
-<!-- Add active items as: - [~] **Title** — one-line description -->
+- [~] **Custom MIDI Channel Routing** — EMU channel switch = instrument switch, one chain per MIDI channel (`MD/draft-midi-channel-routing.md`)
 
 ## Documentation Updates
 
