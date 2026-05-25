@@ -74,68 +74,92 @@
 <main>
 <article>
 <h1 id="pattern-editor">Pattern Editor</h1>
-<p>The Pattern Editor is Zynthian's built-in step sequencer. It lets you program note patterns and CC automation directly on the device, without an external computer.</p>
+<p>The Pattern Editor is Zynthian's built-in step sequencer. It lets you program note patterns and CC automation directly on the device, without an external computer or MIDI file.</p>
+<hr>
+<h2 id="overview">Overview</h2>
+<p>The pattern editor works with the <strong>step sequencer</strong> (<code>zynseq</code>). Patterns are attached to chains — each chain can have multiple patterns (phrases). The launcher screen (mixer tab 2) shows all patterns as a grid of pads.</p>
+<p>There are two views, switchable via tabs:</p>
+<ul><li><strong>Notes view</strong> (<code>pated_notes</code>) — place and edit notes on a pitch/step grid</li><li><strong>CC view</strong> (<code>pated_cc</code>) — add CC automation events on a CC number/step grid</li></ul>
 <hr>
 <h2 id="opening-the-pattern-editor">Opening the Pattern Editor</h2>
-<p><strong>From the launcher screen:</strong> each clip pad in the launcher represents one pattern. Tap a pad to select it, then open the pattern editor via the edit button (or long-press the pad).</p>
-<p><strong>From Admin:</strong> Admin → sequence / pattern editor (when available in the menu).</p>
-<p>The pattern editor opens in the <strong>notes view</strong> (<code>pated_notes</code>). Switch to CC view via the tab at the top.</p>
+<p><strong>From the launcher:</strong> tap any clip pad to select it. Then open the editor via the edit button (pencil icon, or long-press the pad → Edit).</p>
+<p><strong>Keyboard shortcut (V5):</strong> with a clip pad selected, bold-press encoder 3.</p>
 <hr>
 <h2 id="notes-grid">Notes Grid</h2>
-<pre><code>     Step: 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16
-C5       [ ██          ]  [ █  ]                 [ ██████ ]
-B4              [ █  ]
-A4       [ ██████████████████████████████████████████████ ]
-G4                        [ ██  ]
-F4                                    [ ██  ]</code></pre>
-<ul><li><strong>Rows</strong> = pitch (note), highest at the top</li><li><strong>Columns</strong> = steps (time positions)</li><li><strong>Colored bars</strong> = notes, width = duration</li></ul>
-<p>The grid scrolls both horizontally (more steps) and vertically (more notes).</p>
-<h3 id="adding-and-removing-notes">Adding and Removing Notes</h3>
-<table><thead><tr><th>Action</th><th>Effect</th></tr></thead><tbody><tr><td>Tap empty cell</td><td>Add a note at that pitch and step</td></tr><tr><td>Tap existing note</td><td>Select it</td></tr><tr><td>Drag right on a note</td><td>Extend duration</td></tr><tr><td>Long-press a note</td><td>Open per-note parameter editor</td></tr><tr><td>Double-tap a note</td><td>Delete it</td></tr></tbody></table>
+<pre><code>Octave  Pitch  │ 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 │
+  5      C5    │ [██████  ]           [██  ]               [████  ] │
+  5      B4    │          [█  ]                                     │
+  5      A4    │ [████████████████████████████████████████████████] │
+  5      G4    │                    [██  ]                          │
+  5      F4    │                              [██  ]                │
+  5      E4    │                                                     │
+  5      D4    │                                                     │
+  5      C4    │                                                     │</code></pre>
+<ul><li><strong>Rows</strong> — pitch (note), one row per semitone. Rows scroll vertically; octave and note name shown at left.</li><li><strong>Columns</strong> — steps (time positions), left to right. Scroll horizontally for longer patterns.</li><li><strong>Colored bars</strong> — notes. Width = duration (how many steps the note lasts). Color may indicate velocity or selection state.</li></ul>
+<h3 id="note-states">Note States</h3>
+<table><thead><tr><th>Bar style</th><th>State</th></tr></thead><tbody><tr><td>Solid filled bar</td><td>Normal note</td></tr><tr><td>Dotted/outlined bar</td><td>Note copied to clipboard (not yet pasted)</td></tr><tr><td>Bright/different color</td><td>Selected note</td></tr></tbody></table>
+<hr>
+<h2 id="adding-and-removing-notes">Adding and Removing Notes</h2>
+<table><thead><tr><th>Action</th><th>Result</th></tr></thead><tbody><tr><td>Tap empty cell</td><td>Add a note at that pitch and step (default duration 1 step, velocity 100)</td></tr><tr><td>Tap existing note</td><td>Select it (highlights)</td></tr><tr><td>Tap selected note</td><td>Deselect</td></tr><tr><td>Drag right from a note</td><td>Extend the note duration</td></tr><tr><td>Long-press a note (~300ms)</td><td>Open per-note parameter editor</td></tr><tr><td>Double-tap a note</td><td>Delete it</td></tr><tr><td>Drag on empty area</td><td>Box select multiple notes</td></tr><tr><td>Encoder 4 rotate (note selected)</td><td>Adjust selected note's duration</td></tr></tbody></table>
 <hr>
 <h2 id="per-note-parameters">Per-Note Parameters</h2>
-<p>Long-press any note to open the parameter editor. Parameters:</p>
-<table><thead><tr><th>Parameter</th><th>Description</th></tr></thead><tbody><tr><td><strong>Duration</strong></td><td>Length of the note in steps (1 = one step)</td></tr><tr><td><strong>Velocity</strong></td><td>Note-on velocity (1–127)</td></tr><tr><td><strong>Offset</strong></td><td>Nudge the note start within the step (for swing/groove)</td></tr><tr><td><strong>Stutter Speed</strong></td><td>How fast the note stutters (repeats within the step)</td></tr><tr><td><strong>Stutter VFX</strong></td><td>Velocity envelope for stutter: FLAT, FADE-IN, FADE-OUT</td></tr><tr><td><strong>Stutter Ramp</strong></td><td>Speed ramp for stutter: NONE, SPEED-UP, SPEED-DOWN</td></tr><tr><td><strong>Play Frequency</strong></td><td>How often this note plays: ALWAYS, PLAY/2, SKIP/2, PLAY/3…</td></tr><tr><td><strong>Play Chance</strong></td><td>Probability this note plays each time it is reached</td></tr><tr><td><strong>Stutter Frequency</strong></td><td>How often the stutter fires: same options as Play Frequency</td></tr><tr><td><strong>Stutter Chance</strong></td><td>Probability the stutter fires</td></tr></tbody></table>
-<p><strong>Play Frequency</strong> and <strong>Play Chance</strong> create rhythmic variation — a note set to PLAY/2 fires only on alternate passes through the pattern.</p>
+<p>Long-press any note to open the per-note parameter editor. All parameters:</p>
+<table><thead><tr><th>Parameter</th><th>Range</th><th>Description</th></tr></thead><tbody><tr><td><strong>Duration</strong></td><td>1 – pattern length</td><td>Length of the note in steps</td></tr><tr><td><strong>Velocity</strong></td><td>1–127</td><td>Note-on velocity; higher = louder</td></tr><tr><td><strong>Offset</strong></td><td>0–100%</td><td>Nudge note start within the step — useful for swing and groove</td></tr><tr><td><strong>Stutter Speed</strong></td><td>1–16</td><td>How many times the note repeats (stutters) within one step duration</td></tr><tr><td><strong>Stutter VFX</strong></td><td>FLAT / FADE-IN / FADE-OUT</td><td>Velocity envelope for stutter repeats</td></tr><tr><td><strong>Stutter Ramp</strong></td><td>NONE / SPEED-UP / SPEED-DOWN</td><td>Speed change across stutter repeats</td></tr><tr><td><strong>Play Frequency</strong></td><td>NEVER / ALWAYS / PLAY/2–8 / SKIP/2–8</td><td>How often this note fires across pattern passes</td></tr><tr><td><strong>Play Chance</strong></td><td>0–100%</td><td>Probability the note plays each time it is reached</td></tr><tr><td><strong>Stutter Frequency</strong></td><td>Same options as Play Frequency</td><td>How often the stutter fires per play</td></tr><tr><td><strong>Stutter Chance</strong></td><td>0–100%</td><td>Probability the stutter fires when note plays</td></tr></tbody></table>
+<h3 id="play-frequency-values">Play Frequency Values</h3>
+<table><thead><tr><th>Value</th><th>Behavior</th></tr></thead><tbody><tr><td>NEVER</td><td>Note never plays</td></tr><tr><td>ALWAYS</td><td>Note plays every pass (default)</td></tr><tr><td>PLAY/2</td><td>Plays on every other pass (1st, 3rd, 5th…)</td></tr><tr><td>SKIP/2</td><td>Skips every other pass (plays on 2nd, 4th, 6th…)</td></tr><tr><td>PLAY/3</td><td>Plays once every 3 passes</td></tr><tr><td>SKIP/3</td><td>Skips once every 3 passes</td></tr><tr><td>PLAY/4 – PLAY/8</td><td>Plays once every N passes</td></tr><tr><td>SKIP/4 – SKIP/8</td><td>Skips once every N passes</td></tr></tbody></table>
+<p>These create rhythmic variation — place a hi-hat note at PLAY/2 to create a half-time feel, or a ghost note at PLAY/4 to add occasional embellishments.</p>
+<h3 id="stutter-vfx-options">Stutter VFX Options</h3>
+<table><thead><tr><th>Value</th><th>Effect</th></tr></thead><tbody><tr><td>FLAT</td><td>All stutter repeats at same velocity</td></tr><tr><td>FADE-IN</td><td>Velocity ramps up across repeats</td></tr><tr><td>FADE-OUT</td><td>Velocity ramps down (typical decay stutter)</td></tr></tbody></table>
+<h3 id="stutter-ramp-options">Stutter Ramp Options</h3>
+<table><thead><tr><th>Value</th><th>Effect</th></tr></thead><tbody><tr><td>NONE</td><td>All repeats at same speed</td></tr><tr><td>SPEED-UP</td><td>Repeats get faster (accelerando stutter)</td></tr><tr><td>SPEED-DOWN</td><td>Repeats get slower (rallentando stutter)</td></tr></tbody></table>
 <p>Source: <a href="../zynthian-ui/zyngui/zynthian_gui_pated_notes.py"><code>zyngui/zynthian_gui_pated_notes.py:46</code></a></p>
 <hr>
-<h2 id="scale-and-chord-modes">Scale and Chord Modes</h2>
-<p>The pattern editor can restrict note entry to a musical scale, making it easier to compose in key.</p>
-<p><strong>Scale modes:</strong></p>
-<table><thead><tr><th>Scale</th><th>Intervals</th></tr></thead><tbody><tr><td>Major</td><td>C D E F G A B</td></tr><tr><td>Minor</td><td>C D Eb F G Ab Bb</td></tr></tbody></table>
-<p>When a scale is active, only scale notes are shown as rows, and new notes snap to the nearest scale degree.</p>
-<p><strong>Chord modes:</strong> instead of placing single notes, the editor places full chords:</p>
-<table><thead><tr><th>Mode</th><th>What gets placed</th></tr></thead><tbody><tr><td>Single note</td><td>One note</td></tr><tr><td>Chord</td><td>Selected chord type (see below)</td></tr><tr><td>Diatonic triads, major key</td><td>Triad built on the scale degree you tap</td></tr><tr><td>Diatonic 7ths, major key</td><td>7th chord on the scale degree</td></tr><tr><td>Diatonic triads, minor key</td><td>Triad in minor key</td></tr><tr><td>Diatonic 7ths, minor key</td><td>7th chord in minor key</td></tr></tbody></table>
-<p>Available chord types include: Major, Minor, Diminished, Augmented, Major 7th, Minor 7th, Dominant 7th, Half-Diminished 7th, and many extended chords (9th, 11th, 13th). Tap one cell — the full chord appears as a stack of simultaneous notes.</p>
+<h2 id="scale-modes">Scale Modes</h2>
+<p>When a scale is active, the note grid shows only the notes in that scale — non-scale notes are hidden. New notes snap to the nearest scale degree.</p>
+<table><thead><tr><th>Scale</th><th>Intervals from root</th></tr></thead><tbody><tr><td>Major</td><td>0, 2, 4, 5, 7, 9, 11</td></tr><tr><td>Minor</td><td>0, 2, 3, 5, 7, 8, 10</td></tr></tbody></table>
+<p>Activate via the scale selector control in the toolbar. Choose the root note (C–B) then the scale type.</p>
+<hr>
+<h2 id="chord-modes">Chord Modes</h2>
+<p>Instead of placing single notes, chord mode places multiple simultaneous notes when you tap a single cell.</p>
+<table><thead><tr><th>Chord mode</th><th>What gets placed</th></tr></thead><tbody><tr><td><strong>Single note</strong></td><td>One note (default)</td></tr><tr><td><strong>Chord</strong></td><td>The selected chord type at the tapped pitch</td></tr><tr><td><strong>Diatonic triads, major key</strong></td><td>3-note chord built on the tapped scale degree (major key harmony)</td></tr><tr><td><strong>Diatonic 7ths, major key</strong></td><td>4-note chord built on the scale degree (major key)</td></tr><tr><td><strong>Diatonic triads, minor key</strong></td><td>3-note chord (minor key harmony)</td></tr><tr><td><strong>Diatonic 7ths, minor key</strong></td><td>4-note chord (minor key)</td></tr></tbody></table>
+<h3 id="available-chord-types">Available Chord Types</h3>
+<table><thead><tr><th>Category</th><th>Chord</th><th>Intervals</th></tr></thead><tbody><tr><td><strong>Triads</strong></td><td>Major</td><td>0, 4, 7</td></tr><tr><td></td><td>Minor</td><td>0, 3, 7</td></tr><tr><td></td><td>Diminished</td><td>0, 3, 6</td></tr><tr><td></td><td>Augmented</td><td>0, 4, 8</td></tr><tr><td><strong>7th chords</strong></td><td>Major 7th</td><td>0, 4, 7, 11</td></tr><tr><td></td><td>Minor 7th</td><td>0, 3, 7, 10</td></tr><tr><td></td><td>Dominant 7th</td><td>0, 4, 7, 10</td></tr><tr><td></td><td>Half-Diminished 7th</td><td>0, 3, 6, 10</td></tr><tr><td></td><td>Diminished 7th</td><td>0, 3, 6, 9</td></tr><tr><td></td><td>Minor-Major 7th</td><td>0, 3, 7, 11</td></tr><tr><td></td><td>Augmented Major 7th</td><td>0, 4, 8, 11</td></tr><tr><td></td><td>Augmented 7th</td><td>0, 4, 8, 10</td></tr><tr><td><strong>Extended</strong></td><td>Major 9th</td><td>0, 4, 7, 11, 14</td></tr><tr><td></td><td>Dominant 9th</td><td>0, 4, 7, 10, 14</td></tr><tr><td></td><td>Minor 9th</td><td>0, 3, 7, 10, 14</td></tr><tr><td></td><td>Minor-Major 9th</td><td>0, 3, 7, 11, 14</td></tr><tr><td></td><td>Dominant 11th</td><td>0, 4, 7, 10, 14, 17</td></tr><tr><td></td><td>Minor 11th</td><td>0, 3, 7, 10, 14, 17</td></tr><tr><td></td><td>Dominant 13th</td><td>0, 4, 7, 10, 14, 17, 21</td></tr><tr><td></td><td>Minor 13th</td><td>0, 3, 7, 10, 14, 17, 21</td></tr></tbody></table>
+<p>Tap one cell in chord mode — the full chord appears as a stack of staggered simultaneous notes. All notes in the chord are affected by the same per-note parameters (velocity, offset, etc.).</p>
 <hr>
 <h2 id="transport-controls">Transport Controls</h2>
-<p>The bottom of the pattern editor shows transport buttons:</p>
-<table><thead><tr><th>Button</th><th>Action</th></tr></thead><tbody><tr><td>Play/Pause</td><td>Start or pause pattern playback</td></tr><tr><td>Stop</td><td>Stop and return to step 1</td></tr><tr><td>Loop</td><td>Toggle loop mode (pattern repeats)</td></tr><tr><td>Metronome</td><td>Toggle click track</td></tr><tr><td>Tempo</td><td>BPM (same as global tempo)</td></tr></tbody></table>
-<p>Pattern playback is synchronized to the global clock. If other chains or sequences are running, the pattern editor follows the same tempo.</p>
-<hr>
-<h2 id="cc-automation-editor">CC Automation Editor</h2>
-<p>Switch to the CC tab at the top of the pattern editor (<code>pated_cc</code>).</p>
-<p>The CC editor shows the same step grid but rows represent CC numbers instead of pitches. Place a CC event at any step with any value — useful for automating filter sweeps, volume curves, or any parameter bound to a CC.</p>
-<table><thead><tr><th>Action</th><th>Effect</th></tr></thead><tbody><tr><td>Tap step on a CC row</td><td>Add a CC event</td></tr><tr><td>Drag up/down on a CC event</td><td>Adjust the CC value</td></tr><tr><td>Long-press a CC event</td><td>Set exact value</td></tr><tr><td>Double-tap</td><td>Delete the CC event</td></tr></tbody></table>
-<hr>
-<h2 id="copy--paste-patterns">Copy / Paste Patterns</h2>
-<p>Select a range of notes (touch and drag), then use the copy/paste buttons in the toolbar. Paste into the same pattern at a different step, or switch to another channel and paste there.</p>
+<p>The toolbar shows transport buttons:</p>
+<table><thead><tr><th>Control</th><th>Action</th></tr></thead><tbody><tr><td>▶ Play</td><td>Start pattern playback from current position</td></tr><tr><td>⏸ Pause</td><td>Pause at current position</td></tr><tr><td>⏹ Stop</td><td>Stop and return to step 1</td></tr><tr><td>🔁 Loop</td><td>Toggle loop mode (pattern repeats indefinitely)</td></tr><tr><td>Metronome</td><td>Toggle click track during playback</td></tr><tr><td>Tempo</td><td>Current BPM (same as global) — tap to open tempo screen</td></tr><tr><td>Length</td><td>Steps in pattern — tap to change (4–256 steps)</td></tr></tbody></table>
+<p>Playback synchronizes to the global Zynthian clock. If JACK transport is running, patterns follow it.</p>
 <hr>
 <h2 id="pattern-length">Pattern Length</h2>
-<p>The number of steps per pattern is configurable per pattern. Common lengths:</p>
-<ul><li>16 steps = 1 bar (at 4/4, 16th-note resolution)</li><li>32 steps = 2 bars</li><li>64 steps = 4 bars</li></ul>
-<p>Change the pattern length via the length control in the toolbar (encoder 4 or touch).</p>
+<p>Configurable from 1 to 256 steps per pattern. Common lengths:</p>
+<table><thead><tr><th>Steps</th><th>Duration at 16th-note resolution</th></tr></thead><tbody><tr><td>8</td><td>Half bar (4/4)</td></tr><tr><td>16</td><td>1 bar</td></tr><tr><td>32</td><td>2 bars</td></tr><tr><td>64</td><td>4 bars</td></tr><tr><td>128</td><td>8 bars</td></tr></tbody></table>
+<p>Change via the Length control in the toolbar. Notes beyond the new length are hidden but not deleted — extending back recovers them.</p>
+<hr>
+<h2 id="cc-automation-editor">CC Automation Editor</h2>
+<p>The CC tab (<code>pated_cc</code>) shows the same step grid but rows represent MIDI CC numbers instead of pitches.</p>
+<table><thead><tr><th>CC#</th><th>Common function</th></tr></thead><tbody><tr><td>1</td><td>Modulation wheel</td></tr><tr><td>7</td><td>Channel volume</td></tr><tr><td>10</td><td>Pan</td></tr><tr><td>11</td><td>Expression</td></tr><tr><td>64</td><td>Sustain pedal</td></tr><tr><td>71</td><td>Resonance (filter)</td></tr><tr><td>74</td><td>Brightness (filter cutoff)</td></tr><tr><td>91</td><td>Reverb send</td></tr><tr><td>93</td><td>Chorus send</td></tr></tbody></table>
+<h3 id="cc-editor-interactions">CC Editor Interactions</h3>
+<table><thead><tr><th>Action</th><th>Result</th></tr></thead><tbody><tr><td>Tap empty step on a CC row</td><td>Add a CC event at default value (64)</td></tr><tr><td>Drag up/down on a CC event</td><td>Adjust CC value (0–127)</td></tr><tr><td>Long-press a CC event</td><td>Open value editor for exact value</td></tr><tr><td>Double-tap a CC event</td><td>Delete</td></tr><tr><td>Drag across multiple steps</td><td>Lasso-select for batch edit</td></tr></tbody></table>
+<hr>
+<h2 id="copy-and-paste">Copy and Paste</h2>
+<p><strong>Select notes:</strong> touch and drag to draw a selection box. All notes within are selected (bright highlight).</p>
+<p><strong>Copy selected notes:</strong> copy button in toolbar.</p>
+<p><strong>Paste:</strong> tap target position in the grid → paste button. Notes paste relative to the top-left of the selection box.</p>
+<p><strong>Copy between channels:</strong> switch to another chain's pattern (back to launcher → select different clip → open editor) and paste there.</p>
 <hr>
 <h2 id="example-8-step-bass-line-on-setbfree-organ">Example: 8-Step Bass Line on setBfree Organ</h2>
-<ol><li>Add an Instrument chain → setBfree.</li><li>Open pattern editor for the setBfree clip.</li><li>Set pattern length to 8 steps.</li><li>Place notes on a minor pentatonic scale: A2 at steps 1, 2, 3; G2 at step 5; F2 at step 7.</li><li>Set velocities: step 1 = 100, others = 80 for accent on beat 1.</li><li>Press Play — the bass line loops over setBfree with the organ sound.</li></ol>
+<ol><li>Add Instrument chain → setBfree. Assign to MIDI channel 2.</li><li>Tap a clip pad for chain 2 → open pattern editor.</li><li>Set pattern length to 8 steps.</li><li>Place notes on A minor pentatonic: A2 (step 1 duration 2), G2 (step 3 duration 1), F2 (step 4), E2 (step 5 duration 2), G2 (step 7), A2 (step 8).</li><li>Set velocity: step 1 = 110 (accent), others = 80.</li><li>Set stutter on step 5: Stutter Speed = 2, VFX = FADE-OUT — creates a ratchet effect.</li><li>Press Play — the bass line loops.</li></ol>
 <hr>
-<h2 id="example-drum-pattern--fluidsynth-gm-drums-on-channel-10">Example: Drum Pattern — FluidSynth GM Drums on Channel 10</h2>
-<p>GM drum map uses fixed notes for each drum:</p>
-<table><thead><tr><th>Note</th><th>MIDI#</th><th>Drum</th></tr></thead><tbody><tr><td>C2</td><td>36</td><td>Bass drum</td></tr><tr><td>D2</td><td>38</td><td>Snare</td></tr><tr><td>F#2</td><td>42</td><td>Hi-hat closed</td></tr><tr><td>A#2</td><td>46</td><td>Hi-hat open</td></tr><tr><td>C3</td><td>48</td><td>Tom hi</td></tr></tbody></table>
-<ol><li>Add Instrument chain → FluidSynth → General MIDI soundfont → assign to MIDI channel 10.</li><li>Open pattern editor, set to 16 steps.</li><li>Place bass drum (C2) at steps 1, 5, 9, 13.</li><li>Place snare (D2) at steps 5, 13.</li><li>Place closed hi-hat (F#2) every 2 steps.</li><li>Press Play — classic four-on-the-floor pattern.</li></ol>
+<h2 id="example-drum-pattern--fluidsynth-gm-drums">Example: Drum Pattern — FluidSynth GM Drums</h2>
+<p>GM General MIDI drum map note assignments (channel 10):</p>
+<table><thead><tr><th>MIDI note</th><th>Note name</th><th>Drum sound</th></tr></thead><tbody><tr><td>35</td><td>B1</td><td>Bass drum 2</td></tr><tr><td>36</td><td>C2</td><td>Bass drum 1</td></tr><tr><td>38</td><td>D2</td><td>Acoustic snare</td></tr><tr><td>40</td><td>E2</td><td>Electric snare</td></tr><tr><td>42</td><td>F#2</td><td>Closed hi-hat</td></tr><tr><td>44</td><td>G#2</td><td>Pedal hi-hat</td></tr><tr><td>46</td><td>A#2</td><td>Open hi-hat</td></tr><tr><td>49</td><td>C#3</td><td>Crash cymbal 1</td></tr><tr><td>51</td><td>D#3</td><td>Ride cymbal 1</td></tr><tr><td>48</td><td>C3</td><td>Hi tom</td></tr><tr><td>45</td><td>A2</td><td>Low tom</td></tr></tbody></table>
+<p>Classic 4/4 pattern (16 steps):</p>
+<table><thead><tr><th>Step</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th></tr></thead><tbody><tr><td>Bass</td><td>●</td><td></td><td></td><td></td><td>●</td><td></td><td></td><td></td><td>●</td><td></td><td></td><td></td><td>●</td><td></td><td></td><td></td></tr><tr><td>Snare</td><td></td><td></td><td></td><td></td><td>●</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>●</td><td></td><td></td><td></td></tr><tr><td>HH</td><td>●</td><td>●</td><td>●</td><td>●</td><td>●</td><td>●</td><td>●</td><td>●</td><td>●</td><td>●</td><td>●</td><td>●</td><td>●</td><td>●</td><td>●</td><td>●</td></tr></tbody></table>
+<ol><li>Add Instrument chain → FluidSynth → "General MIDI" bank → assign to channel 10.</li><li>Open pattern editor. Set to 16 steps.</li><li>Place C2 (bass drum) at steps 1, 5, 9, 13.</li><li>Place D2 (snare) at steps 5, 13.</li><li>Place F#2 (hi-hat closed) every step.</li><li>Set hi-hat velocity to 60 (quieter than kick and snare).</li><li>Add open hi-hat (A#2) at step 7 with velocity 80 — gives a "2 and" feel.</li><li>Press Play.</li></ol>
 <hr>
 <h2 id="whats-next">What's Next</h2>
-<ul><li><a href="synth-engines.html">Synth Engines</a> — engines to pair with the sequencer</li><li><a href="chain-management.html">Chains & Routing</a> — set up the instrument chain</li><li><a href="snapshots.html">Snapshots</a> — save a complete sequenced setup</li></ul>
+<ul><li><a href="synth-engines.html">Synth Engines</a> — engines to pair with the sequencer</li><li><a href="chain-management.html">Chains & Routing</a> — set up the instrument chain</li><li><a href="snapshots.html">Snapshots</a> — save a complete sequenced setup</li><li><a href="ui-navigation.html">UI Navigation</a> — launcher screen and clip pads</li></ul>
 <hr>
 <p><em>Version: 2026-05-25 — derived from <code>zyngui/zynthian_gui_pated_notes.py</code>, <code>zyngui/zynthian_gui_pated_cc.py</code>.</em></p>
 </article>

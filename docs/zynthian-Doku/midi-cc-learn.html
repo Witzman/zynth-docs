@@ -74,65 +74,103 @@
 <main>
 <article>
 <h1 id="midi-cc-learning--binding">MIDI CC Learning & Binding</h1>
-<p>Zynthian can bind any physical controller knob, slider, or button to any synth parameter via MIDI CC. This page covers the CC learn workflow, CC routing screens, Program Change binding, and MIDI profiles.</p>
+<p>Zynthian can bind any physical controller knob, slider, or button to any synth parameter via MIDI CC. This page covers the CC learn workflow, CC routing, Program Change binding, and MIDI profiles.</p>
 <hr>
-<h2 id="how-midi-cc-learn-works">How MIDI CC Learn Works</h2>
-<p>CC learn captures the next CC message your controller sends and assigns it to the parameter you selected. The binding is stored per-processor and saved with snapshots.</p>
-<h3 id="step-by-step-from-the-control-screen">Step-by-Step from the Control Screen</h3>
-<ol><li>Navigate to the control screen for the chain you want to control.</li><li>Find the parameter you want to bind (rotate to the correct page; the parameter should be visible as one of the 4 knobs).</li><li><strong>Long-press</strong> the encoder for that knob (hold ~600ms until the knob highlights orange).</li><li>Move the physical knob/fader/slider on your MIDI controller.</li><li>The CC number is captured and shown on the knob label. The binding is active.</li></ol>
-<p><strong>Clearing a binding:</strong> long-press the encoder again when no CC is incoming, or use chain_options → <strong>Clear MIDI Learn</strong> to remove all bindings from the chain at once.</p>
+<h2 id="overview">Overview</h2>
+<p><strong>CC Learn</strong> (Continuous Controller learning) captures the next CC message your controller sends and assigns it permanently to the parameter you selected. Bindings survive snapshot saves and reloads.</p>
+<p><strong>CC routing</strong> (<code>midi_cc</code> screen) controls which of the 128 CC numbers pass through to a chain's engine. This is a filter, independent of CC learn.</p>
+<p><strong>MIDI profiles</strong> (<code>midi_profile</code> screen) are shell scripts that set global MIDI behavior — port modes, transpose, PC handling. Switching profiles reloads all MIDI configuration.</p>
 <hr>
-<h2 id="cc-range">CC Range</h2>
-<p>After binding a CC, you can set the parameter range it controls:</p>
-<ol><li>Long-press the bound knob to open the CC range editor.</li><li>Set <strong>Min</strong> and <strong>Max</strong> — the parameter value range that the CC sweeps from 0 to 127.</li></ol>
-<p>Example: bind CC 74 (filter frequency) but limit it to the middle range (40–90 Hz) so the filter doesn't close completely.</p>
+<h2 id="midi-cc-learn--step-by-step">MIDI CC Learn — Step-by-Step</h2>
+<h3 id="from-the-control-screen">From the Control Screen</h3>
+<ol><li>Navigate to the control screen for the chain you want to control.</li><li>Navigate to the page containing the parameter you want to bind (encoder 3 in select mode, or touch the page list).</li><li>Make sure the target parameter is one of the 4 visible knobs.</li><li><strong>Long-press the encoder</strong> for that knob (hold ~600ms). The knob border turns orange.</li><li>Move the physical knob, fader, or slider on your MIDI controller.</li><li>The CC number is captured. The knob shows the CC number badge. Learning ends.</li></ol>
+<h3 id="visual-feedback">Visual Feedback</h3>
+<table><thead><tr><th>State</th><th>Knob appearance</th></tr></thead><tbody><tr><td>Not learning</td><td>Normal border</td></tr><tr><td>Learning active</td><td>Orange highlight border</td></tr><tr><td>CC assigned</td><td>CC number badge below knob name</td></tr><tr><td>Learn cancelled</td><td>Returns to normal</td></tr></tbody></table>
+<h3 id="cancelling-learn-without-assigning">Cancelling Learn Without Assigning</h3>
+<p>Long-press the encoder again while in orange state, or press Back. No CC is assigned and the previous state is restored.</p>
 <hr>
-<h2 id="midi-cc-screen">MIDI CC Screen</h2>
-<p>Access: chain_control → MIDI input subscreen → CC routing, or via admin MIDI settings.</p>
-<p>The <code>midi_cc</code> screen shows all 128 CC numbers with checkboxes:</p>
-<ul><li>☑ CC XX — this CC is routed through to the engine</li><li>☐ CC XX — this CC is blocked (filtered out)</li></ul>
-<p>Use this screen to prevent unwanted CCs from your controller from reaching the engine. For example, if your controller sends CC 7 (volume) automatically and you don't want it to override the engine's internal volume — uncheck CC 7 on that chain.</p>
-<p><strong>Toggle a CC:</strong> tap the CC entry or push encoder 3 while it is highlighted. The change takes effect immediately — no restart needed.</p>
+<h2 id="fine-tuning-a-cc-binding">Fine-Tuning a CC Binding</h2>
+<p>After binding, you can restrict the parameter range the CC sweeps:</p>
+<ol><li>Long-press the bound knob again (already has CC) — options menu opens.</li><li>Select <strong>Set CC Range</strong>.</li><li>Set <strong>Min value</strong> — parameter value when CC = 0.</li><li>Set <strong>Max value</strong> — parameter value when CC = 127.</li></ol>
+<p><strong>Use case:</strong> bind mod wheel (CC 1) to filter cutoff, but restrict to 200 Hz–2000 Hz rather than the full 20 Hz–20 kHz — prevents the filter from fully closing during performance.</p>
+<hr>
+<h2 id="clearing-cc-bindings">Clearing CC Bindings</h2>
+<table><thead><tr><th>Scope</th><th>How</th></tr></thead><tbody><tr><td>Single parameter</td><td>Long-press the bound knob → <strong>Clear CC</strong></td></tr><tr><td>All parameters in one processor</td><td>processor_options → <strong>Clean MIDI-learn</strong></td></tr><tr><td>All parameters in one chain</td><td>chain_options → <strong>Clear MIDI Learn</strong></td></tr></tbody></table>
+<p>Clearing is permanent — the binding is removed from the snapshot state immediately.</p>
+<hr>
+<h2 id="midi-cc-routing-screen">MIDI CC Routing Screen</h2>
+<p>Access: chain_control → MIDI config subscreen → CC routing, or via Admin → MIDI.</p>
+<p>The <code>midi_cc</code> screen shows all 128 MIDI CC numbers for the selected chain:</p>
+<pre><code>☑ CC 00    ☑ CC 01    ☑ CC 07    ☐ CC 11
+☑ CC 16    ☐ CC 17    ☑ CC 64    ☐ CC 74
+...</code></pre>
+<ul><li><strong>☑ CC NN</strong> — this CC is <strong>routed through</strong> to the engine</li><li><strong>☐ CC NN</strong> — this CC is <strong>blocked</strong> for this chain</li></ul>
+<p>Blocking a CC prevents it from reaching the engine regardless of CC learn. Used to prevent unwanted automation — for example, block CC 7 (volume) if your keyboard auto-sends channel volume and you want the ZynMixer to control levels instead.</p>
+<p><strong>Toggle:</strong> tap an entry or push encoder 3 while highlighted. Takes effect immediately with no restart.</p>
 <p>Source: <a href="../zynthian-ui/zyngui/zynthian_gui_midi_cc.py"><code>zyngui/zynthian_gui_midi_cc.py</code></a></p>
 <hr>
+<h2 id="midi-port-configuration-screen">MIDI Port Configuration Screen</h2>
+<p>Access: chain_control → side chain panel → MIDI input/output node.</p>
+<p>The <code>midi_config</code> screen lists all detected MIDI ports. Input and output are separate views (toggle via <code>midi_input</code> flag).</p>
+<h3 id="port-icons-input-ports">Port Icons (Input Ports)</h3>
+<table><thead><tr><th>Icon</th><th>Meaning</th></tr></thead><tbody><tr><td><code>⇥</code></td><td><strong>Active mode</strong> — this port feeds only the active (selected) chain</td></tr><tr><td><code>⇶</code></td><td><strong>Multitimbral mode</strong> — this port routes to all chains by MIDI channel</td></tr><tr><td><code>♣</code></td><td><strong>Sequencer capture</strong> — this port also feeds the zynseq step sequencer</td></tr><tr><td><code>⏱</code></td><td><strong>MIDI Clock</strong> — this port is the external clock source</td></tr><tr><td><code>⌨</code></td><td><strong>Controller driver</strong> — a ctrldev driver is loaded for this device</td></tr></tbody></table>
+<p><strong>No icon</strong> = standard routing, multitimbral mode.</p>
+<h3 id="port-states-in-chain-view">Port States in Chain View</h3>
+<table><thead><tr><th>Prefix</th><th>Meaning</th></tr></thead><tbody><tr><td>☑ (icons) port name</td><td>Connected to this chain</td></tr><tr><td>☐ (icons) port name</td><td>Not connected to this chain</td></tr><tr><td>(indented, no ☑/☐)</td><td>Port captured by a controller driver, not available to chains</td></tr></tbody></table>
+<p><strong>Toggle connection:</strong> tap the port entry. Takes effect immediately.</p>
+<p><strong>Bold-press a port:</strong> opens options (set mode, set as clock source, assign controller driver, etc.).</p>
+<p>Source: <a href="../zynthian-ui/zyngui/zynthian_gui_midi_config.py"><code>zyngui/zynthian_gui_midi_config.py</code></a></p>
+<hr>
 <h2 id="program-change-binding">Program Change Binding</h2>
-<p>The <code>midi_prog</code> screen lets you assign a MIDI Program Change number to a preset:</p>
-<ul><li>Access: usually opened automatically when the engine receives a PC message and <code>Program Change for ZS3</code> is off.</li><li>Shows 0–127 numbered slots plus a "None" option.</li><li>Select a slot to link the current preset to that PC number.</li></ul>
-<p>After binding, when your controller sends PC#N on the chain's MIDI channel, that preset loads automatically.</p>
-<p><strong>Note:</strong> if "Program Change for ZS3" is enabled in Admin → MIDI, PC messages recall ZS3 states instead of individual presets. The <code>midi_prog</code> screen is only for preset binding when ZS3 mode is off.</p>
+<p>The <code>midi_prog</code> screen links a MIDI Program Change number to a preset.</p>
+<p><strong>When it is used:</strong> when Admin → MIDI → Program Change for ZS3 is <strong>disabled</strong>, PC messages load presets in the active engine. The <code>midi_prog</code> screen maps PC numbers to specific presets.</p>
+<table><thead><tr><th>Feature</th><th>Detail</th></tr></thead><tbody><tr><td>Range</td><td>0–127 plus "None"</td></tr><tr><td>Scope</td><td>Per-chain; stored with the chain state</td></tr><tr><td>Trigger</td><td>PC message on the chain's MIDI channel</td></tr></tbody></table>
+<p><strong>Workflow:</strong></p>
+<ol><li>Load the preset you want to assign.</li><li>Navigate to that chain's MIDI settings (or the midi_prog screen opens automatically on PC receive).</li><li>Select the PC number you want to assign to this preset.</li><li>Next time that PC number arrives on that channel, the preset loads.</li></ol>
 <p>Source: <a href="../zynthian-ui/zyngui/zynthian_gui_midi_prog.py"><code>zyngui/zynthian_gui_midi_prog.py</code></a></p>
 <hr>
 <h2 id="midi-profiles">MIDI Profiles</h2>
-<p>A MIDI profile is a <code>.sh</code> environment file that sets MIDI routing and CC mapping for a specific controller. Profiles live in <code>/zynthian/config/midi-profiles/</code>.</p>
-<p><strong>Loading a profile:</strong></p>
-<ol><li>Admin → MIDI → MIDI Profile (or chain_options → MIDI profile if accessible).</li><li>The <code>midi_profile</code> screen lists all <code>.sh</code> files in the profiles directory.</li><li>Select a profile — it loads immediately and reloads the MIDI configuration.</li></ol>
-<p><strong>What a profile contains:</strong></p>
-<pre><code class="language-bash">ZYNTHIAN_MIDI_FINE_TUNING=440
-ZYNTHIAN_MIDI_TRANSPOSE=0
-ZYNTHIAN_MIDI_PROG_CHANGE_ZS3=0
-ZYNTHIAN_MIDI_FILTER_OUTPUT=0</code></pre>
-<p>The <code>default.sh</code> profile is loaded at boot. Create named profiles for specific controllers — e.g. <code>bcr2000.sh</code> for a Behringer BCR2000.</p>
+<p>A MIDI profile is a <code>.sh</code> file that sets environment variables controlling MIDI behavior. Profiles live in <code>/zynthian/config/midi-profiles/</code>.</p>
+<p><strong>Loading a profile:</strong> Admin → MIDI → MIDI Profile (when exposed) — or from the <code>midi_profile</code> screen.</p>
+<p>The screen lists all <code>.sh</code> files in the profiles directory. The currently active profile is pre-selected. Selecting a different profile calls <code>zynconf.save_config()</code> and reloads MIDI configuration immediately.</p>
+<h3 id="common-profile-variables">Common Profile Variables</h3>
+<table><thead><tr><th>Variable</th><th>Default</th><th>Effect</th></tr></thead><tbody><tr><td><code>ZYNTHIAN_MIDI_FINE_TUNING</code></td><td>440</td><td>Master tuning reference frequency (Hz)</td></tr><tr><td><code>ZYNTHIAN_MIDI_TRANSPOSE</code></td><td>0</td><td>Global MIDI note transpose (semitones)</td></tr><tr><td><code>ZYNTHIAN_MIDI_PROG_CHANGE_ZS3</code></td><td>0</td><td>1 = PC messages recall ZS3; 0 = load presets</td></tr><tr><td><code>ZYNTHIAN_MIDI_BANK_CHANGE</code></td><td>0</td><td>1 = process Bank Select CC 0/32</td></tr><tr><td><code>ZYNTHIAN_MIDI_FILTER_OUTPUT</code></td><td>0</td><td>1 = filter MIDI output</td></tr><tr><td><code>ZYNTHIAN_MIDI_SINGLE_ACTIVE_CHANNEL</code></td><td>0</td><td>1 = active MIDI channel sends to one chain only</td></tr><tr><td><code>ZYNTHIAN_MIDI_SYS_ENABLED</code></td><td>0</td><td>1 = process SysEx messages</td></tr><tr><td><code>ZYNTHIAN_MIDI_USB_BY_PORT</code></td><td>0</td><td>1 = map USB devices by port number as well as name</td></tr><tr><td><code>ZYNTHIAN_MIDI_CLOCK_OUTPUT_ENABLED</code></td><td>0</td><td>1 = send MIDI clock to output ports</td></tr></tbody></table>
 <p>Source: <a href="../zynthian-ui/zyngui/zynthian_gui_midi_profile.py"><code>zyngui/zynthian_gui_midi_profile.py</code></a></p>
 <hr>
-<h2 id="midi-key-range">MIDI Key Range</h2>
-<p>The <code>midi_key_range</code> screen restricts which MIDI notes a chain responds to. Set Min and Max notes to define the playable range. Combined with multiple chains, this creates keyboard splits.</p>
-<p>Access via chain_options → MIDI channel settings, or through the chain_control MIDI subscreen.</p>
+<h2 id="admin-midi-settings">Admin MIDI Settings</h2>
+<p>Admin → MIDI section — all global MIDI toggles and settings:</p>
+<table><thead><tr><th>Setting</th><th>Env var written</th><th>Detail</th></tr></thead><tbody><tr><td>MIDI Input Devices</td><td>—</td><td>Opens midi_config in admin mode (no chain)</td></tr><tr><td>MIDI Output Devices</td><td>—</td><td>Opens midi_config output view</td></tr><tr><td>Active MIDI channel ☑/☐</td><td><code>ZYNTHIAN_MIDI_SINGLE_ACTIVE_CHANNEL</code></td><td>☑ = CC/PC only to active chain; ☐ = to all chains on that channel</td></tr><tr><td>Program Change for ZS3 ☑/☐</td><td><code>ZYNTHIAN_MIDI_PROG_CHANGE_ZS3</code></td><td>☑ = PC recalls ZS3; ☐ = PC loads presets</td></tr><tr><td>MIDI Bank Change ☑/☐</td><td><code>ZYNTHIAN_MIDI_BANK_CHANGE</code></td><td>Only shown when ZS3 mode off; ☑ = Bank Select processed</td></tr><tr><td>MIDI-USB mapped by port ☑/☐</td><td><code>ZYNTHIAN_MIDI_USB_BY_PORT</code></td><td>☑ = device ID includes USB port number</td></tr><tr><td>Global Transpose (±N)</td><td>via <code>lib_zyncore.set_global_transpose()</code></td><td>Range −24 to +24 semitones</td></tr><tr><td>Channel Pressure → CC</td><td><code>ZYNTHIAN_MIDI_CHANPRESS_CC</code></td><td>Map mono aftertouch to CC 0–119</td></tr></tbody></table>
 <hr>
-<h2 id="example-mapping-a-16-knob-controller-behringer-bcr2000">Example: Mapping a 16-Knob Controller (Behringer BCR2000)</h2>
-<p>Goal: map 16 physical knobs to ZynAddSubFX parameters across 4 pages.</p>
-<p><strong>Setup:</strong></p>
-<ol><li>Load ZynAddSubFX with any preset.</li><li>Control screen → navigate to "Part 1" page.</li><li>Long-press encoder 1 (Volume knob) → move BCR2000 knob 1 → CC 16 bound.</li><li>Long-press encoder 2 (Pan knob) → move BCR2000 knob 2 → CC 17 bound.</li><li>Long-press encoder 3 (Cutoff knob) → move BCR2000 knob 3 → CC 18 bound.</li><li>Long-press encoder 4 (Resonance knob) → move BCR2000 knob 4 → CC 19 bound.</li><li>Navigate to next page → bind knobs 5–8 → CCs 20–23.</li><li>Continue for remaining pages.</li></ol>
-<p><strong>Save the controller mapping:</strong></p>
-<p>After binding all knobs, save as a ZS3 to capture the parameter assignments. The CC bindings themselves are saved with the snapshot.</p>
+<h2 id="key-ranges-and-splits">Key Ranges and Splits</h2>
+<p>The <code>midi_key_range</code> screen restricts which MIDI notes a chain receives:</p>
+<table><thead><tr><th>Setting</th><th>Effect</th></tr></thead><tbody><tr><td>Min note</td><td>Lowest note this chain responds to</td></tr><tr><td>Max note</td><td>Highest note this chain responds to</td></tr></tbody></table>
+<p>Notes outside the range are filtered before reaching the engine. Combine with two chains on the same channel to create a keyboard split (see <a href="chain-management.html">Chains &amp; Routing</a>).</p>
 <hr>
-<h2 id="example-saving-a-midi-profile-for-a-specific-controller">Example: Saving a MIDI Profile for a Specific Controller</h2>
-<p>When you have a controller with fixed CC assignments and want to recall them on every boot:</p>
-<ol><li>Set up MIDI settings in Admin → MIDI (channels, active MIDI, transpose, etc.).</li><li>The settings are written to <code>zynthian_envars.sh</code>.</li><li>To make a named profile: copy <code>/zynthian/config/zynthian_envars.sh</code> to <code>/zynthian/config/midi-profiles/mycontroller.sh</code> (via SSH).</li><li>Load the profile via the midi_profile screen — it becomes active immediately and can be re-selected on future sessions.</li></ol>
+<h2 id="example-mapping-a-16-knob-controller-bcr2000">Example: Mapping a 16-Knob Controller (BCR2000)</h2>
+<p>The Behringer BCR2000 has 32 rotary encoders in 4 banks. Map a full bank (8 knobs) to ZynAddSubFX parameters.</p>
+<p><strong>Bank 1 mapping (CC 21–28 on channel 1):</strong></p>
+<table><thead><tr><th>BCR2000 knob</th><th>CC#</th><th>ZynAddSubFX parameter</th></tr></thead><tbody><tr><td>Knob 1</td><td>21</td><td>Volume</td></tr><tr><td>Knob 2</td><td>22</td><td>Pan</td></tr><tr><td>Knob 3</td><td>23</td><td>Filter Cutoff</td></tr><tr><td>Knob 4</td><td>24</td><td>Resonance</td></tr><tr><td>Knob 5</td><td>25</td><td>Amplitude Attack</td></tr><tr><td>Knob 6</td><td>26</td><td>Amplitude Decay</td></tr><tr><td>Knob 7</td><td>27</td><td>Amplitude Sustain</td></tr><tr><td>Knob 8</td><td>28</td><td>Amplitude Release</td></tr></tbody></table>
+<p><strong>Steps:</strong></p>
+<ol><li>Program BCR2000 to send CC 21–28 on its Bank 1 encoders, MIDI channel 1.</li><li>Load ZynAddSubFX on chain 1.</li><li>Control screen → navigate to "Global" page → long-press encoder 1 → move BCR2000 knob 1 → CC 21 bound to Volume.</li><li>Continue for all 8 parameters across pages.</li><li>Save as ZS3 "BCR2000 Bank1".</li></ol>
+<p><strong>Next session:</strong> load the ZS3 → all 8 bindings restore → BCR2000 knobs are immediately active.</p>
+<hr>
+<h2 id="example-saving-a-midi-profile-for-a-controller">Example: Saving a MIDI Profile for a Controller</h2>
+<p>Create a named profile for a Roland A-88 that transposes +12 semitones and uses ZS3 PC mode:</p>
+<ol><li>SSH into the Pi:</li></ol>
+<pre><code class="language-bash">ssh root@zynthian.local</code></pre>
+<ol><li>Copy the default profile and edit it:</li></ol>
+<pre><code class="language-bash">cp /zynthian/config/midi-profiles/default.sh /zynthian/config/midi-profiles/roland_a88.sh
+nano /zynthian/config/midi-profiles/roland_a88.sh</code></pre>
+<ol><li>Set these variables:</li></ol>
+<pre><code class="language-bash">export ZYNTHIAN_MIDI_TRANSPOSE=12
+export ZYNTHIAN_MIDI_PROG_CHANGE_ZS3=1
+export ZYNTHIAN_MIDI_BANK_CHANGE=0</code></pre>
+<ol><li>In the Zynthian UI: Admin → (if midi_profile exposed) → select <code>roland_a88</code> → loads immediately.</li></ol>
 <hr>
 <h2 id="whats-next">What's Next</h2>
-<ul><li><a href="control-screen.html">Control Screen</a> — where CC learn is initiated</li><li><a href="zs3-guide.html">ZS3 Subsnapshots</a> — save CC state per song section</li><li><a href="midi.html">MIDI Controllers</a> — connecting USB and BLE controllers</li></ul>
+<ul><li><a href="control-screen.html">Control Screen</a> — where CC learn is initiated</li><li><a href="zs3-guide.html">ZS3 Subsnapshots</a> — save CC state per song section</li><li><a href="midi.html">MIDI Controllers</a> — connecting USB and BLE controllers</li><li><a href="admin-guide.html">Admin & System</a> — global MIDI settings</li></ul>
 <hr>
-<p><em>Version: 2026-05-25 — derived from <code>zyngui/zynthian_gui_midi_cc.py</code>, <code>zyngui/zynthian_gui_midi_prog.py</code>, <code>zyngui/zynthian_gui_midi_profile.py</code>.</em></p>
+<p><em>Version: 2026-05-25 — derived from <code>zyngui/zynthian_gui_midi_cc.py</code>, <code>zyngui/zynthian_gui_midi_prog.py</code>, <code>zyngui/zynthian_gui_midi_profile.py</code>, <code>zyngui/zynthian_gui_midi_config.py</code>, <code>zyngui/zynthian_gui_admin.py</code>.</em></p>
 </article>
 </main>
 </div>

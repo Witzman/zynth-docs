@@ -74,63 +74,81 @@
 <main>
 <article>
 <h1 id="performance--cpu-management">Performance & CPU Management</h1>
-<p>Running multiple synth engines simultaneously on a Raspberry Pi requires attention to CPU budget. This page explains how to read the performance indicators and tune your setup for stability.</p>
+<p>Running multiple synth engines simultaneously on a Raspberry Pi requires attention to CPU budget. This page explains how to read performance indicators, diagnose problems, and tune your setup for stable, glitch-free operation.</p>
 <hr>
 <h2 id="status-bar-cpu-indicator">Status Bar CPU Indicator</h2>
-<p>The status bar at the top of every screen shows a CPU percentage. This is the total system CPU load across all cores.</p>
-<table><thead><tr><th>Range</th><th>Meaning</th><th>Action</th></tr></thead><tbody><tr><td>0–50%</td><td>Comfortable</td><td>No action needed</td></tr><tr><td>50–75%</td><td>Moderate</td><td>Monitor, avoid adding heavy engines</td></tr><tr><td>75–85%</td><td>High</td><td>Risk of XRUNs under heavy MIDI load</td></tr><tr><td>85–100%</td><td>Critical</td><td>Expect audio glitches; reduce load</td></tr></tbody></table>
-<p>On Pi 4 (4 cores), CPU% reflects the sum across all 4 cores divided by 4. A 4-chain setup can saturate one core at 25% total — misleading. Watch individual JACK client CPU in <code>htop</code> if you suspect one engine is a bottleneck.</p>
+<p>The status bar at the top of every screen shows a percentage. This is the <strong>total system CPU load</strong> averaged across all cores.</p>
+<table><thead><tr><th>Range</th><th>Meaning</th><th>Recommended action</th></tr></thead><tbody><tr><td>0–50%</td><td>Comfortable headroom</td><td>None</td></tr><tr><td>50–70%</td><td>Moderate</td><td>Monitor; avoid adding heavy engines</td></tr><tr><td>70–85%</td><td>High</td><td>Risk of XRUNs under peak MIDI load</td></tr><tr><td>85–100%</td><td>Critical</td><td>Audio glitches likely; reduce load now</td></tr></tbody></table>
+<p><strong>Caveat:</strong> on Pi 4 (4 cores), a single core saturated at 100% shows as ~25% total. If one engine is bottlenecking, CPU% alone can be misleading. Use <code>htop</code> over SSH to see per-core and per-process breakdown:</p>
+<pre><code class="language-bash">ssh root@zynthian.local "htop"</code></pre>
 <hr>
 <h2 id="dpm--digital-peak-meters">DPM — Digital Peak Meters</h2>
-<p>The mixer shows vertical level meters (DPM) for each chain when enabled. These are <strong>pre-clipping indicators</strong> — the bar should not reach the top red zone.</p>
-<table><thead><tr><th>Meter zone</th><th>Meaning</th></tr></thead><tbody><tr><td>Green (bottom 2/3)</td><td>Safe level</td></tr><tr><td>Yellow (upper third)</td><td>Approaching 0 dBFS</td></tr><tr><td>Red (top)</td><td>Clipping — reduce volume</td></tr></tbody></table>
-<p><strong>Enable/disable DPM:</strong> Admin → AUDIO → <strong>Mixer Peak Meters</strong> (toggles <code>enable_dpm</code>). Disabling DPM saves a small amount of CPU.</p>
+<p>The mixer shows vertical level meters for each chain (DPM = Digital Peak Meter). These are <strong>pre-clip indicators</strong> — the top red zone means the signal is at or above 0 dBFS.</p>
+<table><thead><tr><th>Meter zone</th><th>Level</th><th>Action</th></tr></thead><tbody><tr><td>Green (lower 2/3)</td><td>−∞ to −6 dBFS</td><td>Safe</td></tr><tr><td>Yellow (upper 1/3)</td><td>−6 to −1 dBFS</td><td>Approaching clip</td></tr><tr><td>Red (top 1–2 bars)</td><td>−1 to 0 dBFS</td><td>Near clipping — reduce engine volume</td></tr><tr><td>Solid red</td><td>0 dBFS (clipping)</td><td>Distortion — reduce immediately</td></tr></tbody></table>
+<p><strong>Enable/disable DPM:</strong> Admin → AUDIO → <strong>Mixer Peak Meters</strong> → toggle. Env var: no direct env var — stored in <code>ZYNTHIAN_UI_ENABLE_DPM</code> by <code>zynconf.save_config()</code>. Disabling saves ~1–2% CPU, useful on tight Pi 3 setups.</p>
+<p>The master chain DPM (far right strip) shows the final summed output level. If it clips while individual chains do not, reduce the master fader or lower multiple chain volumes simultaneously.</p>
 <hr>
 <h2 id="jack-xrun-indicator">JACK XRUN Indicator</h2>
-<p>An <strong>XRUN</strong> (under-run or over-run) occurs when the CPU cannot process an audio buffer in time. The result is an audible click or dropout.</p>
-<p>The status bar shows an XRUN counter (often a small ✕ icon with a count). If this increments during performance, the CPU cannot keep up.</p>
-<p><strong>Immediate response to XRUNs:</strong></p>
-<ol><li>Check CPU% — is it above 80%?</li><li>Check temperature: <code>ssh root@zynthian.local "vcgencmd measure_temp"</code> — above 80°C throttles the Pi.</li><li>Reduce polyphony on the heaviest engine (ZynAddSubFX part settings).</li><li>Increase JACK buffer size (webconf → Audio → Period Size).</li></ol>
-<p><strong>JACK config</strong> (from <code>zynthian_envars.sh</code>):</p>
+<p>An <strong>XRUN</strong> (buffer under-run or over-run) occurs when the CPU cannot process an audio period in time. The result is an audible click or dropout in the audio output.</p>
+<p>The status bar shows an XRUN counter (small ✕ or X with count). If this increments during playback, the CPU cannot keep up.</p>
+<h3 id="interpreting-xrun-timing">Interpreting XRUN Timing</h3>
+<table><thead><tr><th>XRUNs occur</th><th>Likely cause</th></tr></thead><tbody><tr><td>During heavy chord or many simultaneous notes</td><td>Polyphony overload on ZynAddSubFX or similar</td></tr><tr><td>On MIDI note-on only</td><td>Engine voice startup cost too high</td></tr><tr><td>Randomly, not correlated to MIDI</td><td>Thermal throttling or background OS task</td></tr><tr><td>Consistently at specific patterns</td><td>Pattern requires sustained CPU above system capability</td></tr><tr><td>Only during patch changes</td><td>Engine reload is heavy — use ZS3 instead of snapshots during performance</td></tr></tbody></table>
+<h3 id="checking-jack-status">Checking JACK Status</h3>
+<pre><code class="language-bash">ssh root@zynthian.local "systemctl status jack2 --no-pager"
+ssh root@zynthian.local "journalctl -u jack2 -n 20 --no-pager"</code></pre>
+<p>JACK log will show XRUN messages with timestamps.</p>
+<hr>
+<h2 id="jack-configuration-parameters">JACK Configuration Parameters</h2>
+<p>The JACK audio server is configured via <code>JACKD_OPTIONS</code> in <code>zynthian_envars.sh</code>:</p>
 <pre><code class="language-bash">JACKD_OPTIONS="-P 70 -t 2000 -s a -d alsa -d hw:S2 -r 44100 -p 256 -n 3"</code></pre>
-<ul><li><code>-p 256</code> = 256 frames per period ≈ 5.8ms latency at 44100 Hz</li><li><code>-p 512</code> = 512 frames ≈ 11.6ms — use if XRUNs persist</li></ul>
-<hr>
-<h2 id="engine-cpu-cost-pi-4-approximate">Engine CPU Cost (Pi 4, approximate)</h2>
-<table><thead><tr><th>Engine</th><th>Polyphony</th><th>Approximate CPU per chain</th></tr></thead><tbody><tr><td>ZynAddSubFX</td><td>8–64 voices</td><td>8–25%</td></tr><tr><td>FluidSynth</td><td>64–256 voices</td><td>3–8%</td></tr><tr><td>setBfree</td><td>Continuous</td><td>5–10%</td></tr><tr><td>LinuxSampler</td><td>64 voices</td><td>2–5% (disk I/O bound)</td></tr><tr><td>Sfizz</td><td>64 voices</td><td>3–7%</td></tr><tr><td>Aeolus</td><td>Continuous</td><td>8–15%</td></tr><tr><td>LV2 (simple plugin)</td><td>N/A</td><td>1–3%</td></tr><tr><td>LV2 (convolution reverb)</td><td>N/A</td><td>10–30%</td></tr><tr><td>Audio Player</td><td>N/A</td><td>1–3%</td></tr><tr><td>SooperLooper</td><td>N/A</td><td>3–6%</td></tr></tbody></table>
-<p>These are rough estimates. Actual cost depends on preset complexity (ZynAddSubFX varies enormously), sample file size (LinuxSampler), and IR length (convolution reverbs).</p>
-<hr>
-<h2 id="polyphony-limits">Polyphony Limits</h2>
-<table><thead><tr><th>Pi Model</th><th>Safe simultaneous voices (ZynAddSubFX)</th></tr></thead><tbody><tr><td>Pi 3</td><td>16–24</td></tr><tr><td>Pi 4</td><td>32–64</td></tr><tr><td>Pi 5</td><td>64–128</td></tr></tbody></table>
-<p>For FluidSynth, set <code>ZYNTHIAN_SYNTH_POLYPHONY</code> in <code>zynthian_envars.sh</code> (default 64). Reducing to 32 saves CPU with minimal audible difference in most setups.</p>
+<table><thead><tr><th>Flag</th><th>Value</th><th>Meaning</th></tr></thead><tbody><tr><td><code>-P</code></td><td>70</td><td>JACK process real-time priority (0–99, higher = more priority)</td></tr><tr><td><code>-t</code></td><td>2000</td><td>Client timeout in ms before JACK kills it</td></tr><tr><td><code>-s a</code></td><td>alsa</td><td>Use ALSA audio backend</td></tr><tr><td><code>-d alsa</code></td><td>—</td><td>ALSA driver</td></tr><tr><td><code>-d hw:S2</code></td><td>hw:S2</td><td>ALSA hardware device name (S2 = Zynthian soundcard)</td></tr><tr><td><code>-r</code></td><td>44100</td><td>Sample rate in Hz</td></tr><tr><td><code>-p</code></td><td>256</td><td>Frames per period (buffer size)</td></tr><tr><td><code>-n</code></td><td>3</td><td>Number of periods per cycle</td></tr></tbody></table>
+<h3 id="buffer-size-and-latency">Buffer Size and Latency</h3>
+<table><thead><tr><th><code>-p</code> value</th><th>Latency at 44100 Hz</th><th>XRUN risk</th><th>Notes</th></tr></thead><tbody><tr><td>128</td><td>2.9 ms</td><td>High</td><td>Only on Pi 4/5 with simple patches</td></tr><tr><td>256</td><td>5.8 ms</td><td>Low</td><td>Standard — good balance</td></tr><tr><td>512</td><td>11.6 ms</td><td>Very low</td><td>Use if XRUNs persist with 256</td></tr><tr><td>1024</td><td>23.2 ms</td><td>Minimal</td><td>Noticeable latency; last resort</td></tr></tbody></table>
+<p>Change buffer size in webconf → <strong>Audio</strong> → <strong>Period Size</strong>. Takes effect after restart.</p>
 <hr>
 <h2 id="temperature-monitoring">Temperature Monitoring</h2>
-<p>Raspberry Pi 4 throttles at 80°C and hard-throttles at 85°C, causing XRUNs and sluggish UI.</p>
-<p><strong>Check temperature:</strong></p>
+<p>Raspberry Pi 4 throttles CPU at <strong>80°C</strong> and hard-throttles at <strong>85°C</strong>, both causing XRUNs and UI sluggishness.</p>
+<h3 id="check-temperature">Check Temperature</h3>
 <pre><code class="language-bash">ssh root@zynthian.local "vcgencmd measure_temp"
-# → temp=55.2'C</code></pre>
-<p><strong>Check throttle state:</strong></p>
-<pre><code class="language-bash">ssh root@zynthian.local "vcgencmd get_throttled"
-# → throttled=0x0   (OK)
-# → throttled=0x50000  (was throttled, now OK)
-# → throttled=0x5      (currently throttled!)</code></pre>
-<p>The Zynthian case with heatsink keeps the Pi 4 below 65°C in normal use. Convolution reverbs or many simultaneous LV2 chains can push it higher.</p>
-<p><strong>Webconf dashboard</strong> shows CPU and temperature at <code>http://zynthian.local</code> → Dashboard tab.</p>
+# → temp=57.3'C</code></pre>
+<h3 id="check-throttle-state">Check Throttle State</h3>
+<pre><code class="language-bash">ssh root@zynthian.local "vcgencmd get_throttled"</code></pre>
+<p>The returned value is a bitmask. Decode it:</p>
+<table><thead><tr><th>Bit position</th><th>Hex mask</th><th>Meaning</th></tr></thead><tbody><tr><td>0</td><td>0x1</td><td>Under-voltage detected (now)</td></tr><tr><td>1</td><td>0x2</td><td>Arm frequency capped (now)</td></tr><tr><td>2</td><td>0x4</td><td>Currently throttled</td></tr><tr><td>3</td><td>0x8</td><td>Soft temperature limit active</td></tr><tr><td>16</td><td>0x10000</td><td>Under-voltage occurred since boot</td></tr><tr><td>17</td><td>0x20000</td><td>Arm frequency capped since boot</td></tr><tr><td>18</td><td>0x40000</td><td>Throttling occurred since boot</td></tr><tr><td>19</td><td>0x80000</td><td>Soft temperature limit since boot</td></tr></tbody></table>
+<p>Common responses:</p>
+<table><thead><tr><th>Value</th><th>Meaning</th></tr></thead><tbody><tr><td><code>throttled=0x0</code></td><td>No throttling — healthy</td></tr><tr><td><code>throttled=0x50000</code></td><td>Was throttled and had under-voltage at some point since boot, but OK now</td></tr><tr><td><code>throttled=0x50005</code></td><td>Currently throttled AND under-voltage — check power supply and airflow</td></tr><tr><td><code>throttled=0x4</code></td><td>Currently throttling — temperature too high</td></tr></tbody></table>
+<p><strong>Webconf dashboard</strong> shows CPU and temperature live at <code>http://zynthian.local</code>.</p>
 <hr>
-<h2 id="optimization-strategies">Optimization Strategies</h2>
-<p><strong>Quick wins:</strong></p>
-<table><thead><tr><th>Strategy</th><th>Savings</th></tr></thead><tbody><tr><td>Disable DPM meters</td><td>~2%</td></tr><tr><td>Reduce ZynAddSubFX polyphony from 64 to 32</td><td>5–15%</td></tr><tr><td>Use Audio Player instead of live ZynAddSubFX for pads</td><td>10–20%</td></tr><tr><td>Increase JACK buffer from 256 to 512</td><td>Eliminates XRUNs at cost of +6ms latency</td></tr><tr><td>Disable unused chains (mute vs stop)</td><td>Mute saves nothing; remove unused chains entirely</td></tr><tr><td>Use setBfree instead of ZynAddSubFX organ</td><td>setBfree ~5%, ZynAddSubFX organ ~15%</td></tr></tbody></table>
-<p><strong>Structural approaches:</strong></p>
-<ul><li>Pre-render complex pads as audio files, play them back via Audio Player.</li><li>Use LV2 reverb/delay only on the main mixbus (one reverb shared by all chains) instead of per-chain reverb.</li><li>On Pi 4, limit to 3–4 simultaneous synth engines plus effects.</li></ul>
+<h2 id="engine-cpu-cost-pi-4-approximate">Engine CPU Cost (Pi 4, approximate)</h2>
+<p>These figures assume one engine instance at default settings:</p>
+<table><thead><tr><th>Engine</th><th>Notes</th><th>Approx CPU</th></tr></thead><tbody><tr><td>ZynAddSubFX (simple preset)</td><td>Additive + subtractive synthesis</td><td>8–15%</td></tr><tr><td>ZynAddSubFX (complex: many oscillators, effects)</td><td>Full poly preset</td><td>15–30%</td></tr><tr><td>FluidSynth</td><td>SF2 playback, 64 voice poly</td><td>3–8%</td></tr><tr><td>setBfree</td><td>Continuous tonewheel emulation</td><td>5–10%</td></tr><tr><td>LinuxSampler</td><td>Sample playback, disk-bound</td><td>2–5% + disk I/O</td></tr><tr><td>Sfizz</td><td>SFZ player</td><td>3–7%</td></tr><tr><td>Aeolus</td><td>Pipe organ model</td><td>8–15%</td></tr><tr><td>Pianoteq (if licensed)</td><td>Physical model piano</td><td>10–20%</td></tr><tr><td>AudioPlayer</td><td>File playback</td><td>1–3%</td></tr><tr><td>SooperLooper</td><td>Live looper</td><td>3–6%</td></tr><tr><td>Calf Reverb (LV2)</td><td>Simple algorithmic reverb</td><td>2–4%</td></tr><tr><td>IR.lv2 (convolution reverb)</td><td>Per IR length</td><td>10–35%</td></tr><tr><td>ZynAddSubFX as organ emulation</td><td>Many additive oscillators</td><td>15–25%</td></tr></tbody></table>
 <hr>
-<h2 id="example-stable-4-chain-live-setup-on-pi-4-at-buffer-256">Example: Stable 4-Chain Live Setup on Pi 4 at Buffer 256</h2>
-<table><thead><tr><th>Chain</th><th>Engine</th><th>Polyphony</th><th>CPU est.</th></tr></thead><tbody><tr><td>Piano</td><td>FluidSynth (Steinway)</td><td>64</td><td>5%</td></tr><tr><td>Organ</td><td>setBfree</td><td>continuous</td><td>7%</td></tr><tr><td>Lead</td><td>ZynAddSubFX (Simple Lead)</td><td>16</td><td>8%</td></tr><tr><td>Drums</td><td>FluidSynth GM drums</td><td>32</td><td>3%</td></tr><tr><td>Reverb bus</td><td>Calf Reverb LV2</td><td>—</td><td>2%</td></tr></tbody></table>
-<p>Total: ~25% CPU, comfortable headroom for MIDI processing and UI.</p>
+<h2 id="polyphony-limits">Polyphony Limits</h2>
+<p>Maximum simultaneous voices before CPU saturates:</p>
+<table><thead><tr><th>Engine</th><th>Pi 3</th><th>Pi 4</th><th>Pi 5</th></tr></thead><tbody><tr><td>ZynAddSubFX (typical preset)</td><td>8–16</td><td>24–48</td><td>48–96</td></tr><tr><td>FluidSynth</td><td>32–64</td><td>64–128</td><td>128–256</td></tr><tr><td>LinuxSampler</td><td>16–32</td><td>32–64</td><td>64–128</td></tr></tbody></table>
+<p>Set FluidSynth polyphony via env var <code>ZYNTHIAN_SYNTH_POLYPHONY</code> in <code>zynthian_envars.sh</code> (default 64). Reducing to 32 saves ~30% FluidSynth CPU with minimal audible impact for most music styles.</p>
+<p>ZynAddSubFX polyphony is set per-part within the engine's own parameter pages.</p>
+<hr>
+<h2 id="cpu-optimization-strategies">CPU Optimization Strategies</h2>
+<h3 id="quick-wins">Quick Wins</h3>
+<table><thead><tr><th>Strategy</th><th>Typical CPU saving</th></tr></thead><tbody><tr><td>Disable DPM meters (<code>enable_dpm = False</code>)</td><td>1–2%</td></tr><tr><td>Reduce FluidSynth polyphony 64 → 32</td><td>2–4%</td></tr><tr><td>Reduce ZynAddSubFX polyphony 64 → 16</td><td>5–15% depending on preset</td></tr><tr><td>Use setBfree instead of ZynAddSubFX organ emulation</td><td>Saves 5–15%</td></tr><tr><td>Remove unused chains (don't just mute)</td><td>Saves idle engine CPU</td></tr><tr><td>Replace convolution reverb with algorithmic reverb</td><td>Saves 10–30%</td></tr><tr><td>Pre-render complex pads as audio → use AudioPlayer</td><td>Replaces 10–25% with 1–3%</td></tr><tr><td>Increase JACK buffer 256 → 512</td><td>Eliminates XRUNs at +6ms latency cost</td></tr></tbody></table>
+<h3 id="structural-strategies">Structural Strategies</h3>
+<ul><li><strong>Shared reverb bus:</strong> one Calf Reverb on a mixbus chain, fed by all instrument chains via sends, instead of per-chain reverb. One reverb CPU cost vs N.</li><li><strong>ZS3 instead of snapshots during performance:</strong> ZS3 recall is instant; full snapshot reload restarts engines (1–5s gap).</li><li><strong>Limit simultaneous LV2 plugins:</strong> each plugin instance runs its own audio processing thread. 10 LV2 plugins on one chain costs more than 10 sequential processors in terms of scheduling overhead.</li><li><strong>Reduce sample rate to 44100 Hz:</strong> default is already 44100. Moving to 48000 Hz increases CPU ~9% for no audible benefit for synth use.</li></ul>
+<hr>
+<h2 id="example-stable-4-chain-live-setup-on-pi-4">Example: Stable 4-Chain Live Setup on Pi 4</h2>
+<p>Target: no XRUNs at <code>-p 256</code> (5.8ms latency), comfortable headroom below 70% CPU.</p>
+<table><thead><tr><th>Chain</th><th>Engine</th><th>Preset type</th><th>Poly</th><th>Est. CPU</th></tr></thead><tbody><tr><td>Piano</td><td>FluidSynth (Salamander)</td><td>Piano</td><td>48</td><td>6%</td></tr><tr><td>Organ</td><td>setBfree</td><td>Full organ</td><td>—</td><td>8%</td></tr><tr><td>Strings pad</td><td>ZynAddSubFX</td><td>Simple additive pad</td><td>16</td><td>8%</td></tr><tr><td>Drums</td><td>FluidSynth (GM drums)</td><td>Percussion</td><td>24</td><td>3%</td></tr><tr><td>Reverb send bus</td><td>Calf Reverb LV2</td><td>—</td><td>—</td><td>2%</td></tr><tr><td><strong>Total</strong></td><td></td><td></td><td></td><td><strong>~27%</strong></td></tr></tbody></table>
+<p>JACK settings:</p>
 <pre><code class="language-bash">JACKD_OPTIONS="-P 70 -t 2000 -s a -d alsa -d hw:S2 -r 44100 -p 256 -n 3"</code></pre>
 <hr>
-<h2 id="whats-next">What's Next</h2>
-<ul><li><a href="audio.html">Audio Setup</a> — configure JACK buffer size in webconf</li><li><a href="synth-engines.html">Synth Engines</a> — per-engine CPU notes</li><li><a href="troubleshooting.html">Troubleshooting</a> — diagnosing XRUNs and glitches</li></ul>
+<h2 id="diagnosing-xruns">Diagnosing XRUNs</h2>
+<p>Systematic approach:</p>
+<ol><li>Check CPU% in status bar — is it above 75%?</li><li>SSH in: <code>htop</code> — which process is near 100% on one core?</li><li>If ZynAddSubFX: reduce polyphony and/or patch complexity.</li><li>Check temperature: <code>vcgencmd measure_temp</code> — above 75°C improve airflow.</li><li>Check throttle state: <code>vcgencmd get_throttled</code> — non-zero means power or thermal issues.</li><li>Increase JACK buffer: webconf → Audio → Period Size → 512.</li><li>If still XRUNing: remove the heaviest chain and substitute a lighter engine.</li></ol>
 <hr>
-<p><em>Version: 2026-05-25 — derived from <code>zyngui/zynthian_gui_admin.py</code>, <code>zyngui/zynthian_gui_mixer.py</code>, <code>zynthian-sys/config/zynthian_envars_V5.sh</code>.</em></p>
+<h2 id="whats-next">What's Next</h2>
+<ul><li><a href="audio.html">Audio Setup</a> — configure JACK buffer size in webconf</li><li><a href="synth-engines.html">Synth Engines</a> — per-engine CPU notes</li><li><a href="troubleshooting.html">Troubleshooting</a> — XRUNs and audio glitches</li><li><a href="admin-guide.html">Admin & System</a> — DPM toggle and visible chains settings</li></ul>
+<hr>
+<p><em>Version: 2026-05-25 — derived from <code>zyngui/zynthian_gui_admin.py</code>, <code>zyngui/zynthian_gui_mixer.py</code>, <code>zyngui/zynthian_gui_dpm.py</code>, <code>zynthian-sys/config/zynthian_envars_V5.sh</code>.</em></p>
 </article>
 </main>
 </div>

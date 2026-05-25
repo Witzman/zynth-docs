@@ -74,61 +74,74 @@
 <main>
 <article>
 <h1 id="zs3-subsnapshots">ZS3 Subsnapshots</h1>
-<p>A <strong>ZS3</strong> (Zynthian Sub-Snapshot) is a partial state save. Unlike a full snapshot (which captures everything), a ZS3 can capture specific chains and parameters — and it can be recalled instantly via MIDI Program Change during a live performance.</p>
+<p>A <strong>ZS3</strong> (Zynthian Sub-Snapshot) is a partial state save that can be recalled instantly during a live performance via MIDI Program Change. Unlike a full snapshot (which captures everything and takes a moment to load), a ZS3 applies selectively and instantly.</p>
 <hr>
 <h2 id="zs3-vs-snapshot">ZS3 vs Snapshot</h2>
-<table><thead><tr><th>Feature</th><th>Snapshot</th><th>ZS3</th></tr></thead><tbody><tr><td>Saves all chains</td><td>Yes</td><td>No — selective</td></tr><tr><td>Saves engine/preset</td><td>Yes</td><td>Optional</td></tr><tr><td>Saves parameters</td><td>Yes</td><td>Yes</td></tr><tr><td>Saves mixer levels</td><td>Yes</td><td>Optional</td></tr><tr><td>Recall method</td><td>Manual (screen/file)</td><td>Program Change or screen</td></tr><tr><td>Use case</td><td>Between songs</td><td>Between sections within a song</td></tr></tbody></table>
+<table><thead><tr><th>Feature</th><th>Snapshot (<code>.zss</code>)</th><th>ZS3</th></tr></thead><tbody><tr><td>Saves all chains</td><td>Yes</td><td>No — selective per chain/processor</td></tr><tr><td>Saves engine / preset</td><td>Yes</td><td>Optional (toggle per chain)</td></tr><tr><td>Saves synth parameters</td><td>Yes</td><td>Yes</td></tr><tr><td>Saves mixer levels</td><td>Yes</td><td>Optional (toggle)</td></tr><tr><td>Saves MIDI routing</td><td>Yes</td><td>No</td></tr><tr><td>Recall method</td><td>Manual (screen or file load)</td><td>MIDI Program Change or screen tap</td></tr><tr><td>Load time</td><td>1–5s (engine restart)</td><td>Instant (<100ms)</td></tr><tr><td>Typical use</td><td>Between songs</td><td>Between sections within a song</td></tr><tr><td>Max per session</td><td>One per file</td><td>Dozens per snapshot</td></tr></tbody></table>
 <hr>
 <h2 id="zs3-screen">ZS3 Screen</h2>
-<p>Access: Main Menu → <strong>ZS3</strong> (or SW3 on V5 default mapping).</p>
-<p>The list shows:</p>
-<ol><li><strong>Save as new ZS3</strong> — captures current state as a new ZS3 entry.</li><li><strong>Default state</strong> (<code>zs3-0</code>) — the baseline state; always present.</li><li><strong>Saved ZS3s</strong> — all named ZS3 entries you have created.</li></ol>
-<p>Each entry shows its title and (if linked to Program Change) the PC number and channel.</p>
-<p><strong>Select (short press):</strong> load that ZS3 immediately — applies its saved parameters.</p>
-<p><strong>Bold press:</strong> open ZS3 options for that entry.</p>
+<p><strong>Access:</strong> Main Menu → <strong>ZS3</strong> (or SW4 short on V5 default mapping).</p>
+<p>The list shows three sections:</p>
+<ol><li><strong>Save as new ZS3</strong> — captures the current complete state as a new ZS3 entry.</li><li><strong>Default state</strong> (<code>zs3-0</code>) — always present; the baseline state. Reloading this restores whatever was saved as the default.</li><li><strong>Saved ZS3s</strong> — all named ZS3 entries you have created, with PC number / channel shown if assigned.</li></ol>
+<p><strong>Entry format in the list:</strong></p>
+<ul><li><code>Title</code> — named ZS3, no PC assigned</li><li><code>Title → PRG#N</code> — assigned to Program Change N on any channel</li><li><code>Title → CH#C:PRG#N</code> — assigned to Program Change N on channel C</li></ul>
+<h3 id="screen-interactions">Screen Interactions</h3>
+<table><thead><tr><th>Action</th><th>Result</th></tr></thead><tbody><tr><td>Short press (tap)</td><td>Load that ZS3 immediately</td></tr><tr><td>Bold press</td><td>Open ZS3 options for that entry</td></tr><tr><td>MIDI learn button (encoder long-press)</td><td>Enter waiting mode — next PC received assigns to selected ZS3</td></tr></tbody></table>
 <p>Source: <a href="../zynthian-ui/zyngui/zynthian_gui_zs3.py"><code>zyngui/zynthian_gui_zs3.py</code></a></p>
 <hr>
 <h2 id="saving-a-zs3">Saving a ZS3</h2>
-<ol><li>Set up the state you want to capture (preset, volume, effects, etc.).</li><li>ZS3 screen → <strong>Save as new ZS3</strong>.</li><li>A keyboard screen appears — type a name (e.g. "Verse", "Chorus").</li><li>The new ZS3 appears in the list.</li></ol>
-<p>To <strong>update</strong> an existing ZS3 with the current state: bold-press the entry → <strong>Overwrite</strong>.</p>
+<p><strong>Save new:</strong> ZS3 screen → <strong>Save as new ZS3</strong> → keyboard screen appears → type a name → confirm.</p>
+<p>The new ZS3 captures the current state of all chains and processors. By default, all of them are marked for restore.</p>
+<p><strong>Update existing:</strong> bold-press the entry → ZS3 options → <strong>Overwrite</strong>. Replaces the saved state with the current state, keeping the same name and PC assignment.</p>
 <hr>
 <h2 id="zs3-options">ZS3 Options</h2>
-<p>Bold-press any ZS3 entry to open options:</p>
-<table><thead><tr><th>Option</th><th>What it does</th></tr></thead><tbody><tr><td>Restore options</td><td>Choose which chains/processors are restored when loading</td></tr><tr><td>Overwrite</td><td>Replace this ZS3 with the current state</td></tr><tr><td>Rename</td><td>Change the title</td></tr><tr><td>Delete</td><td>Remove this ZS3</td></tr><tr><td>Program Change Number</td><td>Assign a MIDI PC number (0–127) to recall this ZS3</td></tr><tr><td>Program Change Channel</td><td>Restrict PC recall to a specific MIDI channel (1–16 or Any)</td></tr></tbody></table>
+<p>Bold-press any ZS3 entry to access its options:</p>
+<table><thead><tr><th>Option</th><th>Detail</th></tr></thead><tbody><tr><td><strong>Restore options</strong></td><td>Choose which chains/processors are included when loading this ZS3</td></tr><tr><td><strong>Overwrite</strong></td><td>Replace this ZS3 with the current state</td></tr><tr><td><strong>Rename</strong></td><td>Change the title (keyboard screen)</td></tr><tr><td><strong>Delete</strong></td><td>Remove this ZS3 (with confirmation)</td></tr><tr><td><strong>Program Change Number</strong></td><td>Assign MIDI PC 0–127 (or None) to trigger this ZS3</td></tr><tr><td><strong>Program Change Channel</strong></td><td>Restrict PC recall to channel 1–16 (or Any)</td></tr></tbody></table>
+<p><strong>Note:</strong> <code>zs3-0</code> (Default state) only shows Overwrite — it cannot be renamed, deleted, or assigned a PC.</p>
 <p>Source: <a href="../zynthian-ui/zyngui/zynthian_gui_zs3_options.py"><code>zyngui/zynthian_gui_zs3_options.py</code></a></p>
 <hr>
 <h2 id="restore-options">Restore Options</h2>
-<p>By default, loading a ZS3 restores all parameters it captured. The <strong>Restore options</strong> submenu lets you toggle which chains and processors are actually applied on recall.</p>
-<p>Each chain and processor shows a checkbox: ☑ = will be restored, ☐ = skip on recall.</p>
-<p><strong>Use case:</strong> you have a ZS3 that changes organ drawbars but you don't want it to reset the piano preset. Uncheck the piano chain — only the organ parameters apply.</p>
-<p>A <strong>Toggle All Mixer</strong> option toggles all audio mixer processors at once.</p>
+<p>The <strong>Restore options</strong> submenu controls which parts of the ZS3 are actually applied when loaded.</p>
+<h3 id="the-options-screen">The Options Screen</h3>
+<p>Shows a tree: chains at the top level, processors indented below. Each entry has a checkbox:</p>
+<table><thead><tr><th>Checkbox</th><th>State</th></tr></thead><tbody><tr><td>☑</td><td>This item WILL be restored when the ZS3 loads</td></tr><tr><td>☐</td><td>This item will be SKIPPED on load</td></tr></tbody></table>
+<p><strong>Toggle a single item:</strong> tap it (short press).</p>
+<p><strong>Toggle all mixer items at once:</strong> the <strong>Toggle All Mixer</strong> entry at the top — this controls all audio mixer (<code>MI</code> and <code>MR</code>) processors simultaneously. Useful for quickly including or excluding all mixer level changes.</p>
+<h3 id="practical-use-of-restore-options">Practical Use of Restore Options</h3>
+<table><thead><tr><th>Scenario</th><th>What to do</th></tr></thead><tbody><tr><td>ZS3 changes organ drawbars only, not piano preset</td><td>Uncheck the piano chain</td></tr><tr><td>ZS3 adjusts mixer levels but not engine params</td><td>Uncheck synth processor, check mixer processor</td></tr><tr><td>ZS3 is a full state change</td><td>Leave all checked (default)</td></tr><tr><td>ZS3 changes one LFO rate and nothing else</td><td>Uncheck all except that one processor</td></tr></tbody></table>
 <hr>
-<h2 id="linking-zs3-to-midi-program-change">Linking ZS3 to MIDI Program Change</h2>
-<p>This is the key live performance feature — your foot switch or controller can jump to any ZS3 without touching the screen.</p>
+<h2 id="program-change-assignment">Program Change Assignment</h2>
+<p>This is the key live performance feature. Your foot switch or MIDI controller can jump to any ZS3 without touching the screen.</p>
 <h3 id="method-a-assign-via-zs3-options">Method A: Assign via ZS3 Options</h3>
-<ol><li>ZS3 screen → bold-press the ZS3 you want to link.</li><li>Options → <strong>Program Change Number</strong> → select 0–127.</li><li>Optionally: <strong>Program Change Channel</strong> → select a specific channel, or leave as "Any".</li><li>The ZS3 list entry now shows "→ PRG#N" (or "CH#N:PRG#N" for a specific channel).</li></ol>
-<p>From now on, when Zynthian receives PC#N on that channel, this ZS3 loads automatically.</p>
+<ol><li>Bold-press the ZS3 you want to link.</li><li>ZS3 options → <strong>Program Change Number</strong> → select 0–127 (or None to remove).</li><li>Optionally: <strong>Program Change Channel</strong> → select 1–16 (or Any).</li><li>The ZS3 list now shows "→ PRG#N" after the title.</li></ol>
 <h3 id="method-b-midi-learn">Method B: MIDI Learn</h3>
-<ol><li>On the ZS3 screen, press the MIDI learn button (encoder select long-press, or the learn soft button).</li><li>Screen shows <strong>"Waiting for MIDI Program Change..."</strong></li><li>Send a Program Change from your controller.</li><li>The received PC number is assigned to the currently selected ZS3.</li></ol>
-<p>The learn mode is cancelled when you leave the ZS3 screen.</p>
+<ol><li>On the ZS3 screen, navigate to the ZS3 you want to link.</li><li>Long-press encoder 3 (or use the learn button) — the screen shows <strong>"Waiting for MIDI Program Change..."</strong></li><li>Send a Program Change from your controller.</li><li>The PC number is captured and assigned to the selected ZS3.</li><li>Press Back to cancel waiting mode without assigning.</li></ol>
 <hr>
 <h2 id="zs3-id-format">ZS3 ID Format</h2>
-<p>Internally, ZS3 entries use these ID formats:</p>
-<table><thead><tr><th>ID format</th><th>Meaning</th></tr></thead><tbody><tr><td><code>zs3-0</code></td><td>Default state (always present)</td></tr><tr><td><code>zs3-N</code></td><td>Named ZS3 without PC assignment</td></tr><tr><td><code>*/prog</code></td><td>Any channel, Program Change = prog</td></tr><tr><td><code>chan/prog</code></td><td>Specific channel <code>chan</code>, Program Change = prog</td></tr></tbody></table>
+<p>Internally, ZS3 entries use these ID formats stored in <code>state_manager.zs3</code>:</p>
+<table><thead><tr><th>ID format</th><th>Meaning</th></tr></thead><tbody><tr><td><code>zs3-0</code></td><td>Default state — always present, cannot be deleted</td></tr><tr><td><code>zs3-N</code> (e.g. <code>zs3-1</code>)</td><td>Named ZS3 without PC assignment</td></tr><tr><td><code>*/prog</code></td><td>Any channel, Program Change = <code>prog</code> (0-indexed)</td></tr><tr><td><code>chan/prog</code></td><td>Specific channel <code>chan</code> (0-indexed), Program Change = <code>prog</code></td></tr></tbody></table>
+<p>When you assign PC#1 on Any channel, the ID becomes <code>*/1</code>. When you assign PC#1 on channel 16, the ID becomes <code>15/1</code> (channels are stored 0-indexed).</p>
+<hr>
+<h2 id="admin-setting-program-change-for-zs3">Admin Setting: Program Change for ZS3</h2>
+<p><strong>Admin → MIDI → Program Change for ZS3</strong> controls how Zynthian handles incoming PC messages globally:</p>
+<table><thead><tr><th>Setting</th><th>Behavior</th></tr></thead><tbody><tr><td>☑ Enabled</td><td>PC messages recall ZS3 states</td></tr><tr><td>☐ Disabled</td><td>PC messages switch presets in the active engine</td></tr></tbody></table>
+<p>When ZS3 mode is on, all PC messages go to the ZS3 system. When off, they go to the chain's engine. Choose based on your performance workflow.</p>
+<p>Stored as env var: <code>ZYNTHIAN_MIDI_PROG_CHANGE_ZS3</code> (0 or 1).</p>
 <hr>
 <h2 id="example-live-song-arrangement">Example: Live Song Arrangement</h2>
-<p>Song: "Blue Sky" — three sections.</p>
-<ol><li>Set up the full live rig (piano chain + organ chain + drum chain).</li><li><strong>Save a snapshot</strong> as "Blue_Sky" for the whole song.</li><li>Adjust organ drawbars for the verse — save as ZS3 "Verse" → PC#0.</li><li>Pull out the chorus drawbars — save as ZS3 "Chorus" → PC#1.</li><li>Reduce organ volume for the bridge — save as ZS3 "Bridge" → PC#2.</li></ol>
-<p>During the performance, a foot switch sends PC#0 (verse), PC#1 (chorus), PC#2 (bridge) to instantly morph the rig between sections — no hands needed.</p>
+<p>Song "Blue Sky" — intro, verse, chorus, bridge, outro — all on one FluidSynth + setBfree + drums rig.</p>
+<p><strong>Setup (once):</strong></p>
+<ol><li>Build the complete rig: piano chain (ch 1), organ chain (ch 2), drums chain (ch 10).</li><li>Save a snapshot: "Blue_Sky.zss" — this is loaded at the start of the set.</li><li><strong>Intro:</strong> organ drawbars at soft setting + piano quieter → save ZS3 "Intro" → PC#0.</li><li><strong>Verse:</strong> organ medium + piano normal → save ZS3 "Verse" → PC#1.</li><li><strong>Chorus:</strong> organ all drawbars out + piano louder → save ZS3 "Chorus" → PC#2.</li><li><strong>Bridge:</strong> mute organ, piano with reverb → save ZS3 "Bridge" → PC#3.</li><li>Set restore options on "Verse" to exclude the drums chain (drums don't change).</li><li>Enable: Admin → MIDI → Program Change for ZS3 = ☑.</li></ol>
+<p><strong>During performance:</strong> foot switch sends PC#0 → PC#1 → PC#2 → PC#3 → PC#1 → PC#2, morphing the rig between sections with no hands on the screen.</p>
 <hr>
-<h2 id="example-foot-switch-recall">Example: Foot Switch Recall</h2>
-<p>Hardware: sustain pedal or foot switch sending Program Change on channel 16.</p>
-<ol><li>ZS3 screen → bold-press target ZS3 → Program Change Number = 0, Channel = 16.</li><li>Press sustain pedal — ZS3 loads.</li><li>To step through multiple ZS3s sequentially, assign consecutive PC numbers and program your foot switch to increment.</li></ol>
+<h2 id="example-foot-switch-recall-with-channel-filtering">Example: Foot Switch Recall with Channel Filtering</h2>
+<p>Hardware: M-Audio sustain pedal programmed to send PC#0 on channel 16.</p>
+<ol><li>ZS3 "Main Sound" → bold press → Program Change Number = 0, Channel = 16.</li><li>The ZS3 only triggers on PC#0 from channel 16. Other PC messages on other channels are not affected — they can still control presets in individual chains.</li></ol>
 <hr>
 <h2 id="whats-next">What's Next</h2>
-<ul><li><a href="snapshots.html">Snapshots</a> — full-state saves between songs</li><li><a href="control-screen.html">Control Screen</a> — save parameters into a ZS3</li><li><a href="midi.html">MIDI Controllers</a> — configure your foot switch or controller</li></ul>
+<ul><li><a href="snapshots.html">Snapshots</a> — full-state saves between songs</li><li><a href="control-screen.html">Control Screen</a> — save parameters into a ZS3</li><li><a href="midi.html">MIDI Controllers</a> — configure your foot switch or controller</li><li><a href="midi-cc-learn.html">MIDI CC Learning</a> — bind additional controls</li></ul>
 <hr>
-<p><em>Version: 2026-05-25 — derived from <code>zyngui/zynthian_gui_zs3.py</code>, <code>zyngui/zynthian_gui_zs3_options.py</code>.</em></p>
+<p><em>Version: 2026-05-25 — derived from <code>zyngui/zynthian_gui_zs3.py</code>, <code>zyngui/zynthian_gui_zs3_options.py</code>, <code>zyngui/zynthian_gui_admin.py</code>.</em></p>
 </article>
 </main>
 </div>
