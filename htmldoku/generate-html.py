@@ -51,6 +51,11 @@ SIDEBAR = [
         ("Troubleshooting", "troubleshooting.html"),
         ("Performance", "performance-monitoring.html"),
     ]),
+    ("Personal Projects", [
+        ("Personal MIDI Mapping", "project-midi-mapping.html"),
+        ("Generative Drone Synth", "project-drone-synth.html"),
+        ("Maschine MK2 Controller", "project-maschine-mk2.html"),
+    ]),
     ("Under the Hood", [
         ("Architecture", "architecture.html"),
         ("Glossary", "glossary.html"),

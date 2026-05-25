@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Snapshots — Zynthian Docs</title>
+<title>Personal MIDI Mapping — Zynthian Docs</title>
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 <script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
@@ -50,7 +50,7 @@
 <div class="track"><h3>Play & Create</h3><ul>
 <li><a href="userguide.html">User Guide</a></li>
 <li><a href="synth-engines.html">Synth Engines</a></li>
-<li><a href="snapshots.html" aria-current="page"><strong>Snapshots</strong></a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
 <li><a href="recipes.html">Common Setups</a></li>
 </ul></div>
 <div class="track"><h3>Configure</h3><ul>
@@ -66,7 +66,7 @@
 <li><a href="performance-monitoring.html">Performance</a></li>
 </ul></div>
 <div class="track"><h3>Personal Projects</h3><ul>
-<li><a href="project-midi-mapping.html">Personal MIDI Mapping</a></li>
+<li><a href="project-midi-mapping.html" aria-current="page"><strong>Personal MIDI Mapping</strong></a></li>
 <li><a href="project-drone-synth.html">Generative Drone Synth</a></li>
 <li><a href="project-maschine-mk2.html">Maschine MK2 Controller</a></li>
 </ul></div>
@@ -79,39 +79,13 @@
 </nav>
 <main>
 <article>
-<h1 id="snapshots">Snapshots</h1>
-<p>A snapshot is a complete save of the Zynthian state: all chains, engines, presets, MIDI assignments, mixer levels, and controller mappings. Loading a snapshot restores everything instantly.</p>
+<h1 id="personal-midi-mapping">Personal MIDI Mapping</h1>
+<p><em>Blueprint in progress.</em></p>
 <hr>
-<h2 id="saving-a-snapshot">Saving a Snapshot</h2>
-<p><strong>From the touchscreen:</strong> Press the Admin button → <strong>Snapshots</strong> → <strong>Save Snapshot</strong>. Enter a name and confirm.</p>
-<p><strong>From webconf:</strong> Open <code>http://zynthian.local</code> → <strong>Snapshots</strong>. A list of saved snapshots appears. Click <strong>Save Current State</strong> to overwrite, or <strong>Save As</strong> to create a new one.</p>
-<p>Snapshots are stored as <code>.zss</code> files in <code>/zynthian/zynthian-my-data/snapshots/</code>. The file format is YAML-based and human-readable.</p>
+<h2 id="overview">Overview</h2>
+<p><em>Details coming soon.</em></p>
 <hr>
-<h2 id="loading-a-snapshot">Loading a Snapshot</h2>
-<p><strong>From the touchscreen:</strong> Admin → <strong>Snapshots</strong> → select a snapshot from the list.</p>
-<p><strong>From webconf:</strong> Open <strong>Snapshots</strong> → click the snapshot name → <strong>Load</strong>.</p>
-<p>On loading, Zynthian stops all current chains, starts the engines defined in the snapshot, and restores all settings.</p>
-<hr>
-<h2 id="auto-load-on-startup">Auto-Load on Startup</h2>
-<p>The file <code>last_state.zss</code> in the snapshots directory is loaded automatically when Zynthian starts [<code>zynthian-ui/zyngui/zynthian_gui_admin.py</code>]. Saving a snapshot as <code>last_state</code> makes it the default startup state.</p>
-<p>If <code>last_state.zss</code> does not exist (e.g. on a fresh install), Zynthian starts with an empty setup.</p>
-<hr>
-<h2 id="snapshot-library">Snapshot Library</h2>
-<p>Zynthian ships with example snapshots demonstrating common setups: a simple piano, a layered synth, an organ, etc. These are in <code>/zynthian/zynthian-data/snapshots/</code>. They are read-only; to customise one, load it and save a copy under a new name.</p>
-<hr>
-<h2 id="exporting-and-importing-snapshots">Exporting and Importing Snapshots</h2>
-<p><strong>Export via SSH or SFTP:</strong> Copy files from <code>/zynthian/zynthian-my-data/snapshots/</code> to your computer.</p>
-<p><strong>Import:</strong> Upload a <code>.zss</code> file to the same directory via SFTP or the webconf File Manager.</p>
-<hr>
-<h2 id="whats-in-a-snapshot">What's in a Snapshot</h2>
-<p>A <code>.zss</code> file contains:</p>
-<ul><li>Engine list per chain (engine name, bank, preset)</li><li>MIDI channel assignments</li><li>Audio routing (which chain goes to which output)</li><li>Controller positions (knobs, faders)</li><li>Mixer channel levels and mute/solo state</li><li>Tempo and transport settings</li></ul>
-<p>It does not contain audio samples or soundfont data — those must be present on the device.</p>
-<hr>
-<h2 id="whats-next">What's Next</h2>
-<ul><li><a href="synth-engines.html">Synth Engines</a> — what engines can be saved in snapshots</li><li><a href="userguide.html">Userguide</a> — chains and signal flow</li><li><a href="webconf.html">Webconf Reference</a> — snapshot management in the web interface</li></ul>
-<hr>
-<p><em>Version: 2026-05-25 — derived from <code>zynthian-ui/zyngui/zynthian_gui_admin.py</code>, <code>zynthian-ui/zyngine/zynthian_chain_manager.py</code>.</em></p>
+<p><em>Version: 2026-05-25</em></p>
 </article>
 </main>
 </div>
