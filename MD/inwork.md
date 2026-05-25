@@ -2,17 +2,43 @@
 
 Read this after CLAUDE.md.
 
+Status: `[~]` drafting · `[t]` user testing · `[>]` ready to publish · `[ ]` future candidate
+
 ---
 
-## Getting Started
+## Tutorials
 
-- [ ] Documentation first draft complete `main`
+<!-- Add active items as: - [~] **Title** — one-line description -->
 
-## Hardware Setup
+## Documentation Updates
 
-## Audio Configuration
+<!-- Add active items as: - [~] **Title** — one-line description -->
 
-## MIDI
+---
 
-## Webconf
+## Future Tutorial Candidates
 
+### Getting Started / UI
+
+- [ ] Getting started with Zynthian via VNC — navigate UI without physical hardware
+- [ ] Webconf hardware profiles — what they do and how to configure them
+
+### Synth Engines
+
+- [ ] ZynAddSubFX first sound — load preset, hear output via SSH/VNC
+- [ ] Synth engine overview with preset examples
+
+### MIDI
+
+- [ ] MIDI controller compatibility — connecting and mapping common controllers
+- [ ] Bluetooth MIDI pairing — step-by-step for common devices
+
+### Audio
+
+- [ ] USB audio setup and udev quirks
+- [ ] Snapshot workflow — save and restore Zynthian state
+
+### Documentation Pages (extend existing)
+
+- [ ] Add screenshots to getting-started page
+- [ ] Expand synth-engines page with preset walkthrough
