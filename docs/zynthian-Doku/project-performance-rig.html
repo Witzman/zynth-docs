@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multi-Controller Performance Rig — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Get Started</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Using the UI</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="ui-navigation.html">UI Navigation</a></li>
+<li><a href="chain-management.html">Chains & Routing</a></li>
+<li><a href="control-screen.html">Control Screen</a></li>
+<li><a href="midi-cc-learn.html">MIDI CC Learning</a></li>
+<li><a href="zs3-guide.html">ZS3 Subsnapshots</a></li>
+<li><a href="pattern-editor.html">Pattern Editor</a></li>
+<li><a href="midi-recorder.html">MIDI Recorder</a></li>
+<li><a href="admin-guide.html">Admin & System</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Play & Create</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Configure</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Troubleshoot</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+<li><a href="performance-monitoring.html">Performance</a></li>
+</ul></div>
+<div class="track">
+<button class="track-header" aria-expanded="true"><span class="track-label">Personal Projects</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list">
+<li><a href="project-midi-mapping.html">Personal MIDI Mapping</a></li>
+<li><a href="project-drone-synth.html">Generative Drone Synth</a></li>
+<li><a href="project-maschine-mk2.html">Maschine MK2 Controller</a></li>
+<li><a href="project-midi-channel-routing.html">MIDI Channel Routing</a></li>
+<li><a href="project-emu-cc-learn.html">EMU CC Knob Mapping</a></li>
+<li><a href="project-smc-pad-launcher.html">SMC-PAD Launcher Control</a></li>
+<li><a href="project-u46dj-audio-setup.html">ESI U46DJ Audio Setup</a></li>
+<li><a href="project-modui-effects.html">Audio FX Chain with MOD-UI</a></li>
+<li><a href="project-performance-rig.html" aria-current="page"><strong>Multi-Controller Performance Rig</strong></a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Under the Hood</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="multi-controller-performance-rig">Multi-Controller Performance Rig</h1>
+<p><strong>Goal:</strong> Three controllers with distinct roles running simultaneously — Maschine MK2 + SMC-PAD drive a bass/trigger chain (ch1), E-MU Xboard drives a melodic pad chain (ch2), all knobs mapped to engine parameters, saved as the auto-loading boot state. <strong>Prerequisites:</strong> Maschine MK2 daemon built and running (see <a href="project-maschine-mk2.html">Maschine MK2 Controller</a>). SMC-PAD connected and active in webconf MIDI ports. Audio output working. <strong>Access:</strong> SSH · VNC · Webconf</p>
+<hr>
+<h2 id="part-1--dual-chain-midi-routing-draft">Part 1 — Dual-Chain MIDI Routing <code>[draft]</code></h2>
+<p>Set Xboard to ch2, create two chains on separate channels, confirm each controller drives only its intended chain simultaneously.</p>
+<h3 id="step-1--understand-the-channel-plan">Step 1 — Understand the channel plan</h3>
+<p>All three controllers default to MIDI ch1. The Maschine MK2 daemon is hardcoded to ch1 and cannot be changed without modifying the source. The solution is to move the Xboard to ch2:</p>
+<table><thead><tr><th>Controller</th><th>MIDI channel</th><th>Drives</th></tr></thead><tbody><tr><td>Maschine MK2</td><td>ch1 (fixed)</td><td>Chain 1 — bass / triggers</td></tr><tr><td>SMC-PAD pads</td><td>ch1 (default)</td><td>Chain 1 — harmonic triggers</td></tr><tr><td>E-MU Xboard</td><td><strong>ch2</strong> (set manually)</td><td>Chain 2 — melodic pad</td></tr><tr><td>SMC-PAD knobs</td><td>ch1</td><td>Chain 1 params</td></tr><tr><td>Xboard knobs</td><td>ch2</td><td>Chain 2 params</td></tr></tbody></table>
+<p><strong>Verify:</strong> You understand the routing before continuing.</p>
+<h3 id="step-2--set-xboard-to-midi-channel-2">Step 2 — Set Xboard to MIDI channel 2</h3>
+<p>On the E-MU Xboard:</p>
+<ol><li>Press the <strong>MIDI Channel</strong> button (labelled "10. MIDI Channel Select" in the manual).</li><li>Move the Data Slider or press <strong>Octave Transpose +</strong> / <strong>−</strong> to select channel <strong>2</strong>.</li><li>The display confirms the selected channel.</li></ol>
+<p>This setting is non-volatile — the Xboard remembers ch2 after power-off.</p>
+<p><strong>Verify:</strong> Press a key on the Xboard. Confirm via SSH that it sends on ch2:</p>
+<pre><code class="language-bash">ssh root@zynthian.local
+amidi -p hw:$(aconnect -l | grep -i "Xboard\|EMU\|E-MU" | grep -oP 'client \K[0-9]+' | head -1),0,0 -d &amp;</code></pre>
+<p>Press a key — the first byte of the note-on should be <code>91</code> (0x91 = note-on ch2). Press Ctrl+C.</p>
+<p><strong>Verify:</strong> Note-on messages show <code>91</code> as first byte (not <code>90</code> which is ch1).</p>
+<h3 id="step-3--start-the-maschine-mk2-daemon">Step 3 — Start the Maschine MK2 daemon</h3>
+<p>If not already running:</p>
+<pre><code class="language-bash">ssh root@zynthian.local
+systemctl status maschine-mk2.service --no-pager</code></pre>
+<p>If not active, start it:</p>
+<pre><code class="language-bash">systemctl start maschine-mk2.service</code></pre>
+<p><strong>Verify:</strong> <code>aconnect -l</code> shows <code>maschine.rs</code> client.</p>
+<h3 id="step-4--add-chain-1-bass-engine-ch1">Step 4 — Add Chain 1: bass engine (ch1)</h3>
+<p>In VNC, tap <strong>+</strong> → <strong>Add Synth Engine</strong> → <strong>ZynAddSubFX</strong>.</p>
+<p>Load a bass or low pad preset — browse to a bank like <strong>Bass</strong> or <strong>Pads</strong> and select a deep, sustained sound.</p>
+<p>Set the chain to MIDI channel 1:</p>
+<ul><li>Tap the chain → open chain options → <strong>MIDI Channel</strong> → select <strong>1</strong>.</li></ul>
+<p><strong>Verify:</strong> Chain 1 shows channel 1 in the chain view.</p>
+<h3 id="step-5--add-chain-2-melodic-pad-engine-ch2">Step 5 — Add Chain 2: melodic pad engine (ch2)</h3>
+<p>Tap <strong>+</strong> → <strong>Add Synth Engine</strong> → <strong>ZynAddSubFX</strong>.</p>
+<p>Load an ambient pad preset — <strong>Pads</strong> bank, any evolving texture preset.</p>
+<p>Set the chain to MIDI channel 2:</p>
+<ul><li>Tap the chain → <strong>MIDI Channel</strong> → select <strong>2</strong>.</li></ul>
+<p><strong>Verify:</strong> Chain 2 shows channel 2.</p>
+<h3 id="step-6--enable-all-midi-ports-in-webconf">Step 6 — Enable all MIDI ports in webconf</h3>
+<p>Open <code>http://zynthian.local</code> → <strong>MIDI → Ports</strong>. Enable:</p>
+<ul><li>Xboard port</li><li><code>maschine.rs</code> port</li><li>SMC-PAD port</li></ul>
+<p><strong>Verify:</strong> All three ports toggled on.</p>
+<h3 id="step-7--test-simultaneous-routing">Step 7 — Test simultaneous routing</h3>
+<p>Press a Maschine MK2 pad — only Chain 1 (bass) responds.</p>
+<p>Play a note on the Xboard — only Chain 2 (melodic pad) responds.</p>
+<p>Both can play at the same time without interfering.</p>
+<p><strong>Verify:</strong> Each controller triggers its designated chain only. Both play simultaneously without either cutting the other off.</p>
+<hr>
+<h2 id="part-2--smc-pad-integration-and-knob-mapping-draft">Part 2 — SMC-PAD Integration and Knob Mapping <code>[draft]</code></h2>
+<p>Route SMC-PAD pads to Chain 1, shift to bass register, map all knobs to engine parameters.</p>
+<h3 id="step-1--confirm-smc-pad-pads-trigger-chain-1">Step 1 — Confirm SMC-PAD pads trigger Chain 1</h3>
+<p>SMC-PAD pads send notes on ch1 by default (Performance preset). Press any SMC-PAD pad — Chain 1 (bass) should respond.</p>
+<p><strong>Verify:</strong> SMC-PAD pads trigger Chain 1. This is correct — SMC-PAD pads and Maschine pads both drive the bass chain.</p>
+<h3 id="step-2--shift-smc-pad-pads-to-bass-register">Step 2 — Shift SMC-PAD pads to bass register</h3>
+<p>SMC-PAD default note range is mid-register. Shift down for a low bass register:</p>
+<p>Press <strong>Shift + Pad 15</strong> twice to move down two octaves. Press <strong>Shift + Pad 15 + Pad 16</strong> to reset if needed.</p>
+<p><strong>Verify:</strong> SMC-PAD pads now produce bass-range notes, distinct from Maschine's note base.</p>
+<h3 id="step-3--set-maschine-pads-to-low-register">Step 3 — Set Maschine pads to low register</h3>
+<p>On the Maschine MK2, press <strong>Group A</strong> to activate the lowest note base (C2 or lower). Press Maschine pads to confirm they are in the bass register.</p>
+<p>Group buttons A–H shift the note base upward. Group A = lowest.</p>
+<p><strong>Verify:</strong> Maschine pads and SMC-PAD pads cover complementary bass registers without overlapping.</p>
+<h3 id="step-4--map-smc-pad-knobs-to-chain-1-parameters">Step 4 — Map SMC-PAD knobs to Chain 1 parameters</h3>
+<p>In VNC, tap Chain 1 to open its control screen.</p>
+<p>For each parameter you want to control:</p>
+<ol><li>Long-press the parameter knob in VNC (~600ms) — turns orange.</li><li>Turn an SMC-PAD encoder (Knobs 1–8).</li></ol>
+<p>Suggested Chain 1 mapping (bass chain):</p>
+<table><thead><tr><th>SMC-PAD Knob</th><th>Parameter</th></tr></thead><tbody><tr><td>1</td><td>Filter Cutoff</td></tr><tr><td>2</td><td>Filter Resonance</td></tr><tr><td>3</td><td>Amplitude / Volume</td></tr><tr><td>4</td><td>Amp LFO Depth</td></tr><tr><td>5</td><td>Filter LFO Freq</td></tr><tr><td>6</td><td>Portamento / Glide</td></tr><tr><td>7</td><td>Reverb Level</td></tr><tr><td>8</td><td>Pan</td></tr></tbody></table>
+<p><strong>Verify:</strong> Each SMC-PAD knob visibly moves the bound parameter when turned.</p>
+<h3 id="step-5--map-xboard-knobs-to-chain-2-parameters">Step 5 — Map Xboard knobs to Chain 2 parameters</h3>
+<p>With Chain 2 control screen open in VNC, map Xboard CC knobs:</p>
+<ol><li>Long-press a parameter knob in VNC — turns orange.</li><li>Turn a knob on the E-MU Xboard.</li></ol>
+<p>Xboard has 16 knobs — suggested Chain 2 mapping (melodic pad chain):</p>
+<table><thead><tr><th>Xboard Knob</th><th>Suggested Parameter</th></tr></thead><tbody><tr><td>1</td><td>Filter Cutoff (CC 74)</td></tr><tr><td>2</td><td>Filter Resonance (CC 71)</td></tr><tr><td>3</td><td>Amplitude LFO Depth</td></tr><tr><td>4</td><td>Amplitude LFO Freq</td></tr><tr><td>5</td><td>Filter LFO Depth</td></tr><tr><td>6</td><td>Filter LFO Freq</td></tr><tr><td>7</td><td>Reverb / Effect Level</td></tr><tr><td>8</td><td>Volume (CC 7)</td></tr><tr><td>9–16</td><td>Additional ZynAddSubFX params as desired</td></tr></tbody></table>
+<p><strong>Verify:</strong> Xboard knobs control Chain 2 parameters without affecting Chain 1.</p>
+<h3 id="step-6--check-smc-pad-playstop">Step 6 — Check SMC-PAD PLAY/STOP</h3>
+<p>Verify what PLAY/STOP send (from drone tutorial findings, or check again):</p>
+<pre><code class="language-bash">ssh root@zynthian.local
+amidi -p hw:$(aconnect -l | grep -i "SMC\|SINCO" | grep -oP 'client \K[0-9]+' | head -1),0,0 -d &amp;</code></pre>
+<p>Press PLAY, then STOP. Note output bytes. Press Ctrl+C.</p>
+<p>If they send CC: map via CC Learn to a useful function (e.g. hold/release). If they send MIDI real-time (FA/FC): note this for future use — no action needed now.</p>
+<p><strong>Verify:</strong> PLAY/STOP behaviour documented.</p>
+<hr>
+<h2 id="part-3--polish-and-auto-load-draft">Part 3 — Polish and Auto-Load <code>[draft]</code></h2>
+<p>Enable Xboard aftertouch modulation, tune Maschine octave behaviour, set mixer levels, save as boot state.</p>
+<h3 id="step-1--enable-xboard-aftertouch">Step 1 — Enable Xboard aftertouch</h3>
+<p>Confirm aftertouch is active on the Xboard. From the manual:</p>
+<blockquote><p>On the Xboard, Aftertouch transmits channel pressure messages when additional pressure is applied to a key after it is fully depressed.</p></blockquote>
+<p>Check current setting: press and hold a key on the Xboard, then press harder. If no aftertouch arrives, enable it:</p>
+<ul><li>Press <strong>Edit</strong> → navigate to <strong>Aft</strong> (Aftertouch) → set to <strong>On</strong>.</li></ul>
+<p><strong>Verify:</strong> Pressing harder on a held Xboard key sends additional MIDI data (visible as <code>Dn</code> byte in amidi monitor).</p>
+<h3 id="step-2--map-aftertouch-to-modulation-in-chain-2">Step 2 — Map aftertouch to modulation in Chain 2</h3>
+<p>Zynthian routes channel aftertouch automatically to CC 1 (modulation) on most engines. In ZynAddSubFX, modulation typically controls vibrato or filter modulation depth.</p>
+<p>Play a sustained note on the Xboard and press harder — the timbre should change.</p>
+<p>If no modulation occurs:</p>
+<ul><li>In webconf → <strong>MIDI → CC</strong> → add a mapping: Aftertouch → CC 1 on ch2.</li></ul>
+<p><strong>Verify:</strong> Pressing harder on a held Xboard note produces an audible modulation effect.</p>
+<h3 id="step-3--set-mixer-levels-for-both-chains">Step 3 — Set mixer levels for both chains</h3>
+<p>In VNC, open the mixer (main screen → mixer view). Adjust:</p>
+<ul><li>Chain 1 (bass) level: balance against Chain 2</li><li>Chain 2 (melodic pad) level: leave some headroom</li></ul>
+<p>Pan Chain 1 slightly left and Chain 2 slightly right for width (optional).</p>
+<p><strong>Verify:</strong> Both chains sound balanced when playing together.</p>
+<h3 id="step-4--test-the-full-rig">Step 4 — Test the full rig</h3>
+<p>Play the complete setup together:</p>
+<ul><li>Maschine MK2 pads: bass triggers on Chain 1</li><li>SMC-PAD pads: harmonic bass triggers on Chain 1, knobs 1–8 shaping the bass tone</li><li>Xboard: melodic pad on Chain 2, 16 knobs shaping the pad texture, aftertouch adding expression</li></ul>
+<p><strong>Verify:</strong> All three controllers operate simultaneously without conflict. Each shapes its designated chain.</p>
+<h3 id="step-5--save-as-auto-loading-boot-state">Step 5 — Save as auto-loading boot state</h3>
+<p>Save the current state as the default startup snapshot:</p>
+<pre><code class="language-bash">ssh root@zynthian.local
+cp /zynthian/zynthian-my-data/snapshots/$(ls -t /zynthian/zynthian-my-data/snapshots/ | head -1) /zynthian/zynthian-my-data/snapshots/last_state.zss</code></pre>
+<p>Or, save from webconf → <strong>Snapshots</strong> → <strong>Save As</strong> → name it exactly <code>last_state</code>.</p>
+<p>On next boot, Zynthian loads this snapshot automatically — both chains ready, all CC bindings restored, without any manual intervention.</p>
+<p><strong>Verify:</strong></p>
+<pre><code class="language-bash">reboot</code></pre>
+<p>After ~45 seconds, SSH back in:</p>
+<pre><code class="language-bash">ssh root@zynthian.local
+aconnect -l</code></pre>
+<p><strong>Verify:</strong> <code>maschine.rs</code> is running (via systemd service), both chains are loaded, and the rig is ready to play immediately.</p>
+<hr>
+<h2 id="going-further">Going Further</h2>
+<ul><li>Add a third chain on ch3 for a percussion engine (FluidSynth drum kit) triggered by Maschine Group B pads</li><li>Use SMC-PAD KNOB BANK to switch to a second set of 8 knobs — total 16 SMC-PAD CC controls on Chain 1</li><li>Add a MOD-UI effects chain after Chain 2 for reverb/delay on the melodic pad</li><li>Map Maschine Group buttons A–H to trigger different bass registers — 8 octave zones across the 16 pads</li><li>Use Xboard's 16-Channel Control Mode to send one CC across all 16 channels simultaneously for global parameter control</li></ul>
+</article>
+</main>
+<div id="toc-column"></div>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

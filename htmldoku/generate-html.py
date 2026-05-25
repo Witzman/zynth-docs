@@ -60,6 +60,7 @@ SIDEBAR = [
         ("SMC-PAD Launcher Control", "project-smc-pad-launcher.html"),
         ("ESI U46DJ Audio Setup", "project-u46dj-audio-setup.html"),
         ("Audio FX Chain with MOD-UI", "project-modui-effects.html"),
+        ("Multi-Controller Performance Rig", "project-performance-rig.html"),
     ]),
     ("Under the Hood", [
         ("Architecture", "architecture.html"),
