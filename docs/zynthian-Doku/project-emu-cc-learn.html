@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EMU Xboard CC Knob Mapping — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Using the UI</h3><ul>
+<li><a href="ui-navigation.html">UI Navigation</a></li>
+<li><a href="chain-management.html">Chains & Routing</a></li>
+<li><a href="control-screen.html">Control Screen</a></li>
+<li><a href="midi-cc-learn.html">MIDI CC Learning</a></li>
+<li><a href="zs3-guide.html">ZS3 Subsnapshots</a></li>
+<li><a href="pattern-editor.html">Pattern Editor</a></li>
+<li><a href="midi-recorder.html">MIDI Recorder</a></li>
+<li><a href="admin-guide.html">Admin & System</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+<li><a href="performance-monitoring.html">Performance</a></li>
+</ul></div>
+<div class="track"><h3>Personal Projects</h3><ul>
+<li><a href="project-midi-mapping.html">Personal MIDI Mapping</a></li>
+<li><a href="project-drone-synth.html">Generative Drone Synth</a></li>
+<li><a href="project-maschine-mk2.html">Maschine MK2 Controller</a></li>
+<li><a href="project-midi-channel-routing.html">MIDI Channel Routing</a></li>
+<li><a href="project-emu-cc-learn.html" aria-current="page"><strong>EMU CC Knob Mapping</strong></a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="emu-xboard-cc-knob-mapping">EMU Xboard CC Knob Mapping</h1>
+<p><strong>Goal:</strong> Use the EMU Xboard's 16 CC knobs to control Zynthian synth parameters — two variants: static binding to one specific chain, and follow-channel binding where the knobs automatically control whichever chain matches the current MIDI channel. <strong>Prerequisites:</strong> Zynthian running with the four-chain MIDI channel setup from <a href="project-midi-channel-routing.html">MIDI Channel Routing</a>. EMU Xboard connected via USB. <strong>Access:</strong> VNC · SSH (for monitoring only)</p>
+<hr>
+<h2 id="background-two-binding-variants">Background: Two Binding Variants</h2>
+<p><strong>Static binding</strong> — a CC knob is bound to a parameter on one specific chain. The knob controls that chain regardless of what other chains exist. Use this when you always want a dedicated physical knob for one sound (e.g. knob 1 always sweeps the piano's filter).</p>
+<p><strong>Follow-channel binding</strong> — the same CC knob is bound to the same parameter type on every chain. Because Zynthian routes MIDI by channel, the knob automatically controls whichever chain the EMU is currently transmitting on. Switch channels, the knob follows.</p>
+<hr>
+<h2 id="how-cc-learn-works-in-vnc">How CC Learn Works in VNC</h2>
+<p>The standard workflow uses the V5 hardware encoders. In VNC without hardware, the equivalent is:</p>
+<ol><li>Navigate to the control screen for the chain.</li><li>Tap the correct parameter page in the right-side page list.</li><li><strong>Click and hold</strong> the target parameter knob for ~600ms. The knob border turns orange.</li><li>Turn an EMU CC knob. The CC number is captured immediately.</li><li>The orange highlight disappears. A CC badge appears under the knob name.</li></ol>
+<blockquote><p><strong>Note:</strong> Click-and-hold triggering the learn mode needs Pi verification — this is the expected VNC equivalent of the long-press encoder. If holding the click does not trigger orange, try a firm single click on the knob and report back.</p></blockquote>
+<p>To cancel learn without assigning: click-hold the orange knob again, or tap Back.</p>
+<hr>
+<h2 id="part-1--static-binding-to-chain-2-draft">Part 1 — Static Binding to Chain 2 <code>[draft]</code></h2>
+<p>Bind three EMU knobs permanently to Chain 2 (ZynAddSubFX strings). These knobs will control Chain 2 only — when the EMU is on channel 2.</p>
+<p>Chain 2 uses ZynAddSubFX which has clearly labelled filter and envelope pages, making it ideal for the first demo.</p>
+<h3 id="step-1--open-chain-2-control-screen">Step 1 — Open Chain 2 control screen</h3>
+<p>In VNC, tap <strong>Chain 2</strong> in the main screen. The chain control view opens. Tap the <strong>control</strong> subscreen if it is not already showing — the 4-knob display with the page list on the right.</p>
+<h3 id="step-2--bind-knob-1-to-volume">Step 2 — Bind knob 1 to Volume</h3>
+<p>Tap the <strong>Global</strong> page in the right-side page list. The 4 knobs change to show global parameters including <strong>Volume</strong>.</p>
+<p>Click and hold the <strong>Volume</strong> knob for ~600ms. The border turns orange.</p>
+<p>Turn <strong>EMU knob 1</strong>. The CC number is captured and appears as a badge on the Volume knob.</p>
+<h3 id="step-3--bind-knob-2-to-filter-cutoff">Step 3 — Bind knob 2 to Filter Cutoff</h3>
+<p>Tap the <strong>Filter</strong> page in the right-side page list. The knobs now show filter parameters: Cutoff, Resonance, and others.</p>
+<p>Click and hold the <strong>Cutoff</strong> knob for ~600ms → orange. Turn <strong>EMU knob 2</strong>. Captured.</p>
+<h3 id="step-4--bind-knob-3-to-filter-resonance">Step 4 — Bind knob 3 to Filter Resonance</h3>
+<p>Still on the Filter page. Click and hold <strong>Resonance</strong> → orange. Turn <strong>EMU knob 3</strong>. Captured.</p>
+<h3 id="step-5--test-the-bindings">Step 5 — Test the bindings</h3>
+<p>Switch the EMU to <strong>channel 2</strong> (MIDI Channel button → data slider → 2).</p>
+<p>Turn knobs 1, 2, and 3. Confirm:</p>
+<ul><li>Knob 1 → Chain 2 volume changes (visible on the knob display and audible)</li><li>Knob 2 → Filter sweeps open and closed</li><li>Knob 3 → Resonance peaks and softens</li></ul>
+<p>Now switch the EMU to <strong>channel 1</strong>. Turn the same three knobs.</p>
+<p><strong>Verify:</strong> Knobs have no effect on channel 1 — Chain 1 is not bound to these CCs.</p>
+<hr>
+<h2 id="part-2--follow-channel-binding-draft">Part 2 — Follow-Channel Binding <code>[draft]</code></h2>
+<p>Bind the same three EMU knobs to Volume, Cutoff, and Resonance on all four chains. Because Zynthian routes MIDI by channel, the knobs will automatically follow the active MIDI channel.</p>
+<p>Chain 4 uses setBfree (organ), which has drawbars instead of a filter. For that chain, Cutoff and Resonance will be substituted with drawbar controls — the concept is the same.</p>
+<h3 id="step-1--bind-knobs-to-chain-1">Step 1 — Bind knobs to Chain 1</h3>
+<p>Chain 1 is FluidSynth. Tap <strong>Chain 1</strong> → control screen.</p>
+<p>Tap the <strong>Global</strong> or first available page. Find <strong>Volume</strong>. Click-hold → turn <strong>knob 1</strong> → captured.</p>
+<p>Navigate to a page with <strong>Cutoff</strong> (FluidSynth may label this differently — look for Filter or Cutoff across the available pages). Click-hold → turn <strong>knob 2</strong> → captured.</p>
+<p>Find <strong>Resonance</strong> (or the closest equivalent). Click-hold → turn <strong>knob 3</strong> → captured.</p>
+<h3 id="step-2--bind-same-knobs-to-chain-3">Step 2 — Bind same knobs to Chain 3</h3>
+<p>Chain 3 is ZynAddSubFX with a brass or lead preset.</p>
+<p>Tap <strong>Chain 3</strong> → control screen → <strong>Global</strong> page → click-hold <strong>Volume</strong> → turn <strong>knob 1</strong> (same physical knob as Chain 1) → captured.</p>
+<p><strong>Filter</strong> page → click-hold <strong>Cutoff</strong> → turn <strong>knob 2</strong> → captured.</p>
+<p><strong>Filter</strong> page → click-hold <strong>Resonance</strong> → turn <strong>knob 3</strong> → captured.</p>
+<h3 id="step-3--bind-knobs-to-chain-4-setbfree">Step 3 — Bind knobs to Chain 4 (setBfree)</h3>
+<p>Chain 4 is setBfree. The control screen shows the drawbar widget instead of a standard filter page. Bind the three knobs to drawbars or expressive controls instead:</p>
+<ul><li>Tap the <strong>setBfree</strong> page containing drawbar levels.</li><li>Click-hold <strong>Drawbar 1</strong> (16' fundamental) → turn <strong>knob 1</strong> → captured.</li><li>Click-hold <strong>Drawbar 3</strong> (8' principal) → turn <strong>knob 2</strong> → captured.</li><li>Click-hold <strong>Expression</strong> (swell pedal level) → turn <strong>knob 3</strong> → captured.</li></ul>
+<h3 id="step-4--test-follow-channel-behavior">Step 4 — Test follow-channel behavior</h3>
+<p>Cycle the EMU through channels 1, 2, 3, 4. On each channel, turn knobs 1–3 and confirm:</p>
+<ul><li>The knobs control the engine on that channel</li><li>Switching channels switches which chain responds</li><li>No other chain moves</li></ul>
+<p><strong>Verify:</strong> The same three physical knobs control four different chains depending on the EMU's active MIDI channel. The EMU channel is now both the instrument selector (notes) and the parameter target (CC knobs).</p>
+<hr>
+<h2 id="part-3--save-bindings-with-snapshot-draft">Part 3 — Save Bindings with Snapshot <code>[draft]</code></h2>
+<p>CC bindings are saved as part of the snapshot state. The bindings from Parts 1 and 2 will be lost if the snapshot is not updated.</p>
+<h3 id="step-1--update-the-snapshot">Step 1 — Update the snapshot</h3>
+<p>Open <code>http://zynthian.local</code> → <strong>Snapshots</strong>.</p>
+<p>Find <code>midi-channel-map</code> (created in <a href="project-midi-channel-routing.html">MIDI Channel Routing</a>). Click it → <strong>Save</strong> (overwrite with current state including CC bindings).</p>
+<p>Alternatively, save a new snapshot named <code>midi-channel-map-cc</code> to keep both versions.</p>
+<h3 id="step-2--verify-restore">Step 2 — Verify restore</h3>
+<p>SSH in and reboot:</p>
+<pre><code class="language-bash">reboot</code></pre>
+<p>Wait ~30 seconds. Reconnect via VNC. Turn knobs 1–3 on the EMU with MIDI channel 2 active.</p>
+<p><strong>Verify:</strong> Filter cutoff and resonance respond immediately — no re-learning needed. The CC badge is visible on the bound knobs.</p>
+<hr>
+<h2 id="going-further">Going Further</h2>
+<ul><li><strong>Map all 16 knobs</strong> — bind the remaining 13 EMU knobs to envelopes, LFO rate, effects send levels, and other per-chain parameters using the same follow-channel approach</li><li><strong>CC range limiting</strong> — long-press an already-bound knob → <strong>Set CC Range</strong> → restrict the sweep (e.g. filter cutoff between 400 Hz and 4000 Hz only, so it never closes completely)</li><li><strong>Block unwanted CCs</strong> — chain_control → MIDI config → CC routing → uncheck any CC numbers the EMU sends but you do not want to reach the engine (e.g. block CC 7 if the EMU auto-sends channel volume and you want the ZynMixer to control levels)</li><li><strong>ZS3 per section</strong> — save the CC state as a ZS3 subsnapshot for different song sections — one ZS3 with filter open, another with it closed</li><li><strong>XY control</strong> — bind filter cutoff to X and resonance to Y on the control XY pad for two-dimensional morphing with one touch</li></ul>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

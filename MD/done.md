@@ -3,6 +3,7 @@
 ## Tutorials
 
 - [x] **Custom MIDI Channel Routing** — EMU channel switch = instrument switch, one chain per MIDI channel (published draft, not yet Pi-tested) → `htmldoku/project-midi-channel-routing.md`
+- [x] **EMU CC Knob Mapping** — static vs follow-channel CC Learn variants (published draft, not yet Pi-tested) → `htmldoku/project-emu-cc-learn.md`
 
 ## Project Setup
 

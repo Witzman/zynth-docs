@@ -56,6 +56,7 @@ SIDEBAR = [
         ("Generative Drone Synth", "project-drone-synth.html"),
         ("Maschine MK2 Controller", "project-maschine-mk2.html"),
         ("MIDI Channel Routing", "project-midi-channel-routing.html"),
+        ("EMU CC Knob Mapping", "project-emu-cc-learn.html"),
     ]),
     ("Under the Hood", [
         ("Architecture", "architecture.html"),
