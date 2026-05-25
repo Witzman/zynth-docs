@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SMC-PAD Launcher Control — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Get Started</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Using the UI</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="ui-navigation.html">UI Navigation</a></li>
+<li><a href="chain-management.html">Chains & Routing</a></li>
+<li><a href="control-screen.html">Control Screen</a></li>
+<li><a href="midi-cc-learn.html">MIDI CC Learning</a></li>
+<li><a href="zs3-guide.html">ZS3 Subsnapshots</a></li>
+<li><a href="pattern-editor.html">Pattern Editor</a></li>
+<li><a href="midi-recorder.html">MIDI Recorder</a></li>
+<li><a href="admin-guide.html">Admin & System</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Play & Create</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Configure</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Troubleshoot</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+<li><a href="performance-monitoring.html">Performance</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Personal Projects</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="project-midi-mapping.html">Personal MIDI Mapping</a></li>
+<li><a href="project-drone-synth.html">Generative Drone Synth</a></li>
+<li><a href="project-maschine-mk2.html">Maschine MK2 Controller</a></li>
+<li><a href="project-midi-channel-routing.html">MIDI Channel Routing</a></li>
+<li><a href="project-emu-cc-learn.html">EMU CC Knob Mapping</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Under the Hood</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="smc-pad-launcher-control">SMC-PAD Launcher Control</h1>
+<p><strong>Goal:</strong> Use all 16 SMC-PAD pads to trigger Zynthian sequencer slots — 4 phrases × 4 chains, one pad per slot. <strong>Prerequisites:</strong> Zynthian running and accessible via SSH and webconf. SMC-PAD available via USB. <strong>Access:</strong> SSH · Webconf · VNC</p>
+<hr>
+<h2 id="part-1--connect-and-discover-pad-notes-draft">Part 1 — Connect and discover pad notes <code>[draft]</code></h2>
+<p>Before writing any MIDI mappings, identify which MIDI note each pad sends and which channel they use.</p>
+<h3 id="step-1--connect-smc-pad-via-usb">Step 1 — Connect SMC-PAD via USB</h3>
+<p>Plug the SMC-PAD into any USB port on the Raspberry Pi. USB MIDI is class-compliant — no driver needed.</p>
+<p><strong>Verify:</strong> The power LED on the SMC-PAD illuminates.</p>
+<h3 id="step-2--confirm-zynthian-detects-the-device">Step 2 — Confirm Zynthian detects the device</h3>
+<p>SSH into the Pi and run:</p>
+<pre><code class="language-bash">ssh root@zynthian.local
+aconnect -l</code></pre>
+<p>Look for an entry containing <strong>SMC</strong> or similar name, listed as a MIDI client with at least one port.</p>
+<p>Example output:</p>
+<pre><code>client 32: 'SMC-PAD' [type=kernel,card=4]
+    0 'SMC-PAD MIDI 1  '</code></pre>
+<p>Note the <strong>card number</strong> (the digit after <code>hw:</code> in the port name — e.g. <code>4</code> above). You need it for Step 3.</p>
+<p><strong>Verify:</strong> SMC-PAD appears in <code>aconnect -l</code> output.</p>
+<h3 id="step-3--capture-raw-midi-from-the-pads">Step 3 — Capture raw MIDI from the pads</h3>
+<p>Start a MIDI monitor on the SMC-PAD's port. Replace <code>X</code> with your card number from Step 2:</p>
+<pre><code class="language-bash">amidi -d -p hw:X,0,0</code></pre>
+<p>Press each pad one at a time — from <strong>Pad 1</strong> (bottom-left) to <strong>Pad 16</strong> (top-right). Each press prints one line showing three bytes in hex, for example:</p>
+<pre><code>96 24 64</code></pre>
+<p>The three values are:</p>
+<ul><li>Byte 1: MIDI status byte — upper nibble = event type, lower nibble = channel. <code>96</code> = note-on on channel 7. <code>90</code> = note-on on channel 1. <code>99</code> = note-on on channel 10.</li><li>Byte 2: Note number in hex. <code>24</code> hex = 36 decimal.</li><li>Byte 3: Velocity.</li></ul>
+<p>Record the note number (byte 2) for each pad. Convert hex to decimal using:</p>
+<pre><code class="language-bash">printf '%d\n' 0xNN   # replace NN with the hex value</code></pre>
+<p>Fill in this table as you go — you will need it in Part 3:</p>
+<table><thead><tr><th>Pad</th><th>Label</th><th>MIDI note (decimal)</th></tr></thead><tbody><tr><td>1</td><td>bottom-left</td><td></td></tr><tr><td>2</td><td></td><td></td></tr><tr><td>3</td><td></td><td></td></tr><tr><td>4</td><td>bottom-right</td><td></td></tr><tr><td>5</td><td></td><td></td></tr><tr><td>6</td><td></td><td></td></tr><tr><td>7</td><td></td><td></td></tr><tr><td>8</td><td></td><td></td></tr><tr><td>9</td><td></td><td></td></tr><tr><td>10</td><td></td><td></td></tr><tr><td>11</td><td></td><td></td></tr><tr><td>12</td><td></td><td></td></tr><tr><td>13</td><td>top-left</td><td></td></tr><tr><td>14</td><td></td><td></td></tr><tr><td>15</td><td></td><td></td></tr><tr><td>16</td><td>top-right</td><td></td></tr></tbody></table>
+<p>Also note the <strong>MIDI channel</strong> from byte 1. Lower nibble of the status byte = channel index (0-based). Add 1 to get the channel number. Example: <code>96</code> → lower nibble <code>6</code> → channel 7.</p>
+<p>Press <code>Ctrl+C</code> to stop the monitor.</p>
+<p><strong>Verify:</strong> You have 16 different note numbers (one per pad) and one channel number that all pads share.</p>
+<hr>
+<h2 id="part-2--set-up-the-launcher-grid-draft">Part 2 — Set up the launcher grid <code>[draft]</code></h2>
+<p>Build a 4 chains × 4 phrases launcher layout in Zynthian and load a minimal test pattern in each slot.</p>
+<h3 id="step-1--open-the-chain-manager-in-vnc">Step 1 — Open the chain manager in VNC</h3>
+<p>Open a VNC connection to <code>zynthian.local</code>. On the mixer screen, tap the <strong>Chain Manager</strong> icon (or go via <strong>Main Menu → Chain Manager</strong>).</p>
+<p><strong>Verify:</strong> Chain Manager screen is visible.</p>
+<h3 id="step-2--add-4-instrument-chains">Step 2 — Add 4 instrument chains</h3>
+<p>Tap <strong>Add chain</strong> (the <strong>+</strong> button). Select <strong>MIDI Instrument</strong> → choose any available engine (e.g. <strong>ZynAddSubFX</strong>) → select any bank and preset. Repeat until you have 4 chains.</p>
+<p>The chains will appear as columns in the launcher.</p>
+<p><strong>Verify:</strong> Mixer shows 4 chain strips side by side.</p>
+<h3 id="step-3--switch-to-launcher-view">Step 3 — Switch to launcher view</h3>
+<p>On the mixer screen, tap <strong>Launcher</strong> (the tab below the chain strips, to the right of <strong>Mixer</strong>).</p>
+<p><strong>Verify:</strong> Launcher view appears showing 1 row of 4 pads (one column per chain).</p>
+<h3 id="step-4--add-3-more-phrase-rows">Step 4 — Add 3 more phrase rows</h3>
+<p>Long-press on the phrase row label on the left side of the launcher. A menu appears. Select <strong>Append phrase</strong>. Repeat twice more until you have 4 phrase rows.</p>
+<p><strong>Verify:</strong> Launcher shows a 4 × 4 grid (4 rows, 4 columns).</p>
+<h3 id="step-5--add-a-test-pattern-to-each-slot">Step 5 — Add a test pattern to each slot</h3>
+<p>Tap any empty pad in the launcher to select it. Then tap the <strong>Edit</strong> button (pencil icon) or long-press the pad and choose <strong>Edit</strong>. The Pattern Editor opens. Add at least one note — tap any cell in the grid. Press <strong>Back</strong> to return to the launcher.</p>
+<p>Repeat for all 16 slots — each slot needs at least one note so the sequencer has a pattern to play.</p>
+<p><strong>Verify:</strong> All 16 pads in the launcher show a non-empty state (colored, not blank).</p>
+<hr>
+<h2 id="part-3--map-pads-to-sequencer-slots-draft">Part 3 — Map pads to sequencer slots <code>[draft]</code></h2>
+<p>Configure Zynthian's master MIDI channel to match the SMC-PAD's pad channel, then add 16 note→CUIA mappings — one per slot.</p>
+<h3 id="step-1--open-midi-options-in-webconf">Step 1 — Open MIDI options in webconf</h3>
+<p>In a browser, open:</p>
+<pre><code>http://zynthian.local/ui-midi-options</code></pre>
+<p>Log in if prompted (default: admin/raspberry).</p>
+<p><strong>Verify:</strong> MIDI Options page loads.</p>
+<h3 id="step-2--set-the-master-midi-channel">Step 2 — Set the master MIDI channel</h3>
+<p>Find the <strong>Master MIDI Channel</strong> field. Set it to the channel number you recorded in Part 1, Step 3.</p>
+<p>Example: if byte 1 was <code>96</code> (channel 7), enter <code>7</code>.</p>
+<p><strong>Verify:</strong> Master MIDI Channel is set to your pad channel.</p>
+<h3 id="step-3--add-the-16-toggle_seq-mappings">Step 3 — Add the 16 TOGGLE_SEQ mappings</h3>
+<p>Find the <strong>Master Note CUIA</strong> section. It contains a text area with existing note→action lines (one per line, format: <code>note_number: ACTION</code>).</p>
+<p>Add 16 new lines using the note numbers you recorded in Part 1. Map each pad to its slot using the layout below:</p>
+<pre><code>Launcher layout (phrase × chain):
+
+  Phrase 0  →  Pads 1–4   (bottom row)
+  Phrase 1  →  Pads 5–8
+  Phrase 2  →  Pads 9–12
+  Phrase 3  →  Pads 13–16 (top row)
+
+  Chain 0 = leftmost column, Chain 3 = rightmost column</code></pre>
+<p>The CUIA action is <code>TOGGLE_SEQ phrase,chain</code>. Example mapping block assuming pads send notes 36–51:</p>
+<pre><code>36: TOGGLE_SEQ 0,0
+37: TOGGLE_SEQ 0,1
+38: TOGGLE_SEQ 0,2
+39: TOGGLE_SEQ 0,3
+40: TOGGLE_SEQ 1,0
+41: TOGGLE_SEQ 1,1
+42: TOGGLE_SEQ 1,2
+43: TOGGLE_SEQ 1,3
+44: TOGGLE_SEQ 2,0
+45: TOGGLE_SEQ 2,1
+46: TOGGLE_SEQ 2,2
+47: TOGGLE_SEQ 2,3
+48: TOGGLE_SEQ 3,0
+49: TOGGLE_SEQ 3,1
+50: TOGGLE_SEQ 3,2
+51: TOGGLE_SEQ 3,3</code></pre>
+<p>Replace <code>36</code>–<code>51</code> with your actual note numbers from Part 1.</p>
+<p>Check the existing lines in the text area for conflicts — any note number already listed with a different action will be overridden by your new entry. Remove conflicting lines if needed.</p>
+<p><strong>Verify:</strong> 16 new lines appear in the text area with correct note numbers and TOGGLE_SEQ targets.</p>
+<h3 id="step-4--save-and-apply">Step 4 — Save and apply</h3>
+<p>Click <strong>Save</strong>. Zynthian applies the configuration without a full restart.</p>
+<p><strong>Verify:</strong> Page reloads with your entries still present.</p>
+<h3 id="step-5--test-each-pad">Step 5 — Test each pad</h3>
+<p>On the SMC-PAD, press each pad once. In the VNC launcher view, the corresponding slot should toggle between playing (active indicator) and stopped.</p>
+<p>Press the same pad again — the slot should stop.</p>
+<p><strong>Verify:</strong> All 16 pads toggle their corresponding slots. No pad triggers the wrong slot.</p>
+<hr>
+<h2 id="going-further">Going Further</h2>
+<ul><li>Add real patterns to each slot — the test patterns can be replaced with actual sequences.</li><li>Use the SMC-PAD's PAD BANK button to switch to a second bank of 16 pads for a second scene.</li><li>Assign the SMC-PAD's encoders to synth parameters via MIDI CC Learn.</li><li>Save the full setup as a snapshot so the pad mappings load with a single recall.</li></ul>
+</article>
+</main>
+<div id="toc-column"></div>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
