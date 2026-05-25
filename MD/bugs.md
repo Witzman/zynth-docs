@@ -1,0 +1,6 @@
+# Bugs
+
+## Open
+
+## Closed
+
