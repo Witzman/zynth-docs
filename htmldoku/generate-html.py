@@ -59,6 +59,7 @@ SIDEBAR = [
         ("EMU CC Knob Mapping", "project-emu-cc-learn.html"),
         ("SMC-PAD Launcher Control", "project-smc-pad-launcher.html"),
         ("ESI U46DJ Audio Setup", "project-u46dj-audio-setup.html"),
+        ("Audio FX Chain with MOD-UI", "project-modui-effects.html"),
     ]),
     ("Under the Hood", [
         ("Architecture", "architecture.html"),

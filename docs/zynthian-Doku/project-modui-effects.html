@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Audio FX Chain with MOD-UI — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Get Started</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Using the UI</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="ui-navigation.html">UI Navigation</a></li>
+<li><a href="chain-management.html">Chains & Routing</a></li>
+<li><a href="control-screen.html">Control Screen</a></li>
+<li><a href="midi-cc-learn.html">MIDI CC Learning</a></li>
+<li><a href="zs3-guide.html">ZS3 Subsnapshots</a></li>
+<li><a href="pattern-editor.html">Pattern Editor</a></li>
+<li><a href="midi-recorder.html">MIDI Recorder</a></li>
+<li><a href="admin-guide.html">Admin & System</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Play & Create</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Configure</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Troubleshoot</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+<li><a href="performance-monitoring.html">Performance</a></li>
+</ul></div>
+<div class="track">
+<button class="track-header" aria-expanded="true"><span class="track-label">Personal Projects</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list">
+<li><a href="project-midi-mapping.html">Personal MIDI Mapping</a></li>
+<li><a href="project-drone-synth.html">Generative Drone Synth</a></li>
+<li><a href="project-maschine-mk2.html">Maschine MK2 Controller</a></li>
+<li><a href="project-midi-channel-routing.html">MIDI Channel Routing</a></li>
+<li><a href="project-emu-cc-learn.html">EMU CC Knob Mapping</a></li>
+<li><a href="project-smc-pad-launcher.html">SMC-PAD Launcher Control</a></li>
+<li><a href="project-u46dj-audio-setup.html">ESI U46DJ Audio Setup</a></li>
+<li><a href="project-modui-effects.html" aria-current="page"><strong>Audio FX Chain with MOD-UI</strong></a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Under the Hood</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="audio-fx-chain-with-mod-ui">Audio FX Chain with MOD-UI</h1>
+<p><strong>Goal:</strong> Route ESI U46DJ mic input (CH 1/2) and line input (CH 3/4) through a MOD-UI LV2 effects pedalboard designed in the browser, with processed audio on ESI outputs. <strong>Prerequisites:</strong> ESI U46DJ configured as Zynthian audio device at 44.1 kHz (see <a href="project-u46dj-audio-setup.html">ESI U46DJ Audio Setup</a>). JACK running with four capture ports confirmed. <strong>Access:</strong> SSH · Webconf · Browser (port 8888)</p>
+<hr>
+<h2 id="part-1--pass-through-mod-ui-chain-with-esi-input-draft">Part 1 — Pass-Through: MOD-UI Chain with ESI Input <code>[draft]</code></h2>
+<p>Add a MOD-UI chain, route ESI mic input (capture_1/2) through it, confirm unprocessed audio reaches ESI outputs. This proves the JACK routing before adding any effects.</p>
+<h3 id="step-1--install-required-lv2-plugins">Step 1 — Install required LV2 plugins</h3>
+<p>Mic and line processing needs EQ, compression, and reverb plugins. Install them now so they are available in MOD-UI's browser:</p>
+<pre><code class="language-bash">ssh root@zynthian.local
+apt install -y calf-plugins lsp-plugins</code></pre>
+<p>After install, regenerate the LV2 cache:</p>
+<pre><code class="language-bash">systemctl restart zynthian</code></pre>
+<p>Wait ~30 seconds, then reload <code>http://zynthian.local</code>.</p>
+<p><strong>Verify:</strong></p>
+<pre><code class="language-bash">jalv --list | grep -i "calf\|lsp" | head -10</code></pre>
+<p>Expected: multiple Calf and LSP plugin URIs listed.</p>
+<h3 id="step-2--add-a-mod-ui-chain-in-zynthian">Step 2 — Add a MOD-UI chain in Zynthian</h3>
+<p>In VNC, tap <strong>+</strong> (bottom-left) → <strong>Add Audio Effect</strong> → <strong>MOD-UI</strong>.</p>
+<p>Zynthian starts the MOD-UI engine and creates JACK audio ports for the pedalboard.</p>
+<p><strong>Verify:</strong> A MOD-UI chain appears in the main screen.</p>
+<h3 id="step-3--open-the-mod-ui-browser-interface">Step 3 — Open the MOD-UI browser interface</h3>
+<p>Open <code>http://zynthian.local:8888</code> in a browser.</p>
+<p>The MOD-UI pedalboard editor loads. You see a canvas with two fixed blocks on the left (<strong>Audio Input</strong>) and right (<strong>Audio Output</strong>).</p>
+<p><strong>Verify:</strong> MOD-UI pedalboard canvas loads with Audio Input and Audio Output blocks visible.</p>
+<h3 id="step-4--build-a-pass-through-connection-in-the-pedalboard">Step 4 — Build a pass-through connection in the pedalboard</h3>
+<p>Connect the Audio Input directly to the Audio Output — no plugins yet. In MOD-UI:</p>
+<ol><li>Click the output port circle on the <strong>Audio Input</strong> block (right side, port 1).</li><li>Drag the cable to the input port on the <strong>Audio Output</strong> block (left side, port 1).</li><li>Repeat for port 2 (right channel).</li></ol>
+<p><strong>Verify:</strong> Two cable connections run from Audio Input to Audio Output in the pedalboard canvas.</p>
+<h3 id="step-5--find-mod-ui-jack-port-names">Step 5 — Find MOD-UI JACK port names</h3>
+<pre><code class="language-bash">ssh root@zynthian.local
+jack_lsp | grep -i "mod\|modui\|mod-host"</code></pre>
+<p>Note the input port names — they look like <code>effect_1:in_l</code> and <code>effect_1:in_r</code> or <code>mod-monitor:in_l</code> / <code>mod-monitor:in_r</code>. The exact names depend on the pedalboard state.</p>
+<p>Also note the ESI capture ports:</p>
+<pre><code class="language-bash">jack_lsp | grep capture</code></pre>
+<p>Expected: <code>system:capture_1</code> through <code>system:capture_4</code>.</p>
+<p><strong>Verify:</strong> You can identify both the MOD-UI input ports and the ESI capture ports.</p>
+<h3 id="step-6--connect-esi-mic-input-to-mod-ui">Step 6 — Connect ESI mic input to MOD-UI</h3>
+<p>Replace <code>mod-host:in_l</code> and <code>mod-host:in_r</code> with the actual MOD-UI input port names from Step 5:</p>
+<pre><code class="language-bash">jack_connect system:capture_1 mod-host:in_l
+jack_connect system:capture_2 mod-host:in_r</code></pre>
+<p><strong>Verify:</strong></p>
+<pre><code class="language-bash">jack_lsp -c | grep -A2 "capture_1\|capture_2"</code></pre>
+<p>Expected: capture_1 and capture_2 each show a connection to a MOD-UI port.</p>
+<h3 id="step-7--set-esi-input-source-to-mic">Step 7 — Set ESI input source to MIC</h3>
+<p>On the U46DJ front panel, set the <strong>CH 1/2 selector</strong> to <strong>MIC</strong>. Connect a microphone to the MIC input (balanced 1/4" jack, front panel).</p>
+<p>Speak or make noise into the mic.</p>
+<p><strong>Verify:</strong> Audio from the mic is audible through the ESI Mix Out → monitors. Unprocessed pass-through confirms JACK routing is correct.</p>
+<hr>
+<h2 id="part-2--mic-chain-eq--compressor--reverb-draft">Part 2 — Mic Chain: EQ + Compressor + Reverb <code>[draft]</code></h2>
+<p>Build a mic processing chain inside MOD-UI. Signal path: Mic → LSP EQ → Calf Compressor → Calf Reverb → Output.</p>
+<h3 id="step-1--open-mod-ui-at-port-8888">Step 1 — Open MOD-UI at port 8888</h3>
+<p>Open <code>http://zynthian.local:8888</code>. The pass-through pedalboard from Part 1 should be loaded.</p>
+<p><strong>Verify:</strong> Pedalboard canvas loads with the two cable connections from Part 1.</p>
+<h3 id="step-2--add-lsp-parametric-eq">Step 2 — Add LSP Parametric EQ</h3>
+<p>In MOD-UI, click the <strong>+</strong> button (or plugin browser icon). Search for <strong>LSP Parametric Equalizer</strong> (or <code>lsp</code>). Select the <strong>LSP Parametric Equalizer x16 Stereo</strong> plugin.</p>
+<p>Drag it onto the canvas between Audio Input and Audio Output.</p>
+<p><strong>Verify:</strong> EQ plugin block appears on the canvas.</p>
+<h3 id="step-3--wire-the-eq">Step 3 — Wire the EQ</h3>
+<ol><li>Delete the direct Audio Input → Audio Output connections (click the cable, press Delete).</li><li>Connect <strong>Audio Input</strong> port 1 → <strong>EQ</strong> left input.</li><li>Connect <strong>Audio Input</strong> port 2 → <strong>EQ</strong> right input.</li><li>Leave EQ outputs unconnected for now.</li></ol>
+<p><strong>Verify:</strong> Audio Input connects into EQ.</p>
+<h3 id="step-4--add-calf-compressor">Step 4 — Add Calf Compressor</h3>
+<p>Click <strong>+</strong> → search <strong>Calf Compressor</strong>. Drag it onto the canvas to the right of the EQ.</p>
+<p>Connect:</p>
+<ul><li><strong>EQ</strong> left output → <strong>Calf Compressor</strong> left input</li><li><strong>EQ</strong> right output → <strong>Calf Compressor</strong> right input</li></ul>
+<p><strong>Verify:</strong> EQ feeds into Compressor on the canvas.</p>
+<h3 id="step-5--add-calf-reverb">Step 5 — Add Calf Reverb</h3>
+<p>Click <strong>+</strong> → search <strong>Calf Reverb</strong>. Drag it to the right of the Compressor.</p>
+<p>Connect:</p>
+<ul><li><strong>Calf Compressor</strong> left output → <strong>Calf Reverb</strong> left input</li><li><strong>Calf Compressor</strong> right output → <strong>Calf Reverb</strong> right input</li></ul>
+<p>Then connect Reverb outputs to Audio Output:</p>
+<ul><li><strong>Calf Reverb</strong> left output → <strong>Audio Output</strong> port 1</li><li><strong>Calf Reverb</strong> right output → <strong>Audio Output</strong> port 2</li></ul>
+<p><strong>Verify:</strong> Full chain: Audio Input → EQ → Compressor → Reverb → Audio Output.</p>
+<h3 id="step-6--configure-eq-for-mic">Step 6 — Configure EQ for mic</h3>
+<p>Click the <strong>LSP Parametric EQ</strong> block to open its controls. Basic mic EQ settings:</p>
+<table><thead><tr><th>Band</th><th>Type</th><th>Freq</th><th>Gain</th></tr></thead><tbody><tr><td>1</td><td>High-pass</td><td>80 Hz</td><td>—</td><td>Cuts low-end rumble</td></tr><tr><td>2</td><td>Bell</td><td>200 Hz</td><td>−3 dB</td><td>Reduces muddiness</td></tr><tr><td>3</td><td>Bell</td><td>3 kHz</td><td>+2 dB</td><td>Adds presence</td></tr></tbody></table>
+<p>Apply via the MOD-UI parameter sliders. Adjustments are live — speak into the mic and listen.</p>
+<p><strong>Verify:</strong> EQ changes are audible in real time.</p>
+<h3 id="step-7--configure-calf-compressor">Step 7 — Configure Calf Compressor</h3>
+<p>Click <strong>Calf Compressor</strong> to open controls. Starting settings for mic:</p>
+<table><thead><tr><th>Parameter</th><th>Value</th></tr></thead><tbody><tr><td>Threshold</td><td>−18 dB</td></tr><tr><td>Ratio</td><td>4:1</td></tr><tr><td>Attack</td><td>10 ms</td></tr><tr><td>Release</td><td>100 ms</td></tr><tr><td>Makeup Gain</td><td>+6 dB</td></tr></tbody></table>
+<p><strong>Verify:</strong> Loud mic peaks are reduced, quiet passages raised. Sound is more even in level.</p>
+<h3 id="step-8--configure-calf-reverb">Step 8 — Configure Calf Reverb</h3>
+<p>Click <strong>Calf Reverb</strong> to open controls. Starting settings:</p>
+<table><thead><tr><th>Parameter</th><th>Value</th></tr></thead><tbody><tr><td>Room Size</td><td>0.5</td></tr><tr><td>Diffusion</td><td>0.7</td></tr><tr><td>Wet Amount</td><td>0.25</td></tr><tr><td>Dry Amount</td><td>1.0</td></tr></tbody></table>
+<p><strong>Verify:</strong> A subtle room reverb is audible on the mic signal. Dry signal (Dry Amount) remains dominant.</p>
+<h3 id="step-9--test-full-mic-chain">Step 9 — Test full mic chain</h3>
+<p>Speak into the mic. The signal passes through EQ → Compressor → Reverb → ESI outputs.</p>
+<p><strong>Verify:</strong> Mic audio sounds processed — cleaner, more even in level, with a touch of reverb.</p>
+<hr>
+<h2 id="part-3--line-input-second-processing-path-draft">Part 3 — Line Input: Second Processing Path <code>[draft]</code></h2>
+<p>Add a second effects path in MOD-UI for the ESI line input (capture_3/4 — CH 3/4).</p>
+<h3 id="step-1--check-mod-ui-audio-input-count">Step 1 — Check MOD-UI audio input count</h3>
+<p>MOD-UI pedalboard exposes a fixed number of audio inputs to JACK. By default this may be stereo (2 inputs). To handle mic (2ch) and line (2ch) simultaneously, the pedalboard needs 4 audio inputs.</p>
+<p>Check current MOD-UI port count:</p>
+<pre><code class="language-bash">ssh root@zynthian.local
+jack_lsp | grep -i "mod\|mod-host"</code></pre>
+<p>If only 2 input ports appear, you need a second MOD-UI chain (Step 2 route) or to expand the input count (not yet supported cleanly via Zynthian UI).</p>
+<p><strong>Verify:</strong> Note how many input ports MOD-UI exposes.</p>
+<h3 id="step-2a--if-mod-ui-has-only-2-inputs-add-a-second-chain">Step 2A — If MOD-UI has only 2 inputs: add a second chain</h3>
+<p>In VNC, tap <strong>+</strong> → <strong>Add Audio Effect</strong> → <strong>MOD-UI</strong>. A second MOD-UI instance starts on a new JACK client.</p>
+<p>Find its ports:</p>
+<pre><code class="language-bash">jack_lsp | grep -i mod</code></pre>
+<p>Connect ESI line input to the second MOD-UI instance:</p>
+<pre><code class="language-bash">jack_connect system:capture_3 &lt;second-modui-in-l&gt;
+jack_connect system:capture_4 &lt;second-modui-in-r&gt;</code></pre>
+<p>Replace <code>&amp;lt;second-modui-in-l&amp;gt;</code> with the actual port name from <code>jack_lsp</code>.</p>
+<p>Open <code>http://zynthian.local:8888</code> — the pedalboard editor may switch between instances. Use the MOD-UI instance selector (if shown) to work on the second chain.</p>
+<p><strong>Verify:</strong> Second MOD-UI chain is connected to capture_3 and capture_4.</p>
+<h3 id="step-2b--if-mod-ui-has-4-inputs-add-line-path-to-same-pedalboard">Step 2B — If MOD-UI has 4 inputs: add line path to same pedalboard</h3>
+<p>If 4 input ports are available, add a second signal path on the same pedalboard canvas using inputs 3 and 4:</p>
+<p>In MOD-UI browser, add separate EQ + Compressor + Reverb plugins for the line path. Connect Audio Input ports 3/4 → line EQ → line Compressor → line Reverb → Audio Output ports 3/4 (or merge into 1/2 via a Mixer plugin).</p>
+<h3 id="step-3--set-esi-input-source-to-line">Step 3 — Set ESI input source to LINE</h3>
+<p>On the U46DJ front panel, set the <strong>CH 3/4 selector</strong> to <strong>LINE</strong>. Connect a line-level source (keyboard, drum machine, mixer output) to the CH 3/4 RCA inputs on the rear panel.</p>
+<p><strong>Verify:</strong> Audio from the line source is audible through monitors, processed by the second MOD-UI chain.</p>
+<h3 id="step-4--build-line-effects-chain-in-mod-ui">Step 4 — Build line effects chain in MOD-UI</h3>
+<p>For a line-level source, a simpler chain works well. In the second MOD-UI instance or the second path:</p>
+<ul><li><strong>LSP Parametric EQ</strong> — gentle high-pass at 40 Hz, subtle tone shaping</li><li><strong>Calf Compressor</strong> — lighter settings (Ratio 2:1, Threshold −12 dB)</li><li><strong>Calf Reverb</strong> (optional) — or skip reverb if the source already has its own space</li></ul>
+<p>Wire and configure as in Part 2 Steps 2–8, adjusted for line levels.</p>
+<p><strong>Verify:</strong> Line input is processed independently from the mic chain.</p>
+<h3 id="step-5--save-the-mod-ui-pedalboard">Step 5 — Save the MOD-UI pedalboard</h3>
+<p>In the MOD-UI browser, click the save icon (floppy disk) and name the pedalboard (e.g. <code>mic-line-processing</code>). MOD-UI saves pedalboards to <code>/zynthian/zynthian-my-data/mod-ui/pedalboards/</code>.</p>
+<p>Then save a Zynthian snapshot in webconf → <strong>Snapshots</strong> → <strong>Save</strong> — the snapshot stores which MOD-UI chain(s) are loaded.</p>
+<p><strong>Verify:</strong> Pedalboard name appears in MOD-UI's saved pedalboard list. Snapshot saved in webconf.</p>
+<hr>
+<h2 id="going-further">Going Further</h2>
+<ul><li>Add a gate (e.g. Calf Gate) before the compressor to suppress mic noise floor during silence</li><li>Use MOD-UI's built-in MIDI control to automate effect parameters from SMC-PAD knobs</li><li>Add a second reverb with longer tail for ambient mic treatment — blend two reverb plugins in parallel</li><li>Route the processed output back through a Zynthian synth chain for parallel processing</li><li>Install additional LV2 plugins for more effect options: <code>apt install swh-plugins</code> adds dozens of classic effects</li></ul>
+</article>
+</main>
+<div id="toc-column"></div>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
