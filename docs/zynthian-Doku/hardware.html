@@ -116,8 +116,19 @@
 <p>For HDMI on old TVs: add <code>hdmi_force_hotplug=1</code>, <code>hdmi_drive=2</code>, <code>hdmi_group=1</code>, <code>hdmi_mode=4</code> to <code>/boot/firmware/config.txt</code>. Connect to <strong>HDMI0</strong> (closest to USB-C on Pi 4).</p>
 <hr>
 <h2 id="audio-hardware">Audio Hardware</h2>
-<table><thead><tr><th>Device</th><th>Type</th><th>ALSA Name</th></tr></thead><tbody><tr><td>ZynADAC (PCM5242+PCM1863)</td><td>I2S HAT</td><td>Detected by autoconfig</td></tr><tr><td>HifiBerry DAC+</td><td>I2S HAT</td><td><code>HifiBerry</code></td></tr><tr><td>USB Sound Blaster Play! 2</td><td>USB</td><td><code>S2</code> (after udev rule)</td></tr><tr><td>Generic USB audio</td><td>USB</td><td>Varies; check with <code>aplay -l</code></td></tr><tr><td>bcm2835 headphones</td><td>Built-in</td><td><code>Headphones</code></td></tr></tbody></table>
+<table><thead><tr><th>Device</th><th>Type</th><th>ALSA Name</th></tr></thead><tbody><tr><td>ZynADAC (PCM5242+PCM1863)</td><td>I2S HAT</td><td>Detected by autoconfig</td></tr><tr><td>HifiBerry DAC+</td><td>I2S HAT</td><td><code>HifiBerry</code></td></tr><tr><td>ESI U46DJ</td><td>USB</td><td><code>U46DJ</code> [low]</td></tr><tr><td>USB Sound Blaster Play! 2</td><td>USB</td><td><code>S2</code> (after udev rule)</td></tr><tr><td>Generic USB audio</td><td>USB</td><td>Varies; check with <code>aplay -l</code></td></tr><tr><td>bcm2835 headphones</td><td>Built-in</td><td><code>Headphones</code></td></tr></tbody></table>
 <p>For USB audio devices with <code>usb_set_interface failed</code> errors, add a <code>snd-usb-audio</code> quirk — see <a href="audio.html">Audio Setup</a>.</p>
+<h3 id="esi-u46dj">ESI U46DJ</h3>
+<p>4-in 6-out USB audio interface by ESI. USB Audio Class 1.0 — class-compliant, no driver needed on Linux.</p>
+<p><strong>I/O summary:</strong></p>
+<table><thead><tr><th></th><th>Connectors</th><th>Notes</th></tr></thead><tbody><tr><td>Inputs</td><td>4× RCA (rear)</td><td>Shared Line/Phono per pair. Phono has RIAA preamp for moving-magnet cartridges.</td></tr><tr><td>Mic in</td><td>1/4" balanced (front, CH 1/2)</td><td>+48V phantom power via front button. MIC/LINE/PHONO selector.</td></tr><tr><td>Hi-Z in</td><td>1/4" unbalanced (front, CH 3/4)</td><td>Guitar/instrument direct. Hi-Z/LINE/PHONO selector.</td></tr><tr><td>Outputs</td><td>6× RCA (rear)</td><td>Line level, -10dBV nominal / +6dBV max.</td></tr><tr><td>Mix out</td><td>2× RCA (rear)</td><td>Stereo monitor mix output — connect to powered monitors.</td></tr><tr><td>Headphone</td><td>1/4" (front)</td><td>Volume control on front panel. 125mW max @ 32 ohm.</td></tr><tr><td>Ground lug</td><td>Screw terminal (rear)</td><td>Turntable ground — connect when using phono inputs to prevent hum.</td></tr></tbody></table>
+<p><strong>Sample rate constraint (USB 1.1 bandwidth):</strong></p>
+<table><thead><tr><th>Rate</th><th>Inputs</th><th>Outputs</th></tr></thead><tbody><tr><td>44.1 kHz</td><td>4</td><td>6</td></tr><tr><td>48 kHz</td><td>4</td><td>4 (outputs 5/6 inactive)</td></tr></tbody></table>
+<p>Zynthian defaults to 48 kHz — at this rate only 4 outputs are available. Switch to 44.1 kHz in webconf → <strong>Hardware → Audio</strong> if all 6 outputs are needed.</p>
+<p><strong>Phantom power warning:</strong> When using a condenser microphone, the USB bus may not supply enough current. Use an external DC 9V/500mA adapter via the rear power connector if the device becomes unstable when phantom power is active.</p>
+<p>Verify detection after connecting via USB:</p>
+<pre><code class="language-bash">aplay -l
+# → card X: U46DJ [U46DJ], device 0: ...</code></pre>
 <hr>
 <h2 id="hardware-autodetection">Hardware Autodetection</h2>
 <p>On first boot, <code>zynthian_autoconfig.py</code> scans the i2c bus for known chips and selects the matching hardware profile [<code>zynthian-sys/sbin/zynthian_autoconfig.py:42-120</code>]:</p>

@@ -25,6 +25,7 @@ Tutorial generator and teacher. Session rules, workflow, and writing rules in `M
 | Touchscreen | None |
 | Access methods | SSH · webconf (`http://zynthian.local`) · VNC |
 | SSH | `ssh root@zynthian.local` |
+| Audio interface | ESI U46DJ — USB, 4-in 6-out. Class-compliant (no driver). 44.1 kHz → 4in/6out; 48 kHz → 4in/4out. Phono+Line+MIC+Hi-Z inputs. Mix out for monitors. |
 | MIDI keyboard | E-MU Xboard (25/49/61 series) — USB/MIDI keyboard controller, 16 CC knobs, pitch/mod wheels, aftertouch |
 | MIDI pad controller | SMC-PAD — 16-pad USB/Bluetooth controller, 8 encoders, DAW transport, note repeat |
 
@@ -74,6 +75,7 @@ Read the relevant page **before drafting any tutorial step** on that topic.
 | MIDI controllers, routing | `~/zynth-docs/htmldoku/midi.md` |
 | E-MU Xboard controller details | `~/zynth/manuals/EMU Xboard 25_49_61 manual Eng.txt` |
 | SMC-PAD controller details | `~/zynth/manuals/SMC-PAD_ZE.txt` |
+| U46DJ audio interface details | `~/zynth/manuals/U46DJ-English.pdf` |
 | Audio device, JACK setup | `~/zynth-docs/htmldoku/audio.md` |
 | Snapshots, saving/restoring state | `~/zynth-docs/htmldoku/snapshots.md` |
 | Webconf interface reference | `~/zynth-docs/htmldoku/webconf.md` |

@@ -57,11 +57,46 @@ For HDMI on old TVs: add `hdmi_force_hotplug=1`, `hdmi_drive=2`, `hdmi_group=1`,
 |--------|------|-----------|
 | ZynADAC (PCM5242+PCM1863) | I2S HAT | Detected by autoconfig |
 | HifiBerry DAC+ | I2S HAT | `HifiBerry` |
+| ESI U46DJ | USB | `U46DJ` [low] |
 | USB Sound Blaster Play! 2 | USB | `S2` (after udev rule) |
 | Generic USB audio | USB | Varies; check with `aplay -l` |
 | bcm2835 headphones | Built-in | `Headphones` |
 
 For USB audio devices with `usb_set_interface failed` errors, add a `snd-usb-audio` quirk — see [Audio Setup](audio.md).
+
+### ESI U46DJ
+
+4-in 6-out USB audio interface by ESI. USB Audio Class 1.0 — class-compliant, no driver needed on Linux.
+
+**I/O summary:**
+
+| | Connectors | Notes |
+|-|------------|-------|
+| Inputs | 4× RCA (rear) | Shared Line/Phono per pair. Phono has RIAA preamp for moving-magnet cartridges. |
+| Mic in | 1/4" balanced (front, CH 1/2) | +48V phantom power via front button. MIC/LINE/PHONO selector. |
+| Hi-Z in | 1/4" unbalanced (front, CH 3/4) | Guitar/instrument direct. Hi-Z/LINE/PHONO selector. |
+| Outputs | 6× RCA (rear) | Line level, -10dBV nominal / +6dBV max. |
+| Mix out | 2× RCA (rear) | Stereo monitor mix output — connect to powered monitors. |
+| Headphone | 1/4" (front) | Volume control on front panel. 125mW max @ 32 ohm. |
+| Ground lug | Screw terminal (rear) | Turntable ground — connect when using phono inputs to prevent hum. |
+
+**Sample rate constraint (USB 1.1 bandwidth):**
+
+| Rate | Inputs | Outputs |
+|------|--------|---------|
+| 44.1 kHz | 4 | 6 |
+| 48 kHz | 4 | 4 (outputs 5/6 inactive) |
+
+Zynthian defaults to 48 kHz — at this rate only 4 outputs are available. Switch to 44.1 kHz in webconf → **Hardware → Audio** if all 6 outputs are needed.
+
+**Phantom power warning:** When using a condenser microphone, the USB bus may not supply enough current. Use an external DC 9V/500mA adapter via the rear power connector if the device becomes unstable when phantom power is active.
+
+Verify detection after connecting via USB:
+
+```bash
+aplay -l
+# → card X: U46DJ [U46DJ], device 0: ...
+```
 
 ---
 
