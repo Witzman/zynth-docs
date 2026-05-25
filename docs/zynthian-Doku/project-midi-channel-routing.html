@@ -32,12 +32,16 @@
 <p id="search-no-results" style="display:none">No results found.</p>
 <ul id="search-results-list"></ul>
 </div>
-<div class="track"><h3>Get Started</h3><ul>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Get Started</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
 <li><a href="readme.html">Overview</a></li>
 <li><a href="getting-started.html">Getting Started</a></li>
 <li><a href="faq.html">FAQ</a></li>
 </ul></div>
-<div class="track"><h3>Using the UI</h3><ul>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Using the UI</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
 <li><a href="ui-navigation.html">UI Navigation</a></li>
 <li><a href="chain-management.html">Chains & Routing</a></li>
 <li><a href="control-screen.html">Control Screen</a></li>
@@ -47,13 +51,17 @@
 <li><a href="midi-recorder.html">MIDI Recorder</a></li>
 <li><a href="admin-guide.html">Admin & System</a></li>
 </ul></div>
-<div class="track"><h3>Play & Create</h3><ul>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Play & Create</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
 <li><a href="userguide.html">User Guide</a></li>
 <li><a href="synth-engines.html">Synth Engines</a></li>
 <li><a href="snapshots.html">Snapshots</a></li>
 <li><a href="recipes.html">Common Setups</a></li>
 </ul></div>
-<div class="track"><h3>Configure</h3><ul>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Configure</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
 <li><a href="audio.html">Audio Setup</a></li>
 <li><a href="midi.html">MIDI Controllers</a></li>
 <li><a href="hardware.html">Hardware Setup</a></li>
@@ -61,18 +69,24 @@
 <li><a href="configuration-reference.html">Config Reference</a></li>
 <li><a href="lv2-plugins.html">LV2 Plugins</a></li>
 </ul></div>
-<div class="track"><h3>Troubleshoot</h3><ul>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Troubleshoot</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
 <li><a href="troubleshooting.html">Troubleshooting</a></li>
 <li><a href="performance-monitoring.html">Performance</a></li>
 </ul></div>
-<div class="track"><h3>Personal Projects</h3><ul>
+<div class="track">
+<button class="track-header" aria-expanded="true"><span class="track-label">Personal Projects</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list">
 <li><a href="project-midi-mapping.html">Personal MIDI Mapping</a></li>
 <li><a href="project-drone-synth.html">Generative Drone Synth</a></li>
 <li><a href="project-maschine-mk2.html">Maschine MK2 Controller</a></li>
 <li><a href="project-midi-channel-routing.html" aria-current="page"><strong>MIDI Channel Routing</strong></a></li>
 <li><a href="project-emu-cc-learn.html">EMU CC Knob Mapping</a></li>
 </ul></div>
-<div class="track"><h3>Under the Hood</h3><ul>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Under the Hood</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
 <li><a href="architecture.html">Architecture</a></li>
 <li><a href="glossary.html">Glossary</a></li>
 <li><a href="codevelop.html">Co-developing</a></li>
@@ -151,6 +165,7 @@ aconnect -l</code></pre>
 <ul><li><strong>Layer mode</strong> — set multiple chains to the same MIDI channel so one key press triggers multiple engines simultaneously</li><li><strong>Note range splits</strong> — restrict a chain to a key range so different keyboard zones trigger different instruments on a shared channel</li><li><strong>SMC-PAD routing</strong> — add a dedicated drum/percussion chain on channel 10, driven by the pad controller</li><li><strong>Snapshot per setup</strong> — create multiple named snapshots with different chain/channel maps, recall them via the webconf Snapshots page mid-session</li><li><strong>CC knob mapping</strong> — use the EMU's 16 CC potentiometers to control synth parameters on the active chain via MIDI Learn</li></ul>
 </article>
 </main>
+<div id="toc-column"></div>
 </div>
 <script src="search.js"></script>
 <script src="ui.js"></script>

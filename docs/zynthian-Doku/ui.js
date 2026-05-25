@@ -73,7 +73,7 @@
     });
   }
 
-  /* ---- 3. Floating TOC ---- */
+  /* ---- 3. TOC ---- */
 
   function initTOC() {
     var article = document.querySelector('article');
@@ -85,10 +85,25 @@
     nav.id = 'toc';
     nav.setAttribute('aria-label', 'Page contents');
 
+    /* Header with collapse toggle */
     var hdr = document.createElement('div');
     hdr.className = 'toc-header';
-    hdr.textContent = 'Contents';
+    var lbl = document.createElement('span');
+    lbl.className = 'toc-header-label';
+    lbl.textContent = 'Contents';
+    var collapseBtn = document.createElement('button');
+    collapseBtn.className = 'toc-collapse-btn';
+    collapseBtn.setAttribute('aria-label', 'Collapse contents');
+    collapseBtn.setAttribute('aria-expanded', 'true');
+    collapseBtn.textContent = '\u25be';
+    hdr.appendChild(lbl);
+    hdr.appendChild(collapseBtn);
     nav.appendChild(hdr);
+
+    collapseBtn.addEventListener('click', function () {
+      var collapsed = nav.classList.toggle('toc-body-collapsed');
+      collapseBtn.setAttribute('aria-expanded', !collapsed);
+    });
 
     var ul = document.createElement('ul');
     headings.forEach(function (h) {
@@ -103,14 +118,26 @@
     });
     nav.appendChild(ul);
 
+    /* Place in column if available, else floating */
+    var col = document.getElementById('toc-column');
+    if (col) {
+      col.appendChild(nav);
+    } else {
+      nav.classList.add('toc-floating');
+      document.body.appendChild(nav);
+    }
+
+    /* Floating toggle button (visible only on narrow via CSS) */
     var btn = document.createElement('button');
     btn.id = 'toc-toggle';
     btn.setAttribute('aria-label', 'Table of contents');
     btn.textContent = '\u2630';
     document.body.appendChild(btn);
-    document.body.appendChild(nav);
-
-    btn.addEventListener('click', function () { nav.classList.toggle('toc-visible'); });
+    btn.addEventListener('click', function () {
+      if (col && col.offsetParent !== null) return; /* column visible, button inactive */
+      nav.classList.add('toc-floating');
+      nav.classList.toggle('toc-visible');
+    });
     nav.addEventListener('click', function (e) {
       if (e.target.tagName === 'A') nav.classList.remove('toc-visible');
     });
@@ -128,11 +155,30 @@
     headings.forEach(function (h) { observer.observe(h); });
   }
 
+  /* ---- 4. Sidebar collapse ---- */
+
+  function initSidebarCollapse() {
+    document.querySelectorAll('.track-header').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var list = btn.nextElementSibling;
+        var expanded = btn.getAttribute('aria-expanded') === 'true';
+        if (expanded) {
+          list.style.display = 'none';
+          btn.setAttribute('aria-expanded', 'false');
+        } else {
+          list.style.display = '';
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  }
+
   /* ---- init ---- */
 
   document.addEventListener('DOMContentLoaded', function () {
     initCopyButtons();
     initAnchorLinks();
     initTOC();
+    initSidebarCollapse();
   });
 }());

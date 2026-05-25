@@ -288,7 +288,17 @@ def build_sidebar(active_file):
     lines.append('<ul id="search-results-list"></ul>')
     lines.append('</div>')
     for track_name, pages in SIDEBAR:
-        lines.append(f'<div class="track"><h3>{track_name}</h3><ul>')
+        has_active = any(filename == active_file for _, filename in pages)
+        collapsed_attr = '' if has_active else ' data-collapsed="true"'
+        lines.append(f'<div class="track"{collapsed_attr}>')
+        lines.append(
+            f'<button class="track-header" aria-expanded="{"true" if has_active else "false"}">'
+            f'<span class="track-label">{track_name}</span>'
+            f'<span class="track-arrow" aria-hidden="true">&#9660;</span>'
+            f'</button>'
+        )
+        display = '' if has_active else ' style="display:none"'
+        lines.append(f'<ul class="track-list"{display}>')
         for label, filename in pages:
             if filename == active_file:
                 lines.append(
@@ -336,6 +346,7 @@ HTML_TEMPLATE = """\
 {content}
 </article>
 </main>
+<div id="toc-column"></div>
 </div>
 <script src="search.js"></script>
 <script src="ui.js"></script>
@@ -404,18 +415,35 @@ body {
   top: 42px;
   height: calc(100vh - 42px);
 }
-#sidebar .track { margin-bottom: 1rem; }
-#sidebar h3 {
+#sidebar .track { margin-bottom: 0.25rem; }
+.track-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: calc(100% - 2rem);
+  margin: 0.85rem 1rem 0.35rem;
+  padding: 0 0 0.3rem;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(61,184,122,0.2);
+  cursor: pointer;
   font-size: 0.6rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.22em;
   color: #3db87a;
-  margin: 1rem 1rem 0.35rem;
-  padding-bottom: 0.3rem;
-  border-bottom: 1px solid rgba(61,184,122,0.2);
+  text-align: left;
 }
+.track-header:hover { color: #5dda9a; }
+.track-arrow {
+  font-size: 0.65rem;
+  transition: transform 0.18s ease;
+  flex-shrink: 0;
+  margin-left: 0.3rem;
+}
+.track-header[aria-expanded="false"] .track-arrow { transform: rotate(-90deg); }
 #sidebar ul { list-style: none; margin: 0; padding: 0; }
+#sidebar .track-list { margin-bottom: 0.5rem; }
 #sidebar li a {
   display: block;
   padding: 0.28rem 1rem;
@@ -588,6 +616,7 @@ li { margin-bottom: 0.2rem; color: #b8d0b8; }
 @media (max-width: 900px) {
   #layout { flex-direction: column; }
   #sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid rgba(61,184,122,0.3); }
+  #toc-column { display: none !important; }
   main { padding: 1rem; }
   article { padding: 1.25rem 1rem; }
 }
@@ -624,29 +653,69 @@ li { margin-bottom: 0.2rem; color: #b8d0b8; }
 }
 .anchor-link:hover, .anchor-link.anchor-copied { color: #3db87a; }
 
-/* --- Floating TOC --- */
+/* --- TOC column (wide screens) --- */
+#toc-column {
+  width: 220px;
+  flex-shrink: 0;
+  padding: 1.5rem 0.75rem 1.5rem 0;
+  display: none;
+}
+@media (min-width: 1280px) {
+  #toc-column { display: block; }
+}
+
+/* --- TOC box --- */
 #toc {
-  position: fixed;
-  right: 1.5rem;
-  top: 80px;
-  width: 210px;
   background: #0d1e2d;
   border: 1px solid rgba(61,184,122,0.22);
   border-radius: 3px;
   padding: 0.6rem 0.8rem;
   font-size: 0.8rem;
-  max-height: calc(100vh - 120px);
   overflow-y: auto;
-  z-index: 10;
 }
+/* Sticky when in column */
+#toc-column #toc {
+  position: sticky;
+  top: 58px;
+  max-height: calc(100vh - 80px);
+}
+/* Fixed floating when toggled on narrow screens */
+#toc.toc-floating {
+  position: fixed;
+  right: 1.5rem;
+  top: 80px;
+  width: 210px;
+  max-height: calc(100vh - 120px);
+  z-index: 10;
+  display: none;
+}
+#toc.toc-floating.toc-visible { display: block; }
 .toc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.toc-header-label {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.14em;
   font-size: 0.62rem;
   color: #3db87a;
-  margin-bottom: 0.5rem;
 }
+.toc-collapse-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #3db87a;
+  font-size: 0.75rem;
+  padding: 0 0.1rem;
+  line-height: 1;
+  transition: transform 0.18s ease;
+}
+.toc-collapse-btn:hover { color: #5dda9a; }
+#toc.toc-body-collapsed .toc-collapse-btn { transform: rotate(-90deg); }
+#toc.toc-body-collapsed ul { display: none; }
 #toc ul { list-style: none; margin: 0; padding: 0; }
 #toc li a {
   display: block;
@@ -658,6 +727,8 @@ li { margin-bottom: 0.2rem; color: #b8d0b8; }
 }
 #toc li a:hover, #toc li a.toc-active { color: #3db87a; }
 #toc li.toc-h3 a { padding-left: 0.8rem; font-size: 0.75rem; }
+
+/* Floating toggle button (narrow screens only) */
 #toc-toggle {
   display: none;
   position: fixed;
@@ -671,11 +742,11 @@ li { margin-bottom: 0.2rem; color: #b8d0b8; }
   font-size: 1.1rem;
   cursor: pointer;
   z-index: 11;
+  align-items: center;
+  justify-content: center;
 }
-#toc.toc-visible { display: block !important; }
-@media (max-width: 1200px) {
-  #toc { display: none; }
-  #toc-toggle { display: flex; align-items: center; justify-content: center; }
+@media (max-width: 1279px) {
+  #toc-toggle { display: flex; }
 }
 """
 
@@ -905,7 +976,7 @@ UI_JS = """\
     });
   }
 
-  /* ---- 3. Floating TOC ---- */
+  /* ---- 3. TOC ---- */
 
   function initTOC() {
     var article = document.querySelector('article');
@@ -917,10 +988,25 @@ UI_JS = """\
     nav.id = 'toc';
     nav.setAttribute('aria-label', 'Page contents');
 
+    /* Header with collapse toggle */
     var hdr = document.createElement('div');
     hdr.className = 'toc-header';
-    hdr.textContent = 'Contents';
+    var lbl = document.createElement('span');
+    lbl.className = 'toc-header-label';
+    lbl.textContent = 'Contents';
+    var collapseBtn = document.createElement('button');
+    collapseBtn.className = 'toc-collapse-btn';
+    collapseBtn.setAttribute('aria-label', 'Collapse contents');
+    collapseBtn.setAttribute('aria-expanded', 'true');
+    collapseBtn.textContent = '\\u25be';
+    hdr.appendChild(lbl);
+    hdr.appendChild(collapseBtn);
     nav.appendChild(hdr);
+
+    collapseBtn.addEventListener('click', function () {
+      var collapsed = nav.classList.toggle('toc-body-collapsed');
+      collapseBtn.setAttribute('aria-expanded', !collapsed);
+    });
 
     var ul = document.createElement('ul');
     headings.forEach(function (h) {
@@ -935,14 +1021,26 @@ UI_JS = """\
     });
     nav.appendChild(ul);
 
+    /* Place in column if available, else floating */
+    var col = document.getElementById('toc-column');
+    if (col) {
+      col.appendChild(nav);
+    } else {
+      nav.classList.add('toc-floating');
+      document.body.appendChild(nav);
+    }
+
+    /* Floating toggle button (visible only on narrow via CSS) */
     var btn = document.createElement('button');
     btn.id = 'toc-toggle';
     btn.setAttribute('aria-label', 'Table of contents');
     btn.textContent = '\\u2630';
     document.body.appendChild(btn);
-    document.body.appendChild(nav);
-
-    btn.addEventListener('click', function () { nav.classList.toggle('toc-visible'); });
+    btn.addEventListener('click', function () {
+      if (col && col.offsetParent !== null) return; /* column visible, button inactive */
+      nav.classList.add('toc-floating');
+      nav.classList.toggle('toc-visible');
+    });
     nav.addEventListener('click', function (e) {
       if (e.target.tagName === 'A') nav.classList.remove('toc-visible');
     });
@@ -960,12 +1058,31 @@ UI_JS = """\
     headings.forEach(function (h) { observer.observe(h); });
   }
 
+  /* ---- 4. Sidebar collapse ---- */
+
+  function initSidebarCollapse() {
+    document.querySelectorAll('.track-header').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var list = btn.nextElementSibling;
+        var expanded = btn.getAttribute('aria-expanded') === 'true';
+        if (expanded) {
+          list.style.display = 'none';
+          btn.setAttribute('aria-expanded', 'false');
+        } else {
+          list.style.display = '';
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  }
+
   /* ---- init ---- */
 
   document.addEventListener('DOMContentLoaded', function () {
     initCopyButtons();
     initAnchorLinks();
     initTOC();
+    initSidebarCollapse();
   });
 }());
 """
