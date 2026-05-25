@@ -98,12 +98,126 @@
 <main>
 <article>
 <h1 id="maschine-mk2-controller">Maschine MK2 Controller</h1>
-<p><em>Blueprint in progress.</em></p>
+<p><strong>Goal:</strong> Connect a Native Instruments Maschine MK2 to Zynthian as a fully functional MIDI controller — pads trigger notes, buttons and encoders map to synth parameters, daemon auto-starts on boot. <strong>Prerequisites:</strong> Zynthian booted and accessible via SSH. A working audio chain already set up (Part 2 requires sound output). The <code>MaschineMK2_linux</code> source is present at <code>~/zynth/MaschineMK2_linux/</code> on this Pi. <strong>Access:</strong> SSH</p>
 <hr>
-<h2 id="overview">Overview</h2>
-<p><em>Details coming soon.</em></p>
+<h2 id="part-1--build-connect-verify-midi-draft">Part 1 — Build, Connect, Verify MIDI <code>[draft]</code></h2>
+<p>Build the daemon from source, set permissions, run it manually, and confirm pads send MIDI notes to a Zynthian chain.</p>
+<h3 id="step-1--connect-the-maschine-mk2">Step 1 — Connect the Maschine MK2</h3>
+<p>Connect the Maschine MK2 to a USB port on the Raspberry Pi.</p>
+<p><strong>Verify:</strong> USB cable is connected at both ends.</p>
+<h3 id="step-2--find-the-maschine-usb-ids">Step 2 — Find the Maschine USB IDs</h3>
+<pre><code class="language-bash">ssh root@zynthian.local
+lsusb | grep -i "Native\|Maschine\|17cc"</code></pre>
+<p>Expected output:</p>
+<pre><code>Bus 001 Device 003: ID 17cc:1140 Native Instruments Maschine MK2</code></pre>
+<p>Note the vendor <code>17cc</code> and the product ID (e.g. <code>1140</code>). You need these in Step 5.</p>
+<p><strong>Verify:</strong> A line with <code>17cc</code> appears and you can read the product ID.</p>
+<h3 id="step-3--install-rust-on-the-pi">Step 3 — Install Rust on the Pi</h3>
+<p>Rust is not installed by default on ZynthianOS:</p>
+<pre><code class="language-bash">curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+source "$HOME/.cargo/env"
+rustc --version</code></pre>
+<p>Expected: <code>rustc 1.x.x (...)</code></p>
+<p>Download and install takes a few minutes on the Pi.</p>
+<p><strong>Verify:</strong> <code>rustc --version</code> prints a version number.</p>
+<h3 id="step-4--build-the-daemon">Step 4 — Build the daemon</h3>
+<pre><code class="language-bash">cd ~/zynth/MaschineMK2_linux
+source "$HOME/.cargo/env"
+./build.sh</code></pre>
+<p>Compiles with link-time optimisation. On a Pi 4 this takes <strong>5–10 minutes</strong> — this is normal. Wait for the shell prompt to return.</p>
+<p>Expected final lines:</p>
+<pre><code>Compiling maschine v0.0.1
+Finished release [optimized] target(s) in ...
+move picture to target folder</code></pre>
+<p><strong>Verify:</strong></p>
+<pre><code class="language-bash">ls -lh ~/zynth/MaschineMK2_linux/target/release/maschine</code></pre>
+<p>File exists and is several megabytes.</p>
+<h3 id="step-5--add-a-udev-rule-for-stable-device-access">Step 5 — Add a udev rule for stable device access</h3>
+<p>Replace <code>XXXX</code> with the product ID from Step 2 (e.g. <code>1140</code>):</p>
+<pre><code class="language-bash">echo 'SUBSYSTEM=="hidraw", ATTRS{idVendor}=="17cc", ATTRS{idProduct}=="XXXX", MODE="0664", GROUP="audio", SYMLINK+="maschine"' &gt; /etc/udev/rules.d/99-maschine.rules
+udevadm control --reload-rules
+udevadm trigger</code></pre>
+<p>This creates a stable path <code>/dev/maschine</code> regardless of USB port or boot order.</p>
+<p><strong>Verify:</strong></p>
+<pre><code class="language-bash">ls -la /dev/maschine</code></pre>
+<p>Expected: a symlink pointing to <code>/dev/hidrawX</code>.</p>
+<h3 id="step-6--run-the-daemon">Step 6 — Run the daemon</h3>
+<pre><code class="language-bash">cd ~/zynth/MaschineMK2_linux
+./target/release/maschine /dev/maschine any &amp;</code></pre>
+<p>The <code>any</code> argument skips the screen image write. The <code>&amp;amp;</code> runs it in the background.</p>
+<p><strong>Verify:</strong> Command returns to a prompt without error. Pad lights on the Maschine may flicker briefly.</p>
+<h3 id="step-7--confirm-midi-port-is-visible">Step 7 — Confirm MIDI port is visible</h3>
+<pre><code class="language-bash">aconnect -l</code></pre>
+<p>Expected:</p>
+<pre><code>client 32: 'maschine.rs' [type=kernel]
+    0 'maschine.rs port 0'</code></pre>
+<p><strong>Verify:</strong> <code>maschine.rs</code> appears in the output.</p>
+<h3 id="step-8--enable-the-port-in-webconf">Step 8 — Enable the port in webconf</h3>
+<p>Open <code>http://zynthian.local</code> → <strong>MIDI → Ports</strong>. Find <code>maschine.rs</code> and enable it.</p>
+<p><strong>Verify:</strong> Port is toggled on.</p>
+<h3 id="step-9--play-a-pad-hear-a-note">Step 9 — Play a pad, hear a note</h3>
+<p>In VNC, load a chain with any engine (e.g. ZynAddSubFX with a default preset). Press any pad on the Maschine MK2.</p>
+<p><strong>Verify:</strong> A note plays through audio output when a pad is pressed. Group buttons A–H shift the note base up or down.</p>
 <hr>
-<p><em>Version: 2026-05-25</em></p>
+<h2 id="part-2--map-buttons-and-encoders-via-cc-learn-draft">Part 2 — Map Buttons and Encoders via CC Learn <code>[draft]</code></h2>
+<p>Bind Maschine buttons and encoders to synth parameters using Zynthian's CC Learn system.</p>
+<h3 id="step-1--open-a-synth-chain-in-vnc">Step 1 — Open a synth chain in VNC</h3>
+<p>In the Zynthian VNC UI, tap a chain to open its control screen. Parameter knobs (e.g. Cutoff, Resonance, Volume) should be visible.</p>
+<p><strong>Verify:</strong> Chain control screen with parameter knobs is visible.</p>
+<h3 id="step-2--enter-cc-learn-on-a-parameter">Step 2 — Enter CC Learn on a parameter</h3>
+<p>Long-press a parameter knob in the VNC UI (hold ~600ms). The knob highlights orange — CC Learn is now active for that parameter.</p>
+<p><strong>Verify:</strong> Knob turns orange.</p>
+<h3 id="step-3--move-a-maschine-button-or-encoder">Step 3 — Move a Maschine button or encoder</h3>
+<p>While the knob is orange, press a Maschine button or turn a Maschine encoder. Zynthian captures the CC number and binds it.</p>
+<p>Note on encoders: they send absolute CC values (0–127), not relative increments. They work best for parameters where jumping to a value is acceptable. Buttons send CC 127 on press — useful for on/off toggles.</p>
+<p><strong>Verify:</strong> Knob returns to normal colour. Moving the same Maschine control now affects the parameter.</p>
+<h3 id="step-4--repeat-for-other-parameters">Step 4 — Repeat for other parameters</h3>
+<p>Repeat Steps 2–3 for each parameter you want to control.</p>
+<p><strong>Verify:</strong> All desired CC bindings respond correctly.</p>
+<h3 id="step-5--save-a-snapshot">Step 5 — Save a snapshot</h3>
+<p>CC bindings are stored in snapshots. Save now so they survive reboots:</p>
+<p>In webconf → <strong>Snapshots</strong>, click <strong>Save</strong> and give it a name.</p>
+<p><strong>Verify:</strong> Snapshot appears in the list.</p>
+<hr>
+<h2 id="part-3--run-as-a-systemd-service-draft">Part 3 — Run as a Systemd Service <code>[draft]</code></h2>
+<p>Auto-start the daemon on boot so the Maschine is ready without manual SSH.</p>
+<h3 id="step-1--create-the-service-file">Step 1 — Create the service file</h3>
+<pre><code class="language-bash">cat &gt; /etc/systemd/system/maschine-mk2.service &lt;&lt; 'EOF'
+[Unit]
+Description=Maschine MK2 MIDI daemon
+After=jack2.service
+Requires=jack2.service
+
+[Service]
+ExecStart=/root/zynth/MaschineMK2_linux/target/release/maschine /dev/maschine any
+Restart=on-failure
+RestartSec=3
+WorkingDirectory=/root/zynth/MaschineMK2_linux
+
+[Install]
+WantedBy=multi-user.target
+EOF</code></pre>
+<p>Uses <code>/dev/maschine</code> — the stable symlink from the udev rule. No hardcoded hidraw number needed.</p>
+<p><strong>Verify:</strong></p>
+<pre><code class="language-bash">cat /etc/systemd/system/maschine-mk2.service</code></pre>
+<p>File content matches what was written above.</p>
+<h3 id="step-2--enable-and-start-the-service">Step 2 — Enable and start the service</h3>
+<pre><code class="language-bash">systemctl daemon-reload
+systemctl enable maschine-mk2.service
+systemctl start maschine-mk2.service</code></pre>
+<p><strong>Verify:</strong></p>
+<pre><code class="language-bash">systemctl status maschine-mk2.service --no-pager</code></pre>
+<p>Expected: <code>Active: active (running)</code></p>
+<h3 id="step-3--reboot-and-confirm-auto-start">Step 3 — Reboot and confirm auto-start</h3>
+<pre><code class="language-bash">reboot</code></pre>
+<p>After ~45 seconds, SSH back in:</p>
+<pre><code class="language-bash">ssh root@zynthian.local
+systemctl status maschine-mk2.service --no-pager
+aconnect -l | grep maschine</code></pre>
+<p><strong>Verify:</strong> Service is <code>active (running)</code> and <code>maschine.rs</code> appears in <code>aconnect -l</code> without any manual steps.</p>
+<hr>
+<h2 id="going-further">Going Further</h2>
+<ul><li>Use Group buttons A–H to switch octaves and cover different note ranges across the 16 pads</li><li>Map Play and Stop buttons to Zynthian transport controls via CC Learn</li><li>Assign all 8 encoders to different synth parameters for a custom performance layout</li><li>Save a named snapshot with all CC bindings — Zynthian restores them automatically on load</li></ul>
 </article>
 </main>
 <div id="toc-column"></div>

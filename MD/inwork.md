@@ -20,4 +20,5 @@ Status: `[~]` drafting · `[t]` user testing · `[>]` ready to publish · `[ ]` 
 
 ## Future Tutorial Candidates
 
-<!-- none -->
+- [~] **Maschine MK2 Controller** — connect and map NI Maschine MK2 as MIDI controller in Zynthian
+- [ ] **Generative Drone Synth** — build a self-evolving drone patch using Zynthian engines
