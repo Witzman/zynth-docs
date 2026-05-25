@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Custom MIDI Channel Routing — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track"><h3>Get Started</h3><ul>
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track"><h3>Using the UI</h3><ul>
+<li><a href="ui-navigation.html">UI Navigation</a></li>
+<li><a href="chain-management.html">Chains & Routing</a></li>
+<li><a href="control-screen.html">Control Screen</a></li>
+<li><a href="midi-cc-learn.html">MIDI CC Learning</a></li>
+<li><a href="zs3-guide.html">ZS3 Subsnapshots</a></li>
+<li><a href="pattern-editor.html">Pattern Editor</a></li>
+<li><a href="midi-recorder.html">MIDI Recorder</a></li>
+<li><a href="admin-guide.html">Admin & System</a></li>
+</ul></div>
+<div class="track"><h3>Play & Create</h3><ul>
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track"><h3>Configure</h3><ul>
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track"><h3>Troubleshoot</h3><ul>
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+<li><a href="performance-monitoring.html">Performance</a></li>
+</ul></div>
+<div class="track"><h3>Personal Projects</h3><ul>
+<li><a href="project-midi-mapping.html">Personal MIDI Mapping</a></li>
+<li><a href="project-drone-synth.html">Generative Drone Synth</a></li>
+<li><a href="project-maschine-mk2.html">Maschine MK2 Controller</a></li>
+<li><a href="project-midi-channel-routing.html" aria-current="page"><strong>MIDI Channel Routing</strong></a></li>
+</ul></div>
+<div class="track"><h3>Under the Hood</h3><ul>
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="custom-midi-channel-routing">Custom MIDI Channel Routing</h1>
+<p><strong>Goal:</strong> Route each MIDI channel from the EMU Xboard to a dedicated Zynthian chain. Switching the keyboard's transmit channel switches the active instrument. <strong>Prerequisites:</strong> Zynthian running. EMU Xboard connected via USB. Audio output confirmed working. <strong>Access:</strong> SSH · Webconf · VNC</p>
+<hr>
+<h2 id="part-1--two-chains-two-channels-draft">Part 1 — Two Chains, Two Channels <code>[draft]</code></h2>
+<p>Prove the concept: Chain 1 responds to MIDI channel 1 only, Chain 2 to channel 2 only. Switching the EMU between the two channels switches which engine plays — no overlap, no bleed.</p>
+<h3 id="step-1--verify-controller-is-detected">Step 1 — Verify controller is detected</h3>
+<p>SSH into Zynthian and confirm the EMU Xboard appears as a MIDI client:</p>
+<pre><code class="language-bash">ssh root@zynthian.local
+aconnect -l</code></pre>
+<p>Expected: a line containing <code>E-MU</code> or <code>Xboard</code> in the client list:</p>
+<pre><code>client 32: 'E-MU Xboard' [type=kernel,card=X]</code></pre>
+<p>If the EMU does not appear, unplug and replug the USB cable, then run <code>aconnect -l</code> again.</p>
+<h3 id="step-2--verify-midi-port-is-enabled">Step 2 — Verify MIDI port is enabled</h3>
+<p>Open <code>http://zynthian.local</code> → <strong>MIDI</strong> → <strong>Ports</strong>.</p>
+<p>Find the EMU Xboard entry. Confirm it is enabled (checkbox checked / toggle on). If not, enable it and click <strong>Save</strong>.</p>
+<h3 id="step-3--add-chain-1-piano">Step 3 — Add Chain 1 (piano)</h3>
+<p>In VNC, the main screen shows any existing chain strips and a <strong>+</strong> button. Tap <strong>+</strong> to add a new chain.</p>
+<ul><li>Select <strong>FluidSynth</strong>.</li><li>Select bank <strong>GeneralUser GS</strong> (ships with Zynthian).</li><li>Select preset <strong>Acoustic Grand Piano</strong>.</li></ul>
+<p>Zynthian assigns new chains to successive MIDI channels automatically. This is Chain 1 → MIDI channel 1.</p>
+<h3 id="step-4--add-chain-2-stringspad">Step 4 — Add Chain 2 (strings/pad)</h3>
+<p>Tap <strong>+</strong> → select <strong>ZynAddSubFX</strong>.</p>
+<ul><li>Browse to a <strong>Strings</strong> or <strong>Pads</strong> bank.</li><li>Select any string ensemble or pad preset.</li></ul>
+<p>This is Chain 2 → MIDI channel 2. The sustained, slower-attack timbre is easy to distinguish from the piano.</p>
+<h3 id="step-5--confirm-channel-assignments">Step 5 — Confirm channel assignments</h3>
+<p>Tap <strong>Chain 1</strong> in the main screen to open chain control. Navigate to the <strong>Options</strong> subscreen and find the <strong>MIDI Channel</strong> setting — it should read <strong>1</strong>.</p>
+<p>Tap back, then tap <strong>Chain 2</strong> → <strong>Options</strong> → <strong>MIDI Channel</strong> — it should read <strong>2</strong>.</p>
+<p>If either shows a different value or <strong>Omni</strong>, change it to the correct channel number.</p>
+<h3 id="step-6--switch-emu-to-channel-1-and-play">Step 6 — Switch EMU to channel 1 and play</h3>
+<p>On the EMU Xboard:</p>
+<ol><li>Press the <strong>MIDI Channel</strong> button. The MIDI Channel LED lights.</li><li>Use the data slider or <strong>Octave +/-</strong> buttons to select channel <strong>1</strong>.</li><li>Play notes.</li></ol>
+<p>Only Chain 1 should sound. Chain 2 should stay silent.</p>
+<h3 id="step-7--switch-emu-to-channel-2-and-play">Step 7 — Switch EMU to channel 2 and play</h3>
+<p>Press <strong>MIDI Channel</strong> on the EMU and select channel <strong>2</strong>. Play the same notes.</p>
+<p>Only Chain 2 should sound now. Chain 1 should be silent.</p>
+<p><strong>Verify:</strong> Clear difference between the two channels. Switching channels on the keyboard switches the active instrument instantly with no overlap between chains.</p>
+<hr>
+<h2 id="part-2--scale-to-four-channels-draft">Part 2 — Scale to Four Channels <code>[draft]</code></h2>
+<p>Add Chain 3 and Chain 4. By the end, channels 1–4 each trigger a distinct instrument with full channel isolation.</p>
+<h3 id="step-1--add-chain-3-brasslead">Step 1 — Add Chain 3 (brass/lead)</h3>
+<p>Tap <strong>+</strong> → select <strong>ZynAddSubFX</strong>.</p>
+<ul><li>Browse to a <strong>Brass</strong> or <strong>Lead</strong> bank.</li><li>Select any brass ensemble or synth lead preset.</li></ul>
+<p>Zynthian assigns MIDI channel 3 automatically.</p>
+<h3 id="step-2--add-chain-4-organ">Step 2 — Add Chain 4 (organ)</h3>
+<p>Tap <strong>+</strong> → select <strong>setBfree</strong>.</p>
+<p>setBfree is a Hammond B3 organ emulator. It loads immediately with a default drawbar configuration — no bank or preset selection is needed. The organ sound is immediately distinct from all three previous chains.</p>
+<h3 id="step-3--confirm-channels-3-and-4">Step 3 — Confirm channels 3 and 4</h3>
+<p>Tap each new chain → <strong>Options</strong> → <strong>MIDI Channel</strong> and confirm the assignment matches (3 and 4 respectively).</p>
+<h3 id="step-4--test-all-four-channels">Step 4 — Test all four channels</h3>
+<p>Cycle the EMU through channels 1, 2, 3, 4 using the <strong>MIDI Channel</strong> button. Play notes at each channel.</p>
+<p><strong>Verify:</strong> Each channel triggers exactly one chain. No other chains respond. Four distinct sounds, zero crosstalk.</p>
+<hr>
+<h2 id="part-3--save-as-snapshot-draft">Part 3 — Save as Snapshot <code>[draft]</code></h2>
+<p>Save the chain/channel map as a named snapshot and set it as the boot default so it loads automatically on every start.</p>
+<h3 id="step-1--save-a-named-snapshot">Step 1 — Save a named snapshot</h3>
+<p>Open <code>http://zynthian.local</code> → <strong>Snapshots</strong> → <strong>Save As</strong>.</p>
+<p>Enter a name (e.g. <code>midi-channel-map</code>) and click <strong>Save</strong>.</p>
+<h3 id="step-2--set-as-boot-default">Step 2 — Set as boot default</h3>
+<p>In the snapshot list, find <code>midi-channel-map</code>. Click <strong>Save as Last State</strong>.</p>
+<p>This writes the snapshot to <code>last_state.zss</code> — Zynthian loads this file automatically on every boot.</p>
+<h3 id="step-3--verify-persistence">Step 3 — Verify persistence</h3>
+<p>Reboot from SSH:</p>
+<pre><code class="language-bash">reboot</code></pre>
+<p>Wait ~30 seconds. Reconnect via VNC and confirm:</p>
+<ul><li>All chains are present with their correct channel assignments</li><li>EMU channel switching works immediately without any manual setup</li></ul>
+<p><strong>Verify:</strong> After reboot, all chains load with the correct MIDI channel map. The setup is ready to play the moment Zynthian starts.</p>
+<hr>
+<h2 id="going-further">Going Further</h2>
+<ul><li><strong>Layer mode</strong> — set multiple chains to the same MIDI channel so one key press triggers multiple engines simultaneously</li><li><strong>Note range splits</strong> — restrict a chain to a key range so different keyboard zones trigger different instruments on a shared channel</li><li><strong>SMC-PAD routing</strong> — add a dedicated drum/percussion chain on channel 10, driven by the pad controller</li><li><strong>Snapshot per setup</strong> — create multiple named snapshots with different chain/channel maps, recall them via the webconf Snapshots page mid-session</li><li><strong>CC knob mapping</strong> — use the EMU's 16 CC potentiometers to control synth parameters on the active chain via MIDI Learn</li></ul>
+</article>
+</main>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
