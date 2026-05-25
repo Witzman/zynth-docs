@@ -33,22 +33,24 @@ Open `http://zynthian.local` → **MIDI** → **Ports**.
 
 Find the EMU Xboard entry. Confirm it is enabled (checkbox checked / toggle on). If not, enable it and click **Save**.
 
-### Step 3 — Add Chain 1
+### Step 3 — Add Chain 1 (piano)
 
 In VNC, the main screen shows any existing chain strips and a **+** button. Tap **+** to add a new chain.
 
-- Select an engine — **FluidSynth** is a good starting point (piano/keyboard sounds).
-- Select a bank and preset. Choose any piano or keyboard sound.
+- Select **FluidSynth**.
+- Select bank **GeneralUser GS** (ships with Zynthian).
+- Select preset **Acoustic Grand Piano**.
 
 Zynthian assigns new chains to successive MIDI channels automatically. This is Chain 1 → MIDI channel 1.
 
-### Step 4 — Add Chain 2
+### Step 4 — Add Chain 2 (strings/pad)
 
-Tap **+** again to add a second chain.
+Tap **+** → select **ZynAddSubFX**.
 
-- Select a different engine or a clearly different-sounding preset — an organ, pad, or bass sound works well.
+- Browse to a **Strings** or **Pads** bank.
+- Select any string ensemble or pad preset.
 
-This is Chain 2 → MIDI channel 2. Choose something easy to distinguish from Chain 1 by ear.
+This is Chain 2 → MIDI channel 2. The sustained, slower-attack timbre is easy to distinguish from the piano.
 
 ### Step 5 — Confirm channel assignments
 
@@ -82,13 +84,20 @@ Only Chain 2 should sound now. Chain 1 should be silent.
 
 Add Chain 3 and Chain 4. By the end, channels 1–4 each trigger a distinct instrument with full channel isolation.
 
-### Step 1 — Add Chain 3
+### Step 1 — Add Chain 3 (brass/lead)
 
-Tap **+** → select an engine and preset. Zynthian assigns MIDI channel 3 automatically. Choose a sound distinct from Chains 1 and 2.
+Tap **+** → select **ZynAddSubFX**.
 
-### Step 2 — Add Chain 4
+- Browse to a **Brass** or **Lead** bank.
+- Select any brass ensemble or synth lead preset.
 
-Tap **+** → select an engine and preset. Assigned to MIDI channel 4. Again: choose a clearly distinct sound.
+Zynthian assigns MIDI channel 3 automatically.
+
+### Step 2 — Add Chain 4 (organ)
+
+Tap **+** → select **setBfree**.
+
+setBfree is a Hammond B3 organ emulator. It loads immediately with a default drawbar configuration — no bank or preset selection is needed. The organ sound is immediately distinct from all three previous chains.
 
 ### Step 3 — Confirm channels 3 and 4
 

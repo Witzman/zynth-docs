@@ -32,6 +32,7 @@ Status: `[~]` drafting · `[t]` user testing · `[>]` ready to publish · `[ ]` 
 
 - [ ] MIDI controller compatibility — connecting and mapping common controllers
 - [ ] Bluetooth MIDI pairing — step-by-step for common devices
+- [ ] EMU CC knobs via MIDI Learn — map 16 hardware knobs to active chain parameters, bindings save with snapshot
 
 ### Audio
 
