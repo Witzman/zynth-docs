@@ -30,6 +30,7 @@ SIDEBAR = [
         ("MIDI CC Learning", "midi-cc-learn.html"),
         ("ZS3 Subsnapshots", "zs3-guide.html"),
         ("Pattern Editor", "pattern-editor.html"),
+        ("MIDI Recorder", "midi-recorder.html"),
         ("Admin & System", "admin-guide.html"),
     ]),
     ("Play & Create", [
