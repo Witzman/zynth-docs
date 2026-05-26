@@ -1,45 +1,28 @@
 # Generative Drone Synth
 
 **Goal:** Build a self-evolving ambient drone using ZynAddSubFX — LFOs slowly mutate timbre without input, SMC-PAD pads shift root note, 8 knobs shape the texture in real time.
-**Prerequisites:** Zynthian booted with audio output working (U46DJ or similar). SMC-PAD connected and visible in webconf MIDI ports.
+**Prerequisites:** Zynthian booted with audio output working (U46DJ or similar). The `drone-v1` snapshot is pre-built on the Pi — no manual chain setup needed for Part 1. For Parts 2–3: SMC-PAD connected and visible in webconf MIDI ports.
 **Access:** VNC · Webconf · SSH
 
 ---
 
 ## Part 1 — Patch: Self-Evolving Drone `[draft]`
 
-Load a ZynAddSubFX pad preset with slow internal LFOs, confirm the timbre evolves on its own when a note is held.
+The base configuration is pre-built in the `drone-v1` snapshot already on your Pi: a ZynAddSubFX chain named "Drone", Fantasy → Long SpaceChoir 1 preset, monophonic voice mode (one note at a time). Part 1 starts from that snapshot — load it, hold a note, and confirm the timbre evolves on its own.
 
-### Step 1 — Add a ZynAddSubFX chain
+### Step 1 — Load the drone-v1 snapshot
 
-In the Zynthian VNC UI, tap **+** (bottom-left) → **Instrument** → **ZynAddSubFX**.
+In webconf, go to **Library → Snapshots**. Find `drone-v1` in the list and click the load icon next to it.
 
-**Verify:** A new chain appears with ZynAddSubFX loaded.
+**Verify:** In VNC, a chain labelled "Drone" appears, with ZynAddSubFX and "Long SpaceChoir1" visible.
 
-### Step 2 — Select a long, evolving preset
-
-Tap the chain to open the bank selector. Recommended starting points from banks included in a fresh Zynthian installation:
-
-| Bank | Preset | Why |
-|------|--------|-----|
-| **Fantasy** | **Long SpaceChoir 1** | Long attack, built-in space movement — best first choice |
-| **Fantasy** | **Emptyness 1** or **Emptyness 2** | Sparse, open drone texture |
-| **Fantasy** | **Space Voice 1** | Slow vocal-like evolution |
-| **Strings** | **Sweep Pad 1** | Sweeping filter movement already present |
-| **Strings** | **Morph Strings 1** | Morphing timbre over time |
-| **Pads** | **Resonance Pad 1** | Fallback — static but good base for Step 4 |
-
-Start with **Fantasy → Long SpaceChoir 1**. If it does not evolve on its own when held, use Step 4 to add LFO movement manually.
-
-**Verify:** Engine loads with the chosen preset name visible.
-
-### Step 3 — Hold a note and listen
+### Step 2 — Hold a note and listen
 
 On the E-MU Xboard keyboard, press and hold a single note (e.g. middle C). Hold it for 10–20 seconds.
 
-**Verify:** The timbre slowly shifts — filter opens and closes, volume breathes, or harmonics emerge and fade. This is the LFO modulation working. If the sound is static, go to Step 4. If it evolves, skip to Step 5.
+**Verify:** The timbre slowly shifts — filter opens and closes, volume breathes, or harmonics emerge and fade. This is the preset's built-in LFO modulation. If the sound is static, go to Step 3. If it evolves, skip to Step 4.
 
-### Step 4 — (If static) Increase LFO depth in VNC
+### Step 3 — (If static) Increase LFO depth in VNC
 
 If the held note sounds unchanging, navigate to the engine parameters in VNC:
 
@@ -51,34 +34,13 @@ If the held note sounds unchanging, navigate to the engine parameters in VNC:
 
 **Verify:** Holding a note now produces an audibly evolving texture.
 
-### Step 5 — Set voice mode to monophonic
+### Step 4 — Confirm monophonic mode
 
-A drone changes root note cleanly when only one note sounds at a time. Send a MIDI mono mode command via SSH:
+The snapshot sets the engine to mono (one note at a time) — root note changes are clean with no overlapping drones.
 
-First find the ZynAddSubFX MIDI channel:
+Press two different notes in quick succession on the Xboard. The first should stop as the second sounds.
 
-```bash
-ssh root@zynthian.local
-aconnect -l
-```
-
-Note the channel your ZynAddSubFX chain is on (default: channel 1). Then send CC 126 (mono on) to it:
-
-```bash
-amidi -p hw:$(aconnect -l | grep -i "Through\|ZynMidi" | head -1 | grep -oP 'client \K[0-9]+'),0,0 -S "B0 7E 01"
-```
-
-`B0` = CC on channel 1, `7E` = CC 126 (mono on), `01` = 1 voice.
-
-If the chain is on channel 2, change `B0` to `B1`.
-
-**Verify:** Playing two pads in sequence causes the first note to stop immediately when the second is pressed — one note at a time.
-
-### Step 6 — Save a snapshot
-
-In webconf, go to **Library → Snapshots**. Type `drone-v1` in the **Name:** field and click the checkmark button to save.
-
-**Verify:** Snapshot appears in the list.
+**Verify:** Only one note plays at a time. The second note immediately cuts the first.
 
 ---
 
