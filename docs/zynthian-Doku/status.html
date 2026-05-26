@@ -87,6 +87,7 @@
 <li><a href="project-u46dj-audio-setup.html">ESI U46DJ Audio Setup</a></li>
 <li><a href="project-modui-effects.html">Audio FX Chain with MOD-UI</a></li>
 <li><a href="project-performance-rig.html">Multi-Controller Performance Rig</a></li>
+<li><a href="project-live-looper.html">Live Looper with SooperLooper</a></li>
 </ul></div>
 <div class="track">
 <button class="track-header" aria-expanded="true"><span class="track-label">Under the Hood</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
@@ -123,7 +124,7 @@
 
 </style>
 <h1 id="sprint-board">Sprint Board</h1>
-<div class="sb-stats"><div class="sb-stat">Active <span>8</span></div><div class="sb-stat">Needs PR <span>0</span></div><div class="sb-stat">Todo <span>2</span></div><div class="sb-stat">Done <span>5</span></div></div>
+<div class="sb-stats"><div class="sb-stat">Active <span>9</span></div><div class="sb-stat">Needs PR <span>0</span></div><div class="sb-stat">Todo <span>1</span></div><div class="sb-stat">Done <span>5</span></div></div>
 <div class="sb-section"><h2>In Work</h2><div class="sb-items">
 <div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**Custom MIDI Channel Routing** — Xboard channels 1–4 each drive a dedicated chain; snapshot persists on boot</span></div>
 <div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**SMC-PAD Launcher Control** — 16 pads trigger 4×4 sequencer grid via MIDI master channel + CUIA TOGGLE_SEQ</span></div>
@@ -133,8 +134,8 @@
 <div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**Audio FX Chain with MOD-UI** — route ESI mic (CH 1/2) and line (CH 3/4) inputs through MOD-UI pedalboard, output on ESI</span></div>
 <div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**Multi-Controller Performance Rig** — Xboard + SMC-PAD + Maschine MK2 simultaneous roles, saved as performance snapshot</span></div>
 <div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**EMU Xboard CC Knob Mapping** — static and follow-channel CC bindings across 4 chains; depends on MIDI Channel Routing tutorial</span></div>
-<div class="sb-item"><span class="sb-badge status-todo">Todo</span><span class="sb-text">**Live Looper with SooperLooper** — record drone/instrument layers live, SMC-PAD transport controls record/play/overdub</span></div>
 <div class="sb-item"><span class="sb-badge status-todo">Todo</span><span class="sb-text">**ZynAddSubFX Sound Design from Scratch** — build custom evolving pad from ADD + PAD synth modules, no presets</span></div>
+<div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**Live Looper with SooperLooper** — synth + U46DJ live audio into SooperLooper; SMC-PAD transport controls record/play/overdub; pads trigger individual loop slots</span></div>
 </div></div>
 <div class="sb-section"><h2>Done</h2><div class="sb-items">
 <div class="sb-item"><span class="sb-badge status-done">Done</span><span class="sb-text">**Custom MIDI Channel Routing** — EMU channel switch = instrument switch, one chain per MIDI channel (published draft, not yet Pi-tested) → `htmldoku/project-midi-channel-routing.md`</span></div>

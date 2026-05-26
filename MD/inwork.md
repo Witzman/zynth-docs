@@ -26,5 +26,10 @@ Status: `[~]` drafting · `[t]` user testing · `[>]` ready to publish · `[ ]` 
 
 ## Future Tutorial Candidates
 
-- [ ] **Live Looper with SooperLooper** — record drone/instrument layers live, SMC-PAD transport controls record/play/overdub
 - [ ] **ZynAddSubFX Sound Design from Scratch** — build custom evolving pad from ADD + PAD synth modules, no presets
+
+---
+
+## Active (promoted from candidates)
+
+- [~] **Live Looper with SooperLooper** — synth + U46DJ live audio into SooperLooper; SMC-PAD transport controls record/play/overdub; pads trigger individual loop slots

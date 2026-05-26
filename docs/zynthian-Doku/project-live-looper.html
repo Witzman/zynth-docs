@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live Looper with SooperLooper — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Get Started</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Using the UI</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="ui-navigation.html">UI Navigation</a></li>
+<li><a href="chain-management.html">Chains & Routing</a></li>
+<li><a href="control-screen.html">Control Screen</a></li>
+<li><a href="midi-cc-learn.html">MIDI CC Learning</a></li>
+<li><a href="zs3-guide.html">ZS3 Subsnapshots</a></li>
+<li><a href="pattern-editor.html">Pattern Editor</a></li>
+<li><a href="midi-recorder.html">MIDI Recorder</a></li>
+<li><a href="admin-guide.html">Admin & System</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Play & Create</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Configure</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Troubleshoot</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+<li><a href="performance-monitoring.html">Performance</a></li>
+</ul></div>
+<div class="track">
+<button class="track-header" aria-expanded="true"><span class="track-label">Personal Projects</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list">
+<li><a href="project-midi-mapping.html">Personal MIDI Mapping</a></li>
+<li><a href="project-drone-synth.html">Generative Drone Synth</a></li>
+<li><a href="project-maschine-mk2.html">Maschine MK2 Controller</a></li>
+<li><a href="project-midi-channel-routing.html">MIDI Channel Routing</a></li>
+<li><a href="project-emu-cc-learn.html">EMU CC Knob Mapping</a></li>
+<li><a href="project-smc-pad-launcher.html">SMC-PAD Launcher Control</a></li>
+<li><a href="project-u46dj-audio-setup.html">ESI U46DJ Audio Setup</a></li>
+<li><a href="project-modui-effects.html">Audio FX Chain with MOD-UI</a></li>
+<li><a href="project-performance-rig.html">Multi-Controller Performance Rig</a></li>
+<li><a href="project-live-looper.html" aria-current="page"><strong>Live Looper with SooperLooper</strong></a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Under the Hood</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="live-looper-with-sooperlooper">Live Looper with SooperLooper</h1>
+<p><strong>Goal:</strong> Record synth chains and live U46DJ audio into SooperLooper loop slots. SMC-PAD transport buttons control record/play/overdub on the selected loop. SMC-PAD pads 1–6 trigger individual loop slots independently.</p>
+<p><strong>Prerequisites:</strong></p>
+<ul><li>Zynthian booted and reachable at <code>zynthian.local</code></li><li>U46DJ connected via USB and configured as audio device (see ESI U46DJ USB Audio Setup)</li><li>E-MU Xboard connected via USB and detected</li><li>SMC-PAD connected via USB and detected</li><li>VNC client connected to Zynthian</li></ul>
+<p><strong>Access:</strong> VNC · Webconf · SSH</p>
+<hr>
+<h2 id="part-1--first-loop-draft">Part 1 — First Loop <code>[draft]</code></h2>
+<p>SooperLooper captures audio from a single ZynAddSubFX synth chain and loops it back. Controlled entirely from VNC — no hardware mapping yet.</p>
+<h3 id="step-1--start-from-a-clean-state">Step 1 — Start from a clean state</h3>
+<p>In VNC, open the main menu: long-press <strong>Back</strong> (or tap the menu icon in the top-left corner of the screen).</p>
+<p>Select <strong>Admin</strong> → <strong>Clean All</strong> to remove any existing chains.</p>
+<p><strong>Verify:</strong> The mixer screen shows no chain strips — only the <strong>+</strong> button.</p>
+<h3 id="step-2--add-a-zynaddsubfx-instrument-chain">Step 2 — Add a ZynAddSubFX instrument chain</h3>
+<p>Tap <strong>+</strong> in the mixer screen.</p>
+<p>Select <strong>Instrument</strong> from the Add Chain screen.</p>
+<p>Select <strong>ZynAddSubFX</strong> from the engine list.</p>
+<p>Navigate to any bank and load any preset. A pad or synth preset works well — something with sustained audio so the loop is easy to hear.</p>
+<p><strong>Verify:</strong> Play a few notes on the Xboard. Sound comes from the U46DJ Mix output (your monitors/headphones). The chain strip appears in the mixer.</p>
+<h3 id="step-3--add-a-sooperlooper-chain">Step 3 — Add a SooperLooper chain</h3>
+<p>Tap <strong>+</strong> in the mixer screen again.</p>
+<p>Select <strong>Audio Input</strong> from the Add Chain screen.</p>
+<p>Select <strong>SooperLooper</strong> from the engine list.</p>
+<p><strong>Verify:</strong> A second chain strip labeled <strong>SooperLooper</strong> appears in the mixer. Tapping it opens the SooperLooper control screen, which shows a grid of labeled buttons (record, overdub, multiply, etc.) and a row of loop progress bars.</p>
+<h3 id="step-4--route-the-synth-chain-audio-into-sooperlooper">Step 4 — Route the synth chain audio into SooperLooper</h3>
+<p>By default SooperLooper captures only physical audio inputs from the U46DJ. To loop synth audio, route the synth chain's output into SooperLooper.</p>
+<p>Tap the <strong>ZynAddSubFX</strong> chain strip to open its chain control screen.</p>
+<p>On the right side of the screen you will see the side chain panel — a small signal-flow graph showing nodes connected by lines.</p>
+<p>Tap the <strong>Audio Output</strong> node at the bottom of the side chain graph. [low — verify node label in VNC]</p>
+<p>The <strong>Audio Out</strong> subscreen opens. Under the <strong>&gt; Chain inputs</strong> heading you will see a list of available destination chains with checkboxes.</p>
+<p>Tap the <strong>SooperLooper</strong> entry to enable it (checkbox fills: ☑).</p>
+<p><strong>Verify:</strong> The SooperLooper chain is now listed as a selected destination in the Audio Out screen. Tap <strong>Back</strong> to return to the chain control. [low — verify routing takes effect without reboot]</p>
+<h3 id="step-5--record-a-loop">Step 5 — Record a loop</h3>
+<p>Tap the <strong>SooperLooper</strong> chain strip to open its control screen.</p>
+<p>Tap the <strong>record</strong> button. The button highlights and the first loop progress bar begins filling — SooperLooper is recording.</p>
+<p>Play a phrase on the Xboard (4–8 bars works well).</p>
+<p>Tap <strong>record</strong> again to stop recording. SooperLooper immediately begins looping what you played.</p>
+<p><strong>Verify:</strong> You hear the recorded phrase looping continuously. The loop progress bar sweeps left to right in time with the loop. The <strong>record</strong> button returns to its normal color.</p>
+<h3 id="step-6--overdub-a-layer">Step 6 — Overdub a layer</h3>
+<p>While the loop plays, tap <strong>overdub</strong>. Play additional notes on the Xboard.</p>
+<p>Tap <strong>overdub</strong> again to stop overdubbing. Both layers now loop together.</p>
+<p>To undo the overdub: tap <strong>undo</strong>. The added layer disappears.</p>
+<p><strong>Verify:</strong> Undo removes only the last overdub; the original loop continues.</p>
+<h3 id="step-7--stop-and-clear">Step 7 — Stop and clear</h3>
+<p>Tap the loop's progress bar to select it (if not already selected).</p>
+<p>Tap <strong>undo</strong> repeatedly to remove all overdubs down to the original recording. Then, to clear the loop completely: [low — verify exact clear method in VNC widget — may require tapping loop canvas and then a clear action, or using undo_all from a menu]</p>
+<p><strong>Verify:</strong> The loop progress bar resets. SooperLooper is in the idle state, ready to record again.</p>
+<hr>
+<h2 id="part-2--add-u46dj-live-audio-input-draft">Part 2 — Add U46DJ Live Audio Input <code>[draft]</code></h2>
+<p>Route U46DJ line/mic inputs into SooperLooper alongside the synth chain. Now loops can capture both played notes and live audio.</p>
+<h3 id="step-1--open-sooperloopers-audio-input-routing">Step 1 — Open SooperLooper's audio input routing</h3>
+<p>Tap the <strong>SooperLooper</strong> chain strip to open its control screen.</p>
+<p>On the right side, in the side chain panel, tap the <strong>Audio Input</strong> node. [low — verify node label]</p>
+<p>The <strong>Audio In</strong> subscreen opens. It lists the physical audio inputs available from the U46DJ.</p>
+<h3 id="step-2--enable-u46dj-inputs">Step 2 — Enable U46DJ inputs</h3>
+<p>At 44.1 kHz, the U46DJ presents 4 capture channels: inputs 1–4.</p>
+<p>Toggle on <strong>Audio input 1</strong> and <strong>Audio input 2</strong> (the phono/line L and R, or mic inputs — depending on your U46DJ input assignment). [low — verify exact input labels and channel numbers]</p>
+<p>Tap <strong>Back</strong>.</p>
+<p><strong>Verify:</strong> Speak into a mic connected to U46DJ channel 1 or 2 while the SooperLooper input level meter is visible. The green bar in the <strong>input level</strong> display responds to the audio.</p>
+<h3 id="step-3--record-a-loop-with-live-audio">Step 3 — Record a loop with live audio</h3>
+<p>Follow Part 1 Steps 5–6, but this time play the Xboard AND make sound through the U46DJ inputs simultaneously.</p>
+<p><strong>Verify:</strong> The recorded loop contains both the synth audio and the live audio from the U46DJ input.</p>
+<hr>
+<h2 id="part-3--smc-pad-transport-binding-draft">Part 3 — SMC-PAD Transport Binding <code>[draft]</code></h2>
+<p>Map the SMC-PAD <strong>RECORD</strong>, <strong>PLAY</strong>, and <strong>STOP</strong> transport buttons to SooperLooper controls via MIDI filter rules and CC Learn.</p>
+<p>The SMC-PAD transport buttons send Mackie Control MIDI messages — Note On events, not MIDI CC. Zynthian's MIDI filter rules can remap these Note On messages to CC so that CC Learn can bind them to SooperLooper controls.</p>
+<p><strong>Mackie Control MIDI notes sent by SMC-PAD transport buttons</strong> [low — verify on Pi with <code>amidi</code> before entering these rules]:</p>
+<table><thead><tr><th>Button</th><th>MIDI event</th><th>Note</th><th>Channel</th></tr></thead><tbody><tr><td>RECORD</td><td>Note On</td><td>95</td><td>1 (CH#0 in filter)</td></tr><tr><td>PLAY</td><td>Note On</td><td>94</td><td>1 (CH#0 in filter)</td></tr><tr><td>STOP</td><td>Note On</td><td>93</td><td>1 (CH#0 in filter)</td></tr></tbody></table>
+<h3 id="step-1--verify-smc-pad-transport-midi-output">Step 1 — Verify SMC-PAD transport MIDI output</h3>
+<p>Connect to Zynthian via SSH:</p>
+<pre><code class="language-bash">ssh root@zynthian.local</code></pre>
+<p>Find the SMC-PAD MIDI port:</p>
+<pre><code class="language-bash">aconnect -l
+# → Look for a line like: client 32: 'SMC-PAD' [type=kernel,card=N]</code></pre>
+<p>Monitor raw MIDI from the SMC-PAD:</p>
+<pre><code class="language-bash">amidi -p hw:N,0,0 -d
+# Replace N with the card number from aconnect output</code></pre>
+<p>Press <strong>RECORD</strong> on the SMC-PAD. Note the hex bytes printed. Expected: <code>90 5F 7F</code> (channel 1, Note On, note 95, velocity 127). [low — record actual values here during testing]</p>
+<p>Press <strong>PLAY</strong> — expected: <code>90 5E 7F</code> (note 94). [low]</p>
+<p>Press <strong>STOP</strong> — expected: <code>90 5D 7F</code> (note 93). [low]</p>
+<p>Press <strong>Ctrl+C</strong> to stop monitoring.</p>
+<h3 id="step-2--add-midi-filter-rules">Step 2 — Add MIDI filter rules</h3>
+<p>Open <code>http://zynthian.local</code> → <strong>Interface</strong> → <strong>MIDI Options</strong>.</p>
+<p>Scroll to <strong>Midi filter rules</strong>.</p>
+<p>Add the following rules. Enter each rule on its own line.</p>
+<p>Map RECORD (single_pedal — needs both press and release):</p>
+<pre><code>MAP CH#0 NON#95 =&gt; CH#0 CC#85
+MAP CH#0 NOFF#95 =&gt; CH#0 CC#85</code></pre>
+<p>Map PLAY (trigger — press only):</p>
+<pre><code>MAP CH#0 NON#94 =&gt; CH#0 CC#86</code></pre>
+<p>Map STOP (pause — press only):</p>
+<pre><code>MAP CH#0 NON#93 =&gt; CH#0 CC#87</code></pre>
+<p>Click <strong>Save</strong> and then <strong>Restart UI</strong> to apply.</p>
+<p><strong>Verify:</strong></p>
+<pre><code class="language-bash">amidi -p hw:N,0,0 -d</code></pre>
+<p>Press each transport button. The raw output should now show CC messages (<code>B0 55 7F</code>, <code>B0 56 7F</code>, <code>B0 57 7F</code>) instead of Note On events. [low — confirm with actual values]</p>
+<h3 id="step-3--cc-learn-bind-record-to-single_pedal">Step 3 — CC Learn: bind RECORD to single_pedal</h3>
+<p><code>single_pedal</code> mode is an intelligent single-button looper control:</p>
+<ul><li>Idle → starts recording (first press)</li><li>Recording → stops recording and plays back (second press)</li><li>Playing → overdubs (third press)</li><li>Overdubbing → back to playing (fourth press)</li><li>Double-tap: pause</li><li>Triple-tap: clear loop</li></ul>
+<p>In VNC, tap the <strong>SooperLooper</strong> chain strip.</p>
+<p>Navigate to the <strong>Global loop</strong> control page. [low — verify navigation: may need to swipe the control screen or use a navigation button to reach Global loop page]</p>
+<p>Long-press the <strong>single pedal</strong> control (hold ~600ms via VNC mouse) until it highlights orange — CC Learn mode is active.</p>
+<p>Press <strong>RECORD</strong> on the SMC-PAD.</p>
+<p><strong>Verify:</strong> The <strong>single pedal</strong> control shows the bound CC number (85). Pressing RECORD on the SMC-PAD now cycles through idle → record → play → overdub → play.</p>
+<h3 id="step-4--cc-learn-bind-play-to-trigger">Step 4 — CC Learn: bind PLAY to trigger</h3>
+<p>Navigate to the <strong>Loop control</strong> control page in SooperLooper.</p>
+<p>Long-press the <strong>trigger</strong> control until it highlights orange.</p>
+<p>Press <strong>PLAY</strong> on the SMC-PAD.</p>
+<p><strong>Verify:</strong> The <strong>trigger</strong> control shows CC 86. Pressing PLAY triggers the selected loop to play from the start.</p>
+<h3 id="step-5--cc-learn-bind-stop-to-pause">Step 5 — CC Learn: bind STOP to pause</h3>
+<p>Long-press the <strong>pause</strong> control until it highlights orange.</p>
+<p>Press <strong>STOP</strong> on the SMC-PAD.</p>
+<p><strong>Verify:</strong> The <strong>pause</strong> control shows CC 87. Pressing STOP pauses the selected loop.</p>
+<h3 id="step-6--full-transport-test">Step 6 — Full transport test</h3>
+<p>Record a loop using RECORD: press once to start, press again to loop.</p>
+<p>Press PLAY to trigger the loop. Press STOP to pause it. Press PLAY again to resume.</p>
+<p><strong>Verify:</strong> All three transport buttons control the loop without touching VNC.</p>
+<hr>
+<h2 id="part-4--pad-to-loop-triggers-draft">Part 4 — Pad-to-Loop Triggers <code>[draft]</code></h2>
+<p>Map SMC-PAD pads 1–6 to trigger individual SooperLooper loop slots (loops 1–6 can be active simultaneously).</p>
+<p><strong>SMC-PAD pad default MIDI notes (Performance preset, CH#0)</strong> [low — verify before entering rules]:</p>
+<table><thead><tr><th>Pad</th><th>Note</th><th>Hex</th></tr></thead><tbody><tr><td>1</td><td>36</td><td>24</td></tr><tr><td>2</td><td>37</td><td>25</td></tr><tr><td>3</td><td>38</td><td>26</td></tr><tr><td>4</td><td>39</td><td>27</td></tr><tr><td>5</td><td>40</td><td>28</td></tr><tr><td>6</td><td>41</td><td>29</td></tr></tbody></table>
+<blockquote><p><strong>Note:</strong> If the Xboard keyboard is also sending on MIDI channel 1, its notes in the C2–F2 range (notes 36–41) would also get remapped. Verify with <code>amidi</code> which channel the SMC-PAD pads use (it may differ from channel 1). Adjust <code>CH#0</code> in the rules below to match the pad channel if different.</p></blockquote>
+<h3 id="step-1--verify-smc-pad-pad-midi-output">Step 1 — Verify SMC-PAD pad MIDI output</h3>
+<pre><code class="language-bash">amidi -p hw:N,0,0 -d</code></pre>
+<p>Tap pad 1 on the SMC-PAD. Note the channel and note number. [low — record here during testing]</p>
+<h3 id="step-2--add-pad-midi-filter-rules">Step 2 — Add pad MIDI filter rules</h3>
+<p>Open <code>http://zynthian.local</code> → <strong>Interface</strong> → <strong>MIDI Options</strong> → <strong>Midi filter rules</strong>.</p>
+<p>Add these rules (adjust channel if pads do not use CH#0):</p>
+<pre><code>MAP CH#0 NON#36 =&gt; CH#0 CC#90
+MAP CH#0 NON#37 =&gt; CH#0 CC#91
+MAP CH#0 NON#38 =&gt; CH#0 CC#92
+MAP CH#0 NON#39 =&gt; CH#0 CC#93
+MAP CH#0 NON#40 =&gt; CH#0 CC#94
+MAP CH#0 NON#41 =&gt; CH#0 CC#95</code></pre>
+<p>Click <strong>Save</strong> and <strong>Restart UI</strong>.</p>
+<h3 id="step-3--set-sooperlooper-to-6-loops">Step 3 — Set SooperLooper to 6 loops</h3>
+<p>In VNC, tap the <strong>SooperLooper</strong> chain strip.</p>
+<p>Navigate to the <strong>Global loop</strong> page.</p>
+<p>Set <strong>loop count</strong> to 6. [low — verify control name and navigation]</p>
+<p>Six loop progress bars appear in the SooperLooper widget.</p>
+<h3 id="step-4--cc-learn-pads-to-trigger0--trigger5">Step 4 — CC Learn pads to trigger:0 – trigger:5</h3>
+<p>In the SooperLooper control screen, navigate to the control page that shows individual loop triggers. [low — verify which page shows trigger:0–5 vs the selected-loop trigger]</p>
+<p>For each loop slot:</p>
+<ol><li>Long-press <strong>trigger (N)</strong> until it highlights orange.</li><li>Tap the corresponding SMC-PAD pad (pad 1 for loop 1, etc.).</li><li>The control shows the bound CC number.</li></ol>
+<p>Repeat for all 6 loops (pads 1–6 → CC 90–95 → trigger:0–5).</p>
+<h3 id="step-5--test-independent-loop-triggers">Step 5 — Test independent loop triggers</h3>
+<p>Record a loop on loop slot 1 (RECORD → play notes → RECORD).</p>
+<p>Tap pad 1 → loop 1 triggers.</p>
+<p>Add loop slot 2: in the SooperLooper widget, tap the second loop progress bar to select it, then record with RECORD.</p>
+<p>Tap pad 2 → loop 2 triggers independently.</p>
+<p><strong>Verify:</strong> Pads 1 and 2 trigger their respective loops independently. Pressing one pad does not affect the other.</p>
+<hr>
+<h2 id="part-5--snapshot-and-boot-persistence-draft">Part 5 — Snapshot and Boot Persistence <code>[draft]</code></h2>
+<p>Save the complete rig as a snapshot and set it to auto-load on boot.</p>
+<h3 id="step-1--save-snapshot">Step 1 — Save snapshot</h3>
+<p>Open <code>http://zynthian.local</code> → <strong>Library</strong> → <strong>Snapshots</strong>.</p>
+<p>Type a name in the <strong>Name:</strong> field — for example, <code>live-looper</code>.</p>
+<p>Click the checkmark icon to save.</p>
+<h3 id="step-2--set-as-boot-default">Step 2 — Set as boot default</h3>
+<p>Click <strong>Save as Last State</strong>.</p>
+<p><strong>Verify:</strong> Reboot Zynthian:</p>
+<pre><code class="language-bash">ssh root@zynthian.local
+reboot</code></pre>
+<p>After boot, connect VNC. The SooperLooper and synth chains are present, and the MIDI filter rules and CC bindings are active.</p>
+<p>Test one transport button and one pad to confirm routing is intact.</p>
+<hr>
+<h2 id="going-further">Going Further</h2>
+<ul><li>Add more instrument chains (FluidSynth bass, setBfree organ) and route each into SooperLooper for layered loops.</li><li>Use the <strong>overdub</strong> button to layer multiple passes on a single loop slot.</li><li>Assign SMC-PAD knobs 1–8 to SooperLooper <strong>feedback</strong>, <strong>wet</strong>, and <strong>dry</strong> controls via CC Learn — shape the decay of loops in real time.</li><li>Use the <strong>multiply</strong> function (tap <strong>multiply</strong> while a loop plays) to extend the loop length by integer multiples.</li><li>Save multiple snapshots for different performance setups and load them from webconf between songs.</li></ul>
+</article>
+</main>
+<div id="toc-column"></div>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
