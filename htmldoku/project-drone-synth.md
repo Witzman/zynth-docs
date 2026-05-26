@@ -16,11 +16,20 @@ In the Zynthian VNC UI, tap **+** (bottom-left) → **Instrument** → **ZynAddS
 
 **Verify:** A new chain appears with ZynAddSubFX loaded.
 
-### Step 2 — Select a Pads or Ether preset
+### Step 2 — Select a long, evolving preset
 
-Tap the chain to open the bank selector. Browse to a bank named **Pads**, **Ether**, **Ambient**, or **Choir**. Select any preset that suggests long, evolving sound — names like "Slow Pad", "Space", "Atmosphere", "Warm Strings" are good candidates.
+Tap the chain to open the bank selector. Recommended starting points from banks included in a fresh Zynthian installation:
 
-If unsure: start with the bank **Pads** → **Warm Pad** or any preset with "Pad" or "Space" in its name.
+| Bank | Preset | Why |
+|------|--------|-----|
+| **Fantasy** | **Long SpaceChoir 1** | Long attack, built-in space movement — best first choice |
+| **Fantasy** | **Emptyness 1** or **Emptyness 2** | Sparse, open drone texture |
+| **Fantasy** | **Space Voice 1** | Slow vocal-like evolution |
+| **Strings** | **Sweep Pad 1** | Sweeping filter movement already present |
+| **Strings** | **Morph Strings 1** | Morphing timbre over time |
+| **Pads** | **Resonance Pad 1** | Fallback — static but good base for Step 4 |
+
+Start with **Fantasy → Long SpaceChoir 1**. If it does not evolve on its own when held, use Step 4 to add LFO movement manually.
 
 **Verify:** Engine loads with the chosen preset name visible.
 
