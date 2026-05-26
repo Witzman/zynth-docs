@@ -106,6 +106,34 @@ Move item from `MD/inwork.md` to `MD/done.md` as `[x]`.
 
 ---
 
+## Never Invent Names
+
+**Do not invent, guess, or paraphrase any name that appears in the Zynthian UI or on the hardware.** This applies without exception to:
+
+- UI button labels, menu items, screen titles, tab names, field names
+- Preset names, bank names
+- Engine names, plugin names
+- Webconf page titles and navigation labels
+- Hardware control names (button labels, knob names)
+
+**If a name is not already verified, look it up before writing it down.**
+
+Lookup order by category:
+
+| What | Where to look |
+|------|--------------|
+| UI button / menu label | `zyngui/` source (grep for the visible string) or ask user to confirm on Pi |
+| Preset / bank name | `ls` the actual preset directory on the Pi via SSH |
+| Webconf page / field label | `zynthian-webconf/templates/` and `lib/` source |
+| Hardware control name | Relevant manual in `~/zynth/manuals/` |
+| Engine / plugin name | `htmldoku/synth-engines.md` or LV2 plugin list on Pi |
+
+If lookup is not possible in the current session, write the step with a `[low]` tag and a note that the name needs Pi verification before the tutorial is marked `[verified]`.
+
+**Never write a plausible-sounding name and assume it exists.** Wrong names waste user time and break trust in the documentation.
+
+---
+
 ## Documentation First
 
 Always read the relevant `htmldoku/` page(s) before anything else — before drafting steps, before reading code, before asking the user questions. If the documentation covers the topic fully, do not open any source file. Only dive into code when the documentation is silent or ambiguous on a specific detail.
@@ -237,6 +265,55 @@ No real screenshots available. Describe UI paths explicitly:
 > In the Zynthian VNC desktop, the main screen shows four zones — top bar (chain name), middle (engine display), bottom bar (navigation). Tap the **+** icon in the bottom-left to add a new chain.
 
 Use bold for button labels, menu names, field names.
+
+**UI text rule — exact labels only.** Always use the exact text shown in the Zynthian UI. Never rename or paraphrase a button, menu option, or screen title. When uncertain, look up the label in the source code (`zyngui/`) or ask the user to confirm — do not invent a plausible-sounding label.
+
+Known correct labels (verified from source):
+
+**VNC UI — Add Chain screen** (tap **+** in mixer):
+
+| Button | Use for |
+|--------|---------|
+| **Instrument** | Synth engines (ZynAddSubFX, FluidSynth, setBfree, etc.) |
+| **Audio Input** | Audio effect chains — MOD-UI, LV2 effects processing live audio |
+| **MIDI + Audio** | Chains that process both MIDI and audio |
+| **Audio Generator** | Audio generators not triggered by MIDI notes |
+| **MIDI** | MIDI tool chains (no audio output) |
+| **Clip Launcher** | Clip/phrase sequencer launcher |
+| **Mixbus** | Mix bus effects chain |
+| **Special** | Other chain types |
+
+**VNC UI — Chain Control subscreens** (tap a chain in mixer):
+
+| Label | How to reach |
+|-------|--------------|
+| (parameter knobs, no label) | Default view when tapping a chain |
+| **Chain Options** | Sidebar button; shows MIDI channel, chain settings |
+
+**Webconf navigation** (top menu structure):
+
+| Top menu | Submenu item | Reaches |
+|----------|--------------|---------|
+| **Library** | **Snapshots** | Snapshot management page |
+| **Hardware** | **Audio** | Soundcard / JACK settings |
+| **Interface** | **MIDI Options** | MIDI port enable/disable, master channel, filter rules, key actions |
+
+**Webconf — Snapshots page buttons:**
+
+| Button | Label / icon |
+|--------|-------------|
+| Save / create snapshot | Checkmark icon (no text) — first type name in **Name:** field |
+| Set as boot default | **Save as Last State** |
+| Set as permanent default | **Save as Default** |
+
+**Webconf — MIDI Options page sections** (at `/ui-midi-options`):
+
+| What | Label in MIDI Options |
+|------|-----------------------|
+| Enable/disable MIDI ports | **MIDI Devices** button (opens panel) |
+| MIDI channel for master actions | **Master MIDI channel** |
+| Note→CUIA mappings | **Master Key Actions** |
+| MIDI filter / CC routing rules | **Midi filter rules** |
 
 ### Verification steps
 
