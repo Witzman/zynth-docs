@@ -111,15 +111,17 @@
 <p>SSH into the Pi and run:</p>
 <pre><code class="language-bash">ssh root@zynthian.local
 aconnect -l</code></pre>
-<p>Look for an entry containing <strong>SMC</strong> or similar name, listed as a MIDI client with at least one port.</p>
-<p>Example output:</p>
-<pre><code>client 32: 'SMC-PAD' [type=kernel,card=4]
-    0 'SMC-PAD MIDI 1  '</code></pre>
-<p>Note the <strong>card number</strong> (the digit after <code>hw:</code> in the port name — e.g. <code>4</code> above). You need it for Step 3.</p>
-<p><strong>Verify:</strong> SMC-PAD appears in <code>aconnect -l</code> output.</p>
+<p>Look for an entry named <strong>SINCO</strong> with three ports:</p>
+<pre><code>client 28: 'SINCO' [type=kernel,card=3]
+    0 'SINCO SMC-PAD-Private'
+    1 'SINCO SMC-PAD-Master'
+    2 'SINCO           '</code></pre>
+<p>Note the <strong>card number</strong> — the value of <code>card=N</code> on the SINCO line. Card numbers are assigned at boot and may differ each session.</p>
+<p><strong>Verify:</strong> SINCO appears in <code>aconnect -l</code> with three ports.</p>
 <h3 id="step-3--capture-raw-midi-from-the-pads">Step 3 — Capture raw MIDI from the pads</h3>
-<p>Start a MIDI monitor on the SMC-PAD's port. Replace <code>X</code> with your card number from Step 2:</p>
-<pre><code class="language-bash">amidi -d -p hw:X,0,0</code></pre>
+<p>Start a MIDI monitor on the SMC-PAD pad port. Replace <code>X</code> with your card number from Step 2:</p>
+<pre><code class="language-bash">amidi -d -p hw:X,0,1</code></pre>
+<p>Port <code>0,1</code> is the <strong>SMC-PAD-Master</strong> port — this is where pad notes, encoder CCs, and transport buttons are sent. Port <code>0,0</code> (Private) carries internal device messages and will not show pad presses.</p>
 <p>Press each pad one at a time — from <strong>Pad 1</strong> (bottom-left) to <strong>Pad 16</strong> (top-right). Each press prints one line showing three bytes in hex, for example:</p>
 <pre><code>96 24 64</code></pre>
 <p>The three values are:</p>

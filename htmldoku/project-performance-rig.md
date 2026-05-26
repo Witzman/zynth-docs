@@ -66,7 +66,7 @@ systemctl start maschine-mk2.service
 
 In VNC, tap **+** → **Instrument** → **ZynAddSubFX**.
 
-Load a bass or low pad preset — browse to a bank like **Bass** or **Pads** and select a deep, sustained sound.
+Browse to bank **A VDX** and select **Analog Bass** — a deep, sustained bass sound with clear low-end weight.
 
 Set the chain to MIDI channel 1:
 - Tap the chain → **Chain Options** → **MIDI Channel** → select **1**.
@@ -77,7 +77,7 @@ Set the chain to MIDI channel 1:
 
 Tap **+** → **Instrument** → **ZynAddSubFX**.
 
-Load an ambient pad preset — **Pads** bank, any evolving texture preset.
+Browse to bank **Cris Owl Alvarez** and select **ambient choirs** — a slowly evolving pad texture that works well over the bass.
 
 Set the chain to MIDI channel 2:
 - Tap the chain → **Chain Options** → **MIDI Channel** → select **2**.

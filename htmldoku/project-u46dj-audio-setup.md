@@ -1,7 +1,9 @@
 # ESI U46DJ USB Audio Setup
 
 **Goal:** Configure the ESI U46DJ as Zynthian's audio device at 44.1 kHz (4 in / 6 out), verify output to monitors, and confirm all four inputs are available.
-**Prerequisites:** Zynthian booted and accessible via SSH and VNC. Monitors connected to U46DJ Mix Out (rear panel RCA stereo pair). E-MU Xboard connected.
+**Prerequisites:** Zynthian booted and accessible via SSH and VNC. U46DJ powered on and connected via USB. Monitors connected to U46DJ Mix Out (rear panel RCA stereo pair). E-MU Xboard connected.
+
+> **Note:** The JACK service on this Pi is already configured for `hw:U46DJ` from a previous session. Part 1 Steps 3–4 (stop services, edit jack2.service) are done. Verify by running the Step 4 check command first — if the output contains `hw:U46DJ -r 44100`, skip to Step 5. If JACK fails to start, the U46DJ is likely not connected or not powered on.
 **Access:** SSH · VNC
 
 ---

@@ -25,25 +25,28 @@ ssh root@zynthian.local
 aconnect -l
 ```
 
-Look for an entry containing **SMC** or similar name, listed as a MIDI client with at least one port.
+Look for an entry named **SINCO** with three ports:
 
-Example output:
 ```
-client 32: 'SMC-PAD' [type=kernel,card=4]
-    0 'SMC-PAD MIDI 1  '
+client 28: 'SINCO' [type=kernel,card=3]
+    0 'SINCO SMC-PAD-Private'
+    1 'SINCO SMC-PAD-Master'
+    2 'SINCO           '
 ```
 
-Note the **card number** (the digit after `hw:` in the port name — e.g. `4` above). You need it for Step 3.
+Note the **card number** — the value of `card=N` on the SINCO line. Card numbers are assigned at boot and may differ each session.
 
-**Verify:** SMC-PAD appears in `aconnect -l` output.
+**Verify:** SINCO appears in `aconnect -l` with three ports.
 
 ### Step 3 — Capture raw MIDI from the pads
 
-Start a MIDI monitor on the SMC-PAD's port. Replace `X` with your card number from Step 2:
+Start a MIDI monitor on the SMC-PAD pad port. Replace `X` with your card number from Step 2:
 
 ```bash
-amidi -d -p hw:X,0,0
+amidi -d -p hw:X,0,1
 ```
+
+Port `0,1` is the **SMC-PAD-Master** port — this is where pad notes, encoder CCs, and transport buttons are sent. Port `0,0` (Private) carries internal device messages and will not show pad presses.
 
 Press each pad one at a time — from **Pad 1** (bottom-left) to **Pad 16** (top-right). Each press prints one line showing three bytes in hex, for example:
 

@@ -10,18 +10,19 @@
 
 Add a MOD-UI chain, route ESI mic input (capture_1/2) through it, confirm unprocessed audio reaches ESI outputs. This proves the JACK routing before adding any effects.
 
-### Step 1 — Install required LV2 plugins
+### Step 1 — Verify LV2 plugins are installed
 
-Mic and line processing needs EQ, compression, and reverb plugins. Install them now so they are available in MOD-UI's browser:
+Check first — both packages are already installed on this Pi:
 
 ```bash
 ssh root@zynthian.local
-apt install -y calf-plugins lsp-plugins
+dpkg -l calf-plugins lsp-plugins | grep '^ii'
 ```
 
-After install, regenerate the LV2 cache:
+If both lines show `ii`, skip to Step 2. If either is missing, install it:
 
 ```bash
+apt install -y calf-plugins lsp-plugins
 systemctl restart zynthian
 ```
 

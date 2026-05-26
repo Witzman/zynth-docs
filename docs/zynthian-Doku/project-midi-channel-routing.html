@@ -108,20 +108,22 @@
 <p>SSH into Zynthian and confirm the EMU Xboard appears as a MIDI client:</p>
 <pre><code class="language-bash">ssh root@zynthian.local
 aconnect -l</code></pre>
-<p>Expected: a line containing <code>E-MU Xboard25</code> in the client list:</p>
+<p>Expected: a line for the Xboard. The name varies by boot order — either form is correct:</p>
 <pre><code>client 40: 'E-MU Xboard25' [type=kernel,card=X]</code></pre>
-<p>If the EMU does not appear, unplug and replug the USB cable, then run <code>aconnect -l</code> again.</p>
+<p>or:</p>
+<pre><code>client 32: 'USB Device 0x41e:0x3f00' [type=kernel,card=X]</code></pre>
+<p>If neither appears, confirm with <code>lsusb | grep 041e</code> — output should contain <code>E-Mu Xboard 25 MIDI Controller</code>. Unplug and replug if not listed.</p>
 <h3 id="step-2--verify-midi-port-is-enabled">Step 2 — Verify MIDI port is enabled</h3>
 <p>Open <code>http://zynthian.local</code> → <strong>Interface → MIDI Options</strong>. Click <strong>MIDI Devices</strong>.</p>
 <p>Find the EMU Xboard entry. Confirm it is enabled. If not, enable it and save.</p>
 <h3 id="step-3--add-chain-1-piano">Step 3 — Add Chain 1 (piano)</h3>
 <p>In VNC, the main screen shows any existing chain strips and a <strong>+</strong> button. Tap <strong>+</strong> → <strong>Instrument</strong>.</p>
-<ul><li>Select <strong>FluidSynth</strong>.</li><li>Select bank <strong>GeneralUser GS</strong> (ships with Zynthian).</li><li>Select preset <strong>Acoustic Grand Piano</strong>.</li></ul>
+<ul><li>Select <strong>FluidSynth</strong>.</li><li>Select bank <strong>FluidR3_GM</strong> <code>[low]</code>. This is a full GM soundfont installed on this Pi — <code>GeneralUser GS</code> is not present.</li><li>Select preset <strong>Acoustic Grand Piano</strong>.</li></ul>
 <p>Zynthian assigns new chains to successive MIDI channels automatically. This is Chain 1 → MIDI channel 1.</p>
 <h3 id="step-4--add-chain-2-stringspad">Step 4 — Add Chain 2 (strings/pad)</h3>
 <p>Tap <strong>+</strong> → <strong>Instrument</strong> → select <strong>ZynAddSubFX</strong>.</p>
-<ul><li>Browse to a <strong>Strings</strong> or <strong>Pads</strong> bank.</li><li>Select any string ensemble or pad preset.</li></ul>
-<p>This is Chain 2 → MIDI channel 2. The sustained, slower-attack timbre is easy to distinguish from the piano.</p>
+<ul><li>Browse to bank <strong>A VDX</strong>.</li><li>Select <strong>Vangelis Strings 1</strong> — a sustained lush string pad with a clear, slow attack.</li></ul>
+<p>This is Chain 2 → MIDI channel 2. The sustained timbre is easy to distinguish from the piano.</p>
 <h3 id="step-5--confirm-channel-assignments">Step 5 — Confirm channel assignments</h3>
 <p>Tap <strong>Chain 1</strong> in the main screen to open chain control. Navigate to <strong>Chain Options</strong> and find the <strong>MIDI Channel</strong> setting — it should read <strong>1</strong>.</p>
 <p>Tap back, then tap <strong>Chain 2</strong> → <strong>Chain Options</strong> → <strong>MIDI Channel</strong> — it should read <strong>2</strong>.</p>
@@ -139,7 +141,7 @@ aconnect -l</code></pre>
 <p>Add Chain 3 and Chain 4. By the end, channels 1–4 each trigger a distinct instrument with full channel isolation.</p>
 <h3 id="step-1--add-chain-3-brasslead">Step 1 — Add Chain 3 (brass/lead)</h3>
 <p>Tap <strong>+</strong> → <strong>Instrument</strong> → select <strong>ZynAddSubFX</strong>.</p>
-<ul><li>Browse to a <strong>Brass</strong> or <strong>Lead</strong> bank.</li><li>Select any brass ensemble or synth lead preset.</li></ul>
+<ul><li>Browse to bank <strong>Cris Owl Alvarez</strong>.</li><li>Select <strong>synth brass</strong> — a cutting, bright lead that contrasts clearly with the strings on Chain 2.</li></ul>
 <p>Zynthian assigns MIDI channel 3 automatically.</p>
 <h3 id="step-2--add-chain-4-organ">Step 2 — Add Chain 4 (organ)</h3>
 <p>Tap <strong>+</strong> → <strong>Instrument</strong> → select <strong>setBfree</strong>.</p>

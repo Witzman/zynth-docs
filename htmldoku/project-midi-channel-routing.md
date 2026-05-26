@@ -19,13 +19,19 @@ ssh root@zynthian.local
 aconnect -l
 ```
 
-Expected: a line containing `E-MU Xboard25` in the client list:
+Expected: a line for the Xboard. The name varies by boot order — either form is correct:
 
 ```
 client 40: 'E-MU Xboard25' [type=kernel,card=X]
 ```
 
-If the EMU does not appear, unplug and replug the USB cable, then run `aconnect -l` again.
+or:
+
+```
+client 32: 'USB Device 0x41e:0x3f00' [type=kernel,card=X]
+```
+
+If neither appears, confirm with `lsusb | grep 041e` — output should contain `E-Mu Xboard 25 MIDI Controller`. Unplug and replug if not listed.
 
 ### Step 2 — Verify MIDI port is enabled
 
@@ -38,7 +44,7 @@ Find the EMU Xboard entry. Confirm it is enabled. If not, enable it and save.
 In VNC, the main screen shows any existing chain strips and a **+** button. Tap **+** → **Instrument**.
 
 - Select **FluidSynth**.
-- Select bank **GeneralUser GS** (ships with Zynthian).
+- Select bank **FluidR3_GM** `[low]`. This is a full GM soundfont installed on this Pi — `GeneralUser GS` is not present.
 - Select preset **Acoustic Grand Piano**.
 
 Zynthian assigns new chains to successive MIDI channels automatically. This is Chain 1 → MIDI channel 1.
@@ -47,10 +53,10 @@ Zynthian assigns new chains to successive MIDI channels automatically. This is C
 
 Tap **+** → **Instrument** → select **ZynAddSubFX**.
 
-- Browse to a **Strings** or **Pads** bank.
-- Select any string ensemble or pad preset.
+- Browse to bank **A VDX**.
+- Select **Vangelis Strings 1** — a sustained lush string pad with a clear, slow attack.
 
-This is Chain 2 → MIDI channel 2. The sustained, slower-attack timbre is easy to distinguish from the piano.
+This is Chain 2 → MIDI channel 2. The sustained timbre is easy to distinguish from the piano.
 
 ### Step 5 — Confirm channel assignments
 
@@ -89,8 +95,8 @@ Add Chain 3 and Chain 4. By the end, channels 1–4 each trigger a distinct inst
 
 Tap **+** → **Instrument** → select **ZynAddSubFX**.
 
-- Browse to a **Brass** or **Lead** bank.
-- Select any brass ensemble or synth lead preset.
+- Browse to bank **Cris Owl Alvarez**.
+- Select **synth brass** — a cutting, bright lead that contrasts clearly with the strings on Chain 2.
 
 Zynthian assigns MIDI channel 3 automatically.
 

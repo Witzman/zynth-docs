@@ -104,12 +104,13 @@
 <hr>
 <h2 id="part-1--pass-through-mod-ui-chain-with-esi-input-draft">Part 1 — Pass-Through: MOD-UI Chain with ESI Input <code>[draft]</code></h2>
 <p>Add a MOD-UI chain, route ESI mic input (capture_1/2) through it, confirm unprocessed audio reaches ESI outputs. This proves the JACK routing before adding any effects.</p>
-<h3 id="step-1--install-required-lv2-plugins">Step 1 — Install required LV2 plugins</h3>
-<p>Mic and line processing needs EQ, compression, and reverb plugins. Install them now so they are available in MOD-UI's browser:</p>
+<h3 id="step-1--verify-lv2-plugins-are-installed">Step 1 — Verify LV2 plugins are installed</h3>
+<p>Check first — both packages are already installed on this Pi:</p>
 <pre><code class="language-bash">ssh root@zynthian.local
-apt install -y calf-plugins lsp-plugins</code></pre>
-<p>After install, regenerate the LV2 cache:</p>
-<pre><code class="language-bash">systemctl restart zynthian</code></pre>
+dpkg -l calf-plugins lsp-plugins | grep '^ii'</code></pre>
+<p>If both lines show <code>ii</code>, skip to Step 2. If either is missing, install it:</p>
+<pre><code class="language-bash">apt install -y calf-plugins lsp-plugins
+systemctl restart zynthian</code></pre>
 <p>Wait ~30 seconds, then reload <code>http://zynthian.local</code>.</p>
 <p><strong>Verify:</strong></p>
 <pre><code class="language-bash">jalv --list | grep -i "calf\|lsp" | head -10</code></pre>
