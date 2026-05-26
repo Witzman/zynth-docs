@@ -1,7 +1,7 @@
 # Generative Drone Synth
 
 **Goal:** Build a self-evolving ambient drone using ZynAddSubFX — LFOs slowly mutate timbre without input, SMC-PAD pads shift root note, 8 knobs shape the texture in real time.
-**Prerequisites:** Zynthian booted with audio output working (U46DJ or similar). The `drone-v1` snapshot is pre-built on the Pi — no manual chain setup needed for Part 1. For Parts 2–3: SMC-PAD connected and visible in webconf MIDI ports.
+**Prerequisites:** Zynthian booted with audio output working (U46DJ or similar). The `drone-v1` snapshot is pre-built on the Pi — no manual chain setup needed for Part 1. For Parts 2–3: SMC-PAD connected via USB-C cable and visible in webconf MIDI ports. BLE is not used — connect via USB only.
 **Access:** VNC · Webconf · SSH
 
 ---
@@ -46,71 +46,79 @@ Press two different notes in quick succession on the Xboard. The first should st
 
 ## Part 2 — Control: SMC-PAD Pads and PLAY/STOP `[draft]`
 
-Confirm SMC-PAD is routed, check what PLAY/STOP send, implement drone start/stop, and map pads to root note changes.
+Connect the SMC-PAD via USB, confirm it is routed, check what PLAY/STOP send, and map pads to root note changes.
 
-### Step 1 — Enable SMC-PAD in webconf
+### Step 1 — Connect the SMC-PAD via USB
 
-Open `http://zynthian.local` → **Interface → MIDI Options**. Click **MIDI Devices**. Find the SMC-PAD port and enable it.
+Connect the SMC-PAD to the Raspberry Pi using a USB-C cable.
 
-**Verify:** SMC-PAD port is toggled on.
+> **Note:** Bluetooth MIDI (BLE) is not used. Connect via USB only.
 
-### Step 2 — Check what PLAY/STOP buttons send
-
-The SMC-PAD manual states PLAY/STOP are DAW transport buttons — their exact MIDI output in Performance preset must be confirmed before mapping.
+**Verify:** On the Pi, the device appears. Confirm via SSH:
 
 ```bash
 ssh root@zynthian.local
-amidi -p hw:$(aconnect -l | grep -i "SMC\|SINCO" | grep -oP 'client \K[0-9]+' | head -1),0,0 -d &
+aconnect -l | grep SINCO
 ```
 
-This streams raw MIDI from the SMC-PAD. Now press the **PLAY** button, then the **STOP** button. Note the hex bytes that appear. Press Ctrl+C to stop.
+Expected: three SINCO ports listed (SINCO SMC-PAD-Private, SINCO SMC-PAD-Master, SINCO).
 
-**Possible outputs:**
+### Step 2 — Enable the SMC-PAD port in webconf
 
-| Output | What it means |
+The SMC-PAD appears as three MIDI ports in Zynthian. Only the main port needs to be enabled.
+
+Open `http://zynthian.local` → **Interface → MIDI Options**. Click **MIDI Devices**. Find **SINCO 2** and enable it.
+
+> **SINCO 2** is the SMC-PAD-Master port — this sends pad notes, knob CCs, and transport messages. SINCO 1 and SINCO 3 are secondary ports and can be left disabled.
+
+**Verify:** SINCO 2 is toggled on.
+
+### Step 3 — Check what PLAY/STOP buttons send
+
+PLAY and STOP are DAW transport buttons. Their MIDI output must be confirmed before mapping — they may send CC messages (CC-Learnable) or MIDI real-time messages (not CC-Learnable).
+
+In VNC, tap the ZynAddSubFX chain to open the parameter control screen. Long-press any parameter knob (~600ms) until it turns orange — CC Learn is now active.
+
+Press the **PLAY** button on the SMC-PAD. Watch the knob:
+
+| Result | What it means |
 |--------|---------------|
-| `FA` | MIDI Real-Time Start — not directly CC-Learnable |
-| `FC` | MIDI Real-Time Stop — not directly CC-Learnable |
-| `Bn XX YY` | CC message on channel n+1, CC number XX, value YY — CC-Learnable |
+| Knob returns to normal colour | PLAY sent a CC — Zynthian captured it. Go to Step 4A. |
+| Knob stays orange | PLAY sent a MIDI real-time message (FA) — not CC-Learnable. Press the knob again to exit CC Learn. Go to Step 4B. |
 
-**Verify:** You can read the hex output for both PLAY and STOP.
+Repeat with the **STOP** button.
 
-### Step 3A — If PLAY/STOP send CC: map via CC Learn
+**Verify:** You know whether PLAY/STOP send CC or real-time messages.
 
-If PLAY sends a CC (e.g. `B0 72 7F`):
+### Step 4A — If PLAY/STOP send CC: map sustain hold
 
-In VNC, navigate to any parameter knob, long-press it (~600ms) until it turns orange, then press PLAY. Zynthian captures the CC.
+If PLAY sends a CC, CC Learn already captured it. Now bind it to sustain:
 
-Map PLAY → CC 64 value 127 (sustain hold on) and STOP → CC 64 value 0 (sustain off) via **Interface → MIDI Options** → **Midi filter rules** `[low]`. This makes PLAY hold the current note indefinitely and STOP release it.
+Map the captured PLAY CC → value 127 (hold on) and the STOP CC → value 0 (hold off) via **Interface → MIDI Options** → **Midi filter rules** `[low]`. This makes PLAY hold a note indefinitely and STOP release it.
 
-Skip to Step 4.
+Skip to Step 5.
 
-### Step 3B — If PLAY/STOP send MIDI real-time: use two pads instead
+### Step 4B — If PLAY/STOP send real-time: use held pads
 
-MIDI real-time messages (FA/FC) bypass the MIDI CC router and cannot be CC-Learned in Zynthian. Use two SMC-PAD pads as start/stop instead:
+MIDI real-time messages (FA/FC) bypass the CC router and cannot be CC-Learned. Use held pads for drone start/stop instead:
 
-- **Pad 13** (default note D#3): remap to send CC 64 value 127 via the SMC-PAD companion app — or use as a held note (sustain pedal equivalent)
-- **Pad 14** (default note E3): remap to send CC 123 (All Notes Off)
+Hold a pad to sustain a drone note. The note sounds for as long as the pad is pressed. When released, ZynAddSubFX's long release envelope fades the sound slowly rather than cutting it.
 
-If you do not have access to the SMC-PAD companion app (Android/iOS only):
+**Verify:** Pressing a pad starts the drone. Releasing causes a slow fade.
 
-Use Pad 13 normally — hold it to sustain a note. The note sustains for as long as you press the pad. ZynAddSubFX's long release envelope takes over when you release, fading slowly.
+### Step 5 — Play pads as root note changes
 
-**Verify:** Pressing a pad starts the drone sound. Releasing causes a slow fade (not a cut — this is the LFO-driven release).
-
-### Step 4 — Play pads as root note changes
-
-In Performance preset, SMC-PAD pads 1–16 send MIDI notes. Each pad is a different pitch. With monophonic mode active (Part 1 Step 5), pressing a pad silences the current drone and starts a new one on the new pitch.
+SMC-PAD pads 1–16 send MIDI notes. Each pad is a different pitch. With monophonic mode active (Part 1 Step 4), pressing a pad silences the current drone and starts a new one on the new pitch.
 
 Press pads 1–8 slowly in sequence. The drone shifts pitch with each press.
 
 **Verify:** Each pad triggers a distinct drone pitch. The LFO texture continues evolving on the new pitch.
 
-### Step 5 — Shift the octave range
+### Step 6 — Shift the octave range
 
-The SMC-PAD pads default to a mid-range note set. For a deeper drone, shift octaves down:
+SMC-PAD pads default to a mid-range note set. For a deeper drone, shift octaves down:
 
-Press **Shift + Pad 15** to move pads down one octave. Repeat for a lower register. Press **Shift + Pad 15 + Pad 16** to reset to default.
+Press **Shift + Pad 15** to move pads down one octave. Repeat for a lower register. Press **Shift + Pad 15 + Pad 16** to reset to default. `[low]`
 
 **Verify:** Pads produce lower pitches suitable for a bass drone.
 
@@ -153,7 +161,7 @@ Map each one: long-press target parameter in VNC → turn the SMC-PAD knob.
 
 ### Step 4 — Test the full setup
 
-Hold a drone note (pad or PLAY depending on Step 3A/3B above). Slowly turn each knob and confirm the expected parameter changes. Press a different pad to shift root note. Confirm drone continues evolving.
+Hold a drone note (press and hold a pad, or use PLAY if it sends CC per Step 4A above). Slowly turn each knob and confirm the expected parameter changes. Press a different pad to shift root note. Confirm drone continues evolving.
 
 **Verify:** All 8 knobs respond. Root note changes cleanly. LFO texture continues without interruption.
 
@@ -167,7 +175,7 @@ In webconf, go to **Library → Snapshots**. Type `drone-final` in the **Name:**
 
 ## Going Further
 
-- Use the KNOB BANK button on the SMC-PAD to switch to a second set of 8 CC bindings — 16 total parameters under knob control
+- Use the KNOB BANK button on the SMC-PAD to switch to a second bank of 8 encoders — 16 total parameters under CC control
 - Add a Calf Reverb or LSP Reverb LV2 effect chain after ZynAddSubFX for deeper space
 - Add a second ZynAddSubFX chain on a different MIDI channel and use SMC-PAD Pad Bank 2 to play a harmony layer
 - Explore ZynAddSubFX PAD synth module — "Bandwidth" and "Overtones" parameters create complex spectral drones
