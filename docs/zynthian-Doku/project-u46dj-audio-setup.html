@@ -100,104 +100,124 @@
 <main>
 <article>
 <h1 id="esi-u46dj-usb-audio-setup">ESI U46DJ USB Audio Setup</h1>
-<p><strong>Goal:</strong> Configure the ESI U46DJ as Zynthian's audio device at 44.1 kHz (4 in / 6 out), verify output to monitors, and confirm all four inputs are available. <strong>Prerequisites:</strong> Zynthian booted and accessible via SSH and webconf. E-MU Xboard connected and working. Monitors connected to U46DJ Mix Out. <strong>Access:</strong> SSH · Webconf · VNC</p>
+<p><strong>Goal:</strong> Configure the ESI U46DJ as Zynthian's audio device at 44.1 kHz (4 in / 6 out), verify output to monitors, and confirm all four inputs are available. <strong>Prerequisites:</strong> Zynthian booted and accessible via SSH and VNC. Monitors connected to U46DJ Mix Out (rear panel RCA stereo pair). E-MU Xboard connected. <strong>Access:</strong> SSH · VNC</p>
 <hr>
-<h2 id="part-1--select-device-and-verify-jack-draft">Part 1 — Select Device and Verify JACK <code>[draft]</code></h2>
-<p>Select the U46DJ in webconf and confirm JACK starts with it.</p>
-<h3 id="step-1--power-on-the-u46dj">Step 1 — Power on the U46DJ</h3>
-<p>Press the power button on the front panel of the U46DJ. The power LED on the front panel lights up.</p>
-<p><strong>Verify:</strong> Power LED is lit.</p>
-<h3 id="step-2--connect-usb-to-the-pi">Step 2 — Connect USB to the Pi</h3>
+<h2 id="part-1--configure-jack-for-u46dj-draft">Part 1 — Configure JACK for U46DJ <code>[draft]</code></h2>
+<p>The U46DJ has no preset in Zynthian's webconf audio settings. Configure JACK directly by editing the service file via SSH.</p>
+<h3 id="step-1--power-on-the-u46dj-and-connect-usb">Step 1 — Power on the U46DJ and connect USB</h3>
+<p>Press the power button on the U46DJ front panel. The power LED lights up.</p>
 <p>Connect the USB cable from the U46DJ to a USB port on the Raspberry Pi.</p>
-<p><strong>Verify:</strong> No action needed — Linux detects it silently.</p>
-<h3 id="step-3--open-the-audio-settings-in-webconf">Step 3 — Open the Audio settings in webconf</h3>
-<p>Open <code>http://zynthian.local</code> in a browser. Go to <strong>Hardware → Audio</strong>.</p>
-<p><strong>Verify:</strong> The Audio configuration page loads and shows the <strong>Soundcard</strong> dropdown.</p>
-<h3 id="step-4--select-the-u46dj">Step 4 — Select the U46DJ</h3>
-<p>In the <strong>Soundcard</strong> dropdown, select the entry that contains <strong>U46DJ</strong>. It may appear as <code>U46DJ</code> or with a longer ALSA identifier such as <code>U0x46d0x...</code>.</p>
-<p>If U46DJ does not appear in the list:</p>
-<ul><li>Confirm USB cable is connected and device is powered on.</li><li>Reload the page — webconf rescans detected devices on load.</li></ul>
-<p><strong>Verify:</strong> U46DJ is selected in the Soundcard dropdown.</p>
-<h3 id="step-5--set-sample-rate-and-jack-parameters">Step 5 — Set sample rate and JACK parameters</h3>
-<p>Set the following fields:</p>
-<table><thead><tr><th>Field</th><th>Value</th></tr></thead><tbody><tr><td><strong>Sample Rate</strong></td><td><code>44100</code></td></tr><tr><td><strong>Buffer Size</strong></td><td><code>256</code></td></tr><tr><td><strong>Periods</strong></td><td><code>3</code></td></tr></tbody></table>
-<p>44.1 kHz gives you 4 inputs and 6 outputs. 48 kHz would reduce outputs to 4.</p>
-<p><strong>Verify:</strong> Fields show 44100 / 256 / 3.</p>
-<h3 id="step-6--save-and-reboot">Step 6 — Save and reboot</h3>
-<p>Click <strong>Save</strong>. When prompted, click <strong>Reboot</strong>.</p>
-<p>Wait 30–60 seconds for the Pi to restart, then reload <code>http://zynthian.local</code>.</p>
-<p><strong>Verify:</strong> webconf loads after reboot.</p>
-<h3 id="step-7--confirm-jack-is-running">Step 7 — Confirm JACK is running</h3>
+<p><strong>Verify:</strong> Power LED is lit.</p>
+<h3 id="step-2--find-the-alsa-device-name">Step 2 — Find the ALSA device name</h3>
 <pre><code class="language-bash">ssh root@zynthian.local
-systemctl status jack2 --no-pager</code></pre>
-<p>Expected:</p>
-<pre><code>Active: active (running)</code></pre>
-<p>Then check the JACK log:</p>
+aplay -l | grep -i esi</code></pre>
+<p>Expected output:</p>
+<pre><code>card N: U46DJ [U46DJ], device 0: USB Audio [USB Audio]</code></pre>
+<p>The name <code>U46DJ</code> in the second bracket is the ALSA card identifier. The JACK config will reference it as <code>hw:U46DJ</code>.</p>
+<p><strong>Verify:</strong> A line containing <code>U46DJ</code> appears. If nothing appears, confirm the USB cable is seated and the device is powered on, then re-run.</p>
+<h3 id="step-3--stop-zynthian-and-jack">Step 3 — Stop Zynthian and JACK</h3>
+<pre><code class="language-bash">systemctl stop zynthian
+systemctl stop jack2</code></pre>
+<p><strong>Verify:</strong> No error output. Both services are stopped.</p>
+<h3 id="step-4--edit-the-jack-service-file">Step 4 — Edit the JACK service file</h3>
+<pre><code class="language-bash">nano /etc/systemd/system/jack2.service</code></pre>
+<p>Find the <code>ExecStart=</code> line. Replace the entire line with:</p>
+<pre><code>ExecStart=/usr/bin/jackd -P 70 -s -S -d alsa -d hw:U46DJ -r 44100 -p 256 -n 3 -X raw</code></pre>
+<p>Save and exit (Ctrl+O, Enter, Ctrl+X).</p>
+<blockquote><p><strong>44100 Hz is required.</strong> The U46DJ provides 4 inputs and 6 outputs at 44.1 kHz. At 48 kHz, outputs are limited to 4. The device does not expose a 48 kHz mode in Linux.</p></blockquote>
+<blockquote><p><strong>If you later change audio settings via webconf → Hardware → Audio and save, it will regenerate this file and overwrite the edit.</strong> Re-apply this step if that happens.</p></blockquote>
+<p><strong>Verify:</strong></p>
+<pre><code class="language-bash">grep ExecStart /etc/systemd/system/jack2.service</code></pre>
+<p>Expected: line contains <code>hw:U46DJ -r 44100</code>.</p>
+<h3 id="step-5--reload-systemd-and-start-jack">Step 5 — Reload systemd and start JACK</h3>
+<pre><code class="language-bash">systemctl daemon-reload
+systemctl start jack2</code></pre>
+<p>Wait 3 seconds, then check:</p>
+<pre><code class="language-bash">systemctl is-active jack2</code></pre>
+<p>Expected: <code>active</code></p>
+<p>If the status is <code>failed</code>, check the log:</p>
 <pre><code class="language-bash">journalctl -u jack2 -n 30 --no-pager</code></pre>
-<p>Expected lines:</p>
-<pre><code>configuring for 44100Hz, period = 256 frames
-ALSA: use 3 periods for capture
-ALSA: use 3 periods for playback</code></pre>
-<p>If JACK shows <code>failed</code> or <code>inactive</code>, see the Troubleshooting section below.</p>
-<p><strong>Verify:</strong> JACK is <code>active (running)</code> and log shows <code>44100Hz</code>.</p>
-<h3 id="troubleshooting--jack-fails-to-start">Troubleshooting — JACK fails to start</h3>
-<p>If JACK fails, check the full error:</p>
-<pre><code class="language-bash">journalctl -u jack2 -n 50 --no-pager | grep -i error</code></pre>
-<p>Common cause — <code>usb_set_interface failed (-32)</code>: add the skip_validation quirk. First find your device's USB IDs:</p>
-<pre><code class="language-bash">lsusb | grep -i ESI</code></pre>
-<p>Note the <code>ID xxxx:yyyy</code> values, then:</p>
+<p>A common failure is <code>usb_set_interface failed (-32)</code>. If that appears, see the Troubleshooting section below.</p>
+<p><strong>Verify:</strong> <code>jack2</code> is active.</p>
+<h3 id="step-6--confirm-jack-opened-the-u46dj">Step 6 — Confirm JACK opened the U46DJ</h3>
+<pre><code class="language-bash">jack_lsp | grep -v midi</code></pre>
+<p>Expected:</p>
+<pre><code>system:capture_1
+system:capture_2
+system:capture_3
+system:capture_4
+system:playback_1
+system:playback_2
+system:playback_3
+system:playback_4
+system:playback_5
+system:playback_6</code></pre>
+<p>Four capture and six playback ports confirm JACK opened the U46DJ at 44.1 kHz with full 4-in 6-out mode.</p>
+<p><strong>Verify:</strong> Exactly 4 <code>system:capture_<em></code> and 6 <code>system:playback_</em></code> ports listed.</p>
+<h3 id="step-7--start-zynthian">Step 7 — Start Zynthian</h3>
+<pre><code class="language-bash">systemctl start zynthian
+sleep 5
+systemctl is-active zynthian</code></pre>
+<p>Expected: <code>active</code></p>
+<p><strong>Verify:</strong> Zynthian is running.</p>
+<h3 id="troubleshooting--jack-fails-with-usb_set_interface-failed">Troubleshooting — JACK fails with <code>usb_set_interface failed</code></h3>
+<p>If JACK fails, check for this error:</p>
+<pre><code class="language-bash">journalctl -u jack2 -n 50 --no-pager | grep -i 'error\|fail'</code></pre>
+<p>If you see <code>usb_set_interface failed (-32)</code>, add the <code>skip_validation</code> quirk for the U46DJ:</p>
+<pre><code class="language-bash">lsusb | grep -i esi</code></pre>
+<p>Note the <code>ID XXXX:YYYY</code> vendor and product values, then:</p>
 <pre><code class="language-bash">echo 'options snd-usb-audio vid=0xXXXX pid=0xYYYY skip_validation=y' &gt;&gt; /etc/modprobe.d/usb-audio.conf
 rmmod snd-usb-audio &amp;&amp; modprobe snd-usb-audio
 systemctl restart jack2</code></pre>
-<p>Replace <code>XXXX</code> and <code>YYYY</code> with your actual vendor and product IDs.</p>
+<p>Replace <code>XXXX</code> and <code>YYYY</code> with your actual values from <code>lsusb</code>.</p>
 <hr>
 <h2 id="part-2--verify-audio-output-draft">Part 2 — Verify Audio Output <code>[draft]</code></h2>
-<p>Play a synth note and confirm audio reaches monitors through the Mix Out.</p>
+<p>Play a synth note and confirm audio reaches the monitors through the U46DJ Mix Out.</p>
 <h3 id="step-1--connect-monitors-to-mix-out">Step 1 — Connect monitors to Mix Out</h3>
-<p>The <strong>Mix Out</strong> (RCA stereo pair) is on the rear panel of the U46DJ. Connect it to powered monitor speakers.</p>
-<p>Mix Out carries a hardware mix of all outputs — it is independent of software volume. Turn monitor volume to a comfortable level.</p>
+<p>The <strong>Mix Out</strong> is on the rear panel of the U46DJ — a stereo RCA pair labelled Mix Out. Connect it to powered monitor speakers.</p>
+<p>Mix Out carries a hardware mix of all inputs and outputs — it is independent of software volume.</p>
 <p><strong>Verify:</strong> Monitors are connected and powered on.</p>
 <h3 id="step-2--load-a-synth-chain-in-vnc">Step 2 — Load a synth chain in VNC</h3>
 <p>Open VNC to <code>zynthian.local</code>. In the Zynthian UI:</p>
-<ol><li>Tap the <strong>+</strong> icon (bottom-left of screen) to add a new chain.</li><li>Tap <strong>Instrument</strong>.</li><li>Select <strong>ZynAddSubFX</strong> as the engine.</li><li>Choose any preset from the list (the default preset works).</li></ol>
-<p><strong>Verify:</strong> A chain appears in the main screen with ZynAddSubFX loaded.</p>
+<ol><li>Tap the <strong>+</strong> icon in the main screen.</li><li>Tap <strong>Instrument</strong>.</li><li>Select <strong>ZynAddSubFX</strong> as the engine.</li><li>Choose any preset.</li></ol>
+<p><strong>Verify:</strong> A chain appears with ZynAddSubFX loaded.</p>
 <h3 id="step-3--play-a-note">Step 3 — Play a note</h3>
-<p>On the E-MU Xboard keyboard, press any key.</p>
-<p><strong>Verify:</strong> Sound comes from the monitors. If no sound: confirm the JACK log showed the U46DJ device name (not <code>bcm2835</code> or another device), and that the E-MU Xboard MIDI port is active in webconf → <strong>Interface → MIDI Options</strong> → <strong>MIDI Devices</strong>.</p>
+<p>On the E-MU Xboard, press any key.</p>
+<p><strong>Verify:</strong> Sound comes from the monitors.</p>
+<p>If no sound:</p>
+<ul><li>Confirm monitors are on the rear <strong>Mix Out</strong> RCA pair — not Output 1–6.</li><li>Confirm the E-MU Xboard MIDI port is enabled in webconf → <strong>Interface → MIDI Options</strong> → <strong>MIDI Devices</strong>.</li><li>Run <code>jack_lsp -c | grep 'playback_1'</code> to confirm audio is routed to <code>system:playback_1</code>.</li></ul>
 <hr>
 <h2 id="part-3--verify-inputs-draft">Part 3 — Verify Inputs <code>[draft]</code></h2>
-<p>Confirm that all four U46DJ inputs are available as JACK capture ports, and that your source reaches Zynthian.</p>
-<h3 id="step-1--set-the-input-source-selector-on-the-u46dj">Step 1 — Set the input source selector on the U46DJ</h3>
+<p>Confirm all four U46DJ inputs are available as JACK capture ports.</p>
+<h3 id="step-1--set-the-input-source-selector">Step 1 — Set the input source selector</h3>
 <p>The front panel has two physical source selectors:</p>
 <ul><li><strong>Channel 1/2 selector:</strong> MIC · LINE · PHONO</li><li><strong>Channel 3/4 selector:</strong> Hi-Z · LINE · PHONO</li></ul>
-<p>Set each selector to match your source. Options:</p>
-<table><thead><tr><th>Source</th><th>Input</th><th>Selector</th></tr></thead><tbody><tr><td>Microphone</td><td>Channel 1/2 front panel jack (balanced 1/4")</td><td>MIC</td></tr><tr><td>Line-level device</td><td>Channel 1/2 or 3/4 rear RCA</td><td>LINE</td></tr><tr><td>Turntable</td><td>Rear RCA (Inputs 1–4)</td><td>PHONO</td></tr><tr><td>Guitar / bass</td><td>Channel 3/4 front panel jack (unbalanced 1/4")</td><td>Hi-Z</td></tr></tbody></table>
-<p>If using a condenser microphone: press the <strong>+48V</strong> button on the front panel to enable phantom power. This powers both Channel 1 and 2 simultaneously.</p>
-<p><strong>Verify:</strong> Selector is set to the correct position for your source.</p>
+<p>Set each to match your source:</p>
+<table><thead><tr><th>Source</th><th>Input connector</th><th>Selector</th></tr></thead><tbody><tr><td>Microphone</td><td>Channel 1/2 front panel jack (balanced 1/4")</td><td>MIC</td></tr><tr><td>Line-level device</td><td>Channel 1/2 or 3/4 rear RCA</td><td>LINE</td></tr><tr><td>Turntable</td><td>Rear RCA (Inputs 1–4)</td><td>PHONO</td></tr><tr><td>Guitar or bass</td><td>Channel 3/4 front panel jack (unbalanced 1/4")</td><td>Hi-Z</td></tr></tbody></table>
+<p>To use a condenser microphone, press <strong>+48V</strong> on the front panel. This enables phantom power on channels 1 and 2 simultaneously.</p>
+<p><strong>Verify:</strong> Selector is at the correct position for your source.</p>
 <h3 id="step-2--connect-your-source">Step 2 — Connect your source</h3>
-<p>Connect your instrument or microphone to the corresponding connector as shown in the table above.</p>
+<p>Connect your instrument or microphone to the corresponding connector.</p>
 <p><strong>Verify:</strong> Cable is connected at both ends.</p>
-<h3 id="step-3--confirm-jack-capture-ports-via-ssh">Step 3 — Confirm JACK capture ports via SSH</h3>
+<h3 id="step-3--confirm-four-jack-capture-ports">Step 3 — Confirm four JACK capture ports</h3>
 <pre><code class="language-bash">ssh root@zynthian.local
 jack_lsp | grep capture</code></pre>
-<p>Expected output:</p>
+<p>Expected:</p>
 <pre><code>system:capture_1
 system:capture_2
 system:capture_3
 system:capture_4</code></pre>
-<p>Four capture ports confirm JACK opened the U46DJ at 44.1 kHz with full 4-input mode.</p>
-<p><strong>Verify:</strong> Exactly four <code>system:capture_*</code> ports are listed.</p>
+<p><strong>Verify:</strong> Exactly four <code>system:capture_*</code> ports listed. If fewer appear, JACK opened the device at 48 kHz — confirm the <code>jack2.service</code> ExecStart uses <code>-r 44100</code> (Part 1 Step 4).</p>
 <h3 id="step-4--route-an-input-to-a-chain-in-vnc">Step 4 — Route an input to a chain in VNC</h3>
-<p>In the Zynthian VNC UI:</p>
-<ol><li>In the chain you created in Part 2, tap the chain name to open its options.</li><li>Look for an <strong>Audio Input</strong> or <strong>JACK connections</strong> option.</li><li>Connect <code>system:capture_1</code> and <code>system:capture_2</code> to the chain's audio inputs.</li></ol>
-<p>Alternatively, use the JACK patchbay via SSH:</p>
-<pre><code class="language-bash">jack_connect system:capture_1 &lt;chain-input-port&gt;
-jack_lsp -c</code></pre>
-<p>Replace <code>&amp;lt;chain-input-port&amp;gt;</code> with the actual port name shown by <code>jack_lsp</code>.</p>
-<p><strong>Verify:</strong> Input signal from your source is audible through the monitors or visible as activity in the Zynthian UI.</p>
+<p>Open VNC to <code>zynthian.local</code>. In the chain control screen for a loaded ZynAddSubFX chain, look for an audio input routing option and connect <code>system:capture_1</code> to the chain's audio input.</p>
+<p>Alternatively, connect via SSH:</p>
+<pre><code class="language-bash">jack_lsp -c</code></pre>
+<p>Look for the chain's input port name in the output. Then:</p>
+<pre><code class="language-bash">jack_connect system:capture_1 &lt;chain-input-port-name&gt;</code></pre>
+<p><strong>Verify:</strong> Input signal from your source is audible through the monitors.</p>
 <hr>
 <h2 id="going-further">Going Further</h2>
-<ul><li>Tune buffer size down to <code>128</code> if CPU load is low and you want lower latency</li><li>Use Output 1–6 (rear RCA) to route separate stems to a mixer rather than using Mix Out</li><li>Connect a turntable to the Phono inputs — the U46DJ includes an RIAA phono preamp</li><li>Save a snapshot after confirming everything works (<strong>Library → Snapshots</strong> in webconf)</li></ul>
+<ul><li>Reduce buffer size to <code>128</code> frames for lower latency if CPU load is stable; increase to <code>512</code> if you hear clicks or dropouts</li><li>Use Output 1–6 (rear RCA) to route separate stems to a hardware mixer instead of the Mix Out</li><li>Connect a turntable to the Phono inputs — the U46DJ includes an RIAA phono preamp built in</li><li>Use the external DC +9V rear power connector when using phantom power to avoid USB current peaks, especially on laptop setups</li><li>Save a Zynthian snapshot after confirming everything works: webconf → <strong>Library → Snapshots</strong>, type a name, click the checkmark</li></ul>
 </article>
 </main>
 <div id="toc-column"></div>
