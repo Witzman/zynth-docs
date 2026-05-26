@@ -1,7 +1,7 @@
 # Maschine MK2 Controller
 
 **Goal:** Connect a Native Instruments Maschine MK2 to Zynthian as a fully functional MIDI controller — pads trigger notes, buttons and encoders map to synth parameters, daemon auto-starts on boot.
-**Prerequisites:** Zynthian booted and accessible via SSH. A working audio chain already set up (Part 2 requires sound output). The `MaschineMK2_linux` source is present at `~/zynth/MaschineMK2_linux/` on this Pi.
+**Prerequisites:** Zynthian booted and accessible via SSH. A working audio chain already set up (Part 2 requires sound output). The `MaschineMK2_linux` source, Rust toolchain, and compiled binary are already present on this Pi — Steps 3 and 4 can be skipped.
 **Access:** SSH
 
 ---
@@ -56,14 +56,19 @@ source "$HOME/.cargo/env"
 ./build.sh
 ```
 
-Compiles with link-time optimisation. On a Pi 4 this takes **5–10 minutes** — this is normal. Wait for the shell prompt to return.
+Compiles with link-time optimisation. On a Pi 4 this takes a few minutes — this is normal. Wait for the shell prompt to return.
 
 Expected final lines:
 ```
-Compiling maschine v0.0.1
-Finished release [optimized] target(s) in ...
+Finished `release` profile [optimized] target(s) in ...
 move picture to target folder
 ```
+
+> **Build fix for Rust 1.80+ on ARM64:** If the build fails with `error[E0308]: mismatched types` in `alsa-seq/src/handle.rs`, the ALSA FFI binding uses `*const i8` where newer Rust expects `*const u8`. Fix:
+> ```bash
+> sed -i 's/as_ptr() as \*const i8/as_ptr() as *const _/' ~/zynth/MaschineMK2_linux/alsa-seq/src/handle.rs
+> ```
+> Then run `./build.sh` again.
 
 **Verify:**
 
@@ -71,7 +76,7 @@ move picture to target folder
 ls -lh ~/zynth/MaschineMK2_linux/target/release/maschine
 ```
 
-File exists and is several megabytes.
+File exists (around 600K–700K).
 
 ### Step 5 — Add a udev rule for stable device access
 

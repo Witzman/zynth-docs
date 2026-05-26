@@ -100,7 +100,7 @@
 <main>
 <article>
 <h1 id="maschine-mk2-controller">Maschine MK2 Controller</h1>
-<p><strong>Goal:</strong> Connect a Native Instruments Maschine MK2 to Zynthian as a fully functional MIDI controller — pads trigger notes, buttons and encoders map to synth parameters, daemon auto-starts on boot. <strong>Prerequisites:</strong> Zynthian booted and accessible via SSH. A working audio chain already set up (Part 2 requires sound output). The <code>MaschineMK2_linux</code> source is present at <code>~/zynth/MaschineMK2_linux/</code> on this Pi. <strong>Access:</strong> SSH</p>
+<p><strong>Goal:</strong> Connect a Native Instruments Maschine MK2 to Zynthian as a fully functional MIDI controller — pads trigger notes, buttons and encoders map to synth parameters, daemon auto-starts on boot. <strong>Prerequisites:</strong> Zynthian booted and accessible via SSH. A working audio chain already set up (Part 2 requires sound output). The <code>MaschineMK2_linux</code> source, Rust toolchain, and compiled binary are already present on this Pi — Steps 3 and 4 can be skipped. <strong>Access:</strong> SSH</p>
 <hr>
 <h2 id="part-1--build-connect-verify-midi-draft">Part 1 — Build, Connect, Verify MIDI <code>[draft]</code></h2>
 <p>Build the daemon from source, set permissions, run it manually, and confirm pads send MIDI notes to a Zynthian chain.</p>
@@ -126,14 +126,14 @@ rustc --version</code></pre>
 <pre><code class="language-bash">cd ~/zynth/MaschineMK2_linux
 source "$HOME/.cargo/env"
 ./build.sh</code></pre>
-<p>Compiles with link-time optimisation. On a Pi 4 this takes <strong>5–10 minutes</strong> — this is normal. Wait for the shell prompt to return.</p>
+<p>Compiles with link-time optimisation. On a Pi 4 this takes a few minutes — this is normal. Wait for the shell prompt to return.</p>
 <p>Expected final lines:</p>
-<pre><code>Compiling maschine v0.0.1
-Finished release [optimized] target(s) in ...
+<pre><code>Finished `release` profile [optimized] target(s) in ...
 move picture to target folder</code></pre>
+<blockquote><p><strong>Build fix for Rust 1.80+ on ARM64:</strong> If the build fails with <code>error[E0308]: mismatched types</code> in <code>alsa-seq/src/handle.rs</code>, the ALSA FFI binding uses <code><em>const i8</code> where newer Rust expects <code></em>const u8</code>. Fix: ``<code>bash sed -i 's/as_ptr() as \<em>const i8/as_ptr() as </em>const _/' ~/zynth/MaschineMK2_linux/alsa-seq/src/handle.rs </code>`<code> Then run </code>./build.sh` again.</p></blockquote>
 <p><strong>Verify:</strong></p>
 <pre><code class="language-bash">ls -lh ~/zynth/MaschineMK2_linux/target/release/maschine</code></pre>
-<p>File exists and is several megabytes.</p>
+<p>File exists (around 600K–700K).</p>
 <h3 id="step-5--add-a-udev-rule-for-stable-device-access">Step 5 — Add a udev rule for stable device access</h3>
 <p>Replace <code>XXXX</code> with the product ID from Step 2 (e.g. <code>1140</code>):</p>
 <pre><code class="language-bash">echo 'SUBSYSTEM=="hidraw", ATTRS{idVendor}=="17cc", ATTRS{idProduct}=="XXXX", MODE="0664", GROUP="audio", SYMLINK+="maschine"' &gt; /etc/udev/rules.d/99-maschine.rules
