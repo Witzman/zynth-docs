@@ -129,13 +129,13 @@ aconnect -l</code></pre>
 <p>If the chain is on channel 2, change <code>B0</code> to <code>B1</code>.</p>
 <p><strong>Verify:</strong> Playing two pads in sequence causes the first note to stop immediately when the second is pressed — one note at a time.</p>
 <h3 id="step-6--save-a-snapshot">Step 6 — Save a snapshot</h3>
-<p>In webconf → <strong>Snapshots</strong>, click <strong>Save</strong> and name it <code>drone-v1</code>.</p>
+<p>In webconf, go to <strong>Library → Snapshots</strong>. Type <code>drone-v1</code> in the <strong>Name:</strong> field and click the checkmark button to save.</p>
 <p><strong>Verify:</strong> Snapshot appears in the list.</p>
 <hr>
 <h2 id="part-2--control-smc-pad-pads-and-playstop-draft">Part 2 — Control: SMC-PAD Pads and PLAY/STOP <code>[draft]</code></h2>
 <p>Confirm SMC-PAD is routed, check what PLAY/STOP send, implement drone start/stop, and map pads to root note changes.</p>
 <h3 id="step-1--enable-smc-pad-in-webconf">Step 1 — Enable SMC-PAD in webconf</h3>
-<p>Open <code>http://zynthian.local</code> → <strong>MIDI → Ports</strong>. Find the SMC-PAD port and enable it.</p>
+<p>Open <code>http://zynthian.local</code> → <strong>Interface → MIDI Options</strong>. Click <strong>MIDI Devices</strong>. Find the SMC-PAD port and enable it.</p>
 <p><strong>Verify:</strong> SMC-PAD port is toggled on.</p>
 <h3 id="step-2--check-what-playstop-buttons-send">Step 2 — Check what PLAY/STOP buttons send</h3>
 <p>The SMC-PAD manual states PLAY/STOP are DAW transport buttons — their exact MIDI output in Performance preset must be confirmed before mapping.</p>
@@ -148,7 +148,7 @@ amidi -p hw:$(aconnect -l | grep -i "SMC\|SINCO" | grep -oP 'client \K[0-9]+' | 
 <h3 id="step-3a--if-playstop-send-cc-map-via-cc-learn">Step 3A — If PLAY/STOP send CC: map via CC Learn</h3>
 <p>If PLAY sends a CC (e.g. <code>B0 72 7F</code>):</p>
 <p>In VNC, navigate to any parameter knob, long-press it (~600ms) until it turns orange, then press PLAY. Zynthian captures the CC.</p>
-<p>Map PLAY → CC 64 value 127 (sustain hold on) and STOP → CC 64 value 0 (sustain off) via webconf → <strong>MIDI → CC</strong>. This makes PLAY hold the current note indefinitely and STOP release it.</p>
+<p>Map PLAY → CC 64 value 127 (sustain hold on) and STOP → CC 64 value 0 (sustain off) via <strong>Interface → MIDI Options</strong> → <strong>Midi filter rules</strong> <code>[low]</code>. This makes PLAY hold the current note indefinitely and STOP release it.</p>
 <p>Skip to Step 4.</p>
 <h3 id="step-3b--if-playstop-send-midi-real-time-use-two-pads-instead">Step 3B — If PLAY/STOP send MIDI real-time: use two pads instead</h3>
 <p>MIDI real-time messages (FA/FC) bypass the MIDI CC router and cannot be CC-Learned in Zynthian. Use two SMC-PAD pads as start/stop instead:</p>
@@ -182,7 +182,7 @@ amidi -p hw:$(aconnect -l | grep -i "SMC\|SINCO" | grep -oP 'client \K[0-9]+' | 
 <p>Hold a drone note (pad or PLAY depending on Step 3A/3B above). Slowly turn each knob and confirm the expected parameter changes. Press a different pad to shift root note. Confirm drone continues evolving.</p>
 <p><strong>Verify:</strong> All 8 knobs respond. Root note changes cleanly. LFO texture continues without interruption.</p>
 <h3 id="step-5--save-final-snapshot">Step 5 — Save final snapshot</h3>
-<p>In webconf → <strong>Snapshots</strong>, overwrite or save a new snapshot named <code>drone-final</code>. CC bindings are stored with the snapshot.</p>
+<p>In webconf, go to <strong>Library → Snapshots</strong>. Type <code>drone-final</code> in the <strong>Name:</strong> field and click the checkmark button to save. CC bindings are stored with the snapshot.</p>
 <p><strong>Verify:</strong> Snapshot saved. Reload it and confirm bindings survive.</p>
 <hr>
 <h2 id="going-further">Going Further</h2>

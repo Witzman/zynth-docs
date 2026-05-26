@@ -86,7 +86,7 @@ Set the chain to MIDI channel 2:
 
 ### Step 6 — Enable all MIDI ports in webconf
 
-Open `http://zynthian.local` → **MIDI → Ports**. Enable:
+Open `http://zynthian.local` → **Interface → MIDI Options**. Click **MIDI Devices**. Enable:
 - Xboard port
 - `maschine.rs` port
 - SMC-PAD port
@@ -217,7 +217,7 @@ Zynthian routes channel aftertouch automatically to CC 1 (modulation) on most en
 Play a sustained note on the Xboard and press harder — the timbre should change.
 
 If no modulation occurs:
-- In webconf → **MIDI → CC** → add a mapping: Aftertouch → CC 1 on ch2.
+- In webconf → **Interface → MIDI Options** → **Midi filter rules**, add: `CH#2 ATAFTER => CH#2 CC#1` `[low]`.
 
 **Verify:** Pressing harder on a held Xboard note produces an audible modulation effect.
 
@@ -249,7 +249,7 @@ ssh root@zynthian.local
 cp /zynthian/zynthian-my-data/snapshots/$(ls -t /zynthian/zynthian-my-data/snapshots/ | head -1) /zynthian/zynthian-my-data/snapshots/last_state.zss
 ```
 
-Or, save from webconf → **Snapshots** → **Save As** → name it exactly `last_state`.
+Or, go to **Library → Snapshots** → type `last_state` in the **Name:** field → click the checkmark button to save.
 
 On next boot, Zynthian loads this snapshot automatically — both chains ready, all CC bindings restored, without any manual intervention.
 

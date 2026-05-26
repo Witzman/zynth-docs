@@ -120,7 +120,7 @@ client 32: 'maschine.rs' [type=kernel]
 
 ### Step 8 — Enable the port in webconf
 
-Open `http://zynthian.local` → **MIDI → Ports**. Find `maschine.rs` and enable it.
+Open `http://zynthian.local` → **Interface → MIDI Options**. Click **MIDI Devices**. Find `maschine.rs` and enable it.
 
 **Verify:** Port is toggled on.
 
@@ -166,7 +166,7 @@ Repeat Steps 2–3 for each parameter you want to control.
 
 CC bindings are stored in snapshots. Save now so they survive reboots:
 
-In webconf → **Snapshots**, click **Save** and give it a name.
+In webconf, go to **Library → Snapshots**. Type a name in the **Name:** field and click the checkmark button to save.
 
 **Verify:** Snapshot appears in the list.
 

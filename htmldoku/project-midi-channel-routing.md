@@ -29,9 +29,9 @@ If the EMU does not appear, unplug and replug the USB cable, then run `aconnect 
 
 ### Step 2 — Verify MIDI port is enabled
 
-Open `http://zynthian.local` → **MIDI** → **Ports**.
+Open `http://zynthian.local` → **Interface → MIDI Options**. Click **MIDI Devices**.
 
-Find the EMU Xboard entry. Confirm it is enabled (checkbox checked / toggle on). If not, enable it and click **Save**.
+Find the EMU Xboard entry. Confirm it is enabled. If not, enable it and save.
 
 ### Step 3 — Add Chain 1 (piano)
 
@@ -117,13 +117,13 @@ Save the chain/channel map as a named snapshot and set it as the boot default so
 
 ### Step 1 — Save a named snapshot
 
-Open `http://zynthian.local` → **Snapshots** → **Save As**.
+Open `http://zynthian.local` → **Library → Snapshots**.
 
-Enter a name (e.g. `midi-channel-map`) and click **Save**.
+Type a name (e.g. `midi-channel-map`) in the **Name:** field and click the checkmark button to save.
 
 ### Step 2 — Set as boot default
 
-In the snapshot list, find `midi-channel-map`. Click **Save as Last State**.
+In the snapshot list, select `midi-channel-map`. Click **Save as Last State**.
 
 This writes the snapshot to `last_state.zss` — Zynthian loads this file automatically on every boot.
 

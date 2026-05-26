@@ -277,7 +277,7 @@ Wire and configure as in Part 2 Steps 2–8, adjusted for line levels.
 
 In the MOD-UI browser, click the save icon (floppy disk) and name the pedalboard (e.g. `mic-line-processing`). MOD-UI saves pedalboards to `/zynthian/zynthian-my-data/mod-ui/pedalboards/`.
 
-Then save a Zynthian snapshot in webconf → **Snapshots** → **Save** — the snapshot stores which MOD-UI chain(s) are loaded.
+Then save a Zynthian snapshot: go to **Library → Snapshots**, type a name in the **Name:** field, click the checkmark button to save — the snapshot stores which MOD-UI chain(s) are loaded.
 
 **Verify:** Pedalboard name appears in MOD-UI's saved pedalboard list. Snapshot saved in webconf.
 

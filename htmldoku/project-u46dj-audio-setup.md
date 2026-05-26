@@ -138,7 +138,7 @@ Open VNC to `zynthian.local`. In the Zynthian UI:
 
 On the E-MU Xboard keyboard, press any key.
 
-**Verify:** Sound comes from the monitors. If no sound: confirm the JACK log showed the U46DJ device name (not `bcm2835` or another device), and that the E-MU Xboard MIDI port is active in webconf → **MIDI → Ports**.
+**Verify:** Sound comes from the monitors. If no sound: confirm the JACK log showed the U46DJ device name (not `bcm2835` or another device), and that the E-MU Xboard MIDI port is active in webconf → **Interface → MIDI Options** → **MIDI Devices**.
 
 ---
 
@@ -216,4 +216,4 @@ Replace `<chain-input-port>` with the actual port name shown by `jack_lsp`.
 - Tune buffer size down to `128` if CPU load is low and you want lower latency
 - Use Output 1–6 (rear RCA) to route separate stems to a mixer rather than using Mix Out
 - Connect a turntable to the Phono inputs — the U46DJ includes an RIAA phono preamp
-- Save a snapshot after confirming everything works (webconf → **Snapshots**)
+- Save a snapshot after confirming everything works (**Library → Snapshots** in webconf)

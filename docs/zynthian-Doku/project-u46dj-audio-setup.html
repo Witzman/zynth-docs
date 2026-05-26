@@ -163,7 +163,7 @@ systemctl restart jack2</code></pre>
 <p><strong>Verify:</strong> A chain appears in the main screen with ZynAddSubFX loaded.</p>
 <h3 id="step-3--play-a-note">Step 3 — Play a note</h3>
 <p>On the E-MU Xboard keyboard, press any key.</p>
-<p><strong>Verify:</strong> Sound comes from the monitors. If no sound: confirm the JACK log showed the U46DJ device name (not <code>bcm2835</code> or another device), and that the E-MU Xboard MIDI port is active in webconf → <strong>MIDI → Ports</strong>.</p>
+<p><strong>Verify:</strong> Sound comes from the monitors. If no sound: confirm the JACK log showed the U46DJ device name (not <code>bcm2835</code> or another device), and that the E-MU Xboard MIDI port is active in webconf → <strong>Interface → MIDI Options</strong> → <strong>MIDI Devices</strong>.</p>
 <hr>
 <h2 id="part-3--verify-inputs-draft">Part 3 — Verify Inputs <code>[draft]</code></h2>
 <p>Confirm that all four U46DJ inputs are available as JACK capture ports, and that your source reaches Zynthian.</p>
@@ -197,7 +197,7 @@ jack_lsp -c</code></pre>
 <p><strong>Verify:</strong> Input signal from your source is audible through the monitors or visible as activity in the Zynthian UI.</p>
 <hr>
 <h2 id="going-further">Going Further</h2>
-<ul><li>Tune buffer size down to <code>128</code> if CPU load is low and you want lower latency</li><li>Use Output 1–6 (rear RCA) to route separate stems to a mixer rather than using Mix Out</li><li>Connect a turntable to the Phono inputs — the U46DJ includes an RIAA phono preamp</li><li>Save a snapshot after confirming everything works (webconf → <strong>Snapshots</strong>)</li></ul>
+<ul><li>Tune buffer size down to <code>128</code> if CPU load is low and you want lower latency</li><li>Use Output 1–6 (rear RCA) to route separate stems to a mixer rather than using Mix Out</li><li>Connect a turntable to the Phono inputs — the U46DJ includes an RIAA phono preamp</li><li>Save a snapshot after confirming everything works (<strong>Library → Snapshots</strong> in webconf)</li></ul>
 </article>
 </main>
 <div id="toc-column"></div>

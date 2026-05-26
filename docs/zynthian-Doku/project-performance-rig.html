@@ -137,7 +137,7 @@ systemctl status maschine-mk2.service --no-pager</code></pre>
 <ul><li>Tap the chain → <strong>Chain Options</strong> → <strong>MIDI Channel</strong> → select <strong>2</strong>.</li></ul>
 <p><strong>Verify:</strong> Chain 2 shows channel 2.</p>
 <h3 id="step-6--enable-all-midi-ports-in-webconf">Step 6 — Enable all MIDI ports in webconf</h3>
-<p>Open <code>http://zynthian.local</code> → <strong>MIDI → Ports</strong>. Enable:</p>
+<p>Open <code>http://zynthian.local</code> → <strong>Interface → MIDI Options</strong>. Click <strong>MIDI Devices</strong>. Enable:</p>
 <ul><li>Xboard port</li><li><code>maschine.rs</code> port</li><li>SMC-PAD port</li></ul>
 <p><strong>Verify:</strong> All three ports toggled on.</p>
 <h3 id="step-7--test-simultaneous-routing">Step 7 — Test simultaneous routing</h3>
@@ -192,7 +192,7 @@ amidi -p hw:$(aconnect -l | grep -i "SMC\|SINCO" | grep -oP 'client \K[0-9]+' | 
 <p>Zynthian routes channel aftertouch automatically to CC 1 (modulation) on most engines. In ZynAddSubFX, modulation typically controls vibrato or filter modulation depth.</p>
 <p>Play a sustained note on the Xboard and press harder — the timbre should change.</p>
 <p>If no modulation occurs:</p>
-<ul><li>In webconf → <strong>MIDI → CC</strong> → add a mapping: Aftertouch → CC 1 on ch2.</li></ul>
+<ul><li>In webconf → <strong>Interface → MIDI Options</strong> → <strong>Midi filter rules</strong>, add: <code>CH#2 ATAFTER =&gt; CH#2 CC#1</code> <code>[low]</code>.</li></ul>
 <p><strong>Verify:</strong> Pressing harder on a held Xboard note produces an audible modulation effect.</p>
 <h3 id="step-3--set-mixer-levels-for-both-chains">Step 3 — Set mixer levels for both chains</h3>
 <p>In VNC, open the mixer (main screen → mixer view). Adjust:</p>
@@ -207,7 +207,7 @@ amidi -p hw:$(aconnect -l | grep -i "SMC\|SINCO" | grep -oP 'client \K[0-9]+' | 
 <p>Save the current state as the default startup snapshot:</p>
 <pre><code class="language-bash">ssh root@zynthian.local
 cp /zynthian/zynthian-my-data/snapshots/$(ls -t /zynthian/zynthian-my-data/snapshots/ | head -1) /zynthian/zynthian-my-data/snapshots/last_state.zss</code></pre>
-<p>Or, save from webconf → <strong>Snapshots</strong> → <strong>Save As</strong> → name it exactly <code>last_state</code>.</p>
+<p>Or, go to <strong>Library → Snapshots</strong> → type <code>last_state</code> in the <strong>Name:</strong> field → click the checkmark button to save.</p>
 <p>On next boot, Zynthian loads this snapshot automatically — both chains ready, all CC bindings restored, without any manual intervention.</p>
 <p><strong>Verify:</strong></p>
 <pre><code class="language-bash">reboot</code></pre>

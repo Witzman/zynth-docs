@@ -157,7 +157,7 @@ Example: if byte 1 was `96` (channel 7), enter `7`.
 
 ### Step 3 — Add the 16 TOGGLE_SEQ mappings
 
-Find the **Master Note CUIA** section. It contains a text area with existing note→action lines (one per line, format: `note_number: ACTION`).
+Find the **Master Key Actions** field. It contains a text area with existing note→action lines (one per line, format: `note_number: ACTION`).
 
 Add 16 new lines using the note numbers you recorded in Part 1. Map each pad to its slot using the layout below:
 

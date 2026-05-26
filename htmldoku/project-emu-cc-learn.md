@@ -126,11 +126,11 @@ CC bindings are saved as part of the snapshot state. The bindings from Parts 1 a
 
 ### Step 1 — Update the snapshot
 
-Open `http://zynthian.local` → **Snapshots**.
+Open `http://zynthian.local` → **Library → Snapshots**.
 
-Find `midi-channel-map` (created in [MIDI Channel Routing](project-midi-channel-routing.html)). Click it → **Save** (overwrite with current state including CC bindings).
+Select `midi-channel-map` (created in [MIDI Channel Routing](project-midi-channel-routing.html)). Click the checkmark button to overwrite it with the current state including CC bindings.
 
-Alternatively, save a new snapshot named `midi-channel-map-cc` to keep both versions.
+Alternatively, type `midi-channel-map-cc` in the **Name:** field and click the checkmark to save as a new snapshot.
 
 ### Step 2 — Verify restore
 

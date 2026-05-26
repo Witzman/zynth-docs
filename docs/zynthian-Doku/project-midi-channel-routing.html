@@ -112,8 +112,8 @@ aconnect -l</code></pre>
 <pre><code>client 32: 'E-MU Xboard' [type=kernel,card=X]</code></pre>
 <p>If the EMU does not appear, unplug and replug the USB cable, then run <code>aconnect -l</code> again.</p>
 <h3 id="step-2--verify-midi-port-is-enabled">Step 2 — Verify MIDI port is enabled</h3>
-<p>Open <code>http://zynthian.local</code> → <strong>MIDI</strong> → <strong>Ports</strong>.</p>
-<p>Find the EMU Xboard entry. Confirm it is enabled (checkbox checked / toggle on). If not, enable it and click <strong>Save</strong>.</p>
+<p>Open <code>http://zynthian.local</code> → <strong>Interface → MIDI Options</strong>. Click <strong>MIDI Devices</strong>.</p>
+<p>Find the EMU Xboard entry. Confirm it is enabled. If not, enable it and save.</p>
 <h3 id="step-3--add-chain-1-piano">Step 3 — Add Chain 1 (piano)</h3>
 <p>In VNC, the main screen shows any existing chain strips and a <strong>+</strong> button. Tap <strong>+</strong> → <strong>Instrument</strong>.</p>
 <ul><li>Select <strong>FluidSynth</strong>.</li><li>Select bank <strong>GeneralUser GS</strong> (ships with Zynthian).</li><li>Select preset <strong>Acoustic Grand Piano</strong>.</li></ul>
@@ -153,10 +153,10 @@ aconnect -l</code></pre>
 <h2 id="part-3--save-as-snapshot-draft">Part 3 — Save as Snapshot <code>[draft]</code></h2>
 <p>Save the chain/channel map as a named snapshot and set it as the boot default so it loads automatically on every start.</p>
 <h3 id="step-1--save-a-named-snapshot">Step 1 — Save a named snapshot</h3>
-<p>Open <code>http://zynthian.local</code> → <strong>Snapshots</strong> → <strong>Save As</strong>.</p>
-<p>Enter a name (e.g. <code>midi-channel-map</code>) and click <strong>Save</strong>.</p>
+<p>Open <code>http://zynthian.local</code> → <strong>Library → Snapshots</strong>.</p>
+<p>Type a name (e.g. <code>midi-channel-map</code>) in the <strong>Name:</strong> field and click the checkmark button to save.</p>
 <h3 id="step-2--set-as-boot-default">Step 2 — Set as boot default</h3>
-<p>In the snapshot list, find <code>midi-channel-map</code>. Click <strong>Save as Last State</strong>.</p>
+<p>In the snapshot list, select <code>midi-channel-map</code>. Click <strong>Save as Last State</strong>.</p>
 <p>This writes the snapshot to <code>last_state.zss</code> — Zynthian loads this file automatically on every boot.</p>
 <h3 id="step-3--verify-persistence">Step 3 — Verify persistence</h3>
 <p>Reboot from SSH:</p>

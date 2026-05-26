@@ -67,7 +67,7 @@ If the chain is on channel 2, change `B0` to `B1`.
 
 ### Step 6 — Save a snapshot
 
-In webconf → **Snapshots**, click **Save** and name it `drone-v1`.
+In webconf, go to **Library → Snapshots**. Type `drone-v1` in the **Name:** field and click the checkmark button to save.
 
 **Verify:** Snapshot appears in the list.
 
@@ -79,7 +79,7 @@ Confirm SMC-PAD is routed, check what PLAY/STOP send, implement drone start/stop
 
 ### Step 1 — Enable SMC-PAD in webconf
 
-Open `http://zynthian.local` → **MIDI → Ports**. Find the SMC-PAD port and enable it.
+Open `http://zynthian.local` → **Interface → MIDI Options**. Click **MIDI Devices**. Find the SMC-PAD port and enable it.
 
 **Verify:** SMC-PAD port is toggled on.
 
@@ -110,7 +110,7 @@ If PLAY sends a CC (e.g. `B0 72 7F`):
 
 In VNC, navigate to any parameter knob, long-press it (~600ms) until it turns orange, then press PLAY. Zynthian captures the CC.
 
-Map PLAY → CC 64 value 127 (sustain hold on) and STOP → CC 64 value 0 (sustain off) via webconf → **MIDI → CC**. This makes PLAY hold the current note indefinitely and STOP release it.
+Map PLAY → CC 64 value 127 (sustain hold on) and STOP → CC 64 value 0 (sustain off) via **Interface → MIDI Options** → **Midi filter rules** `[low]`. This makes PLAY hold the current note indefinitely and STOP release it.
 
 Skip to Step 4.
 
@@ -188,7 +188,7 @@ Hold a drone note (pad or PLAY depending on Step 3A/3B above). Slowly turn each 
 
 ### Step 5 — Save final snapshot
 
-In webconf → **Snapshots**, overwrite or save a new snapshot named `drone-final`. CC bindings are stored with the snapshot.
+In webconf, go to **Library → Snapshots**. Type `drone-final` in the **Name:** field and click the checkmark button to save. CC bindings are stored with the snapshot.
 
 **Verify:** Snapshot saved. Reload it and confirm bindings survive.
 

@@ -155,7 +155,7 @@ udevadm trigger</code></pre>
     0 'maschine.rs port 0'</code></pre>
 <p><strong>Verify:</strong> <code>maschine.rs</code> appears in the output.</p>
 <h3 id="step-8--enable-the-port-in-webconf">Step 8 — Enable the port in webconf</h3>
-<p>Open <code>http://zynthian.local</code> → <strong>MIDI → Ports</strong>. Find <code>maschine.rs</code> and enable it.</p>
+<p>Open <code>http://zynthian.local</code> → <strong>Interface → MIDI Options</strong>. Click <strong>MIDI Devices</strong>. Find <code>maschine.rs</code> and enable it.</p>
 <p><strong>Verify:</strong> Port is toggled on.</p>
 <h3 id="step-9--play-a-pad-hear-a-note">Step 9 — Play a pad, hear a note</h3>
 <p>In VNC, load a chain with any engine (e.g. ZynAddSubFX with a default preset). Press any pad on the Maschine MK2.</p>
@@ -178,7 +178,7 @@ udevadm trigger</code></pre>
 <p><strong>Verify:</strong> All desired CC bindings respond correctly.</p>
 <h3 id="step-5--save-a-snapshot">Step 5 — Save a snapshot</h3>
 <p>CC bindings are stored in snapshots. Save now so they survive reboots:</p>
-<p>In webconf → <strong>Snapshots</strong>, click <strong>Save</strong> and give it a name.</p>
+<p>In webconf, go to <strong>Library → Snapshots</strong>. Type a name in the <strong>Name:</strong> field and click the checkmark button to save.</p>
 <p><strong>Verify:</strong> Snapshot appears in the list.</p>
 <hr>
 <h2 id="part-3--run-as-a-systemd-service-draft">Part 3 — Run as a Systemd Service <code>[draft]</code></h2>
