@@ -64,23 +64,23 @@ systemctl start maschine-mk2.service
 
 ### Step 4 — Add Chain 1: bass engine (ch1)
 
-In VNC, tap **+** → **Add Synth Engine** → **ZynAddSubFX**.
+In VNC, tap **+** → **Instrument** → **ZynAddSubFX**.
 
 Load a bass or low pad preset — browse to a bank like **Bass** or **Pads** and select a deep, sustained sound.
 
 Set the chain to MIDI channel 1:
-- Tap the chain → open chain options → **MIDI Channel** → select **1**.
+- Tap the chain → **Chain Options** → **MIDI Channel** → select **1**.
 
 **Verify:** Chain 1 shows channel 1 in the chain view.
 
 ### Step 5 — Add Chain 2: melodic pad engine (ch2)
 
-Tap **+** → **Add Synth Engine** → **ZynAddSubFX**.
+Tap **+** → **Instrument** → **ZynAddSubFX**.
 
 Load an ambient pad preset — **Pads** bank, any evolving texture preset.
 
 Set the chain to MIDI channel 2:
-- Tap the chain → **MIDI Channel** → select **2**.
+- Tap the chain → **Chain Options** → **MIDI Channel** → select **2**.
 
 **Verify:** Chain 2 shows channel 2.
 

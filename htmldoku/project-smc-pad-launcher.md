@@ -103,7 +103,7 @@ Open a VNC connection to `zynthian.local`. On the mixer screen, tap the **Chain 
 
 ### Step 2 — Add 4 instrument chains
 
-Tap **Add chain** (the **+** button). Select **MIDI Instrument** → choose any available engine (e.g. **ZynAddSubFX**) → select any bank and preset. Repeat until you have 4 chains.
+Tap **+** → **Instrument** → choose any available engine (e.g. **ZynAddSubFX**) → select any bank and preset. Repeat until you have 4 chains.
 
 The chains will appear as columns in the launcher.
 

@@ -35,7 +35,7 @@ Find the EMU Xboard entry. Confirm it is enabled (checkbox checked / toggle on).
 
 ### Step 3 — Add Chain 1 (piano)
 
-In VNC, the main screen shows any existing chain strips and a **+** button. Tap **+** to add a new chain.
+In VNC, the main screen shows any existing chain strips and a **+** button. Tap **+** → **Instrument**.
 
 - Select **FluidSynth**.
 - Select bank **GeneralUser GS** (ships with Zynthian).
@@ -45,7 +45,7 @@ Zynthian assigns new chains to successive MIDI channels automatically. This is C
 
 ### Step 4 — Add Chain 2 (strings/pad)
 
-Tap **+** → select **ZynAddSubFX**.
+Tap **+** → **Instrument** → select **ZynAddSubFX**.
 
 - Browse to a **Strings** or **Pads** bank.
 - Select any string ensemble or pad preset.
@@ -54,9 +54,9 @@ This is Chain 2 → MIDI channel 2. The sustained, slower-attack timbre is easy 
 
 ### Step 5 — Confirm channel assignments
 
-Tap **Chain 1** in the main screen to open chain control. Navigate to the **Options** subscreen and find the **MIDI Channel** setting — it should read **1**.
+Tap **Chain 1** in the main screen to open chain control. Navigate to **Chain Options** and find the **MIDI Channel** setting — it should read **1**.
 
-Tap back, then tap **Chain 2** → **Options** → **MIDI Channel** — it should read **2**.
+Tap back, then tap **Chain 2** → **Chain Options** → **MIDI Channel** — it should read **2**.
 
 If either shows a different value or **Omni**, change it to the correct channel number.
 
@@ -86,7 +86,7 @@ Add Chain 3 and Chain 4. By the end, channels 1–4 each trigger a distinct inst
 
 ### Step 1 — Add Chain 3 (brass/lead)
 
-Tap **+** → select **ZynAddSubFX**.
+Tap **+** → **Instrument** → select **ZynAddSubFX**.
 
 - Browse to a **Brass** or **Lead** bank.
 - Select any brass ensemble or synth lead preset.
@@ -95,13 +95,13 @@ Zynthian assigns MIDI channel 3 automatically.
 
 ### Step 2 — Add Chain 4 (organ)
 
-Tap **+** → select **setBfree**.
+Tap **+** → **Instrument** → select **setBfree**.
 
 setBfree is a Hammond B3 organ emulator. It loads immediately with a default drawbar configuration — no bank or preset selection is needed. The organ sound is immediately distinct from all three previous chains.
 
 ### Step 3 — Confirm channels 3 and 4
 
-Tap each new chain → **Options** → **MIDI Channel** and confirm the assignment matches (3 and 4 respectively).
+Tap each new chain → **Chain Options** → **MIDI Channel** and confirm the assignment matches (3 and 4 respectively).
 
 ### Step 4 — Test all four channels
 

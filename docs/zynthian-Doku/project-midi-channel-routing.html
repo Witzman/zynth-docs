@@ -115,16 +115,16 @@ aconnect -l</code></pre>
 <p>Open <code>http://zynthian.local</code> → <strong>MIDI</strong> → <strong>Ports</strong>.</p>
 <p>Find the EMU Xboard entry. Confirm it is enabled (checkbox checked / toggle on). If not, enable it and click <strong>Save</strong>.</p>
 <h3 id="step-3--add-chain-1-piano">Step 3 — Add Chain 1 (piano)</h3>
-<p>In VNC, the main screen shows any existing chain strips and a <strong>+</strong> button. Tap <strong>+</strong> to add a new chain.</p>
+<p>In VNC, the main screen shows any existing chain strips and a <strong>+</strong> button. Tap <strong>+</strong> → <strong>Instrument</strong>.</p>
 <ul><li>Select <strong>FluidSynth</strong>.</li><li>Select bank <strong>GeneralUser GS</strong> (ships with Zynthian).</li><li>Select preset <strong>Acoustic Grand Piano</strong>.</li></ul>
 <p>Zynthian assigns new chains to successive MIDI channels automatically. This is Chain 1 → MIDI channel 1.</p>
 <h3 id="step-4--add-chain-2-stringspad">Step 4 — Add Chain 2 (strings/pad)</h3>
-<p>Tap <strong>+</strong> → select <strong>ZynAddSubFX</strong>.</p>
+<p>Tap <strong>+</strong> → <strong>Instrument</strong> → select <strong>ZynAddSubFX</strong>.</p>
 <ul><li>Browse to a <strong>Strings</strong> or <strong>Pads</strong> bank.</li><li>Select any string ensemble or pad preset.</li></ul>
 <p>This is Chain 2 → MIDI channel 2. The sustained, slower-attack timbre is easy to distinguish from the piano.</p>
 <h3 id="step-5--confirm-channel-assignments">Step 5 — Confirm channel assignments</h3>
-<p>Tap <strong>Chain 1</strong> in the main screen to open chain control. Navigate to the <strong>Options</strong> subscreen and find the <strong>MIDI Channel</strong> setting — it should read <strong>1</strong>.</p>
-<p>Tap back, then tap <strong>Chain 2</strong> → <strong>Options</strong> → <strong>MIDI Channel</strong> — it should read <strong>2</strong>.</p>
+<p>Tap <strong>Chain 1</strong> in the main screen to open chain control. Navigate to <strong>Chain Options</strong> and find the <strong>MIDI Channel</strong> setting — it should read <strong>1</strong>.</p>
+<p>Tap back, then tap <strong>Chain 2</strong> → <strong>Chain Options</strong> → <strong>MIDI Channel</strong> — it should read <strong>2</strong>.</p>
 <p>If either shows a different value or <strong>Omni</strong>, change it to the correct channel number.</p>
 <h3 id="step-6--switch-emu-to-channel-1-and-play">Step 6 — Switch EMU to channel 1 and play</h3>
 <p>On the EMU Xboard:</p>
@@ -138,14 +138,14 @@ aconnect -l</code></pre>
 <h2 id="part-2--scale-to-four-channels-draft">Part 2 — Scale to Four Channels <code>[draft]</code></h2>
 <p>Add Chain 3 and Chain 4. By the end, channels 1–4 each trigger a distinct instrument with full channel isolation.</p>
 <h3 id="step-1--add-chain-3-brasslead">Step 1 — Add Chain 3 (brass/lead)</h3>
-<p>Tap <strong>+</strong> → select <strong>ZynAddSubFX</strong>.</p>
+<p>Tap <strong>+</strong> → <strong>Instrument</strong> → select <strong>ZynAddSubFX</strong>.</p>
 <ul><li>Browse to a <strong>Brass</strong> or <strong>Lead</strong> bank.</li><li>Select any brass ensemble or synth lead preset.</li></ul>
 <p>Zynthian assigns MIDI channel 3 automatically.</p>
 <h3 id="step-2--add-chain-4-organ">Step 2 — Add Chain 4 (organ)</h3>
-<p>Tap <strong>+</strong> → select <strong>setBfree</strong>.</p>
+<p>Tap <strong>+</strong> → <strong>Instrument</strong> → select <strong>setBfree</strong>.</p>
 <p>setBfree is a Hammond B3 organ emulator. It loads immediately with a default drawbar configuration — no bank or preset selection is needed. The organ sound is immediately distinct from all three previous chains.</p>
 <h3 id="step-3--confirm-channels-3-and-4">Step 3 — Confirm channels 3 and 4</h3>
-<p>Tap each new chain → <strong>Options</strong> → <strong>MIDI Channel</strong> and confirm the assignment matches (3 and 4 respectively).</p>
+<p>Tap each new chain → <strong>Chain Options</strong> → <strong>MIDI Channel</strong> and confirm the assignment matches (3 and 4 respectively).</p>
 <h3 id="step-4--test-all-four-channels">Step 4 — Test all four channels</h3>
 <p>Cycle the EMU through channels 1, 2, 3, 4 using the <strong>MIDI Channel</strong> button. Play notes at each channel.</p>
 <p><strong>Verify:</strong> Each channel triggers exactly one chain. No other chains respond. Four distinct sounds, zero crosstalk.</p>

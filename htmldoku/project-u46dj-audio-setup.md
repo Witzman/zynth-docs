@@ -128,8 +128,9 @@ Mix Out carries a hardware mix of all outputs — it is independent of software 
 Open VNC to `zynthian.local`. In the Zynthian UI:
 
 1. Tap the **+** icon (bottom-left of screen) to add a new chain.
-2. Select **ZynAddSubFX** as the engine.
-3. Choose any preset from the list (the default preset works).
+2. Tap **Instrument**.
+3. Select **ZynAddSubFX** as the engine.
+4. Choose any preset from the list (the default preset works).
 
 **Verify:** A chain appears in the main screen with ZynAddSubFX loaded.
 

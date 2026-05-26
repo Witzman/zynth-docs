@@ -115,7 +115,7 @@ apt install -y calf-plugins lsp-plugins</code></pre>
 <pre><code class="language-bash">jalv --list | grep -i "calf\|lsp" | head -10</code></pre>
 <p>Expected: multiple Calf and LSP plugin URIs listed.</p>
 <h3 id="step-2--add-a-mod-ui-chain-in-zynthian">Step 2 — Add a MOD-UI chain in Zynthian</h3>
-<p>In VNC, tap <strong>+</strong> (bottom-left) → <strong>Add Audio Effect</strong> → <strong>MOD-UI</strong>.</p>
+<p>In VNC, tap <strong>+</strong> (bottom-left) → <strong>Audio Input</strong> → <strong>MOD-UI</strong>.</p>
 <p>Zynthian starts the MOD-UI engine and creates JACK audio ports for the pedalboard.</p>
 <p><strong>Verify:</strong> A MOD-UI chain appears in the main screen.</p>
 <h3 id="step-3--open-the-mod-ui-browser-interface">Step 3 — Open the MOD-UI browser interface</h3>
@@ -197,7 +197,7 @@ jack_lsp | grep -i "mod\|mod-host"</code></pre>
 <p>If only 2 input ports appear, you need a second MOD-UI chain (Step 2 route) or to expand the input count (not yet supported cleanly via Zynthian UI).</p>
 <p><strong>Verify:</strong> Note how many input ports MOD-UI exposes.</p>
 <h3 id="step-2a--if-mod-ui-has-only-2-inputs-add-a-second-chain">Step 2A — If MOD-UI has only 2 inputs: add a second chain</h3>
-<p>In VNC, tap <strong>+</strong> → <strong>Add Audio Effect</strong> → <strong>MOD-UI</strong>. A second MOD-UI instance starts on a new JACK client.</p>
+<p>In VNC, tap <strong>+</strong> → <strong>Audio Input</strong> → <strong>MOD-UI</strong>. A second MOD-UI instance starts on a new JACK client.</p>
 <p>Find its ports:</p>
 <pre><code class="language-bash">jack_lsp | grep -i mod</code></pre>
 <p>Connect ESI line input to the second MOD-UI instance:</p>

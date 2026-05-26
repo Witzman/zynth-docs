@@ -38,12 +38,18 @@ flowchart LR
 
 ### Adding a chain
 
-Tap **+** in the mixer/launcher screen to add a chain. Two options appear:
+Tap **+** in the mixer/launcher screen. The **Add Chain...** screen shows a grid of chain type buttons:
 
-| Option | Use for |
+| Button | Use for |
 |--------|---------|
-| **Add Instrument Chain** | Synth engines (ZynAddSubFX, FluidSynth, setBfree, etc.) — receives MIDI, produces audio |
-| **Add Audio Chain** | Audio-only processing — LV2 effects, no MIDI trigger |
+| **Instrument** | Synth engines (ZynAddSubFX, FluidSynth, setBfree, etc.) — receives MIDI, produces audio |
+| **Audio Input** | Audio processing chains — LV2 effects, MOD-UI pedalboards — takes live audio input |
+| **MIDI + Audio** | Chains that process both MIDI and audio |
+| **Audio Generator** | Audio generators not driven by MIDI notes |
+| **MIDI** | MIDI tool chains (no audio output) |
+| **Clip Launcher** | Clip/phrase sequencer launcher |
+| **Mixbus** | Mix bus effects chain |
+| **Special** | Other chain types |
 
 After selecting chain type, pick the engine, then bank, then preset.
 
