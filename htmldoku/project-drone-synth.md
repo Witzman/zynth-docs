@@ -12,7 +12,7 @@ Load a ZynAddSubFX pad preset with slow internal LFOs, confirm the timbre evolve
 
 ### Step 1 — Add a ZynAddSubFX chain
 
-In the Zynthian VNC UI, tap **+** (bottom-left) → **Add Synth Engine** → **ZynAddSubFX**.
+In the Zynthian VNC UI, tap **+** (bottom-left) → **Add Instrument Chain** → **ZynAddSubFX**.
 
 **Verify:** A new chain appears with ZynAddSubFX loaded.
 

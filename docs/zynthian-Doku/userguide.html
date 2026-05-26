@@ -122,6 +122,11 @@ flowchart LR
     Mixer --> Out[Audio Output]
 </div>
 <hr>
+<h3 id="adding-a-chain">Adding a chain</h3>
+<p>Tap <strong>+</strong> in the mixer/launcher screen to add a chain. Two options appear:</p>
+<table><thead><tr><th>Option</th><th>Use for</th></tr></thead><tbody><tr><td><strong>Add Instrument Chain</strong></td><td>Synth engines (ZynAddSubFX, FluidSynth, setBfree, etc.) — receives MIDI, produces audio</td></tr><tr><td><strong>Add Audio Chain</strong></td><td>Audio-only processing — LV2 effects, no MIDI trigger</td></tr></tbody></table>
+<p>After selecting chain type, pick the engine, then bank, then preset.</p>
+<hr>
 <h2 id="signal-flow">Signal Flow</h2>
 <p>MIDI arrives from any connected controller and is routed by the ZynMidiRouter [<code>zynthian-ui/zyngine/zynthian_engine_midi_control.py</code>] to chains by channel number. Each chain's engine produces audio that flows through the JACK audio graph to the output device. The ZynMixer provides per-chain volume, pan, and mute/solo.</p>
 <p>The full software stack:</p>
@@ -164,7 +169,7 @@ flowchart TD
     MM --> ZS3[zs3]
     MM --> Admin[admin]
     ChM --> CC
-    ChM --> AddCh[add_chain → engine → bank → preset]
+    ChM --> AddCh["+ → Add Instrument Chain / Add Audio Chain → engine → bank → preset"]
     AddCh --> CC
     CC -->|"control subscreen"| Ctrl[control]
     CC -->|"options subscreen"| ChOpt[chain_options]
