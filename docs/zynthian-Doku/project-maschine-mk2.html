@@ -151,12 +151,13 @@ udevadm trigger</code></pre>
 <h3 id="step-7--confirm-midi-port-is-visible">Step 7 — Confirm MIDI port is visible</h3>
 <pre><code class="language-bash">aconnect -l</code></pre>
 <p>Expected:</p>
-<pre><code>client 32: 'maschine.rs' [type=kernel]
-    0 'maschine.rs port 0'</code></pre>
-<p><strong>Verify:</strong> <code>maschine.rs</code> appears in the output.</p>
+<pre><code>client 128: 'maschine.rs' [type=user,pid=XXXXX]
+    0 'Pads MIDI       '</code></pre>
+<p>Client number varies. Port name is <code>Pads MIDI</code>.</p>
+<p><strong>Verify:</strong> <code>maschine.rs</code> appears in the output with a <code>Pads MIDI</code> port.</p>
 <h3 id="step-8--enable-the-port-in-webconf">Step 8 — Enable the port in webconf</h3>
-<p>Open <code>http://zynthian.local</code> → <strong>Interface → MIDI Options</strong>. Click <strong>MIDI Devices</strong>. Find <code>maschine.rs</code> and enable it.</p>
-<p><strong>Verify:</strong> Port is toggled on.</p>
+<p>Open <code>http://zynthian.local</code> → <strong>Interface → MIDI Options</strong>. Click <strong>MIDI Devices</strong>. Find <code>maschine.rs</code> (port shown as <code>Pads MIDI</code>) and enable it.</p>
+<p><strong>Verify:</strong> Port is toggled on. <code>[low]</code> — exact label in webconf MIDI Devices panel not confirmed on Pi.</p>
 <h3 id="step-9--play-a-pad-hear-a-note">Step 9 — Play a pad, hear a note</h3>
 <p>In VNC, load a chain with any engine (e.g. ZynAddSubFX with a default preset). Press any pad on the Maschine MK2.</p>
 <p><strong>Verify:</strong> A note plays through audio output when a pad is pressed. Group buttons A–H shift the note base up or down.</p>

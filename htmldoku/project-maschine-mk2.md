@@ -117,17 +117,19 @@ aconnect -l
 
 Expected:
 ```
-client 32: 'maschine.rs' [type=kernel]
-    0 'maschine.rs port 0'
+client 128: 'maschine.rs' [type=user,pid=XXXXX]
+    0 'Pads MIDI       '
 ```
 
-**Verify:** `maschine.rs` appears in the output.
+Client number varies. Port name is `Pads MIDI`.
+
+**Verify:** `maschine.rs` appears in the output with a `Pads MIDI` port.
 
 ### Step 8 — Enable the port in webconf
 
-Open `http://zynthian.local` → **Interface → MIDI Options**. Click **MIDI Devices**. Find `maschine.rs` and enable it.
+Open `http://zynthian.local` → **Interface → MIDI Options**. Click **MIDI Devices**. Find `maschine.rs` (port shown as `Pads MIDI`) and enable it.
 
-**Verify:** Port is toggled on.
+**Verify:** Port is toggled on. `[low]` — exact label in webconf MIDI Devices panel not confirmed on Pi.
 
 ### Step 9 — Play a pad, hear a note
 
