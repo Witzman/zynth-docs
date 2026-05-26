@@ -19,10 +19,10 @@ ssh root@zynthian.local
 aconnect -l
 ```
 
-Expected: a line containing `E-MU` or `Xboard` in the client list:
+Expected: a line containing `E-MU Xboard25` in the client list:
 
 ```
-client 32: 'E-MU Xboard' [type=kernel,card=X]
+client 40: 'E-MU Xboard25' [type=kernel,card=X]
 ```
 
 If the EMU does not appear, unplug and replug the USB cable, then run `aconnect -l` again.
@@ -64,15 +64,16 @@ If either shows a different value or **Omni**, change it to the correct channel 
 
 On the EMU Xboard:
 
-1. Press the **MIDI Channel** button. The MIDI Channel LED lights.
-2. Use the data slider or **Octave +/-** buttons to select channel **1**.
-3. Play notes.
+1. Press the **MIDI Channel** button. The MIDI Channel LED illuminates.
+2. Use the data slider or **Octave Transpose +** / **-** buttons to select channel **1**.
+3. Press **Enter** to confirm. The LED stops flashing.
+4. Play notes.
 
 Only Chain 1 should sound. Chain 2 should stay silent.
 
 ### Step 7 — Switch EMU to channel 2 and play
 
-Press **MIDI Channel** on the EMU and select channel **2**. Play the same notes.
+Press **MIDI Channel** on the EMU, use **Octave Transpose +** / **-** or the data slider to select channel **2**, press **Enter** to confirm. Play the same notes.
 
 Only Chain 2 should sound now. Chain 1 should be silent.
 

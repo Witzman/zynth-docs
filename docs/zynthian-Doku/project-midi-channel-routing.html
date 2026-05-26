@@ -108,8 +108,8 @@
 <p>SSH into Zynthian and confirm the EMU Xboard appears as a MIDI client:</p>
 <pre><code class="language-bash">ssh root@zynthian.local
 aconnect -l</code></pre>
-<p>Expected: a line containing <code>E-MU</code> or <code>Xboard</code> in the client list:</p>
-<pre><code>client 32: 'E-MU Xboard' [type=kernel,card=X]</code></pre>
+<p>Expected: a line containing <code>E-MU Xboard25</code> in the client list:</p>
+<pre><code>client 40: 'E-MU Xboard25' [type=kernel,card=X]</code></pre>
 <p>If the EMU does not appear, unplug and replug the USB cable, then run <code>aconnect -l</code> again.</p>
 <h3 id="step-2--verify-midi-port-is-enabled">Step 2 — Verify MIDI port is enabled</h3>
 <p>Open <code>http://zynthian.local</code> → <strong>Interface → MIDI Options</strong>. Click <strong>MIDI Devices</strong>.</p>
@@ -128,10 +128,10 @@ aconnect -l</code></pre>
 <p>If either shows a different value or <strong>Omni</strong>, change it to the correct channel number.</p>
 <h3 id="step-6--switch-emu-to-channel-1-and-play">Step 6 — Switch EMU to channel 1 and play</h3>
 <p>On the EMU Xboard:</p>
-<ol><li>Press the <strong>MIDI Channel</strong> button. The MIDI Channel LED lights.</li><li>Use the data slider or <strong>Octave +/-</strong> buttons to select channel <strong>1</strong>.</li><li>Play notes.</li></ol>
+<ol><li>Press the <strong>MIDI Channel</strong> button. The MIDI Channel LED illuminates.</li><li>Use the data slider or <strong>Octave Transpose +</strong> / <strong>-</strong> buttons to select channel <strong>1</strong>.</li><li>Press <strong>Enter</strong> to confirm. The LED stops flashing.</li><li>Play notes.</li></ol>
 <p>Only Chain 1 should sound. Chain 2 should stay silent.</p>
 <h3 id="step-7--switch-emu-to-channel-2-and-play">Step 7 — Switch EMU to channel 2 and play</h3>
-<p>Press <strong>MIDI Channel</strong> on the EMU and select channel <strong>2</strong>. Play the same notes.</p>
+<p>Press <strong>MIDI Channel</strong> on the EMU, use <strong>Octave Transpose +</strong> / <strong>-</strong> or the data slider to select channel <strong>2</strong>, press <strong>Enter</strong> to confirm. Play the same notes.</p>
 <p>Only Chain 2 should sound now. Chain 1 should be silent.</p>
 <p><strong>Verify:</strong> Clear difference between the two channels. Switching channels on the keyboard switches the active instrument instantly with no overlap between chains.</p>
 <hr>
