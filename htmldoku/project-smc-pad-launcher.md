@@ -96,18 +96,14 @@ Press `Ctrl+C` to stop the monitor.
 
 The 8 encoders send MIDI CC messages on the same port. The verified CC assignments for **Preset 1** are:
 
-| Physical position | Knob # | CC |
-|-------------------|--------|----|
-| 1 (top-left)      | 7      | 16 |
-| 2                 | 5      | 17 |
-| 3                 | 3      | 18 |
-| 4 (top-right)     | 1      | 30 |
-| 5 (bottom-left)   | 8      | 80 |
-| 6                 | 6      | 81 |
-| 7                 | 4      | 82 |
-| 8 (bottom-right)  | 2      | 31 |
+The encoders are arranged in two vertical columns of four. Knob numbers are the device's internal numbering.
 
-Knob numbers are the device's internal numbering. Physical positions run left to right, top row then bottom row.
+| Position         | Left column | CC | Right column | CC |
+|------------------|-------------|----|--------------|----|
+| Row 1 (top)      | Knob 7      | 16 | Knob 8       | 80 |
+| Row 2            | Knob 5      | 17 | Knob 6       | 81 |
+| Row 3            | Knob 3      | 18 | Knob 4       | 82 |
+| Row 4 (bottom)   | Knob 1      | 30 | Knob 2       | 31 |
 
 Use these CC numbers with Zynthian's MIDI CC Learn (long-press a parameter in the chain control screen) to assign encoders to synth parameters.
 
