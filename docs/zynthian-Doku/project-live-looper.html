@@ -103,13 +103,13 @@
 <h1 id="live-looper-with-sooperlooper">Live Looper with SooperLooper</h1>
 <p><strong>Goal:</strong> Record synth chains and live U46DJ audio into SooperLooper loop slots. SMC-PAD transport buttons control record/play/overdub on the selected loop. SMC-PAD pads 1–6 trigger individual loop slots independently.</p>
 <p><strong>Prerequisites:</strong></p>
-<ul><li>Zynthian booted and reachable at <code>zynthian.local</code></li><li>U46DJ connected via USB and configured as audio device (see ESI U46DJ USB Audio Setup)</li><li>E-MU Xboard connected via USB and detected</li><li>SMC-PAD connected via USB and detected</li><li>VNC client connected to Zynthian</li></ul>
-<p><strong>Access:</strong> VNC · Webconf · SSH</p>
+<ul><li>Zynthian booted and reachable at <code>zynthian.local</code></li><li>U46DJ connected via USB and configured as audio device (see ESI U46DJ USB Audio Setup)</li><li>E-MU Xboard connected via USB and detected</li><li>SMC-PAD connected via USB and detected</li></ul>
+<p><strong>Access:</strong> Touchscreen · Webconf · SSH</p>
 <hr>
 <h2 id="part-1--first-loop-draft">Part 1 — First Loop <code>[draft]</code></h2>
-<p>SooperLooper captures audio from a single ZynAddSubFX synth chain and loops it back. Controlled entirely from VNC — no hardware mapping yet.</p>
+<p>SooperLooper captures audio from a single ZynAddSubFX synth chain and loops it back. Controlled from the touchscreen — no hardware mapping yet.</p>
 <h3 id="step-1--start-from-a-clean-state">Step 1 — Start from a clean state</h3>
-<p>In VNC, open the main menu: long-press <strong>Back</strong> (or tap the menu icon in the top-left corner of the screen).</p>
+<p>Open the main menu: tap <strong>OPT/ADMIN</strong> on the keypad.</p>
 <p>Select <strong>Admin</strong> → <strong>Clean All</strong> to remove any existing chains.</p>
 <p><strong>Verify:</strong> The mixer screen shows no chain strips — only the <strong>+</strong> button.</p>
 <h3 id="step-2--add-a-zynaddsubfx-instrument-chain">Step 2 — Add a ZynAddSubFX instrument chain</h3>
@@ -127,7 +127,7 @@
 <p>By default SooperLooper captures only physical audio inputs from the U46DJ. To loop synth audio, route the synth chain's output into SooperLooper.</p>
 <p>Tap the <strong>ZynAddSubFX</strong> chain strip to open its chain control screen.</p>
 <p>On the right side of the screen you will see the side chain panel — a small signal-flow graph showing nodes connected by lines.</p>
-<p>Tap the <strong>Audio Output</strong> node at the bottom of the side chain graph. [low — verify node label in VNC]</p>
+<p>Tap the <strong>Audio Output</strong> node at the bottom of the side chain graph. [low — verify node label on Pi]</p>
 <p>The <strong>Audio Out</strong> subscreen opens. Under the <strong>&gt; Chain inputs</strong> heading you will see a list of available destination chains with checkboxes.</p>
 <p>Tap the <strong>SooperLooper</strong> entry to enable it (checkbox fills: ☑).</p>
 <p><strong>Verify:</strong> The SooperLooper chain is now listed as a selected destination in the Audio Out screen. Tap <strong>Back</strong> to return to the chain control. [low — verify routing takes effect without reboot]</p>
@@ -144,7 +144,7 @@
 <p><strong>Verify:</strong> Undo removes only the last overdub; the original loop continues.</p>
 <h3 id="step-7--stop-and-clear">Step 7 — Stop and clear</h3>
 <p>Tap the loop's progress bar to select it (if not already selected).</p>
-<p>Tap <strong>undo</strong> repeatedly to remove all overdubs down to the original recording. Then, to clear the loop completely: [low — verify exact clear method in VNC widget — may require tapping loop canvas and then a clear action, or using undo_all from a menu]</p>
+<p>Tap <strong>undo</strong> repeatedly to remove all overdubs down to the original recording. Then, to clear the loop completely: [low — verify exact clear method — may require tapping loop canvas and then a clear action, or using undo_all from a menu]</p>
 <p><strong>Verify:</strong> The loop progress bar resets. SooperLooper is in the idle state, ready to record again.</p>
 <hr>
 <h2 id="part-2--add-u46dj-live-audio-input-draft">Part 2 — Add U46DJ Live Audio Input <code>[draft]</code></h2>
@@ -198,9 +198,9 @@ MAP CH#0 NOFF#95 =&gt; CH#0 CC#85</code></pre>
 <h3 id="step-3--cc-learn-bind-record-to-single_pedal">Step 3 — CC Learn: bind RECORD to single_pedal</h3>
 <p><code>single_pedal</code> mode is an intelligent single-button looper control:</p>
 <ul><li>Idle → starts recording (first press)</li><li>Recording → stops recording and plays back (second press)</li><li>Playing → overdubs (third press)</li><li>Overdubbing → back to playing (fourth press)</li><li>Double-tap: pause</li><li>Triple-tap: clear loop</li></ul>
-<p>In VNC, tap the <strong>SooperLooper</strong> chain strip.</p>
-<p>Navigate to the <strong>Global loop</strong> control page. [low — verify navigation: may need to swipe the control screen or use a navigation button to reach Global loop page]</p>
-<p>Long-press the <strong>single pedal</strong> control (hold ~600ms via VNC mouse) until it highlights orange — CC Learn mode is active.</p>
+<p>Tap the <strong>SooperLooper</strong> chain strip.</p>
+<p>Navigate to the <strong>Global loop</strong> control page. [low — verify navigation: may need to swipe the control screen or tap F1/F2 to reach Global loop page]</p>
+<p>Long-press the <strong>single pedal</strong> control (~600ms) until it highlights orange — CC Learn mode is active.</p>
 <p>Press <strong>RECORD</strong> on the SMC-PAD.</p>
 <p><strong>Verify:</strong> The <strong>single pedal</strong> control shows the bound CC number (85). Pressing RECORD on the SMC-PAD now cycles through idle → record → play → overdub → play.</p>
 <h3 id="step-4--cc-learn-bind-play-to-trigger">Step 4 — CC Learn: bind PLAY to trigger</h3>
@@ -236,7 +236,7 @@ MAP CH#0 NON#40 =&gt; CH#0 CC#94
 MAP CH#0 NON#41 =&gt; CH#0 CC#95</code></pre>
 <p>Click <strong>Save</strong> and <strong>Restart UI</strong>.</p>
 <h3 id="step-3--set-sooperlooper-to-6-loops">Step 3 — Set SooperLooper to 6 loops</h3>
-<p>In VNC, tap the <strong>SooperLooper</strong> chain strip.</p>
+<p>Tap the <strong>SooperLooper</strong> chain strip.</p>
 <p>Navigate to the <strong>Global loop</strong> page.</p>
 <p>Set <strong>loop count</strong> to 6. [low — verify control name and navigation]</p>
 <p>Six loop progress bars appear in the SooperLooper widget.</p>
@@ -263,7 +263,7 @@ MAP CH#0 NON#41 =&gt; CH#0 CC#95</code></pre>
 <p><strong>Verify:</strong> Reboot Zynthian:</p>
 <pre><code class="language-bash">ssh root@zynthian.local
 reboot</code></pre>
-<p>After boot, connect VNC. The SooperLooper and synth chains are present, and the MIDI filter rules and CC bindings are active.</p>
+<p>After boot, the SooperLooper and synth chains are present on the display, and the MIDI filter rules and CC bindings are active.</p>
 <p>Test one transport button and one pad to confirm routing is intact.</p>
 <hr>
 <h2 id="going-further">Going Further</h2>

@@ -101,7 +101,7 @@
 <main>
 <article>
 <h1 id="smc-pad-launcher-control">SMC-PAD Launcher Control</h1>
-<p><strong>Goal:</strong> Use all 16 SMC-PAD pads to trigger Zynthian sequencer slots — 4 phrases × 4 chains, one pad per slot. <strong>Prerequisites:</strong> Zynthian running and accessible via SSH and webconf. SMC-PAD available via USB. <strong>Access:</strong> SSH · Webconf · VNC</p>
+<p><strong>Goal:</strong> Use all 16 SMC-PAD pads to trigger Zynthian sequencer slots — 4 phrases × 4 chains, one pad per slot. <strong>Prerequisites:</strong> Zynthian running and accessible via SSH and webconf. SMC-PAD available via USB. <strong>Access:</strong> SSH · Webconf · Touchscreen</p>
 <hr>
 <h2 id="part-1--connect-and-discover-pad-notes-draft">Part 1 — Connect and discover pad notes <code>[draft]</code></h2>
 <p>Before writing any MIDI mappings, identify which MIDI note each pad sends and which channel they use.</p>
@@ -137,8 +137,8 @@ aconnect -l</code></pre>
 <hr>
 <h2 id="part-2--set-up-the-launcher-grid-draft">Part 2 — Set up the launcher grid <code>[draft]</code></h2>
 <p>Build a 4 chains × 4 phrases launcher layout in Zynthian and load a minimal test pattern in each slot.</p>
-<h3 id="step-1--open-the-chain-manager-in-vnc">Step 1 — Open the chain manager in VNC</h3>
-<p>Open a VNC connection to <code>zynthian.local</code>. On the mixer screen, tap the <strong>Chain Manager</strong> icon (or go via <strong>Main Menu → Chain Manager</strong>).</p>
+<h3 id="step-1--open-the-chain-manager">Step 1 — Open the chain manager</h3>
+<p>On the touchscreen mixer screen, tap the <strong>Chain Manager</strong> icon (or tap <strong>OPT/ADMIN</strong> on the keypad → <strong>Main Menu → Chain Manager</strong>).</p>
 <p><strong>Verify:</strong> Chain Manager screen is visible.</p>
 <h3 id="step-2--add-4-instrument-chains">Step 2 — Add 4 instrument chains</h3>
 <p>Tap <strong>+</strong> → <strong>Instrument</strong> → choose any available engine (e.g. <strong>ZynAddSubFX</strong>) → select any bank and preset. Repeat until you have 4 chains.</p>
@@ -201,7 +201,7 @@ aconnect -l</code></pre>
 <p>Click <strong>Save</strong>. Zynthian applies the configuration without a full restart.</p>
 <p><strong>Verify:</strong> Page reloads with your entries still present.</p>
 <h3 id="step-5--test-each-pad">Step 5 — Test each pad</h3>
-<p>On the SMC-PAD, press each pad once. In the VNC launcher view, the corresponding slot should toggle between playing (active indicator) and stopped.</p>
+<p>On the SMC-PAD, press each pad once. In the launcher view on the touchscreen, the corresponding slot should toggle between playing (active indicator) and stopped.</p>
 <p>Press the same pad again — the slot should stop.</p>
 <p><strong>Verify:</strong> All 16 pads toggle their corresponding slots. No pad triggers the wrong slot.</p>
 <hr>

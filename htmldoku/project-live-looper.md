@@ -7,19 +7,18 @@
 - U46DJ connected via USB and configured as audio device (see ESI U46DJ USB Audio Setup)
 - E-MU Xboard connected via USB and detected
 - SMC-PAD connected via USB and detected
-- VNC client connected to Zynthian
 
-**Access:** VNC · Webconf · SSH
+**Access:** Touchscreen · Webconf · SSH
 
 ---
 
 ## Part 1 — First Loop `[draft]`
 
-SooperLooper captures audio from a single ZynAddSubFX synth chain and loops it back. Controlled entirely from VNC — no hardware mapping yet.
+SooperLooper captures audio from a single ZynAddSubFX synth chain and loops it back. Controlled from the touchscreen — no hardware mapping yet.
 
 ### Step 1 — Start from a clean state
 
-In VNC, open the main menu: long-press **Back** (or tap the menu icon in the top-left corner of the screen).
+Open the main menu: tap **OPT/ADMIN** on the keypad.
 
 Select **Admin** → **Clean All** to remove any existing chains.
 
@@ -55,7 +54,7 @@ Tap the **ZynAddSubFX** chain strip to open its chain control screen.
 
 On the right side of the screen you will see the side chain panel — a small signal-flow graph showing nodes connected by lines.
 
-Tap the **Audio Output** node at the bottom of the side chain graph. [low — verify node label in VNC]
+Tap the **Audio Output** node at the bottom of the side chain graph. [low — verify node label on Pi]
 
 The **Audio Out** subscreen opens. Under the **> Chain inputs** heading you will see a list of available destination chains with checkboxes.
 
@@ -89,7 +88,7 @@ To undo the overdub: tap **undo**. The added layer disappears.
 
 Tap the loop's progress bar to select it (if not already selected).
 
-Tap **undo** repeatedly to remove all overdubs down to the original recording. Then, to clear the loop completely: [low — verify exact clear method in VNC widget — may require tapping loop canvas and then a clear action, or using undo_all from a menu]
+Tap **undo** repeatedly to remove all overdubs down to the original recording. Then, to clear the loop completely: [low — verify exact clear method — may require tapping loop canvas and then a clear action, or using undo_all from a menu]
 
 **Verify:** The loop progress bar resets. SooperLooper is in the idle state, ready to record again.
 
@@ -216,11 +215,11 @@ Press each transport button. The raw output should now show CC messages (`B0 55 
 - Double-tap: pause
 - Triple-tap: clear loop
 
-In VNC, tap the **SooperLooper** chain strip.
+Tap the **SooperLooper** chain strip.
 
-Navigate to the **Global loop** control page. [low — verify navigation: may need to swipe the control screen or use a navigation button to reach Global loop page]
+Navigate to the **Global loop** control page. [low — verify navigation: may need to swipe the control screen or tap F1/F2 to reach Global loop page]
 
-Long-press the **single pedal** control (hold ~600ms via VNC mouse) until it highlights orange — CC Learn mode is active.
+Long-press the **single pedal** control (~600ms) until it highlights orange — CC Learn mode is active.
 
 Press **RECORD** on the SMC-PAD.
 
@@ -298,7 +297,7 @@ Click **Save** and **Restart UI**.
 
 ### Step 3 — Set SooperLooper to 6 loops
 
-In VNC, tap the **SooperLooper** chain strip.
+Tap the **SooperLooper** chain strip.
 
 Navigate to the **Global loop** page.
 
@@ -355,7 +354,7 @@ ssh root@zynthian.local
 reboot
 ```
 
-After boot, connect VNC. The SooperLooper and synth chains are present, and the MIDI filter rules and CC bindings are active.
+After boot, the SooperLooper and synth chains are present on the display, and the MIDI filter rules and CC bindings are active.
 
 Test one transport button and one pad to confirm routing is intact.
 

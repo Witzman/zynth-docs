@@ -2,7 +2,7 @@
 
 **Goal:** Build a self-evolving ambient drone using ZynAddSubFX — LFOs slowly mutate timbre without input, SMC-PAD pads shift root note, 8 knobs shape the texture in real time.
 **Prerequisites:** Zynthian booted with audio output working (U46DJ or similar). For Parts 2–3: SMC-PAD connected via USB-C cable and visible in webconf MIDI ports. BLE is not used — connect via USB only.
-**Access:** VNC · Webconf · SSH
+**Access:** Touchscreen · Webconf · SSH
 
 ---
 
@@ -12,7 +12,7 @@ Build the drone chain from scratch: load ZynAddSubFX with an ambient preset that
 
 ### Step 1 — Add a ZynAddSubFX chain
 
-In VNC, tap **+** (bottom-left) → **Instrument** → **ZynAddSubFX**.
+Tap **+** → **Instrument** → **ZynAddSubFX**.
 
 **Verify:** A ZynAddSubFX chain appears in the main screen.
 
@@ -24,7 +24,7 @@ Browse to bank **Cris Owl Alvarez** and select **ambient choirs**. This preset h
 
 ### Step 3 — Set voice mode to monophonic
 
-Monophonic mode ensures root note changes are clean with no overlapping drones. In VNC, tap the chain control screen. `[low]` Navigate to the MIDI or Part settings and set max voices to **1**.
+Monophonic mode ensures root note changes are clean with no overlapping drones. Tap the chain control screen, then navigate to the MIDI or Part settings and set max voices to **1**. `[low]`
 
 **Verify:** Press two different notes in quick succession on the Xboard. The second note cuts the first cleanly — no overlap.
 
@@ -34,9 +34,9 @@ On the E-MU Xboard keyboard, press and hold a single note (e.g. middle C). Hold 
 
 **Verify:** The timbre slowly shifts — filter opens and closes, volume breathes, or harmonics emerge and fade. This is the preset's built-in LFO modulation. If the sound is static, go to Step 5. If it evolves, Part 1 is complete.
 
-### Step 5 — (If static) Increase LFO depth in VNC
+### Step 5 — (If static) Increase LFO depth
 
-If the held note sounds unchanging, navigate to the engine parameters in VNC:
+If the held note sounds unchanging, navigate to the engine parameters on the touchscreen:
 
 1. Tap the chain control screen.
 2. Navigate to the **Amplitude LFO** section.
@@ -81,7 +81,7 @@ Open `http://zynthian.local` → **Interface → MIDI Options**. Click **MIDI De
 
 PLAY and STOP are DAW transport buttons. Their MIDI output must be confirmed before mapping — they may send CC messages (CC-Learnable) or MIDI real-time messages (not CC-Learnable).
 
-In VNC, tap the ZynAddSubFX chain to open the parameter control screen. Long-press any parameter knob (~600ms) until it turns orange — CC Learn is now active.
+On the touchscreen, tap the ZynAddSubFX chain to open the parameter control screen. Long-press any parameter knob (~600ms) until it turns orange — CC Learn is now active.
 
 Press the **PLAY** button on the SMC-PAD. Watch the knob:
 
@@ -132,7 +132,7 @@ Press **Shift + Pad 15** to move pads down one octave. Repeat for a lower regist
 
 Map the 8 SMC-PAD encoders to key ZynAddSubFX parameters for live textural control.
 
-### Step 1 — Open the chain control screen in VNC
+### Step 1 — Open the chain control screen
 
 Tap the ZynAddSubFX chain to open its parameter control screen. Parameter knobs are visible — Filter Cutoff, Resonance, Amplitude, etc.
 
@@ -140,13 +140,13 @@ Tap the ZynAddSubFX chain to open its parameter control screen. Parameter knobs 
 
 ### Step 2 — Map Knob 1 → Filter Cutoff
 
-Long-press the **Filter Cutoff** parameter knob in VNC (~600ms) until it turns orange. Turn **SMC-PAD Knob 1**. Zynthian captures the CC.
+Long-press the **Filter Cutoff** parameter knob on the touchscreen (~600ms) until it turns orange. Turn **SMC-PAD Knob 1**. Zynthian captures the CC.
 
 **Verify:** Turning Knob 1 now opens and closes the filter.
 
 ### Step 3 — Map remaining knobs
 
-Repeat the long-press → turn knob process for each remaining parameter. Suggested mapping for a drone context:
+Repeat the long-press on touchscreen → turn SMC-PAD knob process for each remaining parameter. Suggested mapping for a drone context:
 
 | SMC-PAD Knob | Suggested Parameter | Effect |
 |---|---|---|

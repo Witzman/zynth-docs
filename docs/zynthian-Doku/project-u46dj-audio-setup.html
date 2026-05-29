@@ -101,9 +101,9 @@
 <main>
 <article>
 <h1 id="esi-u46dj-usb-audio-setup">ESI U46DJ USB Audio Setup</h1>
-<p><strong>Goal:</strong> Configure the ESI U46DJ as Zynthian's audio device at 44.1 kHz (4 in / 6 out), verify output to monitors, and confirm all four inputs are available. <strong>Prerequisites:</strong> Zynthian booted and accessible via SSH and VNC. U46DJ powered on and connected via USB. Monitors connected to U46DJ Mix Out (rear panel RCA stereo pair). E-MU Xboard connected.</p>
+<p><strong>Goal:</strong> Configure the ESI U46DJ as Zynthian's audio device at 44.1 kHz (4 in / 6 out), verify output to monitors, and confirm all four inputs are available. <strong>Prerequisites:</strong> Zynthian booted and accessible via SSH and touchscreen. U46DJ powered on and connected via USB. Monitors connected to U46DJ Mix Out (rear panel RCA stereo pair). E-MU Xboard connected.</p>
 <blockquote><p><strong>Note:</strong> The JACK service on this Pi is already configured for <code>hw:U46DJ</code> from a previous session. Part 1 Steps 3–4 (stop services, edit jack2.service) are done. Verify by running the Step 4 check command first — if the output contains <code>hw:U46DJ -r 44100</code>, skip to Step 5. If JACK fails to start, the U46DJ is likely not connected or not powered on.</p></blockquote>
-<p><strong>Access:</strong> SSH · VNC</p>
+<p><strong>Access:</strong> SSH · Touchscreen</p>
 <hr>
 <h2 id="part-1--configure-jack-for-u46dj-draft">Part 1 — Configure JACK for U46DJ <code>[draft]</code></h2>
 <p>The U46DJ has no preset in Zynthian's webconf audio settings. Configure JACK directly by editing the service file via SSH.</p>
@@ -180,9 +180,9 @@ systemctl restart jack2</code></pre>
 <p>The <strong>Mix Out</strong> is on the rear panel of the U46DJ — a stereo RCA pair labelled Mix Out. Connect it to powered monitor speakers.</p>
 <p>Mix Out carries a hardware mix of all inputs and outputs — it is independent of software volume.</p>
 <p><strong>Verify:</strong> Monitors are connected and powered on.</p>
-<h3 id="step-2--load-a-synth-chain-in-vnc">Step 2 — Load a synth chain in VNC</h3>
-<p>Open VNC to <code>zynthian.local</code>. In the Zynthian UI:</p>
-<ol><li>Tap the <strong>+</strong> icon in the main screen.</li><li>Tap <strong>Instrument</strong>.</li><li>Select <strong>ZynAddSubFX</strong> as the engine.</li><li>Choose any preset.</li></ol>
+<h3 id="step-2--load-a-synth-chain">Step 2 — Load a synth chain</h3>
+<p>On the touchscreen:</p>
+<ol><li>Tap <strong>+</strong> in the mixer screen.</li><li>Tap <strong>Instrument</strong>.</li><li>Select <strong>ZynAddSubFX</strong> as the engine.</li><li>Choose any preset.</li></ol>
 <p><strong>Verify:</strong> A chain appears with ZynAddSubFX loaded.</p>
 <h3 id="step-3--play-a-note">Step 3 — Play a note</h3>
 <p>On the E-MU Xboard, press any key.</p>
@@ -211,8 +211,8 @@ system:capture_2
 system:capture_3
 system:capture_4</code></pre>
 <p><strong>Verify:</strong> Exactly four <code>system:capture_*</code> ports listed. If fewer appear, JACK opened the device at 48 kHz — confirm the <code>jack2.service</code> ExecStart uses <code>-r 44100</code> (Part 1 Step 4).</p>
-<h3 id="step-4--route-an-input-to-a-chain-in-vnc">Step 4 — Route an input to a chain in VNC</h3>
-<p>Open VNC to <code>zynthian.local</code>. In the chain control screen for a loaded ZynAddSubFX chain, look for an audio input routing option and connect <code>system:capture_1</code> to the chain's audio input.</p>
+<h3 id="step-4--route-an-input-to-a-chain">Step 4 — Route an input to a chain</h3>
+<p>On the touchscreen, open the chain control screen for the loaded ZynAddSubFX chain, look for an audio input routing option and connect <code>system:capture_1</code> to the chain's audio input.</p>
 <p>Alternatively, connect via SSH:</p>
 <pre><code class="language-bash">jack_lsp -c</code></pre>
 <p>Look for the chain's input port name in the output. Then:</p>

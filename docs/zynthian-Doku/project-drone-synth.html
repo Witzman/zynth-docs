@@ -101,24 +101,24 @@
 <main>
 <article>
 <h1 id="generative-drone-synth">Generative Drone Synth</h1>
-<p><strong>Goal:</strong> Build a self-evolving ambient drone using ZynAddSubFX — LFOs slowly mutate timbre without input, SMC-PAD pads shift root note, 8 knobs shape the texture in real time. <strong>Prerequisites:</strong> Zynthian booted with audio output working (U46DJ or similar). For Parts 2–3: SMC-PAD connected via USB-C cable and visible in webconf MIDI ports. BLE is not used — connect via USB only. <strong>Access:</strong> VNC · Webconf · SSH</p>
+<p><strong>Goal:</strong> Build a self-evolving ambient drone using ZynAddSubFX — LFOs slowly mutate timbre without input, SMC-PAD pads shift root note, 8 knobs shape the texture in real time. <strong>Prerequisites:</strong> Zynthian booted with audio output working (U46DJ or similar). For Parts 2–3: SMC-PAD connected via USB-C cable and visible in webconf MIDI ports. BLE is not used — connect via USB only. <strong>Access:</strong> Touchscreen · Webconf · SSH</p>
 <hr>
 <h2 id="part-1--patch-self-evolving-drone-draft">Part 1 — Patch: Self-Evolving Drone <code>[draft]</code></h2>
 <p>Build the drone chain from scratch: load ZynAddSubFX with an ambient preset that has built-in LFO modulation, set it to monophonic, and confirm the timbre evolves without any input.</p>
 <h3 id="step-1--add-a-zynaddsubfx-chain">Step 1 — Add a ZynAddSubFX chain</h3>
-<p>In VNC, tap <strong>+</strong> (bottom-left) → <strong>Instrument</strong> → <strong>ZynAddSubFX</strong>.</p>
+<p>Tap <strong>+</strong> → <strong>Instrument</strong> → <strong>ZynAddSubFX</strong>.</p>
 <p><strong>Verify:</strong> A ZynAddSubFX chain appears in the main screen.</p>
 <h3 id="step-2--load-an-ambient-drone-preset">Step 2 — Load an ambient drone preset</h3>
 <p>Browse to bank <strong>Cris Owl Alvarez</strong> and select <strong>ambient choirs</strong>. This preset has built-in LFO modulation — timbre slowly shifts on a held note. <code>[low]</code> — if it sounds static on Step 4, try alternatives: <strong>Alex J → Deep Cosmos</strong>, <strong>Alex J → Sweet Quiet Space</strong>, or <strong>Alex J → Vast Space Synth</strong>.</p>
 <p><strong>Verify:</strong> ZynAddSubFX loads the preset.</p>
 <h3 id="step-3--set-voice-mode-to-monophonic">Step 3 — Set voice mode to monophonic</h3>
-<p>Monophonic mode ensures root note changes are clean with no overlapping drones. In VNC, tap the chain control screen. <code>[low]</code> Navigate to the MIDI or Part settings and set max voices to <strong>1</strong>.</p>
+<p>Monophonic mode ensures root note changes are clean with no overlapping drones. Tap the chain control screen, then navigate to the MIDI or Part settings and set max voices to <strong>1</strong>. <code>[low]</code></p>
 <p><strong>Verify:</strong> Press two different notes in quick succession on the Xboard. The second note cuts the first cleanly — no overlap.</p>
 <h3 id="step-4--hold-a-note-and-listen">Step 4 — Hold a note and listen</h3>
 <p>On the E-MU Xboard keyboard, press and hold a single note (e.g. middle C). Hold it for 10–20 seconds.</p>
 <p><strong>Verify:</strong> The timbre slowly shifts — filter opens and closes, volume breathes, or harmonics emerge and fade. This is the preset's built-in LFO modulation. If the sound is static, go to Step 5. If it evolves, Part 1 is complete.</p>
-<h3 id="step-5--if-static-increase-lfo-depth-in-vnc">Step 5 — (If static) Increase LFO depth in VNC</h3>
-<p>If the held note sounds unchanging, navigate to the engine parameters in VNC:</p>
+<h3 id="step-5--if-static-increase-lfo-depth">Step 5 — (If static) Increase LFO depth</h3>
+<p>If the held note sounds unchanging, navigate to the engine parameters on the touchscreen:</p>
 <ol><li>Tap the chain control screen.</li><li>Navigate to the <strong>Amplitude LFO</strong> section.</li><li>Increase <strong>Depth</strong> to 40–60 and <strong>Freq</strong> to a slow value (0.3–0.8 Hz).</li><li>Navigate to <strong>Filter LFO</strong>.</li><li>Increase <strong>Depth</strong> to 30–50 and set <strong>Freq</strong> to a slightly different value from the amplitude LFO (e.g. 0.5 Hz) — the offset creates beating between the two modulations.</li></ol>
 <p><strong>Verify:</strong> Holding a note now produces an audibly evolving texture.</p>
 <hr>
@@ -138,7 +138,7 @@ aconnect -l | grep SINCO</code></pre>
 <p><strong>Verify:</strong> SINCO 2 is toggled on.</p>
 <h3 id="step-3--check-what-playstop-buttons-send">Step 3 — Check what PLAY/STOP buttons send</h3>
 <p>PLAY and STOP are DAW transport buttons. Their MIDI output must be confirmed before mapping — they may send CC messages (CC-Learnable) or MIDI real-time messages (not CC-Learnable).</p>
-<p>In VNC, tap the ZynAddSubFX chain to open the parameter control screen. Long-press any parameter knob (~600ms) until it turns orange — CC Learn is now active.</p>
+<p>On the touchscreen, tap the ZynAddSubFX chain to open the parameter control screen. Long-press any parameter knob (~600ms) until it turns orange — CC Learn is now active.</p>
 <p>Press the <strong>PLAY</strong> button on the SMC-PAD. Watch the knob:</p>
 <table><thead><tr><th>Result</th><th>What it means</th></tr></thead><tbody><tr><td>Knob returns to normal colour</td><td>PLAY sent a CC — Zynthian captured it. Go to Step 4A.</td></tr><tr><td>Knob stays orange</td><td>PLAY sent a MIDI real-time message (FA) — not CC-Learnable. Press the knob again to exit CC Learn. Go to Step 4B.</td></tr></tbody></table>
 <p>Repeat with the <strong>STOP</strong> button.</p>
@@ -162,14 +162,14 @@ aconnect -l | grep SINCO</code></pre>
 <hr>
 <h2 id="part-3--shape-8-knobs-to-parameters-draft">Part 3 — Shape: 8 Knobs to Parameters <code>[draft]</code></h2>
 <p>Map the 8 SMC-PAD encoders to key ZynAddSubFX parameters for live textural control.</p>
-<h3 id="step-1--open-the-chain-control-screen-in-vnc">Step 1 — Open the chain control screen in VNC</h3>
+<h3 id="step-1--open-the-chain-control-screen">Step 1 — Open the chain control screen</h3>
 <p>Tap the ZynAddSubFX chain to open its parameter control screen. Parameter knobs are visible — Filter Cutoff, Resonance, Amplitude, etc.</p>
 <p><strong>Verify:</strong> Control screen shows knobs for the engine parameters.</p>
 <h3 id="step-2--map-knob-1--filter-cutoff">Step 2 — Map Knob 1 → Filter Cutoff</h3>
-<p>Long-press the <strong>Filter Cutoff</strong> parameter knob in VNC (~600ms) until it turns orange. Turn <strong>SMC-PAD Knob 1</strong>. Zynthian captures the CC.</p>
+<p>Long-press the <strong>Filter Cutoff</strong> parameter knob on the touchscreen (~600ms) until it turns orange. Turn <strong>SMC-PAD Knob 1</strong>. Zynthian captures the CC.</p>
 <p><strong>Verify:</strong> Turning Knob 1 now opens and closes the filter.</p>
 <h3 id="step-3--map-remaining-knobs">Step 3 — Map remaining knobs</h3>
-<p>Repeat the long-press → turn knob process for each remaining parameter. Suggested mapping for a drone context:</p>
+<p>Repeat the long-press on touchscreen → turn SMC-PAD knob process for each remaining parameter. Suggested mapping for a drone context:</p>
 <table><thead><tr><th>SMC-PAD Knob</th><th>Suggested Parameter</th><th>Effect</th></tr></thead><tbody><tr><td>1</td><td>Filter Cutoff (CC 74)</td><td>Opens/closes texture brightness</td></tr><tr><td>2</td><td>Filter Resonance (CC 71)</td><td>Adds / removes filter peak</td></tr><tr><td>3</td><td>Amplitude LFO Depth</td><td>Breathing intensity</td></tr><tr><td>4</td><td>Amplitude LFO Freq</td><td>Breath speed</td></tr><tr><td>5</td><td>Filter LFO Depth</td><td>Filter sweep depth</td></tr><tr><td>6</td><td>Filter LFO Freq</td><td>Filter movement speed</td></tr><tr><td>7</td><td>Reverb / Effect Level</td><td>Space — wet/dry</td></tr><tr><td>8</td><td>Volume (CC 7)</td><td>Overall level</td></tr></tbody></table>
 <p>Map each one: long-press target parameter in VNC → turn the SMC-PAD knob.</p>
 <p><strong>Verify:</strong> Each knob produces an audible change when turned while a drone note is held.</p>

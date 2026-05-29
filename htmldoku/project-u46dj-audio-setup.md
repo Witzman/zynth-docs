@@ -1,10 +1,10 @@
 # ESI U46DJ USB Audio Setup
 
 **Goal:** Configure the ESI U46DJ as Zynthian's audio device at 44.1 kHz (4 in / 6 out), verify output to monitors, and confirm all four inputs are available.
-**Prerequisites:** Zynthian booted and accessible via SSH and VNC. U46DJ powered on and connected via USB. Monitors connected to U46DJ Mix Out (rear panel RCA stereo pair). E-MU Xboard connected.
+**Prerequisites:** Zynthian booted and accessible via SSH and touchscreen. U46DJ powered on and connected via USB. Monitors connected to U46DJ Mix Out (rear panel RCA stereo pair). E-MU Xboard connected.
 
 > **Note:** The JACK service on this Pi is already configured for `hw:U46DJ` from a previous session. Part 1 Steps 3–4 (stop services, edit jack2.service) are done. Verify by running the Step 4 check command first — if the output contains `hw:U46DJ -r 44100`, skip to Step 5. If JACK fails to start, the U46DJ is likely not connected or not powered on.
-**Access:** SSH · VNC
+**Access:** SSH · Touchscreen
 
 ---
 
@@ -166,11 +166,11 @@ Mix Out carries a hardware mix of all inputs and outputs — it is independent o
 
 **Verify:** Monitors are connected and powered on.
 
-### Step 2 — Load a synth chain in VNC
+### Step 2 — Load a synth chain
 
-Open VNC to `zynthian.local`. In the Zynthian UI:
+On the touchscreen:
 
-1. Tap the **+** icon in the main screen.
+1. Tap **+** in the mixer screen.
 2. Tap **Instrument**.
 3. Select **ZynAddSubFX** as the engine.
 4. Choose any preset.
@@ -237,9 +237,9 @@ system:capture_4
 
 **Verify:** Exactly four `system:capture_*` ports listed. If fewer appear, JACK opened the device at 48 kHz — confirm the `jack2.service` ExecStart uses `-r 44100` (Part 1 Step 4).
 
-### Step 4 — Route an input to a chain in VNC
+### Step 4 — Route an input to a chain
 
-Open VNC to `zynthian.local`. In the chain control screen for a loaded ZynAddSubFX chain, look for an audio input routing option and connect `system:capture_1` to the chain's audio input.
+On the touchscreen, open the chain control screen for the loaded ZynAddSubFX chain, look for an audio input routing option and connect `system:capture_1` to the chain's audio input.
 
 Alternatively, connect via SSH:
 

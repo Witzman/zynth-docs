@@ -101,7 +101,7 @@
 <main>
 <article>
 <h1 id="multi-controller-performance-rig">Multi-Controller Performance Rig</h1>
-<p><strong>Goal:</strong> Three controllers with distinct roles running simultaneously — Maschine MK2 + SMC-PAD drive a bass/trigger chain (ch1), E-MU Xboard drives a melodic pad chain (ch2), all knobs mapped to engine parameters, saved as the auto-loading boot state. <strong>Prerequisites:</strong> Maschine MK2 daemon built and running (see <a href="project-maschine-mk2.html">Maschine MK2 Controller</a>). SMC-PAD connected and active in webconf MIDI ports. Audio output working. <strong>Access:</strong> SSH · VNC · Webconf</p>
+<p><strong>Goal:</strong> Three controllers with distinct roles running simultaneously — Maschine MK2 + SMC-PAD drive a bass/trigger chain (ch1), E-MU Xboard drives a melodic pad chain (ch2), all knobs mapped to engine parameters, saved as the auto-loading boot state. <strong>Prerequisites:</strong> Maschine MK2 daemon built and running (see <a href="project-maschine-mk2.html">Maschine MK2 Controller</a>). SMC-PAD connected and active in webconf MIDI ports. Audio output working. <strong>Access:</strong> SSH · Touchscreen · Webconf</p>
 <hr>
 <h2 id="part-1--dual-chain-midi-routing-draft">Part 1 — Dual-Chain MIDI Routing <code>[draft]</code></h2>
 <p>Set Xboard to ch2, create two chains on separate channels, confirm each controller drives only its intended chain simultaneously.</p>
@@ -126,7 +126,7 @@ systemctl status maschine-mk2.service --no-pager</code></pre>
 <pre><code class="language-bash">systemctl start maschine-mk2.service</code></pre>
 <p><strong>Verify:</strong> <code>aconnect -l</code> shows <code>maschine.rs</code> client.</p>
 <h3 id="step-4--add-chain-1-bass-engine-ch1">Step 4 — Add Chain 1: bass engine (ch1)</h3>
-<p>In VNC, tap <strong>+</strong> → <strong>Instrument</strong> → <strong>ZynAddSubFX</strong>.</p>
+<p>On the touchscreen, tap <strong>+</strong> → <strong>Instrument</strong> → <strong>ZynAddSubFX</strong>.</p>
 <p>Browse to bank <strong>A VDX</strong> and select <strong>Analog Bass</strong> — a deep, sustained bass sound with clear low-end weight.</p>
 <p>Set the chain to MIDI channel 1:</p>
 <ul><li>Tap the chain → <strong>Chain Options</strong> → <strong>MIDI Channel</strong> → select <strong>1</strong>.</li></ul>
@@ -134,8 +134,7 @@ systemctl status maschine-mk2.service --no-pager</code></pre>
 <h3 id="step-5--add-chain-2-melodic-pad-engine-ch2">Step 5 — Add Chain 2: melodic pad engine (ch2)</h3>
 <p>Tap <strong>+</strong> → <strong>Instrument</strong> → <strong>ZynAddSubFX</strong>.</p>
 <p>Browse to bank <strong>Cris Owl Alvarez</strong> and select <strong>ambient choirs</strong> — a slowly evolving pad texture that works well over the bass.</p>
-<p>Set the chain to MIDI channel 2:</p>
-<ul><li>Tap the chain → <strong>Chain Options</strong> → <strong>MIDI Channel</strong> → select <strong>2</strong>.</li></ul>
+<p>Set the chain to MIDI channel 2: tap the chain → <strong>Chain Options</strong> → <strong>MIDI Channel</strong> → select <strong>2</strong>.</p>
 <p><strong>Verify:</strong> Chain 2 shows channel 2.</p>
 <h3 id="step-6--enable-all-midi-ports-in-webconf">Step 6 — Enable all MIDI ports in webconf</h3>
 <p>Open <code>http://zynthian.local</code> → <strong>Interface → MIDI Options</strong>. Click <strong>MIDI Devices</strong>. Enable:</p>
@@ -161,15 +160,15 @@ systemctl status maschine-mk2.service --no-pager</code></pre>
 <p>Group buttons A–H shift the note base upward. Group A = lowest.</p>
 <p><strong>Verify:</strong> Maschine pads and SMC-PAD pads cover complementary bass registers without overlapping.</p>
 <h3 id="step-4--map-smc-pad-knobs-to-chain-1-parameters">Step 4 — Map SMC-PAD knobs to Chain 1 parameters</h3>
-<p>In VNC, tap Chain 1 to open its control screen.</p>
+<p>On the touchscreen, tap Chain 1 to open its control screen.</p>
 <p>For each parameter you want to control:</p>
-<ol><li>Long-press the parameter knob in VNC (~600ms) — turns orange.</li><li>Turn an SMC-PAD encoder (Knobs 1–8).</li></ol>
+<ol><li>Long-press the parameter knob (~600ms) — turns orange.</li><li>Turn an SMC-PAD encoder (Knobs 1–8).</li></ol>
 <p>Suggested Chain 1 mapping (bass chain):</p>
 <table><thead><tr><th>SMC-PAD Knob</th><th>Parameter</th></tr></thead><tbody><tr><td>1</td><td>Filter Cutoff</td></tr><tr><td>2</td><td>Filter Resonance</td></tr><tr><td>3</td><td>Amplitude / Volume</td></tr><tr><td>4</td><td>Amp LFO Depth</td></tr><tr><td>5</td><td>Filter LFO Freq</td></tr><tr><td>6</td><td>Portamento / Glide</td></tr><tr><td>7</td><td>Reverb Level</td></tr><tr><td>8</td><td>Pan</td></tr></tbody></table>
 <p><strong>Verify:</strong> Each SMC-PAD knob visibly moves the bound parameter when turned.</p>
 <h3 id="step-5--map-xboard-knobs-to-chain-2-parameters">Step 5 — Map Xboard knobs to Chain 2 parameters</h3>
-<p>With Chain 2 control screen open in VNC, map Xboard CC knobs:</p>
-<ol><li>Long-press a parameter knob in VNC — turns orange.</li><li>Turn a knob on the E-MU Xboard.</li></ol>
+<p>Tap Chain 2 to open its control screen. Map Xboard CC knobs:</p>
+<ol><li>Long-press a parameter knob on the touchscreen (~600ms) — turns orange.</li><li>Turn a knob on the E-MU Xboard.</li></ol>
 <p>Xboard has 16 knobs — suggested Chain 2 mapping (melodic pad chain):</p>
 <table><thead><tr><th>Xboard Knob</th><th>Suggested Parameter</th></tr></thead><tbody><tr><td>1</td><td>Filter Cutoff (CC 74)</td></tr><tr><td>2</td><td>Filter Resonance (CC 71)</td></tr><tr><td>3</td><td>Amplitude LFO Depth</td></tr><tr><td>4</td><td>Amplitude LFO Freq</td></tr><tr><td>5</td><td>Filter LFO Depth</td></tr><tr><td>6</td><td>Filter LFO Freq</td></tr><tr><td>7</td><td>Reverb / Effect Level</td></tr><tr><td>8</td><td>Volume (CC 7)</td></tr><tr><td>9–16</td><td>Additional ZynAddSubFX params as desired</td></tr></tbody></table>
 <p><strong>Verify:</strong> Xboard knobs control Chain 2 parameters without affecting Chain 1.</p>
@@ -196,7 +195,7 @@ amidi -p hw:$(aconnect -l | grep -i "SMC\|SINCO" | grep -oP 'client \K[0-9]+' | 
 <ul><li>In webconf → <strong>Interface → MIDI Options</strong> → <strong>Midi filter rules</strong>, add: <code>CH#2 ATAFTER =&gt; CH#2 CC#1</code> <code>[low]</code>.</li></ul>
 <p><strong>Verify:</strong> Pressing harder on a held Xboard note produces an audible modulation effect.</p>
 <h3 id="step-3--set-mixer-levels-for-both-chains">Step 3 — Set mixer levels for both chains</h3>
-<p>In VNC, open the mixer (main screen → mixer view). Adjust:</p>
+<p>On the touchscreen, open the mixer (main screen → mixer view). Adjust:</p>
 <ul><li>Chain 1 (bass) level: balance against Chain 2</li><li>Chain 2 (melodic pad) level: leave some headroom</li></ul>
 <p>Pan Chain 1 slightly left and Chain 2 slightly right for width (optional).</p>
 <p><strong>Verify:</strong> Both chains sound balanced when playing together.</p>

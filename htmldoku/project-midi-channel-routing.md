@@ -2,7 +2,7 @@
 
 **Goal:** Route each MIDI channel from the EMU Xboard to a dedicated Zynthian chain. Switching the keyboard's transmit channel switches the active instrument.
 **Prerequisites:** Zynthian running. EMU Xboard connected via USB. Audio output confirmed working.
-**Access:** SSH · Webconf · VNC
+**Access:** SSH · Webconf · Touchscreen
 
 ---
 
@@ -41,7 +41,7 @@ Find the EMU Xboard entry. Confirm it is enabled. If not, enable it and save.
 
 ### Step 3 — Add Chain 1 (piano)
 
-In VNC, the main screen shows any existing chain strips and a **+** button. Tap **+** → **Instrument**.
+On the touchscreen, tap **+** → **Instrument**.
 
 - Select **FluidSynth**.
 - Select bank **FluidR3_GM** `[low]`. This is a full GM soundfont installed on this Pi — `GeneralUser GS` is not present.
@@ -142,7 +142,7 @@ Reboot from SSH:
 reboot
 ```
 
-Wait ~30 seconds. Reconnect via VNC and confirm:
+Wait ~30 seconds. Confirm on the touchscreen:
 - All chains are present with their correct channel assignments
 - EMU channel switching works immediately without any manual setup
 

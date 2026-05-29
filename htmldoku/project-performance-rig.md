@@ -2,7 +2,7 @@
 
 **Goal:** Three controllers with distinct roles running simultaneously — Maschine MK2 + SMC-PAD drive a bass/trigger chain (ch1), E-MU Xboard drives a melodic pad chain (ch2), all knobs mapped to engine parameters, saved as the auto-loading boot state.
 **Prerequisites:** Maschine MK2 daemon built and running (see [Maschine MK2 Controller](project-maschine-mk2.html)). SMC-PAD connected and active in webconf MIDI ports. Audio output working.
-**Access:** SSH · VNC · Webconf
+**Access:** SSH · Touchscreen · Webconf
 
 ---
 
@@ -64,7 +64,7 @@ systemctl start maschine-mk2.service
 
 ### Step 4 — Add Chain 1: bass engine (ch1)
 
-In VNC, tap **+** → **Instrument** → **ZynAddSubFX**.
+On the touchscreen, tap **+** → **Instrument** → **ZynAddSubFX**.
 
 Browse to bank **A VDX** and select **Analog Bass** — a deep, sustained bass sound with clear low-end weight.
 
@@ -79,8 +79,7 @@ Tap **+** → **Instrument** → **ZynAddSubFX**.
 
 Browse to bank **Cris Owl Alvarez** and select **ambient choirs** — a slowly evolving pad texture that works well over the bass.
 
-Set the chain to MIDI channel 2:
-- Tap the chain → **Chain Options** → **MIDI Channel** → select **2**.
+Set the chain to MIDI channel 2: tap the chain → **Chain Options** → **MIDI Channel** → select **2**.
 
 **Verify:** Chain 2 shows channel 2.
 
@@ -133,10 +132,10 @@ Group buttons A–H shift the note base upward. Group A = lowest.
 
 ### Step 4 — Map SMC-PAD knobs to Chain 1 parameters
 
-In VNC, tap Chain 1 to open its control screen.
+On the touchscreen, tap Chain 1 to open its control screen.
 
 For each parameter you want to control:
-1. Long-press the parameter knob in VNC (~600ms) — turns orange.
+1. Long-press the parameter knob (~600ms) — turns orange.
 2. Turn an SMC-PAD encoder (Knobs 1–8).
 
 Suggested Chain 1 mapping (bass chain):
@@ -156,9 +155,9 @@ Suggested Chain 1 mapping (bass chain):
 
 ### Step 5 — Map Xboard knobs to Chain 2 parameters
 
-With Chain 2 control screen open in VNC, map Xboard CC knobs:
+Tap Chain 2 to open its control screen. Map Xboard CC knobs:
 
-1. Long-press a parameter knob in VNC — turns orange.
+1. Long-press a parameter knob on the touchscreen (~600ms) — turns orange.
 2. Turn a knob on the E-MU Xboard.
 
 Xboard has 16 knobs — suggested Chain 2 mapping (melodic pad chain):
@@ -223,7 +222,7 @@ If no modulation occurs:
 
 ### Step 3 — Set mixer levels for both chains
 
-In VNC, open the mixer (main screen → mixer view). Adjust:
+On the touchscreen, open the mixer (main screen → mixer view). Adjust:
 - Chain 1 (bass) level: balance against Chain 2
 - Chain 2 (melodic pad) level: leave some headroom
 

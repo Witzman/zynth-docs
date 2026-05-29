@@ -2,7 +2,7 @@
 
 **Goal:** Use all 16 SMC-PAD pads to trigger Zynthian sequencer slots — 4 phrases × 4 chains, one pad per slot.
 **Prerequisites:** Zynthian running and accessible via SSH and webconf. SMC-PAD available via USB.
-**Access:** SSH · Webconf · VNC
+**Access:** SSH · Webconf · Touchscreen
 
 ---
 
@@ -98,9 +98,9 @@ Press `Ctrl+C` to stop the monitor.
 
 Build a 4 chains × 4 phrases launcher layout in Zynthian and load a minimal test pattern in each slot.
 
-### Step 1 — Open the chain manager in VNC
+### Step 1 — Open the chain manager
 
-Open a VNC connection to `zynthian.local`. On the mixer screen, tap the **Chain Manager** icon (or go via **Main Menu → Chain Manager**).
+On the touchscreen mixer screen, tap the **Chain Manager** icon (or tap **OPT/ADMIN** on the keypad → **Main Menu → Chain Manager**).
 
 **Verify:** Chain Manager screen is visible.
 
@@ -210,7 +210,7 @@ Click **Save**. Zynthian applies the configuration without a full restart.
 
 ### Step 5 — Test each pad
 
-On the SMC-PAD, press each pad once. In the VNC launcher view, the corresponding slot should toggle between playing (active indicator) and stopped.
+On the SMC-PAD, press each pad once. In the launcher view on the touchscreen, the corresponding slot should toggle between playing (active indicator) and stopped.
 
 Press the same pad again — the slot should stop.
 

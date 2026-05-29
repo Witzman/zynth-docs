@@ -38,7 +38,7 @@ Expected: multiple Calf and LSP plugin URIs listed.
 
 ### Step 2 — Add a MOD-UI chain in Zynthian
 
-In VNC, tap **+** (bottom-left) → **Audio Input** → **MOD-UI**.
+On the touchscreen, tap **+** → **Audio Input** → **MOD-UI**.
 
 Zynthian starts the MOD-UI engine and creates JACK audio ports for the pedalboard.
 
@@ -229,7 +229,7 @@ If only 2 input ports appear, you need a second MOD-UI chain (Step 2 route) or t
 
 ### Step 2A — If MOD-UI has only 2 inputs: add a second chain
 
-In VNC, tap **+** → **Audio Input** → **MOD-UI**. A second MOD-UI instance starts on a new JACK client.
+On the touchscreen, tap **+** → **Audio Input** → **MOD-UI**. A second MOD-UI instance starts on a new JACK client.
 
 Find its ports:
 

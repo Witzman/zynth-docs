@@ -101,7 +101,7 @@
 <main>
 <article>
 <h1 id="custom-midi-channel-routing">Custom MIDI Channel Routing</h1>
-<p><strong>Goal:</strong> Route each MIDI channel from the EMU Xboard to a dedicated Zynthian chain. Switching the keyboard's transmit channel switches the active instrument. <strong>Prerequisites:</strong> Zynthian running. EMU Xboard connected via USB. Audio output confirmed working. <strong>Access:</strong> SSH · Webconf · VNC</p>
+<p><strong>Goal:</strong> Route each MIDI channel from the EMU Xboard to a dedicated Zynthian chain. Switching the keyboard's transmit channel switches the active instrument. <strong>Prerequisites:</strong> Zynthian running. EMU Xboard connected via USB. Audio output confirmed working. <strong>Access:</strong> SSH · Webconf · Touchscreen</p>
 <hr>
 <h2 id="part-1--two-chains-two-channels-draft">Part 1 — Two Chains, Two Channels <code>[draft]</code></h2>
 <p>Prove the concept: Chain 1 responds to MIDI channel 1 only, Chain 2 to channel 2 only. Switching the EMU between the two channels switches which engine plays — no overlap, no bleed.</p>
@@ -118,7 +118,7 @@ aconnect -l</code></pre>
 <p>Open <code>http://zynthian.local</code> → <strong>Interface → MIDI Options</strong>. Click <strong>MIDI Devices</strong>.</p>
 <p>Find the EMU Xboard entry. Confirm it is enabled. If not, enable it and save.</p>
 <h3 id="step-3--add-chain-1-piano">Step 3 — Add Chain 1 (piano)</h3>
-<p>In VNC, the main screen shows any existing chain strips and a <strong>+</strong> button. Tap <strong>+</strong> → <strong>Instrument</strong>.</p>
+<p>On the touchscreen, tap <strong>+</strong> → <strong>Instrument</strong>.</p>
 <ul><li>Select <strong>FluidSynth</strong>.</li><li>Select bank <strong>FluidR3_GM</strong> <code>[low]</code>. This is a full GM soundfont installed on this Pi — <code>GeneralUser GS</code> is not present.</li><li>Select preset <strong>Acoustic Grand Piano</strong>.</li></ul>
 <p>Zynthian assigns new chains to successive MIDI channels automatically. This is Chain 1 → MIDI channel 1.</p>
 <h3 id="step-4--add-chain-2-stringspad">Step 4 — Add Chain 2 (strings/pad)</h3>
@@ -164,7 +164,7 @@ aconnect -l</code></pre>
 <h3 id="step-3--verify-persistence">Step 3 — Verify persistence</h3>
 <p>Reboot from SSH:</p>
 <pre><code class="language-bash">reboot</code></pre>
-<p>Wait ~30 seconds. Reconnect via VNC and confirm:</p>
+<p>Wait ~30 seconds. Confirm on the touchscreen:</p>
 <ul><li>All chains are present with their correct channel assignments</li><li>EMU channel switching works immediately without any manual setup</li></ul>
 <p><strong>Verify:</strong> After reboot, all chains load with the correct MIDI channel map. The setup is ready to play the moment Zynthian starts.</p>
 <hr>

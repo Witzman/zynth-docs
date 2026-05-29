@@ -133,7 +133,7 @@ Open `http://zynthian.local` → **Interface → MIDI Options**. Click **MIDI De
 
 ### Step 9 — Play a pad, hear a note
 
-In VNC, load a chain with any engine (e.g. ZynAddSubFX with a default preset). Press any pad on the Maschine MK2.
+On the touchscreen, load a chain with any engine (e.g. ZynAddSubFX with a default preset). Press any pad on the Maschine MK2.
 
 **Verify:** A note plays through audio output when a pad is pressed. Group buttons A–H shift the note base up or down.
 
@@ -143,15 +143,15 @@ In VNC, load a chain with any engine (e.g. ZynAddSubFX with a default preset). P
 
 Bind Maschine buttons and encoders to synth parameters using Zynthian's CC Learn system.
 
-### Step 1 — Open a synth chain in VNC
+### Step 1 — Open a synth chain
 
-In the Zynthian VNC UI, tap a chain to open its control screen. Parameter knobs (e.g. Cutoff, Resonance, Volume) should be visible.
+On the touchscreen, tap a chain to open its control screen. Parameter knobs (e.g. Cutoff, Resonance, Volume) should be visible.
 
 **Verify:** Chain control screen with parameter knobs is visible.
 
 ### Step 2 — Enter CC Learn on a parameter
 
-Long-press a parameter knob in the VNC UI (hold ~600ms). The knob highlights orange — CC Learn is now active for that parameter.
+Long-press a parameter knob on the touchscreen (~600ms). The knob highlights orange — CC Learn is now active for that parameter.
 
 **Verify:** Knob turns orange.
 

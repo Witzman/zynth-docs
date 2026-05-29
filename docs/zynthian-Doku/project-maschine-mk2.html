@@ -160,16 +160,16 @@ udevadm trigger</code></pre>
 <p>Open <code>http://zynthian.local</code> → <strong>Interface → MIDI Options</strong>. Click <strong>MIDI Devices</strong>. Find <code>maschine.rs</code> (port shown as <code>Pads MIDI</code>) and enable it.</p>
 <p><strong>Verify:</strong> Port is toggled on. <code>[low]</code> — exact label in webconf MIDI Devices panel not confirmed on Pi.</p>
 <h3 id="step-9--play-a-pad-hear-a-note">Step 9 — Play a pad, hear a note</h3>
-<p>In VNC, load a chain with any engine (e.g. ZynAddSubFX with a default preset). Press any pad on the Maschine MK2.</p>
+<p>On the touchscreen, load a chain with any engine (e.g. ZynAddSubFX with a default preset). Press any pad on the Maschine MK2.</p>
 <p><strong>Verify:</strong> A note plays through audio output when a pad is pressed. Group buttons A–H shift the note base up or down.</p>
 <hr>
 <h2 id="part-2--map-buttons-and-encoders-via-cc-learn-draft">Part 2 — Map Buttons and Encoders via CC Learn <code>[draft]</code></h2>
 <p>Bind Maschine buttons and encoders to synth parameters using Zynthian's CC Learn system.</p>
-<h3 id="step-1--open-a-synth-chain-in-vnc">Step 1 — Open a synth chain in VNC</h3>
-<p>In the Zynthian VNC UI, tap a chain to open its control screen. Parameter knobs (e.g. Cutoff, Resonance, Volume) should be visible.</p>
+<h3 id="step-1--open-a-synth-chain">Step 1 — Open a synth chain</h3>
+<p>On the touchscreen, tap a chain to open its control screen. Parameter knobs (e.g. Cutoff, Resonance, Volume) should be visible.</p>
 <p><strong>Verify:</strong> Chain control screen with parameter knobs is visible.</p>
 <h3 id="step-2--enter-cc-learn-on-a-parameter">Step 2 — Enter CC Learn on a parameter</h3>
-<p>Long-press a parameter knob in the VNC UI (hold ~600ms). The knob highlights orange — CC Learn is now active for that parameter.</p>
+<p>Long-press a parameter knob on the touchscreen (~600ms). The knob highlights orange — CC Learn is now active for that parameter.</p>
 <p><strong>Verify:</strong> Knob turns orange.</p>
 <h3 id="step-3--move-a-maschine-button-or-encoder">Step 3 — Move a Maschine button or encoder</h3>
 <p>While the knob is orange, press a Maschine button or turn a Maschine encoder. Zynthian captures the CC number and binds it.</p>

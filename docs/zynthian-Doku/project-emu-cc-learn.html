@@ -101,32 +101,30 @@
 <main>
 <article>
 <h1 id="emu-xboard-cc-knob-mapping">EMU Xboard CC Knob Mapping</h1>
-<p><strong>Goal:</strong> Use the EMU Xboard's 16 CC knobs to control Zynthian synth parameters — two variants: static binding to one specific chain, and follow-channel binding where the knobs automatically control whichever chain matches the current MIDI channel. <strong>Prerequisites:</strong> Zynthian running with the four-chain MIDI channel setup from <a href="project-midi-channel-routing.html">MIDI Channel Routing</a>. EMU Xboard connected via USB. <strong>Access:</strong> VNC · SSH (for monitoring only)</p>
+<p><strong>Goal:</strong> Use the EMU Xboard's 16 CC knobs to control Zynthian synth parameters — two variants: static binding to one specific chain, and follow-channel binding where the knobs automatically control whichever chain matches the current MIDI channel. <strong>Prerequisites:</strong> Zynthian running with the four-chain MIDI channel setup from <a href="project-midi-channel-routing.html">MIDI Channel Routing</a>. EMU Xboard connected via USB. <strong>Access:</strong> Touchscreen · SSH (for monitoring only)</p>
 <hr>
 <h2 id="background-two-binding-variants">Background: Two Binding Variants</h2>
 <p><strong>Static binding</strong> — a CC knob is bound to a parameter on one specific chain. The knob controls that chain regardless of what other chains exist. Use this when you always want a dedicated physical knob for one sound (e.g. knob 1 always sweeps the piano's filter).</p>
 <p><strong>Follow-channel binding</strong> — the same CC knob is bound to the same parameter type on every chain. Because Zynthian routes MIDI by channel, the knob automatically controls whichever chain the EMU is currently transmitting on. Switch channels, the knob follows.</p>
 <hr>
-<h2 id="how-cc-learn-works-in-vnc">How CC Learn Works in VNC</h2>
-<p>The standard workflow uses the V5 hardware encoders. In VNC without hardware, the equivalent is:</p>
-<ol><li>Navigate to the control screen for the chain.</li><li>Tap the correct parameter page in the right-side page list.</li><li><strong>Click and hold</strong> the target parameter knob for ~600ms. The knob border turns orange.</li><li>Turn an EMU CC knob. The CC number is captured immediately.</li><li>The orange highlight disappears. A CC badge appears under the knob name.</li></ol>
-<blockquote><p><strong>Note:</strong> Click-and-hold triggering the learn mode needs Pi verification — this is the expected VNC equivalent of the long-press encoder. If holding the click does not trigger orange, try a firm single click on the knob and report back.</p></blockquote>
-<p>To cancel learn without assigning: click-hold the orange knob again, or tap Back.</p>
+<h2 id="how-cc-learn-works">How CC Learn Works</h2>
+<ol><li>Tap the chain strip to open its control screen.</li><li>Tap the correct parameter page in the right-side page list.</li><li><strong>Long-press</strong> the target parameter knob (~600ms). The knob border turns orange.</li><li>Turn an EMU CC knob. The CC number is captured immediately.</li><li>The orange highlight disappears. A CC badge appears under the knob name.</li></ol>
+<p>To cancel without assigning: long-press the orange knob again, or tap <strong>BACK/NO</strong> on the keypad.</p>
 <hr>
 <h2 id="part-1--static-binding-to-chain-2-draft">Part 1 — Static Binding to Chain 2 <code>[draft]</code></h2>
 <p>Bind three EMU knobs permanently to Chain 2 (ZynAddSubFX strings). These knobs will control Chain 2 only — when the EMU is on channel 2.</p>
 <p>Chain 2 uses ZynAddSubFX which has clearly labelled filter and envelope pages, making it ideal for the first demo.</p>
 <h3 id="step-1--open-chain-2-control-screen">Step 1 — Open Chain 2 control screen</h3>
-<p>In VNC, tap <strong>Chain 2</strong> in the main screen. The chain control view opens. Tap the <strong>control</strong> subscreen if it is not already showing — the 4-knob display with the page list on the right.</p>
+<p>On the touchscreen, tap <strong>Chain 2</strong> in the main screen. The chain control view opens. Tap the <strong>control</strong> subscreen if it is not already showing — the 4-knob display with the page list on the right.</p>
 <h3 id="step-2--bind-knob-1-to-volume">Step 2 — Bind knob 1 to Volume</h3>
 <p>Tap the <strong>Global</strong> page in the right-side page list. The 4 knobs change to show global parameters including <strong>Volume</strong>.</p>
-<p>Click and hold the <strong>Volume</strong> knob for ~600ms. The border turns orange.</p>
+<p>Long-press the <strong>Volume</strong> knob (~600ms). The border turns orange.</p>
 <p>Turn <strong>EMU knob 1</strong>. The CC number is captured and appears as a badge on the Volume knob.</p>
 <h3 id="step-3--bind-knob-2-to-filter-cutoff">Step 3 — Bind knob 2 to Filter Cutoff</h3>
 <p>Tap the <strong>Filter</strong> page in the right-side page list. The knobs now show filter parameters: Cutoff, Resonance, and others.</p>
-<p>Click and hold the <strong>Cutoff</strong> knob for ~600ms → orange. Turn <strong>EMU knob 2</strong>. Captured.</p>
+<p>Long-press <strong>Cutoff</strong> (~600ms) → orange. Turn <strong>EMU knob 2</strong>. Captured.</p>
 <h3 id="step-4--bind-knob-3-to-filter-resonance">Step 4 — Bind knob 3 to Filter Resonance</h3>
-<p>Still on the Filter page. Click and hold <strong>Resonance</strong> → orange. Turn <strong>EMU knob 3</strong>. Captured.</p>
+<p>Still on the Filter page. Long-press <strong>Resonance</strong> → orange. Turn <strong>EMU knob 3</strong>. Captured.</p>
 <h3 id="step-5--test-the-bindings">Step 5 — Test the bindings</h3>
 <p>Switch the EMU to <strong>channel 2</strong> (MIDI Channel button → data slider → 2).</p>
 <p>Turn knobs 1, 2, and 3. Confirm:</p>
@@ -139,17 +137,17 @@
 <p>Chain 4 uses setBfree (organ), which has drawbars instead of a filter. For that chain, Cutoff and Resonance will be substituted with drawbar controls — the concept is the same.</p>
 <h3 id="step-1--bind-knobs-to-chain-1">Step 1 — Bind knobs to Chain 1</h3>
 <p>Chain 1 is FluidSynth. Tap <strong>Chain 1</strong> → control screen.</p>
-<p>Tap the <strong>Global</strong> or first available page. Find <strong>Volume</strong>. Click-hold → turn <strong>knob 1</strong> → captured.</p>
-<p>Navigate to a page with <strong>Cutoff</strong> (FluidSynth may label this differently — look for Filter or Cutoff across the available pages). Click-hold → turn <strong>knob 2</strong> → captured.</p>
-<p>Find <strong>Resonance</strong> (or the closest equivalent). Click-hold → turn <strong>knob 3</strong> → captured.</p>
+<p>Tap the <strong>Global</strong> or first available page. Find <strong>Volume</strong>. Long-press → turn <strong>knob 1</strong> → captured.</p>
+<p>Navigate to a page with <strong>Cutoff</strong> (FluidSynth may label this differently — look for Filter or Cutoff across the available pages). Long-press → turn <strong>knob 2</strong> → captured.</p>
+<p>Find <strong>Resonance</strong> (or the closest equivalent). Long-press → turn <strong>knob 3</strong> → captured.</p>
 <h3 id="step-2--bind-same-knobs-to-chain-3">Step 2 — Bind same knobs to Chain 3</h3>
 <p>Chain 3 is ZynAddSubFX with a brass or lead preset.</p>
-<p>Tap <strong>Chain 3</strong> → control screen → <strong>Global</strong> page → click-hold <strong>Volume</strong> → turn <strong>knob 1</strong> (same physical knob as Chain 1) → captured.</p>
-<p><strong>Filter</strong> page → click-hold <strong>Cutoff</strong> → turn <strong>knob 2</strong> → captured.</p>
-<p><strong>Filter</strong> page → click-hold <strong>Resonance</strong> → turn <strong>knob 3</strong> → captured.</p>
+<p>Tap <strong>Chain 3</strong> → control screen → <strong>Global</strong> page → long-press <strong>Volume</strong> → turn <strong>knob 1</strong> (same physical knob as Chain 1) → captured.</p>
+<p><strong>Filter</strong> page → long-press <strong>Cutoff</strong> → turn <strong>knob 2</strong> → captured.</p>
+<p><strong>Filter</strong> page → long-press <strong>Resonance</strong> → turn <strong>knob 3</strong> → captured.</p>
 <h3 id="step-3--bind-knobs-to-chain-4-setbfree">Step 3 — Bind knobs to Chain 4 (setBfree)</h3>
 <p>Chain 4 is setBfree. The control screen shows the drawbar widget instead of a standard filter page. Bind the three knobs to drawbars or expressive controls instead:</p>
-<ul><li>Tap the <strong>setBfree</strong> page containing drawbar levels.</li><li>Click-hold <strong>Drawbar 1</strong> (16' fundamental) → turn <strong>knob 1</strong> → captured.</li><li>Click-hold <strong>Drawbar 3</strong> (8' principal) → turn <strong>knob 2</strong> → captured.</li><li>Click-hold <strong>Expression</strong> (swell pedal level) → turn <strong>knob 3</strong> → captured.</li></ul>
+<ul><li>Tap the <strong>setBfree</strong> page containing drawbar levels.</li><li>Long-press <strong>Drawbar 1</strong> (16' fundamental) → turn <strong>knob 1</strong> → captured.</li><li>Long-press <strong>Drawbar 3</strong> (8' principal) → turn <strong>knob 2</strong> → captured.</li><li>Long-press <strong>Expression</strong> (swell pedal level) → turn <strong>knob 3</strong> → captured.</li></ul>
 <h3 id="step-4--test-follow-channel-behavior">Step 4 — Test follow-channel behavior</h3>
 <p>Cycle the EMU through channels 1, 2, 3, 4. On each channel, turn knobs 1–3 and confirm:</p>
 <ul><li>The knobs control the engine on that channel</li><li>Switching channels switches which chain responds</li><li>No other chain moves</li></ul>
@@ -164,7 +162,7 @@
 <h3 id="step-2--verify-restore">Step 2 — Verify restore</h3>
 <p>SSH in and reboot:</p>
 <pre><code class="language-bash">reboot</code></pre>
-<p>Wait ~30 seconds. Reconnect via VNC. Turn knobs 1–3 on the EMU with MIDI channel 2 active.</p>
+<p>Wait ~30 seconds. On the touchscreen, turn knobs 1–3 on the EMU with MIDI channel 2 active.</p>
 <p><strong>Verify:</strong> Filter cutoff and resonance respond immediately — no re-learning needed. The CC badge is visible on the bound knobs.</p>
 <hr>
 <h2 id="going-further">Going Further</h2>
