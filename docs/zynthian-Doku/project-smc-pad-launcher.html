@@ -129,8 +129,8 @@ aconnect -l</code></pre>
 <ul><li>Byte 1: MIDI status byte — upper nibble = event type, lower nibble = channel. <code>96</code> = note-on on channel 7. <code>90</code> = note-on on channel 1. <code>99</code> = note-on on channel 10.</li><li>Byte 2: Note number in hex. <code>24</code> hex = 36 decimal.</li><li>Byte 3: Velocity.</li></ul>
 <p>Record the note number (byte 2) for each pad. Convert hex to decimal using:</p>
 <pre><code class="language-bash">printf '%d\n' 0xNN   # replace NN with the hex value</code></pre>
-<p>Fill in this table as you go — you will need it in Part 3:</p>
-<table><thead><tr><th>Pad</th><th>Label</th><th>MIDI note (decimal)</th></tr></thead><tbody><tr><td>1</td><td>bottom-left</td><td></td></tr><tr><td>2</td><td></td><td></td></tr><tr><td>3</td><td></td><td></td></tr><tr><td>4</td><td>bottom-right</td><td></td></tr><tr><td>5</td><td></td><td></td></tr><tr><td>6</td><td></td><td></td></tr><tr><td>7</td><td></td><td></td></tr><tr><td>8</td><td></td><td></td></tr><tr><td>9</td><td></td><td></td></tr><tr><td>10</td><td></td><td></td></tr><tr><td>11</td><td></td><td></td></tr><tr><td>12</td><td></td><td></td></tr><tr><td>13</td><td>top-left</td><td></td></tr><tr><td>14</td><td></td><td></td></tr><tr><td>15</td><td></td><td></td></tr><tr><td>16</td><td>top-right</td><td></td></tr></tbody></table>
+<p>The table below shows the verified note numbers for <strong>Preset 1</strong> (Performance preset — select with <strong>Shift + Pad 1</strong>). If you are using a different preset, fill in your own values here.</p>
+<table><thead><tr><th>Pad</th><th>Position</th><th>MIDI note (decimal)</th></tr></thead><tbody><tr><td>1</td><td>bottom-left</td><td>36</td></tr><tr><td>2</td><td>bottom</td><td>37</td></tr><tr><td>3</td><td>bottom</td><td>38</td></tr><tr><td>4</td><td>bottom-right</td><td>39</td></tr><tr><td>5</td><td>left</td><td>40</td></tr><tr><td>6</td><td></td><td>41</td></tr><tr><td>7</td><td></td><td>42</td></tr><tr><td>8</td><td>right</td><td>43</td></tr><tr><td>9</td><td>left</td><td>44</td></tr><tr><td>10</td><td></td><td>45</td></tr><tr><td>11</td><td></td><td>46</td></tr><tr><td>12</td><td>right</td><td>47</td></tr><tr><td>13</td><td>top-left</td><td>48</td></tr><tr><td>14</td><td>top</td><td>49</td></tr><tr><td>15</td><td>top</td><td>50</td></tr><tr><td>16</td><td>top-right</td><td>51</td></tr></tbody></table>
 <p>Also note the <strong>MIDI channel</strong> from byte 1. Lower nibble of the status byte = channel index (0-based). Add 1 to get the channel number. Example: <code>96</code> → lower nibble <code>6</code> → channel 7.</p>
 <p>Press <code>Ctrl+C</code> to stop the monitor.</p>
 <p><strong>Verify:</strong> You have 16 different note numbers (one per pad) and one channel number that all pads share.</p>
@@ -177,7 +177,7 @@ aconnect -l</code></pre>
   Phrase 3  →  Pads 13–16 (top row)
 
   Chain 0 = leftmost column, Chain 3 = rightmost column</code></pre>
-<p>The CUIA action is <code>TOGGLE_SEQ phrase,chain</code>. Example mapping block assuming pads send notes 36–51:</p>
+<p>The CUIA action is <code>TOGGLE_SEQ phrase,chain</code>. Mapping block for <strong>Preset 1</strong> (notes 36–51 verified):</p>
 <pre><code>36: TOGGLE_SEQ 0,0
 37: TOGGLE_SEQ 0,1
 38: TOGGLE_SEQ 0,2
@@ -194,7 +194,7 @@ aconnect -l</code></pre>
 49: TOGGLE_SEQ 3,1
 50: TOGGLE_SEQ 3,2
 51: TOGGLE_SEQ 3,3</code></pre>
-<p>Replace <code>36</code>–<code>51</code> with your actual note numbers from Part 1.</p>
+<p>If you are using a different preset, replace these note numbers with your values from Part 1.</p>
 <p>Check the existing lines in the text area for conflicts — any note number already listed with a different action will be overridden by your new entry. Remove conflicting lines if needed.</p>
 <p><strong>Verify:</strong> 16 new lines appear in the text area with correct note numbers and TOGGLE_SEQ targets.</p>
 <h3 id="step-4--save-and-apply">Step 4 — Save and apply</h3>

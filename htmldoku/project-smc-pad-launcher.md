@@ -65,26 +65,26 @@ Record the note number (byte 2) for each pad. Convert hex to decimal using:
 printf '%d\n' 0xNN   # replace NN with the hex value
 ```
 
-Fill in this table as you go — you will need it in Part 3:
+The table below shows the verified note numbers for **Preset 1** (Performance preset — select with **Shift + Pad 1**). If you are using a different preset, fill in your own values here.
 
-| Pad | Label | MIDI note (decimal) |
-|-----|-------|---------------------|
-| 1  | bottom-left | |
-| 2  | | |
-| 3  | | |
-| 4  | bottom-right | |
-| 5  | | |
-| 6  | | |
-| 7  | | |
-| 8  | | |
-| 9  | | |
-| 10 | | |
-| 11 | | |
-| 12 | | |
-| 13 | top-left | |
-| 14 | | |
-| 15 | | |
-| 16 | top-right | |
+| Pad | Position | MIDI note (decimal) |
+|-----|----------|---------------------|
+| 1  | bottom-left  | 36 |
+| 2  | bottom       | 37 |
+| 3  | bottom       | 38 |
+| 4  | bottom-right | 39 |
+| 5  | left         | 40 |
+| 6  |              | 41 |
+| 7  |              | 42 |
+| 8  | right        | 43 |
+| 9  | left         | 44 |
+| 10 |              | 45 |
+| 11 |              | 46 |
+| 12 | right        | 47 |
+| 13 | top-left     | 48 |
+| 14 | top          | 49 |
+| 15 | top          | 50 |
+| 16 | top-right    | 51 |
 
 Also note the **MIDI channel** from byte 1. Lower nibble of the status byte = channel index (0-based). Add 1 to get the channel number. Example: `96` → lower nibble `6` → channel 7.
 
@@ -175,7 +175,7 @@ Launcher layout (phrase × chain):
   Chain 0 = leftmost column, Chain 3 = rightmost column
 ```
 
-The CUIA action is `TOGGLE_SEQ phrase,chain`. Example mapping block assuming pads send notes 36–51:
+The CUIA action is `TOGGLE_SEQ phrase,chain`. Mapping block for **Preset 1** (notes 36–51 verified):
 
 ```
 36: TOGGLE_SEQ 0,0
@@ -196,7 +196,7 @@ The CUIA action is `TOGGLE_SEQ phrase,chain`. Example mapping block assuming pad
 51: TOGGLE_SEQ 3,3
 ```
 
-Replace `36`–`51` with your actual note numbers from Part 1.
+If you are using a different preset, replace these note numbers with your values from Part 1.
 
 Check the existing lines in the text area for conflicts — any note number already listed with a different action will be overridden by your new entry. Remove conflicting lines if needed.
 
