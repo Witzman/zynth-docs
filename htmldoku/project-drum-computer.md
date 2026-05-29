@@ -33,15 +33,17 @@ SMC-PAD Preset 1 sends notes 36–51 on channel 7. Those notes map directly onto
 
 If you are on a different SMC-PAD preset, verify your notes and channel first — follow Part 1 of the [SMC-PAD Launcher Control](project-smc-pad-launcher.html) tutorial.
 
+> **Shortcut:** A pre-built snapshot named **SMC-PAD Drum Computer** is already saved in the Zynthian snapshot library (bank 000). Load it via **Library → Snapshots** to skip Steps 1–2 and go straight to Step 3.
+
 ### Step 1 — Add a FluidSynth drum chain
 
 On the VNC desktop, tap **+** in the mixer screen. The **Add Chain...** screen appears. Tap **Instrument**.
 
 Browse engines and select **FluidSynth**. The bank list appears.
 
-Select the **GeneralUser GS** bank. [low — verify exact bank name on Pi]
+Select the **System/FluidDrums** bank.
 
-A preset list appears. Select a drum kit preset — look for a name containing "Drums" or "Kit". [low — verify exact preset name on Pi]
+A preset list appears. Select **Standard**.
 
 **Verify:** A new chain strip appears in the mixer labelled with the FluidSynth preset name.
 
@@ -146,25 +148,15 @@ At minimum, add at least one note per slot.
 
 **Verify:** All 4 clip pads in the drum chain column show a non-empty state.
 
-### Step 3 — Set the master MIDI channel
+### Step 3 — Verify master MIDI channel and key actions
 
-In a browser, open:
+The master MIDI channel and TOGGLE_SEQ pad mappings are already configured on this system. Confirm via webconf:
 
 ```
 http://zynthian.local/ui-midi-options
 ```
 
-Find **Master MIDI Channel** and set it to **7** (the SMC-PAD's channel).
-
-Click **Save**.
-
-**Verify:** Page reloads with Master MIDI Channel = 7.
-
-### Step 4 — Add TOGGLE_SEQ mappings for top-row pads
-
-On the same MIDI Options page, find the **Master Key Actions** text area.
-
-Add 4 lines — one per top-row pad:
+Check that **Master MIDI Channel** shows **7** and **Master Key Actions** contains:
 
 ```
 48: TOGGLE_SEQ 0,0
@@ -173,11 +165,9 @@ Add 4 lines — one per top-row pad:
 51: TOGGLE_SEQ 0,3
 ```
 
-Notes 48–51 are pads 13–16 (top row). `TOGGLE_SEQ phrase,chain` toggles phrase N of chain 0 (the drum chain).
+If either is missing, add or correct the values and click **Save**.
 
-Click **Save**.
-
-**Verify:** 4 new lines appear in the text area. Page saves without error.
+**Verify:** Master MIDI Channel = 7 and 4 TOGGLE_SEQ lines are present.
 
 ### Step 5 — Test launcher control
 

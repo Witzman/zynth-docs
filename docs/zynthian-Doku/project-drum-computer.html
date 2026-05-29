@@ -109,11 +109,12 @@
 <p>SMC-PAD Preset 1 sends notes 36–51 on channel 7. Those notes map directly onto the GM drum map:</p>
 <table><thead><tr><th>Pad</th><th>Note</th><th>Drum sound</th></tr></thead><tbody><tr><td>1</td><td>36 (C2)</td><td>Bass drum 1</td></tr><tr><td>2</td><td>37 (C#2)</td><td>Side stick</td></tr><tr><td>3</td><td>38 (D2)</td><td>Acoustic snare</td></tr><tr><td>4</td><td>39 (D#2)</td><td>Hand clap</td></tr><tr><td>5</td><td>40 (E2)</td><td>Electric snare</td></tr><tr><td>6</td><td>41 (F2)</td><td>Low floor tom</td></tr><tr><td>7</td><td>42 (F#2)</td><td>Closed hi-hat</td></tr><tr><td>8</td><td>43 (G2)</td><td>High floor tom</td></tr><tr><td>9</td><td>44 (G#2)</td><td>Pedal hi-hat</td></tr><tr><td>10</td><td>45 (A2)</td><td>Low tom</td></tr><tr><td>11</td><td>46 (A#2)</td><td>Open hi-hat</td></tr><tr><td>12</td><td>47 (B2)</td><td>Low-mid tom</td></tr><tr><td>13</td><td>48 (C3)</td><td>Hi tom</td></tr><tr><td>14</td><td>49 (C#3)</td><td>Crash cymbal 1</td></tr><tr><td>15</td><td>50 (D3)</td><td>High tom</td></tr><tr><td>16</td><td>51 (D#3)</td><td>Ride cymbal 1</td></tr></tbody></table>
 <p>If you are on a different SMC-PAD preset, verify your notes and channel first — follow Part 1 of the <a href="project-smc-pad-launcher.html">SMC-PAD Launcher Control</a> tutorial.</p>
+<blockquote><p><strong>Shortcut:</strong> A pre-built snapshot named <strong>SMC-PAD Drum Computer</strong> is already saved in the Zynthian snapshot library (bank 000). Load it via <strong>Library → Snapshots</strong> to skip Steps 1–2 and go straight to Step 3.</p></blockquote>
 <h3 id="step-1--add-a-fluidsynth-drum-chain">Step 1 — Add a FluidSynth drum chain</h3>
 <p>On the VNC desktop, tap <strong>+</strong> in the mixer screen. The <strong>Add Chain...</strong> screen appears. Tap <strong>Instrument</strong>.</p>
 <p>Browse engines and select <strong>FluidSynth</strong>. The bank list appears.</p>
-<p>Select the <strong>GeneralUser GS</strong> bank. [low — verify exact bank name on Pi]</p>
-<p>A preset list appears. Select a drum kit preset — look for a name containing "Drums" or "Kit". [low — verify exact preset name on Pi]</p>
+<p>Select the <strong>System/FluidDrums</strong> bank.</p>
+<p>A preset list appears. Select <strong>Standard</strong>.</p>
 <p><strong>Verify:</strong> A new chain strip appears in the mixer labelled with the FluidSynth preset name.</p>
 <h3 id="step-2--set-the-chain-midi-channel">Step 2 — Set the chain MIDI channel</h3>
 <p>Tap the new chain strip to open its control screen. Tap <strong>Chain Options</strong> in the sidebar.</p>
@@ -164,22 +165,16 @@
 <ul><li>Tap the clip pad to select it</li><li>Tap <strong>Edit</strong> (pencil icon)</li><li>Build a variation — for example: row 2 = half-time feel (kick on steps 1 and 9 only), row 3 = fill (kick on steps 13–16), row 4 = breakdown (hi-hat only)</li><li>Tap <strong>Back</strong> to return to the launcher</li></ul>
 <p>At minimum, add at least one note per slot.</p>
 <p><strong>Verify:</strong> All 4 clip pads in the drum chain column show a non-empty state.</p>
-<h3 id="step-3--set-the-master-midi-channel">Step 3 — Set the master MIDI channel</h3>
-<p>In a browser, open:</p>
+<h3 id="step-3--verify-master-midi-channel-and-key-actions">Step 3 — Verify master MIDI channel and key actions</h3>
+<p>The master MIDI channel and TOGGLE_SEQ pad mappings are already configured on this system. Confirm via webconf:</p>
 <pre><code>http://zynthian.local/ui-midi-options</code></pre>
-<p>Find <strong>Master MIDI Channel</strong> and set it to <strong>7</strong> (the SMC-PAD's channel).</p>
-<p>Click <strong>Save</strong>.</p>
-<p><strong>Verify:</strong> Page reloads with Master MIDI Channel = 7.</p>
-<h3 id="step-4--add-toggle_seq-mappings-for-top-row-pads">Step 4 — Add TOGGLE_SEQ mappings for top-row pads</h3>
-<p>On the same MIDI Options page, find the <strong>Master Key Actions</strong> text area.</p>
-<p>Add 4 lines — one per top-row pad:</p>
+<p>Check that <strong>Master MIDI Channel</strong> shows <strong>7</strong> and <strong>Master Key Actions</strong> contains:</p>
 <pre><code>48: TOGGLE_SEQ 0,0
 49: TOGGLE_SEQ 0,1
 50: TOGGLE_SEQ 0,2
 51: TOGGLE_SEQ 0,3</code></pre>
-<p>Notes 48–51 are pads 13–16 (top row). <code>TOGGLE_SEQ phrase,chain</code> toggles phrase N of chain 0 (the drum chain).</p>
-<p>Click <strong>Save</strong>.</p>
-<p><strong>Verify:</strong> 4 new lines appear in the text area. Page saves without error.</p>
+<p>If either is missing, add or correct the values and click <strong>Save</strong>.</p>
+<p><strong>Verify:</strong> Master MIDI Channel = 7 and 4 TOGGLE_SEQ lines are present.</p>
 <h3 id="step-5--test-launcher-control">Step 5 — Test launcher control</h3>
 <p>Press pad 13 (top-left) on the SMC-PAD. In the launcher view, the phrase 1 clip should start playing (active indicator).</p>
 <p>Press pad 13 again — the clip stops.</p>
