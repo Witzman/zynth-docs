@@ -134,6 +134,12 @@ aconnect -l</code></pre>
 <p>Also note the <strong>MIDI channel</strong> from byte 1. Lower nibble of the status byte = channel index (0-based). Add 1 to get the channel number. Example: <code>96</code> → lower nibble <code>6</code> → channel 7.</p>
 <p>Press <code>Ctrl+C</code> to stop the monitor.</p>
 <p><strong>Verify:</strong> You have 16 different note numbers (one per pad) and one channel number that all pads share.</p>
+<h3 id="step-4--note-encoder-cc-numbers">Step 4 — Note encoder CC numbers</h3>
+<p>The 8 encoders send MIDI CC messages on the same port. The verified CC assignments for <strong>Preset 1</strong> are:</p>
+<table><thead><tr><th>Physical position</th><th>Knob #</th><th>CC</th></tr></thead><tbody><tr><td>1 (top-left)</td><td>7</td><td>16</td></tr><tr><td>2</td><td>5</td><td>17</td></tr><tr><td>3</td><td>3</td><td>18</td></tr><tr><td>4 (top-right)</td><td>1</td><td>30</td></tr><tr><td>5 (bottom-left)</td><td>8</td><td>80</td></tr><tr><td>6</td><td>6</td><td>81</td></tr><tr><td>7</td><td>4</td><td>82</td></tr><tr><td>8 (bottom-right)</td><td>2</td><td>31</td></tr></tbody></table>
+<p>Knob numbers are the device's internal numbering. Physical positions run left to right, top row then bottom row.</p>
+<p>Use these CC numbers with Zynthian's MIDI CC Learn (long-press a parameter in the chain control screen) to assign encoders to synth parameters.</p>
+<p><strong>Verify:</strong> Turning each encoder produces a CC message in <code>amidi -d</code> output with the CC number listed above.</p>
 <hr>
 <h2 id="part-2--set-up-the-launcher-grid-draft">Part 2 — Set up the launcher grid <code>[draft]</code></h2>
 <p>Build a 4 chains × 4 phrases launcher layout in Zynthian and load a minimal test pattern in each slot.</p>
