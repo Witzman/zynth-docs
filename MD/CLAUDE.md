@@ -22,7 +22,7 @@ Tutorial generator and teacher. Session rules, workflow, and writing rules in `M
 |------|--------|
 | Hardware | Raspberry Pi 4, ZynthianOS |
 | Kit / encoders | None — no physical hardware kit |
-| Touchscreen | None |
+| Touchscreen | Elecrow ESP32 5" 800×480 — HDMI (video) + USB (touch). Working. |
 | Access methods | SSH · webconf (`http://zynthian.local`) · VNC |
 | SSH | `ssh root@zynthian.local` |
 | Audio interface | ESI U46DJ — USB, 4-in 6-out. Class-compliant (no driver). 44.1 kHz → 4in/6out; 48 kHz → 4in/4out. Phono+Line+MIC+Hi-Z inputs. Mix out for monitors. |
