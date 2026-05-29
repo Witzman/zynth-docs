@@ -211,6 +211,24 @@ aconnect -l</code></pre>
 <p>Press the same pad again — the slot should stop.</p>
 <p><strong>Verify:</strong> All 16 pads toggle their corresponding slots. No pad triggers the wrong slot.</p>
 <hr>
+<h2 id="part-4--map-left-column-encoders-to-screen-knobs-verified">Part 4 — Map left column encoders to screen knobs <code>[verified]</code></h2>
+<p>Wire the SMC-PAD's left column encoders to Zynthian's four on-screen parameter knobs. This lets you tweak synth parameters without touching the touchscreen.</p>
+<p>The mapping (Preset 1):</p>
+<table><thead><tr><th>Encoder</th><th>CC</th><th>Screen knob</th></tr></thead><tbody><tr><td>Knob 7 (top)</td><td>16</td><td>Knob 1 (top)</td></tr><tr><td>Knob 5</td><td>17</td><td>Knob 2</td></tr><tr><td>Knob 3</td><td>18</td><td>Knob 3</td></tr><tr><td>Knob 1 (bottom)</td><td>30</td><td>Knob 4 (bottom)</td></tr></tbody></table>
+<h3 id="step-1--deploy-the-controller-driver">Step 1 — Deploy the controller driver</h3>
+<p>The driver file lives in <code>zynthian-ui/zyngine/ctrldev/</code>. Copy it to the Pi:</p>
+<pre><code class="language-bash">scp zynthian_ctrldev_sinco_smc_pad.py root@zynthian.local:/zynthian/zynthian-ui/zyngine/ctrldev/</code></pre>
+<p>Then restart the UI:</p>
+<pre><code class="language-bash">ssh root@zynthian.local "systemctl restart zynthian"</code></pre>
+<p><strong>Verify:</strong> Zynthian restarts and returns to the main screen after ~10 seconds.</p>
+<h3 id="step-2--activate-the-driver">Step 2 — Activate the driver</h3>
+<p>In VNC, go to <strong>Admin</strong> → <strong>MIDI</strong> → <strong>MIDI Input Devices</strong>.</p>
+<p>Find <strong>SINCO IN 2</strong> (the SMC-PAD Master port). Long-press it and select <strong>SINCO SMC-PAD</strong>.</p>
+<p><strong>Verify:</strong> The port entry updates to show the driver name.</p>
+<h3 id="step-3--test-the-encoders">Step 3 — Test the encoders</h3>
+<p>Open any chain's control screen (tap a chain in the mixer). Turn Knob 7 (top of left column) — the top screen knob should move.</p>
+<p><strong>Verify:</strong> All four left column encoders move their corresponding screen knobs. Pads still trigger sequencer slots.</p>
+<hr>
 <h2 id="going-further">Going Further</h2>
 <ul><li>Add real patterns to each slot — the test patterns can be replaced with actual sequences.</li><li>Use the SMC-PAD's PAD BANK button to switch to a second bank of 16 pads for a second scene.</li><li>Assign the SMC-PAD's encoders to synth parameters via MIDI CC Learn.</li><li>Save the full setup as a snapshot so the pad mappings load with a single recall.</li></ul>
 </article>

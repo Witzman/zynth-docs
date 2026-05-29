@@ -235,6 +235,51 @@ Press the same pad again — the slot should stop.
 
 ---
 
+## Part 4 — Map left column encoders to screen knobs `[verified]`
+
+Wire the SMC-PAD's left column encoders to Zynthian's four on-screen parameter knobs. This lets you tweak synth parameters without touching the touchscreen.
+
+The mapping (Preset 1):
+
+| Encoder | CC | Screen knob |
+|---------|----|-------------|
+| Knob 7 (top)    | 16 | Knob 1 (top)    |
+| Knob 5          | 17 | Knob 2          |
+| Knob 3          | 18 | Knob 3          |
+| Knob 1 (bottom) | 30 | Knob 4 (bottom) |
+
+### Step 1 — Deploy the controller driver
+
+The driver file lives in `zynthian-ui/zyngine/ctrldev/`. Copy it to the Pi:
+
+```bash
+scp zynthian_ctrldev_sinco_smc_pad.py root@zynthian.local:/zynthian/zynthian-ui/zyngine/ctrldev/
+```
+
+Then restart the UI:
+
+```bash
+ssh root@zynthian.local "systemctl restart zynthian"
+```
+
+**Verify:** Zynthian restarts and returns to the main screen after ~10 seconds.
+
+### Step 2 — Activate the driver
+
+In VNC, go to **Admin** → **MIDI** → **MIDI Input Devices**.
+
+Find **SINCO IN 2** (the SMC-PAD Master port). Long-press it and select **SINCO SMC-PAD**.
+
+**Verify:** The port entry updates to show the driver name.
+
+### Step 3 — Test the encoders
+
+Open any chain's control screen (tap a chain in the mixer). Turn Knob 7 (top of left column) — the top screen knob should move.
+
+**Verify:** All four left column encoders move their corresponding screen knobs. Pads still trigger sequencer slots.
+
+---
+
 ## Going Further
 
 - Add real patterns to each slot — the test patterns can be replaced with actual sequences.
