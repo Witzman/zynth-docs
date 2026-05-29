@@ -58,6 +58,7 @@ SIDEBAR = [
         ("MIDI Channel Routing", "project-midi-channel-routing.html"),
         ("EMU CC Knob Mapping", "project-emu-cc-learn.html"),
         ("SMC-PAD Launcher Control", "project-smc-pad-launcher.html"),
+        ("SMC-PAD Drum Computer", "project-drum-computer.html"),
         ("ESI U46DJ Audio Setup", "project-u46dj-audio-setup.html"),
         ("Audio FX Chain with MOD-UI", "project-modui-effects.html"),
         ("Multi-Controller Performance Rig", "project-performance-rig.html"),
