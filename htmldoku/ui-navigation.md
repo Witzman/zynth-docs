@@ -239,6 +239,83 @@ These are the defaults from `zynthian_envars_V5.sh`. Customizable via `ZYNTHIAN_
 
 ---
 
+## V5 Touch Keypad
+
+The **V5 touch keypad** is a software button overlay that appears on the touchscreen when no physical V5 hardware buttons are present. It emulates all V5 button functions via touch, so VNC is not required for navigation.
+
+Activate it in the Zynthian UI: **Admin → Touch Navigation → V5 keypad at left** (or at right).
+
+### Screen Layout
+
+With the keypad active, the 800×480 display is divided into three zones:
+
+```
+┌──────────┬──────────────────────────────────────────────────────────┐
+│ OPT/     │ MIX/     │                                               │
+│ ADMIN    │ LEVEL    │                                               │
+├──────────┼──────────┤                                               │
+│ CTRL/    │ ZS3/     │         Zynthian UI area                      │
+│ PRESET   │ SHOT     │         (640 × 400 px)                        │
+├──────────┼──────────┤                                               │
+│ [metro]  │ PAD/     │                                               │
+│          │ STEP     │                                               │
+├──────────┼──────────┤                                               │
+│ BACK/    │ SEL/     │                                               │
+│ NO       │ YES      │                                               │
+├──────────┼──────────┤                                               │
+│ ALT      │ UP       │                                               │
+├──────────┼──────────┤                                               │
+│ LEFT     │ DOWN     ├────────┬──────┬──────┬──────┬──────┬──────┬──┤
+│          │          │ RIGHT  │ ● REC│ ■ STP│ ▶ PLY│  F1  │  F2  │F3│F4│
+└──────────┴──────────┴────────┴──────┴──────┴──────┴──────┴──────┴──┴──┘
+ ←── 160px ──→ ←────────────── 640px ───────────────────────────────────→
+```
+
+- **Left side panel** — 160px wide × 480px tall — 2 columns × 6 rows of buttons
+- **Bottom row** — 80px tall × 640px wide — 8 buttons (right of the side panel)
+- **Zynthian UI area** — 640 × 400px — touch works normally here (tap, long-press, swipe)
+
+### Button Reference
+
+Button label format: **X/Y** means short tap = X action, bold hold (300ms) = Y action.
+
+| Button | Short tap | Bold hold (300ms) | Long hold (>2s) |
+|--------|-----------|-------------------|-----------------|
+| **OPT/ADMIN** | Main Menu | Admin screen | Power off |
+| **MIX/LEVEL** | Audio Mixer | ALSA Mixer (hardware levels) | All sounds off |
+| **CTRL/PRESET** | Chain Control | Bank/Preset selection | Preset favorites |
+| **ZS3/SHOT** | ZS3 list | Snapshots | — |
+| **[metronome]** | Tempo | — | — |
+| **PAD/STEP** | Pad Launcher | Pattern Editor | Arranger |
+| **BACK/NO** | Back / cancel | — | — |
+| **SEL/YES** | Select / confirm | Options for item | — |
+| **ALT** | Toggle ALT mode | Help | — |
+| **UP** | Navigate up | — | — |
+| **LEFT** | Navigate left | — | — |
+| **DOWN** | Navigate down | — | — |
+| **RIGHT** | Navigate right | — | — |
+| **REC (●)** | Record | — | — |
+| **STOP (■)** | Stop | All notes off | All sounds off |
+| **PLAY (▶)** | Play / pause | Audio file list | — |
+| **F1** (ALT: F5) | Program Change 1 | Program Change 1 | — |
+| **F2** (ALT: F6) | Program Change 2 | Program Change 2 | — |
+| **F3** (ALT: F7) | Program Change 3 | Program Change 3 | — |
+| **F4** (ALT: F8) | Program Change 4 | Program Change 4 | — |
+
+**ALT mode:** Tap **ALT** to toggle. While active, F1–F4 relabel to F5–F8 and trigger Program Changes 5–8.
+
+### Changing the Layout
+
+| Setting | Where |
+|---------|-------|
+| V5 keypad at left | **Admin → Touch Navigation → V5 keypad at left** |
+| V5 keypad at right | **Admin → Touch Navigation → V5 keypad at right** |
+| Disable keypad | **Admin → Touch Navigation → None** |
+
+The setting writes `ZYNTHIAN_UI_TOUCH_NAVIGATION2` in `/zynthian/config/zynthian_envars.sh` and takes effect after restart.
+
+---
+
 ## Screen Navigation Stack
 
 Zynthian maintains a linear screen history. Each screen transition pushes to the stack; Back pops. The stack resets to root on `show_screen_reset()` calls.
@@ -262,4 +339,4 @@ In chain_control, the side chain panel toggles independently — it doesn't push
 
 ---
 
-*Version: 2026-05-25 — derived from `zyngui/zynthian_gui_main_menu.py`, `zyngui/zynthian_gui_mixer.py`, `zyngui/zynthian_gui_chain_control.py`, `zynthian-sys/config/zynthian_envars_V5.sh`.*
+*Version: 2026-05-29 — derived from `zyngui/zynthian_gui_main_menu.py`, `zyngui/zynthian_gui_mixer.py`, `zyngui/zynthian_gui_chain_control.py`, `zyngui/zynthian_gui_touchkeypad_v5.py`, `zyngui/zynthian_gui_config.py`, `zynthian-sys/config/zynthian_envars_V5.sh`.*

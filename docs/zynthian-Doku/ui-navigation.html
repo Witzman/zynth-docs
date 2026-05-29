@@ -165,6 +165,39 @@
 <table><thead><tr><th>Switch</th><th>Short press</th><th>Bold press (300ms–2s)</th><th>Long press (>2s)</th></tr></thead><tbody><tr><td>SW1</td><td>MENU (main_menu)</td><td>SCREEN_ADMIN</td><td>POWER_OFF</td></tr><tr><td>SW2</td><td>SCREEN_AUDIO_MIXER</td><td>SCREEN_ALSA_MIXER</td><td>ALL_SOUNDS_OFF</td></tr><tr><td>SW3</td><td>CHAIN_CONTROL</td><td>BANK_PRESET</td><td>PRESET_FAV</td></tr><tr><td>SW4</td><td>SCREEN_ZS3</td><td>SCREEN_SNAPSHOT</td><td>—</td></tr></tbody></table>
 <p>These are the defaults from <code>zynthian_envars_V5.sh</code>. Customizable via <code>ZYNTHIAN_WIRING_CUSTOM_SWITCH_NN__UI_SHORT/BOLD/LONG</code>.</p>
 <hr>
+<h2 id="v5-touch-keypad">V5 Touch Keypad</h2>
+<p>The <strong>V5 touch keypad</strong> is a software button overlay that appears on the touchscreen when no physical V5 hardware buttons are present. It emulates all V5 button functions via touch, so VNC is not required for navigation.</p>
+<p>Activate it in the Zynthian UI: <strong>Admin → Touch Navigation → V5 keypad at left</strong> (or at right).</p>
+<h3 id="screen-layout">Screen Layout</h3>
+<p>With the keypad active, the 800×480 display is divided into three zones:</p>
+<pre><code>┌──────────┬──────────────────────────────────────────────────────────┐
+│ OPT/     │ MIX/     │                                               │
+│ ADMIN    │ LEVEL    │                                               │
+├──────────┼──────────┤                                               │
+│ CTRL/    │ ZS3/     │         Zynthian UI area                      │
+│ PRESET   │ SHOT     │         (640 × 400 px)                        │
+├──────────┼──────────┤                                               │
+│ [metro]  │ PAD/     │                                               │
+│          │ STEP     │                                               │
+├──────────┼──────────┤                                               │
+│ BACK/    │ SEL/     │                                               │
+│ NO       │ YES      │                                               │
+├──────────┼──────────┤                                               │
+│ ALT      │ UP       │                                               │
+├──────────┼──────────┤                                               │
+│ LEFT     │ DOWN     ├────────┬──────┬──────┬──────┬──────┬──────┬──┤
+│          │          │ RIGHT  │ ● REC│ ■ STP│ ▶ PLY│  F1  │  F2  │F3│F4│
+└──────────┴──────────┴────────┴──────┴──────┴──────┴──────┴──────┴──┴──┘
+ ←── 160px ──→ ←────────────── 640px ───────────────────────────────────→</code></pre>
+<ul><li><strong>Left side panel</strong> — 160px wide × 480px tall — 2 columns × 6 rows of buttons</li><li><strong>Bottom row</strong> — 80px tall × 640px wide — 8 buttons (right of the side panel)</li><li><strong>Zynthian UI area</strong> — 640 × 400px — touch works normally here (tap, long-press, swipe)</li></ul>
+<h3 id="button-reference">Button Reference</h3>
+<p>Button label format: <strong>X/Y</strong> means short tap = X action, bold hold (300ms) = Y action.</p>
+<table><thead><tr><th>Button</th><th>Short tap</th><th>Bold hold (300ms)</th><th>Long hold (>2s)</th></tr></thead><tbody><tr><td><strong>OPT/ADMIN</strong></td><td>Main Menu</td><td>Admin screen</td><td>Power off</td></tr><tr><td><strong>MIX/LEVEL</strong></td><td>Audio Mixer</td><td>ALSA Mixer (hardware levels)</td><td>All sounds off</td></tr><tr><td><strong>CTRL/PRESET</strong></td><td>Chain Control</td><td>Bank/Preset selection</td><td>Preset favorites</td></tr><tr><td><strong>ZS3/SHOT</strong></td><td>ZS3 list</td><td>Snapshots</td><td>—</td></tr><tr><td><strong>[metronome]</strong></td><td>Tempo</td><td>—</td><td>—</td></tr><tr><td><strong>PAD/STEP</strong></td><td>Pad Launcher</td><td>Pattern Editor</td><td>Arranger</td></tr><tr><td><strong>BACK/NO</strong></td><td>Back / cancel</td><td>—</td><td>—</td></tr><tr><td><strong>SEL/YES</strong></td><td>Select / confirm</td><td>Options for item</td><td>—</td></tr><tr><td><strong>ALT</strong></td><td>Toggle ALT mode</td><td>Help</td><td>—</td></tr><tr><td><strong>UP</strong></td><td>Navigate up</td><td>—</td><td>—</td></tr><tr><td><strong>LEFT</strong></td><td>Navigate left</td><td>—</td><td>—</td></tr><tr><td><strong>DOWN</strong></td><td>Navigate down</td><td>—</td><td>—</td></tr><tr><td><strong>RIGHT</strong></td><td>Navigate right</td><td>—</td><td>—</td></tr><tr><td><strong>REC (●)</strong></td><td>Record</td><td>—</td><td>—</td></tr><tr><td><strong>STOP (■)</strong></td><td>Stop</td><td>All notes off</td><td>All sounds off</td></tr><tr><td><strong>PLAY (▶)</strong></td><td>Play / pause</td><td>Audio file list</td><td>—</td></tr><tr><td><strong>F1</strong> (ALT: F5)</td><td>Program Change 1</td><td>Program Change 1</td><td>—</td></tr><tr><td><strong>F2</strong> (ALT: F6)</td><td>Program Change 2</td><td>Program Change 2</td><td>—</td></tr><tr><td><strong>F3</strong> (ALT: F7)</td><td>Program Change 3</td><td>Program Change 3</td><td>—</td></tr><tr><td><strong>F4</strong> (ALT: F8)</td><td>Program Change 4</td><td>Program Change 4</td><td>—</td></tr></tbody></table>
+<p><strong>ALT mode:</strong> Tap <strong>ALT</strong> to toggle. While active, F1–F4 relabel to F5–F8 and trigger Program Changes 5–8.</p>
+<h3 id="changing-the-layout">Changing the Layout</h3>
+<table><thead><tr><th>Setting</th><th>Where</th></tr></thead><tbody><tr><td>V5 keypad at left</td><td><strong>Admin → Touch Navigation → V5 keypad at left</strong></td></tr><tr><td>V5 keypad at right</td><td><strong>Admin → Touch Navigation → V5 keypad at right</strong></td></tr><tr><td>Disable keypad</td><td><strong>Admin → Touch Navigation → None</strong></td></tr></tbody></table>
+<p>The setting writes <code>ZYNTHIAN_UI_TOUCH_NAVIGATION2</code> in <code>/zynthian/config/zynthian_envars.sh</code> and takes effect after restart.</p>
+<hr>
 <h2 id="screen-navigation-stack">Screen Navigation Stack</h2>
 <p>Zynthian maintains a linear screen history. Each screen transition pushes to the stack; Back pops. The stack resets to root on <code>show_screen_reset()</code> calls.</p>
 <p>Typical depth when working:</p>
@@ -175,7 +208,7 @@
 <h2 id="whats-next">What's Next</h2>
 <ul><li><a href="chain-management.html">Chains & Routing</a> — add and configure chains</li><li><a href="control-screen.html">Control Screen</a> — adjust synth parameters</li><li><a href="zs3-guide.html">ZS3 Subsnapshots</a> — live performance recall</li><li><a href="admin-guide.html">Admin & System</a> — WiFi, Bluetooth, updates</li></ul>
 <hr>
-<p><em>Version: 2026-05-25 — derived from <code>zyngui/zynthian_gui_main_menu.py</code>, <code>zyngui/zynthian_gui_mixer.py</code>, <code>zyngui/zynthian_gui_chain_control.py</code>, <code>zynthian-sys/config/zynthian_envars_V5.sh</code>.</em></p>
+<p><em>Version: 2026-05-29 — derived from <code>zyngui/zynthian_gui_main_menu.py</code>, <code>zyngui/zynthian_gui_mixer.py</code>, <code>zyngui/zynthian_gui_chain_control.py</code>, <code>zyngui/zynthian_gui_touchkeypad_v5.py</code>, <code>zyngui/zynthian_gui_config.py</code>, <code>zynthian-sys/config/zynthian_envars_V5.sh</code>.</em></p>
 </article>
 </main>
 <div id="toc-column"></div>
