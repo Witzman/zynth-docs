@@ -104,18 +104,16 @@
 <h1 id="esi-u46dj-usb-audio-setup">ESI U46DJ USB Audio Setup</h1>
 <p><strong>Goal:</strong> Configure the ESI U46DJ as Zynthian's audio device at 44.1 kHz (6-out playback), verify output to monitors via Mix Out. <strong>Prerequisites:</strong> Zynthian booted and accessible via SSH and touchscreen. U46DJ connected via USB and powered on. Monitors connected to U46DJ Mix Out (rear panel RCA stereo pair). E-MU Xboard connected. <strong>Access:</strong> SSH · Touchscreen</p>
 <blockquote><p><strong>Power supply:</strong> The U46DJ draws up to 500 mA peak at startup — enough to trip the Pi 4's USB port over-current protection. Connect the external DC +9V/500 mA adapter to the rear panel before plugging in the USB data cable. If no DC adapter is available, use a powered USB hub between the Pi and the U46DJ.</p></blockquote>
-<blockquote><p><strong>Boot sequence:</strong> The U46DJ USB firmware enters a bad state if the USB data cable is connected while the Pi is booting. Always boot the Pi first, then power on the U46DJ, then connect the USB cable. The JACK wait script handles the rest automatically.</p></blockquote>
+<blockquote><p><strong>Boot sequence:</strong> With a powered USB hub, the U46DJ can be left connected and powered on at boot — the hub isolates it from the Pi's USB controller and the JACK wait script handles startup sequencing automatically. Without a powered hub, boot the Pi first, then power on the U46DJ, then connect the USB cable.</p></blockquote>
 <blockquote><p><strong>Capture inputs:</strong> The U46DJ USB capture stream is not stable on this Pi. JACK runs in playback-only mode. The 4 inputs (mic, line, phono, Hi-Z) are available at the hardware level but not routed through JACK in this configuration.</p></blockquote>
 <hr>
-<h2 id="part-1--configure-jack-for-u46dj-draft">Part 1 — Configure JACK for U46DJ <code>[draft]</code></h2>
+<h2 id="part-1--configure-jack-for-u46dj-verified">Part 1 — Configure JACK for U46DJ <code>[verified]</code></h2>
 <p>The U46DJ has no preset in Zynthian's webconf audio settings. Configure JACK directly by editing the service file via SSH, then connect the device using the correct boot sequence.</p>
-<h3 id="step-1--boot-the-pi-without-u46dj-connected">Step 1 — Boot the Pi without U46DJ connected</h3>
-<p>Start the Pi with the U46DJ USB cable <strong>unplugged</strong>. Wait for the Zynthian UI to appear on screen, or for the audio/MIDI error screen — either is expected at this point.</p>
-<p><strong>Verify:</strong> Pi is booted and accessible via SSH.</p>
-<h3 id="step-2--power-on-the-u46dj-and-connect-usb">Step 2 — Power on the U46DJ and connect USB</h3>
-<p>Press the power button on the U46DJ front panel. The power LED lights on.</p>
-<p>Wait 3 seconds, then plug the USB data cable into the Pi.</p>
-<p><strong>Verify:</strong> Power LED is lit. USB cable is connected.</p>
+<h3 id="step-1--connect-u46dj-via-powered-usb-hub-and-power-on">Step 1 — Connect U46DJ via powered USB hub and power on</h3>
+<p>Connect the U46DJ to a powered USB hub, and connect the hub to the Pi. Press the power button on the U46DJ front panel. The power LED lights on.</p>
+<p>The powered hub supplies its own 5V — the U46DJ does not draw from the Pi's USB port. The DC +9V rear connector is not required when using a powered hub.</p>
+<p>If you have no powered hub: boot the Pi first without U46DJ connected, wait for the Zynthian UI or error screen, then power on the U46DJ and plug in the USB cable.</p>
+<p><strong>Verify:</strong> Power LED is lit. USB cable connected to hub.</p>
 <h3 id="step-3--confirm-the-u46dj-is-detected">Step 3 — Confirm the U46DJ is detected</h3>
 <pre><code class="language-bash">ssh root@zynthian.local
 aplay -l | grep -i u46</code></pre>
@@ -184,7 +182,7 @@ systemctl start zynthian</code></pre>
 <p>This means the RT audio thread could not start. Either:</p>
 <ol><li>The U46DJ capture stream is being opened (full-duplex mode) — fix by ensuring <code>-P hw:U46DJ</code> (not <code>-d hw:U46DJ</code>) in the <code>ExecStart</code> line.</li><li>A stale jackd process from a previous manual run is holding the device — run <code>kill -9 $(pgrep jackd)</code> before starting the service.</li></ol>
 <hr>
-<h2 id="part-2--verify-audio-output-draft">Part 2 — Verify Audio Output <code>[draft]</code></h2>
+<h2 id="part-2--verify-audio-output-verified">Part 2 — Verify Audio Output <code>[verified]</code></h2>
 <p>Play a synth note and confirm audio reaches the monitors through the U46DJ Mix Out.</p>
 <h3 id="step-1--connect-monitors-to-mix-out">Step 1 — Connect monitors to Mix Out</h3>
 <p>The <strong>Mix Out</strong> is on the rear panel of the U46DJ — a stereo RCA pair labelled Mix Out. Connect it to powered monitor speakers.</p>

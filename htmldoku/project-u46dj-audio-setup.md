@@ -6,29 +6,25 @@
 
 > **Power supply:** The U46DJ draws up to 500 mA peak at startup — enough to trip the Pi 4's USB port over-current protection. Connect the external DC +9V/500 mA adapter to the rear panel before plugging in the USB data cable. If no DC adapter is available, use a powered USB hub between the Pi and the U46DJ.
 
-> **Boot sequence:** The U46DJ USB firmware enters a bad state if the USB data cable is connected while the Pi is booting. Always boot the Pi first, then power on the U46DJ, then connect the USB cable. The JACK wait script handles the rest automatically.
+> **Boot sequence:** With a powered USB hub, the U46DJ can be left connected and powered on at boot — the hub isolates it from the Pi's USB controller and the JACK wait script handles startup sequencing automatically. Without a powered hub, boot the Pi first, then power on the U46DJ, then connect the USB cable.
 
 > **Capture inputs:** The U46DJ USB capture stream is not stable on this Pi. JACK runs in playback-only mode. The 4 inputs (mic, line, phono, Hi-Z) are available at the hardware level but not routed through JACK in this configuration.
 
 ---
 
-## Part 1 — Configure JACK for U46DJ `[draft]`
+## Part 1 — Configure JACK for U46DJ `[verified]`
 
 The U46DJ has no preset in Zynthian's webconf audio settings. Configure JACK directly by editing the service file via SSH, then connect the device using the correct boot sequence.
 
-### Step 1 — Boot the Pi without U46DJ connected
+### Step 1 — Connect U46DJ via powered USB hub and power on
 
-Start the Pi with the U46DJ USB cable **unplugged**. Wait for the Zynthian UI to appear on screen, or for the audio/MIDI error screen — either is expected at this point.
+Connect the U46DJ to a powered USB hub, and connect the hub to the Pi. Press the power button on the U46DJ front panel. The power LED lights on.
 
-**Verify:** Pi is booted and accessible via SSH.
+The powered hub supplies its own 5V — the U46DJ does not draw from the Pi's USB port. The DC +9V rear connector is not required when using a powered hub.
 
-### Step 2 — Power on the U46DJ and connect USB
+If you have no powered hub: boot the Pi first without U46DJ connected, wait for the Zynthian UI or error screen, then power on the U46DJ and plug in the USB cable.
 
-Press the power button on the U46DJ front panel. The power LED lights on.
-
-Wait 3 seconds, then plug the USB data cable into the Pi.
-
-**Verify:** Power LED is lit. USB cable is connected.
+**Verify:** Power LED is lit. USB cable connected to hub.
 
 ### Step 3 — Confirm the U46DJ is detected
 
@@ -177,7 +173,7 @@ This means the RT audio thread could not start. Either:
 
 ---
 
-## Part 2 — Verify Audio Output `[draft]`
+## Part 2 — Verify Audio Output `[verified]`
 
 Play a synth note and confirm audio reaches the monitors through the U46DJ Mix Out.
 
