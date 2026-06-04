@@ -102,10 +102,11 @@
 <main>
 <article>
 <h1 id="maschine-mk2-controller">Maschine MK2 Controller</h1>
-<p><strong>Goal:</strong> Connect a Native Instruments Maschine MK2 to Zynthian as a fully functional MIDI controller — pads trigger notes, buttons and encoders map to synth parameters, daemon auto-starts on boot. <strong>Prerequisites:</strong> Zynthian booted and accessible via SSH. A working audio chain already set up (Part 2 requires sound output). The <code>MaschineMK2_linux</code> source, Rust toolchain, and compiled binary are already present on this Pi — Steps 3 and 4 can be skipped. <strong>Access:</strong> SSH</p>
+<p><strong>Goal:</strong> Connect a Native Instruments Maschine MK2 to Zynthian as a MIDI controller — pads trigger notes, daemon auto-starts on boot. <strong>Prerequisites:</strong> Zynthian booted and accessible via SSH. A working audio chain already set up (Part 2 requires sound output). <strong>Access:</strong> SSH</p>
 <hr>
-<h2 id="part-1--build-connect-verify-midi-draft">Part 1 — Build, Connect, Verify MIDI <code>[draft]</code></h2>
-<p>Build the daemon from source, set permissions, run it manually, and confirm pads send MIDI notes to a Zynthian chain.</p>
+<h2 id="part-1--build-connect-verify-midi-verified">Part 1 — Build, Connect, Verify MIDI <code>[verified]</code></h2>
+<p>Build the daemon from source, wire it into JACK, and confirm pads send MIDI notes to a Zynthian chain.</p>
+<p>The Maschine MK2 has a native USB MIDI class-compliant port, but it sends no data from the pads without Maschine software running. All pad MIDI comes from <code>MaschineMK2_linux</code>, a daemon that reads HID data from the device and outputs ALSA MIDI.</p>
 <h3 id="step-1--connect-the-maschine-mk2">Step 1 — Connect the Maschine MK2</h3>
 <p>Connect the Maschine MK2 to a USB port on the Raspberry Pi.</p>
 <p><strong>Verify:</strong> USB cable is connected at both ends.</p>
@@ -116,7 +117,13 @@ lsusb | grep -i "Native\|Maschine\|17cc"</code></pre>
 <pre><code>Bus 001 Device 003: ID 17cc:1140 Native Instruments Maschine MK2</code></pre>
 <p>Note the vendor <code>17cc</code> and the product ID (e.g. <code>1140</code>). You need these in Step 5.</p>
 <p><strong>Verify:</strong> A line with <code>17cc</code> appears and you can read the product ID.</p>
-<h3 id="step-3--install-rust-on-the-pi">Step 3 — Install Rust on the Pi</h3>
+<h3 id="step-3--copy-source-to-the-pi">Step 3 — Copy source to the Pi</h3>
+<p>From the machine where <code>~/zynth/MaschineMK2_linux</code> exists:</p>
+<pre><code class="language-bash">ssh root@zynthian.local "mkdir -p ~/zynth"
+rsync -av --exclude='target/' ~/zynth/MaschineMK2_linux/ root@zynthian.local:~/zynth/MaschineMK2_linux/</code></pre>
+<p><strong>Verify:</strong> Source files present on Pi:</p>
+<pre><code class="language-bash">ls ~/zynth/MaschineMK2_linux/</code></pre>
+<h3 id="step-4--install-rust-on-the-pi">Step 4 — Install Rust on the Pi</h3>
 <p>Rust is not installed by default on ZynthianOS:</p>
 <pre><code class="language-bash">curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 source "$HOME/.cargo/env"
@@ -124,7 +131,7 @@ rustc --version</code></pre>
 <p>Expected: <code>rustc 1.x.x (...)</code></p>
 <p>Download and install takes a few minutes on the Pi.</p>
 <p><strong>Verify:</strong> <code>rustc --version</code> prints a version number.</p>
-<h3 id="step-4--build-the-daemon">Step 4 — Build the daemon</h3>
+<h3 id="step-5--build-the-daemon">Step 5 — Build the daemon</h3>
 <pre><code class="language-bash">cd ~/zynth/MaschineMK2_linux
 source "$HOME/.cargo/env"
 ./build.sh</code></pre>
@@ -136,7 +143,7 @@ move picture to target folder</code></pre>
 <p><strong>Verify:</strong></p>
 <pre><code class="language-bash">ls -lh ~/zynth/MaschineMK2_linux/target/release/maschine</code></pre>
 <p>File exists (around 600K–700K).</p>
-<h3 id="step-5--add-a-udev-rule-for-stable-device-access">Step 5 — Add a udev rule for stable device access</h3>
+<h3 id="step-6--add-a-udev-rule-for-stable-device-access">Step 6 — Add a udev rule for stable device access</h3>
 <p>Replace <code>XXXX</code> with the product ID from Step 2 (e.g. <code>1140</code>):</p>
 <pre><code class="language-bash">echo 'SUBSYSTEM=="hidraw", ATTRS{idVendor}=="17cc", ATTRS{idProduct}=="XXXX", MODE="0664", GROUP="audio", SYMLINK+="maschine"' &gt; /etc/udev/rules.d/99-maschine.rules
 udevadm control --reload-rules
@@ -145,24 +152,52 @@ udevadm trigger</code></pre>
 <p><strong>Verify:</strong></p>
 <pre><code class="language-bash">ls -la /dev/maschine</code></pre>
 <p>Expected: a symlink pointing to <code>/dev/hidrawX</code>.</p>
-<h3 id="step-6--run-the-daemon">Step 6 — Run the daemon</h3>
+<h3 id="step-7--configure-a2jmidid-to-export-software-midi-clients">Step 7 — Configure a2jmidid to export software MIDI clients</h3>
+<p>Zynthian uses <code>a2jmidid</code> to bridge ALSA MIDI to JACK. By default it only bridges hardware ports. The daemon creates a software ALSA MIDI client, so <code>a2jmidid</code> needs the <code>-e</code> (export) flag to bridge it.</p>
+<p>Add a systemd drop-in override so Zynthian updates do not overwrite this change:</p>
+<pre><code class="language-bash">mkdir -p /etc/systemd/system/a2jmidid.service.d
+cat &gt; /etc/systemd/system/a2jmidid.service.d/export-software.conf &lt;&lt; 'EOF'
+[Service]
+ExecStart=
+ExecStart=/usr/bin/a2jmidid -e
+EOF
+systemctl daemon-reload
+systemctl restart a2jmidid.service</code></pre>
+<p><strong>Verify:</strong></p>
+<pre><code class="language-bash">pgrep -a a2jmidid</code></pre>
+<p>Expected: <code>/usr/bin/a2jmidid -e</code></p>
+<h3 id="step-8--create-the-jack-connect-script">Step 8 — Create the JACK connect script</h3>
+<p>The daemon's ALSA MIDI port is bridged to JACK by a2jmidid, but Zynthian's autoconnect does not pick it up automatically (it only connects physical ports). This script finds the port by name and connects it to ZynMidiRouter on every start.</p>
+<pre><code class="language-bash">cat &gt; /usr/local/bin/maschine-jack-connect.sh &lt;&lt; 'EOF'
+#!/bin/bash
+for i in $(seq 1 30); do
+    PORT=$(jack_lsp 2&gt;/dev/null | grep -m1 'a2j:maschine rs.*Pads MIDI')
+    if [ -n "$PORT" ]; then
+        jack_connect "$PORT" ZynMidiRouter:dev3_in 2&gt;/dev/null &amp;&amp; echo "Connected: $PORT" &amp;&amp; exit 0
+    fi
+    sleep 1
+done
+echo 'Maschine a2j port not found after 30s'
+exit 1
+EOF
+chmod +x /usr/local/bin/maschine-jack-connect.sh</code></pre>
+<p><strong>Verify:</strong></p>
+<pre><code class="language-bash">ls -lh /usr/local/bin/maschine-jack-connect.sh</code></pre>
+<h3 id="step-9--run-the-daemon">Step 9 — Run the daemon</h3>
 <pre><code class="language-bash">cd ~/zynth/MaschineMK2_linux
 ./target/release/maschine /dev/maschine any &amp;</code></pre>
 <p>The <code>any</code> argument skips the screen image write. The <code>&amp;amp;</code> runs it in the background.</p>
 <p><strong>Verify:</strong> Command returns to a prompt without error. Pad lights on the Maschine may flicker briefly.</p>
-<h3 id="step-7--confirm-midi-port-is-visible">Step 7 — Confirm MIDI port is visible</h3>
-<pre><code class="language-bash">aconnect -l</code></pre>
-<p>Expected:</p>
-<pre><code>client 128: 'maschine.rs' [type=user,pid=XXXXX]
-    0 'Pads MIDI       '</code></pre>
-<p>Client number varies. Port name is <code>Pads MIDI</code>.</p>
-<p><strong>Verify:</strong> <code>maschine.rs</code> appears in the output with a <code>Pads MIDI</code> port.</p>
-<h3 id="step-8--enable-the-port-in-webconf">Step 8 — Enable the port in webconf</h3>
-<p>Open <code>http://zynthian.local</code> → <strong>Interface → MIDI Options</strong>. Click <strong>MIDI Devices</strong>. Find <code>maschine.rs</code> (port shown as <code>Pads MIDI</code>) and enable it.</p>
-<p><strong>Verify:</strong> Port is toggled on. <code>[low]</code> — exact label in webconf MIDI Devices panel not confirmed on Pi.</p>
-<h3 id="step-9--play-a-pad-hear-a-note">Step 9 — Play a pad, hear a note</h3>
-<p>On the touchscreen, load a chain with any engine (e.g. ZynAddSubFX with a default preset). Press any pad on the Maschine MK2.</p>
-<p><strong>Verify:</strong> A note plays through audio output when a pad is pressed. Group buttons A–H shift the note base up or down.</p>
+<h3 id="step-10--wire-the-daemon-midi-port-to-zynthian">Step 10 — Wire the daemon MIDI port to Zynthian</h3>
+<pre><code class="language-bash">/usr/local/bin/maschine-jack-connect.sh</code></pre>
+<p>Expected output:</p>
+<pre><code>Connected: a2j:maschine rs [XXX] (capture): Pads MIDI</code></pre>
+<p><strong>Verify:</strong></p>
+<pre><code class="language-bash">aconnect -l | grep maschine</code></pre>
+<p>Expected: <code>maschine.rs</code> listed with a <code>Pads MIDI</code> port.</p>
+<h3 id="step-11--play-a-pad-hear-a-note">Step 11 — Play a pad, hear a note</h3>
+<p>Load a chain with any engine (e.g. ZynAddSubFX with a default preset). Press any pad on the Maschine MK2.</p>
+<p><strong>Verify:</strong> A note plays through audio output when a pad is pressed.</p>
 <hr>
 <h2 id="part-2--map-buttons-and-encoders-via-cc-learn-draft">Part 2 — Map Buttons and Encoders via CC Learn <code>[draft]</code></h2>
 <p>Bind Maschine buttons and encoders to synth parameters using Zynthian's CC Learn system.</p>
@@ -184,17 +219,18 @@ udevadm trigger</code></pre>
 <p>In webconf, go to <strong>Library → Snapshots</strong>. Type a name in the <strong>Name:</strong> field and click the checkmark button to save.</p>
 <p><strong>Verify:</strong> Snapshot appears in the list.</p>
 <hr>
-<h2 id="part-3--run-as-a-systemd-service-draft">Part 3 — Run as a Systemd Service <code>[draft]</code></h2>
+<h2 id="part-3--run-as-a-systemd-service-verified">Part 3 — Run as a Systemd Service <code>[verified]</code></h2>
 <p>Auto-start the daemon on boot so the Maschine is ready without manual SSH.</p>
 <h3 id="step-1--create-the-service-file">Step 1 — Create the service file</h3>
 <pre><code class="language-bash">cat &gt; /etc/systemd/system/maschine-mk2.service &lt;&lt; 'EOF'
 [Unit]
 Description=Maschine MK2 MIDI daemon
-After=jack2.service
+After=jack2.service a2jmidid.service
 Requires=jack2.service
 
 [Service]
 ExecStart=/root/zynth/MaschineMK2_linux/target/release/maschine /dev/maschine any
+ExecStartPost=/usr/local/bin/maschine-jack-connect.sh
 Restart=on-failure
 RestartSec=3
 WorkingDirectory=/root/zynth/MaschineMK2_linux
@@ -202,7 +238,7 @@ WorkingDirectory=/root/zynth/MaschineMK2_linux
 [Install]
 WantedBy=multi-user.target
 EOF</code></pre>
-<p>Uses <code>/dev/maschine</code> — the stable symlink from the udev rule. No hardcoded hidraw number needed.</p>
+<p>Uses <code>/dev/maschine</code> (stable symlink from udev rule) and runs the JACK connect script automatically after the daemon starts.</p>
 <p><strong>Verify:</strong></p>
 <pre><code class="language-bash">cat /etc/systemd/system/maschine-mk2.service</code></pre>
 <p>File content matches what was written above.</p>
@@ -218,8 +254,9 @@ systemctl start maschine-mk2.service</code></pre>
 <p>After ~45 seconds, SSH back in:</p>
 <pre><code class="language-bash">ssh root@zynthian.local
 systemctl status maschine-mk2.service --no-pager
-aconnect -l | grep maschine</code></pre>
-<p><strong>Verify:</strong> Service is <code>active (running)</code> and <code>maschine.rs</code> appears in <code>aconnect -l</code> without any manual steps.</p>
+aconnect -l | grep maschine
+jack_lsp -c 2&gt;/dev/null | grep 'maschine.*ZynMidiRouter\|ZynMidiRouter.*dev3'</code></pre>
+<p><strong>Verify:</strong> Service is <code>active (running)</code>, <code>maschine.rs</code> appears in <code>aconnect -l</code>, and the JACK connection to <code>ZynMidiRouter:dev3_in</code> is present — all without any manual steps.</p>
 <hr>
 <h2 id="going-further">Going Further</h2>
 <ul><li>Use Group buttons A–H to switch octaves and cover different note ranges across the 16 pads</li><li>Map Play and Stop buttons to Zynthian transport controls via CC Learn</li><li>Assign all 8 encoders to different synth parameters for a custom performance layout</li><li>Save a named snapshot with all CC bindings — Zynthian restores them automatically on load</li></ul>
