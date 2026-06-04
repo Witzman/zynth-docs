@@ -168,7 +168,7 @@ Preset 2 (DAW): **Shift + Pad 2** — transport buttons send Mackie Control; use
 
 ### Assignment matrix
 
-Status tags: `[verified]` = Pi-tested · `[draft]` = written, not yet tested · `[low]` = not yet verified · `[blocked]` = depends on unresolved issue
+Status tags: `[verified]` = Pi-tested · `[draft]` = written, not yet tested · `[low]` = not yet verified · `[blocked]` = depends on unresolved issue · `passive` = standard MIDI, no explicit assignment needed
 
 | Device | Control | Ch | Message | Zynthian target | Tutorial | Status |
 |---|---|---|---|---|---|---|
@@ -215,6 +215,7 @@ Both devices send notes on ch 1. With SINGLE_ACTIVE_CHANNEL=ON, both drive which
 
 | Group | Note base | Notes sent | Overlap with SMC-PAD (36–51) |
 |---|---|---|---|
+| A | 24 | 24–39 | partial — notes 36–39 (pads 1–4) |
 | B | 36 | 36–51 | **full overlap** |
 | C | 48 | 48–63 | partial — notes 48–51 (pads 13–16) |
 | D | 60 | 60–75 | none |
