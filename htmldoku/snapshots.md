@@ -6,19 +6,26 @@ A snapshot is a complete save of the Zynthian state: all chains, engines, preset
 
 ## Saving a Snapshot
 
-**From the touchscreen:** Press the Admin button → **Snapshots** → **Save Snapshot**. Enter a name and confirm.
+**From the touchscreen:** Tap **OPT/ADMIN** (short) → **Snapshots**. Navigate into a bank (e.g. **000**). Tap **Save as new snapshot**, enter a name, confirm.
 
-**From webconf:** Open `http://zynthian.local` → **Snapshots**. A list of saved snapshots appears. Click **Save Current State** to overwrite, or **Save As** to create a new one.
+**From webconf:** Open `http://zynthian.local` → **Snapshots**. Navigate into a bank folder first, then type a name in the **Name:** field and tap the checkmark icon.
 
-Snapshots are stored as `.zss` files in `/zynthian/zynthian-my-data/snapshots/`. The file format is YAML-based and human-readable.
+> **Bank subdirectory required.** Snapshots saved to the root of `/zynthian/zynthian-my-data/snapshots/` are invisible in the Zynthian UI snapshot list. Always save into a bank subfolder — the default is `000`. To move a misplaced snapshot via SSH:
+> ```bash
+> mv /zynthian/zynthian-my-data/snapshots/name.zss /zynthian/zynthian-my-data/snapshots/000/
+> ```
+
+Snapshots are stored as `.zss` files under `/zynthian/zynthian-my-data/snapshots/<bank>/`. The file format is YAML-based and human-readable.
 
 ---
 
 ## Loading a Snapshot
 
-**From the touchscreen:** Admin → **Snapshots** → select a snapshot from the list.
+**From the touchscreen:** Tap **ZS3/SHOT** (bold hold, 300ms) to open the Snapshots screen. Navigate into a bank, tap the snapshot name to load it.
 
-**From webconf:** Open **Snapshots** → click the snapshot name → **Load**.
+**Alternatively:** Tap **OPT/ADMIN** (short) → **Snapshots** → navigate into bank → tap snapshot name.
+
+**From webconf:** Open `http://zynthian.local` → **Snapshots** → click the snapshot name → **Load**.
 
 On loading, Zynthian stops all current chains, starts the engines defined in the snapshot, and restores all settings.
 
