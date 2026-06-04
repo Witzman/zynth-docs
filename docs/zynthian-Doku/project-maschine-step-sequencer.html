@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maschine MK2 Step Sequencer — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Get Started</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Using the UI</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="ui-navigation.html">UI Navigation</a></li>
+<li><a href="chain-management.html">Chains & Routing</a></li>
+<li><a href="control-screen.html">Control Screen</a></li>
+<li><a href="midi-cc-learn.html">MIDI CC Learning</a></li>
+<li><a href="zs3-guide.html">ZS3 Subsnapshots</a></li>
+<li><a href="pattern-editor.html">Pattern Editor</a></li>
+<li><a href="midi-recorder.html">MIDI Recorder</a></li>
+<li><a href="admin-guide.html">Admin & System</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Play & Create</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Configure</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Troubleshoot</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+<li><a href="performance-monitoring.html">Performance</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Personal Projects</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="project-midi-mapping.html">Personal MIDI Mapping</a></li>
+<li><a href="project-drone-synth.html">Generative Drone Synth</a></li>
+<li><a href="project-maschine-mk2.html">Maschine MK2 Controller</a></li>
+<li><a href="project-midi-channel-routing.html">MIDI Channel Routing</a></li>
+<li><a href="project-emu-cc-learn.html">EMU CC Knob Mapping</a></li>
+<li><a href="project-smc-pad-launcher.html">SMC-PAD Launcher Control</a></li>
+<li><a href="project-drum-computer.html">SMC-PAD Drum Computer</a></li>
+<li><a href="project-u46dj-audio-setup.html">ESI U46DJ Audio Setup</a></li>
+<li><a href="project-modui-effects.html">Audio FX Chain with MOD-UI</a></li>
+<li><a href="project-performance-rig.html">Multi-Controller Performance Rig</a></li>
+<li><a href="project-live-looper.html">Live Looper with SooperLooper</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Under the Hood</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="maschine-mk2-step-sequencer">Maschine MK2 Step Sequencer</h1>
+<p><strong>Goal:</strong> Use the MaschineMK2_linux daemon's built-in 16-step sequencer to trigger Zynthian synth engines — no Native Instruments software required. <strong>Prerequisites:</strong> <a href="project-maschine-mk2.html">Maschine MK2 Controller</a> tutorial complete — daemon installed, systemd service active, JACK routing wired to ZynMidiRouter. <strong>Access:</strong> SSH · VNC</p>
+<hr>
+<h2 id="part-1--first-sequence-draft">Part 1 — First Sequence <code>[draft]</code></h2>
+<p>The daemon's step sequencer outputs MIDI on <strong>channel 2</strong> — one channel above the normal pad output on channel 1. A chain set to MIDI channel 2 responds only to the sequencer; the pads (channel 1) leave it silent.</p>
+<h3 id="step-1--confirm-the-daemon-is-running">Step 1 — Confirm the daemon is running</h3>
+<pre><code class="language-bash">ssh root@zynthian.local
+systemctl status maschine-mk2.service --no-pager</code></pre>
+<p>Expected: <code>Active: active (running)</code></p>
+<p>If not running:</p>
+<pre><code class="language-bash">systemctl start maschine-mk2.service</code></pre>
+<p><strong>Verify:</strong> Service is active.</p>
+<h3 id="step-2--add-a-chain-for-the-sequencer">Step 2 — Add a chain for the sequencer</h3>
+<p>In the Zynthian VNC desktop, tap <strong>+</strong> in the mixer.</p>
+<ol><li>Tap <strong>Instrument</strong></li><li>Choose an engine — <strong>ZynAddSubFX</strong> with any preset works for this test</li><li>Tap the new chain to open it, then open <strong>Chain Options</strong></li><li>Set <strong>MIDI Channel</strong> to <strong>2</strong></li></ol>
+<p><strong>Verify:</strong> Chain appears in the mixer with an engine loaded and MIDI channel set to 2.</p>
+<h3 id="step-3--enter-sequencer-mode">Step 3 — Enter sequencer mode</h3>
+<p>On the Maschine MK2:</p>
+<ol><li>Hold <strong>Shift</strong>, press <strong>Pad Mode</strong> — enters pad mode 1</li><li>Hold <strong>Shift</strong>, press <strong>Pad Mode</strong> a second time — enters sequencer mode (pad mode 2)</li></ol>
+<p>In sequencer mode, pressing a pad does not play a note — it toggles that pad as an active step.</p>
+<p>[low] Exact pad LED behavior on mode change needs Pi verification.</p>
+<p><strong>Verify:</strong> Pressing a pad produces no sound from Zynthian.</p>
+<h3 id="step-4--program-a-simple-pattern">Step 4 — Program a simple pattern</h3>
+<p>Tap four pads — for example, the first pad in each row (bottom-to-top). Each tap should light the pad up brighter to mark the step as active. Tap a lit pad to deactivate it.</p>
+<p><strong>Verify:</strong> Four pads are lit; the others are dim.</p>
+<h3 id="step-5--start-playback">Step 5 — Start playback</h3>
+<p>Press <strong>Play</strong> on the Maschine MK2.</p>
+<p><strong>Verify:</strong> Zynthian plays a repeating 4-note pattern at a steady tempo — each active step fires one note.</p>
+<h3 id="step-6--stop-playback">Step 6 — Stop playback</h3>
+<p>Press the <strong>Erase</strong> button to stop.</p>
+<p>The <strong>Erase</strong> button acts as Stop in sequencer mode. The <strong>Play</strong> button only starts.</p>
+<p><strong>Verify:</strong> Playback stops.</p>
+<hr>
+<h2 id="part-2--melodic-pattern-draft">Part 2 — Melodic Pattern <code>[draft]</code></h2>
+<p>By default all 16 steps play C3 (MIDI 48). To build a melody, assign different notes to different steps. The 16 pads act as a note keyboard when Shift is held: each pad maps to a pitch based on its position plus the current note base set by the Group buttons.</p>
+<p>Default note base (no Group button pressed): C3 (MIDI 48). Group D sets it to C4 (MIDI 60).</p>
+<p>Pad layout with <strong>Group D</strong> selected (note base C4, MIDI 60):</p>
+<pre><code>[ C4  C#4  D4  D#4 ]   ← top row    (pads 0–3)
+[ G#3  A3  A#3  B3 ]   ← row 3      (pads 4–7)
+[ E3  F3  F#3  G3  ]   ← row 2      (pads 8–11)
+[ C3  C#3  D3  D#3 ]   ← bottom row (pads 12–15)</code></pre>
+<h3 id="step-1--set-note-base-to-c4">Step 1 — Set note base to C4</h3>
+<p>Press <strong>Group D</strong> on the Maschine MK2.</p>
+<p>All unassigned steps now play C4 instead of C3.</p>
+<p><strong>Verify:</strong> Press Play — pattern plays C4.</p>
+<h3 id="step-2--assign-a-note-to-a-step">Step 2 — Assign a note to a step</h3>
+<p>To change the note on step 0 (top-left pad) to D4:</p>
+<ol><li>Hold <strong>Shift</strong>, tap <strong>pad 0</strong> — selects step 0 as the target for note assignment</li><li>Hold <strong>Shift</strong>, tap <strong>pad 2</strong> (top row, third from left, D4 with Group D) — assigns D4 to step 0</li></ol>
+<p>[low] Visual feedback for the selected-step state needs Pi verification.</p>
+<p>Repeat for other steps. Use the note layout above to map pads to pitches. Any step can be assigned any note in the current two-octave range shown.</p>
+<p><strong>Verify:</strong> Press Play — step 0 plays D4, other steps play C4.</p>
+<h3 id="step-3--build-a-melody">Step 3 — Build a melody</h3>
+<p>Assign different notes across several active steps to create a phrase. Use the chromatic pad layout above as a reference.</p>
+<p><strong>Verify:</strong> The sequence plays distinct pitches in the programmed order.</p>
+<hr>
+<h2 id="part-3--tempo-and-snapshot-draft">Part 3 — Tempo and Snapshot <code>[draft]</code></h2>
+<h3 id="step-1--adjust-tempo">Step 1 — Adjust tempo</h3>
+<p>[low] Hold <strong>Shift</strong> and turn <strong>encoder B6</strong> (second encoder in the top row) to change the step rate. Turn right to speed up, left to slow down. The README marks speed control as "under construction" — behavior needs Pi verification.</p>
+<p>The default step rate is approximately 75 BPM in 16th notes (200 ms per step).</p>
+<p><strong>Verify:</strong> Turning the encoder changes the playback rate.</p>
+<h3 id="step-2--transpose-with-group-buttons">Step 2 — Transpose with Group buttons</h3>
+<p>Press any Group button (A–H) while the sequencer is running to shift the note base of all steps:</p>
+<table><thead><tr><th>Button</th><th>Note base</th><th>Register</th></tr></thead><tbody><tr><td>A</td><td>C1</td><td>sub-bass</td></tr><tr><td>B</td><td>C2</td><td>bass</td></tr><tr><td>C</td><td>C3 (default)</td><td>mid-low</td></tr><tr><td>D</td><td>C4 (middle C)</td><td>mid</td></tr><tr><td>E</td><td>C5</td><td>mid-high</td></tr><tr><td>F</td><td>C6</td><td>high</td></tr><tr><td>G</td><td>C7</td><td>very high</td></tr><tr><td>H</td><td>C8</td><td>extreme high</td></tr></tbody></table>
+<p>[low] Whether Group transpose applies immediately to the playing step or only from the next step needs Pi verification.</p>
+<p><strong>Verify:</strong> Group button press shifts the pitch of the entire pattern up or down.</p>
+<h3 id="step-3--save-the-setup-as-a-snapshot">Step 3 — Save the setup as a snapshot</h3>
+<p>In webconf, go to <strong>Library</strong> → <strong>Snapshots</strong>. Enter a name in the <strong>Name:</strong> field and click the checkmark icon.</p>
+<p>The snapshot saves the Zynthian chain configuration (engine, MIDI channel 2 assignment). It does not save the Maschine step pattern — that lives in the daemon's runtime state and resets when the daemon restarts.</p>
+<p><strong>Verify:</strong> Snapshot appears in the list and reloads the chain on channel 2.</p>
+<hr>
+<h2 id="going-further">Going Further</h2>
+<ul><li>Keep a chain on channel 1 for live pad play and a chain on channel 2 for the step sequencer — different engines, different roles, simultaneously active</li><li>Program a bass pattern on the sequencer while improvising a melody with the pads</li><li>Pre-assign step notes via OSC: the daemon listens on <code>127.0.0.1:42434</code> for <code>/maschine/midi_note_base</code> messages — scriptable from the Pi</li><li>Combine with the Multi-Controller Performance Rig tutorial to add the Xboard and SMC-PAD alongside the Maschine sequencer</li></ul>
+</article>
+</main>
+<div id="toc-column"></div>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

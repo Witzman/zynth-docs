@@ -18,6 +18,7 @@ Status: `[~]` drafting · `[t]` user testing · `[>]` ready to publish · `[ ]` 
 - [~] **Multi-Controller Performance Rig** — Xboard + SMC-PAD + Maschine MK2 simultaneous roles, saved as performance snapshot
 - [~] **EMU Xboard CC Knob Mapping** — static and follow-channel CC bindings across 4 chains; depends on MIDI Channel Routing tutorial
 - [~] **Dub Techno Performance Loop** — drums + bass + pad via step sequencer, delay/reverb effects, SMC-PAD live mute control
+- [~] **Maschine MK2 Step Sequencer** — 16-step sequencer via MaschineMK2_linux daemon; sequencer fires on Ch2; melodic note assignment; no NI software required; prereq: Maschine MK2 Controller tutorial
 
 
 ## Documentation Updates
