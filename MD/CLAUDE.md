@@ -1,12 +1,13 @@
 # Zynthian — Claude Context
 
-**On every session start, read all three files in this order before doing anything else:**
+**On every session start, read all four files in this order before doing anything else:**
 
 1. This file (`CLAUDE.md`) — project layout, hardware, file locations
 2. `MD/inwork.md` — active tutorials and future candidates
-3. `MD/agent-behavior.md` — all session rules, workflow, and writing rules (read in full)
+3. `MD/todo.md` — active tasks and tutorial completion work
+4. `MD/agent-behavior.md` — all session rules, workflow, and writing rules (read in full)
 
-`MD/agent-behavior.md` governs all agent behavior. Do not proceed until all three are read.
+`MD/agent-behavior.md` governs all agent behavior. Do not proceed until all four are read.
 
 ---
 
@@ -95,6 +96,7 @@ Read the relevant page **before drafting any tutorial step** on that topic.
 |------|---------|
 | `MD/agent-behavior.md` | Agent rules — tutorial creation process, tone, format, writing rules |
 | `MD/inwork.md` | Active tutorials — `[~]` drafting · `[t]` testing · `[>]` ready to publish |
+| `MD/todo.md` | Active tasks and tutorial completion work — read every session |
 | `MD/done.md` | Published tutorials `[x]` |
 | `MD/bugs.md` | Issues found during tutorial testing |
 

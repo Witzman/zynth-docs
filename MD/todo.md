@@ -1,0 +1,26 @@
+# Zynthian — To Do
+
+Status: `[ ]` pending · `[~]` in progress · `[x]` done
+
+Read this after `inwork.md` to see cross-cutting tasks and tutorial completion work.
+
+---
+
+## Active
+
+- [~] **Complete Dub Techno Performance Loop tutorial**
+  - [~] Test Part 1 on Pi — load snapshot `dub-techno-p1`, build patterns, verify playback
+  - [ ] Draft Part 2 (pad + delay/reverb) — after Part 1 verified
+  - [ ] Test Part 2 on Pi
+  - [ ] Draft Part 3 (SMC-PAD mute control) — after Part 2 verified
+  - [ ] Test Part 3 on Pi
+  - [ ] Publish — run generator, commit, push, move to `done.md`
+  - Plan: `~/zynth/docs/superpowers/plans/2026-06-04-dub-techno-loop.md`
+  - Tutorial file: `~/zynth-docs/htmldoku/project-dub-techno-loop.md`
+  - Snapshot on Pi: `/zynthian/zynthian-my-data/snapshots/dub-techno-p1.zss`
+
+---
+
+## Backlog
+
+<!-- Add future cross-cutting tasks here -->
