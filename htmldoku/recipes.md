@@ -91,7 +91,7 @@ Step-by-step walkthroughs for the most useful Zynthian configurations. Each reci
    - Drums on MIDI ch 10
    - Bass on MIDI ch 2
    - Lead on MIDI ch 3
-8. Save as snapshot.
+8. Save as snapshot: tap **ZS3/SHOT** (bold hold) → navigate into **000** bank → **Save as new snapshot**. (Snapshots saved to the root level are invisible in the UI — always use a bank subfolder.)
 
 **Tips:** Use webconf → MIDI → Ports to confirm your DAW's MIDI output port is active.
 

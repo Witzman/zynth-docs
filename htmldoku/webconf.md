@@ -76,6 +76,8 @@ Handler: `zynthian-webconf/lib/presets_config_handler.py`.
 
 List, load, save, delete, and download snapshots. Uploading a `.zss` file here adds it to the snapshot library.
 
+> **Bank subfolder required for UI visibility.** Snapshots must be in a subfolder (e.g. `000/`) inside the snapshots directory to appear in the Zynthian UI. Snapshots at the root level are invisible to the touchscreen snapshot browser. When uploading via webconf, navigate into a bank folder before saving. `last_state.zss` and `default.zss` are exceptions — they live at root and are shown specially.
+
 ---
 
 ## System
