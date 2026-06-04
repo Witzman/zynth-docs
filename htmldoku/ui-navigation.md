@@ -283,7 +283,7 @@ Button label format: **X/Y** means short tap = X action, bold hold (300ms) = Y a
 |--------|-----------|-------------------|-----------------|
 | **OPT/ADMIN** | Main Menu | Admin screen | Power off |
 | **MIX/LEVEL** | Audio Mixer | ALSA Mixer (hardware levels) | All sounds off |
-| **CTRL/PRESET** | Chain Control | Bank/Preset selection | Preset favorites |
+| **CTRL/PRSET** | Chain Control | Bank/Preset selection | Preset favorites |
 | **ZS3/SHOT** | ZS3 list | Snapshots | — |
 | **[metronome]** | Tempo | — | — |
 | **PAD/STEP** | Pad Launcher | Pattern Editor | Arranger |
