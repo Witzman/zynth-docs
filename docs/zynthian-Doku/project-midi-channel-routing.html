@@ -157,10 +157,10 @@ aconnect -l</code></pre>
 <h2 id="part-3--save-as-snapshot-draft">Part 3 — Save as Snapshot <code>[draft]</code></h2>
 <p>Save the chain/channel map as a named snapshot and set it as the boot default so it loads automatically on every start.</p>
 <h3 id="step-1--save-a-named-snapshot">Step 1 — Save a named snapshot</h3>
-<p>Open <code>http://zynthian.local</code> → <strong>Library → Snapshots</strong>.</p>
-<p>Type a name (e.g. <code>midi-channel-map</code>) in the <strong>Name:</strong> field and click the checkmark button to save.</p>
+<p>Tap <strong>OPT/ADMIN</strong> (short) → <strong>Snapshots</strong> → navigate into the <strong>000</strong> bank → <strong>Save as new snapshot</strong> → type <code>midi-channel-map</code> → confirm.</p>
+<p>Navigate into the <strong>000</strong> bank folder first, then type the name and tap the checkmark icon. (Snapshots saved to the root level are invisible in the Zynthian UI.)</p>
 <h3 id="step-2--set-as-boot-default">Step 2 — Set as boot default</h3>
-<p>In the snapshot list, select <code>midi-channel-map</code>. Click <strong>Save as Last State</strong>.</p>
+<p>In the snapshot list, select <code>midi-channel-map</code>. Tap <strong>Save as Last State</strong>.</p>
 <p>This writes the snapshot to <code>last_state.zss</code> — Zynthian loads this file automatically on every boot.</p>
 <h3 id="step-3--verify-persistence">Step 3 — Verify persistence</h3>
 <p>Reboot from SSH:</p>

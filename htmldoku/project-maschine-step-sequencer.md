@@ -2,7 +2,7 @@
 
 **Goal:** Use the MaschineMK2_linux daemon's built-in 16-step sequencer to trigger Zynthian synth engines — no Native Instruments software required.
 **Prerequisites:** [Maschine MK2 Controller](project-maschine-mk2.html) tutorial complete — daemon installed, systemd service active, JACK routing wired to ZynMidiRouter.
-**Access:** SSH · VNC
+**Access:** SSH · Touchscreen · VNC
 
 ---
 
@@ -29,7 +29,7 @@ systemctl start maschine-mk2.service
 
 ### Step 2 — Add a chain for the sequencer
 
-In the Zynthian VNC desktop, tap **+** in the mixer.
+Tap **+** at right edge of Mixer.
 
 1. Tap **Instrument**
 2. Choose an engine — **ZynAddSubFX** with any preset works for this test
@@ -148,7 +148,9 @@ Press any Group button (A–H) while the sequencer is running to shift the note 
 
 ### Step 3 — Save the setup as a snapshot
 
-In webconf, go to **Library** → **Snapshots**. Enter a name in the **Name:** field and click the checkmark icon.
+Tap **OPT/ADMIN** (short) → **Snapshots** → navigate into **000** bank → **Save as new snapshot** → type name → confirm.
+
+Navigate into the **000** bank folder first, then type the name and tap the checkmark icon. (Snapshots saved to the root level are invisible in the Zynthian UI.)
 
 The snapshot saves the Zynthian chain configuration (engine, MIDI channel 2 assignment). It does not save the Maschine step pattern — that lives in the daemon's runtime state and resets when the daemon restarts.
 

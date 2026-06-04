@@ -102,17 +102,15 @@
 <main>
 <article>
 <h1 id="dub-techno-performance-loop">Dub Techno Performance Loop</h1>
-<p><strong>Goal:</strong> Build a looping dub techno foundation — a 16-step drum pattern and a sparse bass line playing simultaneously — as the basis for a live dub techno performance rig. <strong>Prerequisites:</strong> Zynthian running and accessible via webconf and VNC. Audio output confirmed working (speakers or headphones connected to the ESI U46DJ mix output). <strong>Access:</strong> Webconf · VNC</p>
+<p><strong>Goal:</strong> Build a looping dub techno foundation — a 16-step drum pattern and a sparse bass line playing simultaneously — as the basis for a live dub techno performance rig. <strong>Prerequisites:</strong> Zynthian running and accessible via touchscreen and webconf. Audio output confirmed working (speakers or headphones connected to the ESI U46DJ mix output). <strong>Access:</strong> Touchscreen · Webconf</p>
 <hr>
 <h2 id="part-1--drums--bass-loop-draft">Part 1 — Drums + Bass Loop <code>[draft]</code></h2>
 <p>Set up two chains — a drum kit and a bass synth — each with a looping 16-step pattern, to prove the sequenced foundation works before adding effects or performance controls.</p>
-<p>The two chains are pre-configured in a prepared snapshot. You load it, then build the patterns in the VNC step sequencer.</p>
-<blockquote><p><strong>V5 touch keypad:</strong> This tutorial uses the V5 touch keypad (left-side panel). Key buttons: <strong>OPT/ADMIN</strong> (short = Main Menu), <strong>MIX/LEVEL</strong> (short = Mixer), <strong>PAD/STEP</strong> (short = Launcher), <strong>BACK/NO</strong> (Back). Transport row at bottom: <strong>PLAY (▶)</strong>, <strong>STOP (■)</strong>.</p></blockquote>
+<p>The two chains are pre-configured in a prepared snapshot. You load it, then build the patterns in the touchscreen step sequencer.</p>
 <hr>
 <h3 id="step-1--load-the-prepared-snapshot">Step 1 — Load the prepared snapshot</h3>
-<p>In a browser, open <code>http://zynthian.local</code> (or <code>http://192.168.2.123</code>) → <strong>Library → Snapshots</strong>.</p>
-<p>Find <strong>dub-techno-p1</strong> in the list and load it.</p>
-<p><strong>Verify:</strong> In VNC, the mixer shows two chain strips — one for FluidSynth (drums) and one for ZynAddSubFX (bass). Both load automatically with the correct presets: <strong>System/FluidDrums / Standard</strong> and <strong>A VDX / Analog Bass</strong>.</p>
+<p>Tap <strong>ZS3/SHOT</strong> (bold hold, 300ms) → navigate into the <strong>000</strong> bank → select <strong>dub-techno-p1</strong>.</p>
+<p><strong>Verify:</strong> The mixer shows two chain strips — one for FluidSynth (drums) and one for ZynAddSubFX (bass). Both load automatically with the correct presets: <strong>System/FluidDrums / Standard</strong> and <strong>A VDX / Analog Bass</strong>.</p>
 <hr>
 <h3 id="step-2--open-the-launcher">Step 2 — Open the Launcher</h3>
 <p>Tap <strong>PAD/STEP</strong> (short) on the V5 keypad.</p>
@@ -174,8 +172,8 @@
 <p>Tap <strong>STOP (■)</strong> in the V5 keypad transport row.</p>
 <p><strong>Verify:</strong> Both patterns stop. No sound.</p>
 <h3 id="step-19--save-the-snapshot-with-patterns">Step 19 — Save the snapshot with patterns</h3>
-<p>In a browser, go to <code>http://zynthian.local</code> → <strong>Library → Snapshots</strong>.</p>
-<p>In the <strong>Name:</strong> field, type <code>dub-techno-p1</code>. Tap the checkmark icon.</p>
+<p>Tap <strong>OPT/ADMIN</strong> (short) → <strong>Snapshots</strong> → navigate into the <strong>000</strong> bank → <strong>Save as new snapshot</strong> → type <code>dub-techno-p1</code> → confirm.</p>
+<p>Navigate into the <strong>000</strong> bank folder first, then type the name and tap the checkmark icon. (Snapshots saved to the root level are invisible in the Zynthian UI.)</p>
 <p><strong>Verify:</strong> Snapshot <code>dub-techno-p1</code> appears in the list. The snapshot now includes both patterns.</p>
 <hr>
 <p><strong>Verify:</strong> Load <code>dub-techno-p1</code> from snapshots, press <strong>PLAY (▶)</strong> — both chains play immediately with no extra setup. Kick + snare + hi-hat driving, sparse bass underneath. Dry signal.</p>

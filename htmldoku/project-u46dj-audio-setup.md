@@ -224,4 +224,4 @@ To use the inputs with Zynthian (e.g. for the Audio FX Chain tutorial), full-dup
 - Reduce buffer size from `2048` only if the system is fully stable — XRUNs appear quickly on this USB 1.1 device; `2048` is the proven minimum
 - Use Output 1–6 (rear RCA) to route separate stems to a hardware mixer instead of the Mix Out
 - Connect a turntable to the Phono inputs — the U46DJ includes an RIAA phono preamp built in
-- Save a Zynthian snapshot after confirming everything works: webconf → **Library → Snapshots**, type a name, click the checkmark
+- Save a Zynthian snapshot after confirming everything works: Tap **OPT/ADMIN** (short) → **Snapshots** → navigate into **000** bank → **Save as new snapshot** → type name → confirm. (Navigate into the **000** bank folder first — snapshots saved to the root level are invisible in the Zynthian UI.)

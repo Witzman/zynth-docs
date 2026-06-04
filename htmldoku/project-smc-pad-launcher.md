@@ -266,7 +266,7 @@ ssh root@zynthian.local "systemctl restart zynthian"
 
 ### Step 2 — Activate the driver
 
-In VNC, go to **Admin** → **MIDI** → **MIDI Input Devices**.
+Tap **OPT/ADMIN** (bold hold, 300ms) → **MIDI** → **MIDI Input Devices**.
 
 Find **SINCO IN 2** (the SMC-PAD Master port). Long-press it and select **SINCO SMC-PAD**.
 

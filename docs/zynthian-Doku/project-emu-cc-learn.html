@@ -157,9 +157,9 @@
 <h2 id="part-3--save-bindings-with-snapshot-draft">Part 3 — Save Bindings with Snapshot <code>[draft]</code></h2>
 <p>CC bindings are saved as part of the snapshot state. The bindings from Parts 1 and 2 will be lost if the snapshot is not updated.</p>
 <h3 id="step-1--update-the-snapshot">Step 1 — Update the snapshot</h3>
-<p>Open <code>http://zynthian.local</code> → <strong>Library → Snapshots</strong>.</p>
-<p>Select <code>midi-channel-map</code> (created in <a href="project-midi-channel-routing.html">MIDI Channel Routing</a>). Click the checkmark button to overwrite it with the current state including CC bindings.</p>
-<p>Alternatively, type <code>midi-channel-map-cc</code> in the <strong>Name:</strong> field and click the checkmark to save as a new snapshot.</p>
+<p>Tap <strong>OPT/ADMIN</strong> (short) → <strong>Snapshots</strong> → navigate into the <strong>000</strong> bank → <strong>Save as new snapshot</strong> → type <code>midi-channel-map-cc</code> → confirm.</p>
+<blockquote><p><strong>Note:</strong> Navigate into the <strong>000</strong> bank folder first, then type the name and tap the checkmark icon. (Snapshots saved to the root level are invisible in the Zynthian UI.)</p></blockquote>
+<p>To overwrite the existing <code>midi-channel-map</code> snapshot instead, navigate into <strong>000</strong> bank, select <code>midi-channel-map</code>, and choose the overwrite/save option.</p>
 <h3 id="step-2--verify-restore">Step 2 — Verify restore</h3>
 <p>SSH in and reboot:</p>
 <pre><code class="language-bash">reboot</code></pre>

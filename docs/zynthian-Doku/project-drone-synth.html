@@ -172,13 +172,13 @@ aconnect -l | grep SINCO</code></pre>
 <h3 id="step-3--map-remaining-knobs">Step 3 — Map remaining knobs</h3>
 <p>Repeat the long-press on touchscreen → turn SMC-PAD knob process for each remaining parameter. Suggested mapping for a drone context:</p>
 <table><thead><tr><th>SMC-PAD Knob</th><th>Suggested Parameter</th><th>Effect</th></tr></thead><tbody><tr><td>1</td><td>Filter Cutoff (CC 74)</td><td>Opens/closes texture brightness</td></tr><tr><td>2</td><td>Filter Resonance (CC 71)</td><td>Adds / removes filter peak</td></tr><tr><td>3</td><td>Amplitude LFO Depth</td><td>Breathing intensity</td></tr><tr><td>4</td><td>Amplitude LFO Freq</td><td>Breath speed</td></tr><tr><td>5</td><td>Filter LFO Depth</td><td>Filter sweep depth</td></tr><tr><td>6</td><td>Filter LFO Freq</td><td>Filter movement speed</td></tr><tr><td>7</td><td>Reverb / Effect Level</td><td>Space — wet/dry</td></tr><tr><td>8</td><td>Volume (CC 7)</td><td>Overall level</td></tr></tbody></table>
-<p>Map each one: long-press target parameter in VNC → turn the SMC-PAD knob.</p>
+<p>Map each one: long-press target parameter on touchscreen → turn the SMC-PAD knob.</p>
 <p><strong>Verify:</strong> Each knob produces an audible change when turned while a drone note is held.</p>
 <h3 id="step-4--test-the-full-setup">Step 4 — Test the full setup</h3>
 <p>Hold a drone note (press and hold a pad, or use PLAY if it sends CC per Step 4A above). Slowly turn each knob and confirm the expected parameter changes. Press a different pad to shift root note. Confirm drone continues evolving.</p>
 <p><strong>Verify:</strong> All 8 knobs respond. Root note changes cleanly. LFO texture continues without interruption.</p>
 <h3 id="step-5--save-final-snapshot">Step 5 — Save final snapshot</h3>
-<p>In webconf, go to <strong>Library → Snapshots</strong>. Type <code>drone-final</code> in the <strong>Name:</strong> field and click the checkmark button to save. CC bindings are stored with the snapshot.</p>
+<p>Tap <strong>OPT/ADMIN</strong> (short) → <strong>Snapshots</strong> → navigate into <strong>000</strong> bank → <strong>Save as new snapshot</strong> → type <code>drone-final</code> → confirm. Navigate into the <strong>000</strong> bank folder first, then type the name and tap the checkmark icon. (Snapshots saved to the root level are invisible in the Zynthian UI.) CC bindings are stored with the snapshot.</p>
 <p><strong>Verify:</strong> Snapshot saved. Reload it and confirm bindings survive.</p>
 <hr>
 <h2 id="going-further">Going Further</h2>

@@ -64,7 +64,7 @@ systemctl start maschine-mk2.service
 
 ### Step 4 — Add Chain 1: bass engine (ch1)
 
-On the touchscreen, tap **+** → **Instrument** → **ZynAddSubFX**.
+Tap **+** at right edge of Mixer → **Instrument** → **ZynAddSubFX**.
 
 Browse to bank **A VDX** and select **Analog Bass** — a deep, sustained bass sound with clear low-end weight.
 
@@ -75,7 +75,7 @@ Set the chain to MIDI channel 1:
 
 ### Step 5 — Add Chain 2: melodic pad engine (ch2)
 
-Tap **+** → **Instrument** → **ZynAddSubFX**.
+Tap **+** at right edge of Mixer → **Instrument** → **ZynAddSubFX**.
 
 Browse to bank **Cris Owl Alvarez** and select **ambient choirs** — a slowly evolving pad texture that works well over the bass.
 
@@ -241,14 +241,9 @@ Play the complete setup together:
 
 ### Step 5 — Save as auto-loading boot state
 
-Save the current state as the default startup snapshot:
+Tap **OPT/ADMIN** (short) → **Snapshots** → navigate into **000** bank → **Save as new snapshot** → type `last_state` → confirm.
 
-```bash
-ssh root@zynthian.local
-cp /zynthian/zynthian-my-data/snapshots/$(ls -t /zynthian/zynthian-my-data/snapshots/ | head -1) /zynthian/zynthian-my-data/snapshots/last_state.zss
-```
-
-Or, go to **Library → Snapshots** → type `last_state` in the **Name:** field → click the checkmark button to save.
+Navigate into the **000** bank folder first, then type the name and tap the checkmark icon. (Snapshots saved to the root level are invisible in the Zynthian UI.)
 
 On next boot, Zynthian loads this snapshot automatically — both chains ready, all CC bindings restored, without any manual intervention.
 

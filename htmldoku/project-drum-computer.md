@@ -1,8 +1,8 @@
 # SMC-PAD Drum Computer
 
 **Goal:** Use all 16 SMC-PAD pads as a drum computer — pads 1–12 trigger GM drum sounds live, pads 13–16 launch looped beat patterns.
-**Prerequisites:** Zynthian running and accessible via webconf and VNC. SMC-PAD connected via USB and detected (verified in the [SMC-PAD Launcher Control](project-smc-pad-launcher.html) tutorial, Part 1).
-**Access:** Webconf · VNC
+**Prerequisites:** Zynthian running and accessible via touchscreen, webconf, and VNC. SMC-PAD connected via USB and detected (verified in the [SMC-PAD Launcher Control](project-smc-pad-launcher.html) tutorial, Part 1).
+**Access:** Touchscreen · Webconf · VNC
 
 ---
 
@@ -33,11 +33,11 @@ SMC-PAD Preset 1 sends notes 36–51 on channel 7. Those notes map directly onto
 
 If you are on a different SMC-PAD preset, verify your notes and channel first — follow Part 1 of the [SMC-PAD Launcher Control](project-smc-pad-launcher.html) tutorial.
 
-> **Shortcut:** A pre-built snapshot named **SMC-PAD Drum Computer** is already saved in the Zynthian snapshot library (bank 000). Load it via **Library → Snapshots** to skip Steps 1–2 and go straight to Step 3.
+> **Shortcut:** A pre-built snapshot named **SMC-PAD Drum Computer** is already saved in the Zynthian snapshot library (bank 000). Tap **ZS3/SHOT** (bold hold) → navigate into the **000** bank → select **SMC-PAD Drum Computer** to skip Steps 1–2 and go straight to Step 3.
 
 ### Step 1 — Add a FluidSynth drum chain
 
-On the VNC desktop, tap **+** in the mixer screen. The **Add Chain...** screen appears. Tap **Instrument**.
+Tap **+** at the right edge of the Mixer. The **Add Chain...** screen appears. Tap **Instrument**.
 
 Browse engines and select **FluidSynth**. The bank list appears.
 
@@ -49,7 +49,7 @@ A preset list appears. Select **Standard**.
 
 ### Step 2 — Set the chain MIDI channel
 
-Tap the new chain strip to open its control screen. Tap **Chain Options** in the sidebar.
+Tap the new chain strip in the Mixer to open its control screen. Tap **Chain Options** in the sidebar.
 
 Find **MIDI Channel** and set it to **7** (the channel SMC-PAD Preset 1 sends on).
 
@@ -73,7 +73,7 @@ Build a classic 4/4 drum pattern in the step sequencer, using the FluidSynth cha
 
 ### Step 1 — Switch to launcher view
 
-On the mixer screen, tap the **Launcher** tab (to the right of **Mixer**, below the chain strips). [low — verify exact tab label on Pi]
+Tap **PAD/STEP** (short) to switch to the Launcher view. [low — verify exact tab label on Pi]
 
 **Verify:** Launcher view appears showing a grid of clip pads. The drum chain appears as a column.
 
@@ -81,7 +81,7 @@ On the mixer screen, tap the **Launcher** tab (to the right of **Mixer**, below 
 
 Tap the clip pad for the drum chain (row 1, column 1 — the top-left pad in the launcher grid).
 
-Tap the **Edit** button (pencil icon) in the toolbar, or long-press the pad and select **Edit**.
+Tap **PAD/STEP** (bold hold, 300ms) to open the Pattern Editor, or long-press the pad and select **Edit**.
 
 **Verify:** Pattern Editor opens showing a pitch/step grid.
 
@@ -113,13 +113,13 @@ Long-press one of the hi-hat notes and set **Velocity** to **60** — quieter th
 
 ### Step 7 — Play the pattern
 
-In the Pattern Editor toolbar, tap **▶ Play**. The sequencer starts looping the 16-step pattern.
+Tap **PLAY (▶)** in the bottom row. The sequencer starts looping the 16-step pattern.
 
 **Verify:** Kick on beats 1 and 3 (steps 1, 5, 9, 13), snare on beats 2 and 4 (steps 5, 13), closed hi-hat on every step. Pattern loops continuously.
 
 ### Step 8 — Stop and return to launcher
 
-Tap **⏹ Stop** in the toolbar. Tap **Back** to return to the launcher view.
+Tap **STOP (■)** in the bottom row. Tap **BACK/NO** to return to the launcher view.
 
 **Verify:** Back in the launcher, the clip pad for the drum chain shows a non-empty state (colored, not blank).
 
@@ -183,13 +183,9 @@ Test pads 14, 15, and 16 — each should toggle its corresponding phrase slot.
 
 ### Step 6 — Save as snapshot
 
-In a browser, open:
+Tap **OPT/ADMIN** (short) → **Snapshots** → navigate into the **000** bank → **Save as new snapshot** → type `SMC-PAD Drum Computer` → confirm.
 
-```
-http://zynthian.local
-```
-
-Go to **Library → Snapshots**. In the **Name:** field enter `SMC-PAD Drum Computer`. Click the checkmark icon to save.
+> **Important:** Navigate into the **000** bank folder first, then type the name and tap the checkmark icon. Snapshots saved to the root level are invisible in the Zynthian UI.
 
 **Verify:** The snapshot appears in the list. Loading it restores the drum chain, all 4 patterns, and MIDI mappings.
 

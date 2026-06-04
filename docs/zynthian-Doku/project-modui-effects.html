@@ -222,8 +222,8 @@ jack_connect system:capture_4 &lt;second-modui-in-r&gt;</code></pre>
 <p><strong>Verify:</strong> Line input is processed independently from the mic chain.</p>
 <h3 id="step-5--save-the-mod-ui-pedalboard">Step 5 — Save the MOD-UI pedalboard</h3>
 <p>In the MOD-UI browser, click the save icon (floppy disk) and name the pedalboard (e.g. <code>mic-line-processing</code>). MOD-UI saves pedalboards to <code>/zynthian/zynthian-my-data/mod-ui/pedalboards/</code>.</p>
-<p>Then save a Zynthian snapshot: go to <strong>Library → Snapshots</strong>, type a name in the <strong>Name:</strong> field, click the checkmark button to save — the snapshot stores which MOD-UI chain(s) are loaded.</p>
-<p><strong>Verify:</strong> Pedalboard name appears in MOD-UI's saved pedalboard list. Snapshot saved in webconf.</p>
+<p>Then save a Zynthian snapshot: tap <strong>OPT/ADMIN</strong> (short) → <strong>Snapshots</strong> → navigate into the <strong>000</strong> bank → <strong>Save as new snapshot</strong> → type name → confirm. (Snapshots saved to the root level are invisible in the Zynthian UI.) The snapshot stores which MOD-UI chain(s) are loaded.</p>
+<p><strong>Verify:</strong> Pedalboard name appears in MOD-UI's saved pedalboard list. Snapshot saved in the 000 bank.</p>
 <hr>
 <h2 id="going-further">Going Further</h2>
 <ul><li>Add a gate (e.g. Calf Gate) before the compressor to suppress mic noise floor during silence</li><li>Use MOD-UI's built-in MIDI control to automate effect parameters from SMC-PAD knobs</li><li>Add a second reverb with longer tail for ambient mic treatment — blend two reverb plugins in parallel</li><li>Route the processed output back through a Zynthian synth chain for parallel processing</li><li>Install additional LV2 plugins for more effect options: <code>apt install swh-plugins</code> adds dozens of classic effects</li></ul>

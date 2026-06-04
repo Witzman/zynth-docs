@@ -14,7 +14,7 @@ The Maschine step sequencer runs on its own internal clock — independent of Zy
 
 ### Step 1 — Load the dub techno snapshot
 
-In webconf, go to **Library → Snapshots** and load **dub-techno-p1**.
+Tap **ZS3/SHOT** (bold hold) → navigate into **000** bank → select **dub-techno-p1**.
 
 **Verify:** Mixer shows the FluidSynth drum chain and ZynAddSubFX bass chain.
 
@@ -37,7 +37,7 @@ systemctl start maschine-mk2.service
 
 ### Step 3 — Add a pad chain on MIDI channel 2
 
-In the Zynthian VNC desktop, tap **+** in the mixer.
+Tap **+** at right edge of Mixer.
 
 1. Tap **Instrument**
 2. Select **ZynAddSubFX**
@@ -79,13 +79,15 @@ Press **Play** on the Maschine MK2.
 
 ### Step 6 — Start Zynthian transport
 
-In VNC, open the Launcher (**PAD/STEP** on the V5 keypad) and tap **PLAY (▶)**.
+Tap **PAD/STEP** (short) to open the Launcher, then tap **PLAY (▶)**.
 
 **Verify:** Drum pattern and bass pattern play from Zynthian. Maschine pad layer plays simultaneously. All three layers audible together.
 
 ### Step 7 — Save the combined snapshot
 
-In webconf, go to **Library → Snapshots**. Type `dub-techno-maschine-p1` in the **Name:** field and click the checkmark icon.
+Tap **OPT/ADMIN** (short) → **Snapshots** → navigate into **000** bank → **Save as new snapshot** → type `dub-techno-maschine-p1` → confirm.
+
+Navigate into the **000** bank folder first, then type the name and tap the checkmark icon. (Snapshots saved to the root level are invisible in the Zynthian UI.)
 
 **Verify:** Snapshot saved. Reloading it restores the three chains. (The Maschine daemon and its step pattern are not saved in the snapshot — restart the daemon and reprogram the pattern after loading.)
 
@@ -99,7 +101,7 @@ Add dub-style delay and reverb to the pad chain for the classic smeared, spaciou
 
 [low] Exact LV2 plugin name and chain insertion method need Pi verification. The following describes the expected workflow.
 
-In VNC, tap the pad chain in the mixer to open it. Add an LV2 effect to the chain's FX slot — look for a tape delay or simple delay plugin.
+Tap the pad chain strip in the Mixer to open it. Add an LV2 effect to the chain's FX slot — look for a tape delay or simple delay plugin.
 
 Set:
 - Delay time: aligned to the BPM (e.g. 500ms at 120 BPM for quarter-note delay)
@@ -123,7 +125,9 @@ Set:
 
 ### Step 3 — Save the effects snapshot
 
-In webconf, save as `dub-techno-maschine-p2`.
+Tap **OPT/ADMIN** (short) → **Snapshots** → navigate into **000** bank → **Save as new snapshot** → type `dub-techno-maschine-p2` → confirm.
+
+Navigate into the **000** bank folder first, then type the name and tap the checkmark icon. (Snapshots saved to the root level are invisible in the Zynthian UI.)
 
 **Verify:** Snapshot restores pad chain with delay and reverb settings intact.
 

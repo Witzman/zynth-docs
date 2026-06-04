@@ -256,11 +256,10 @@ MAP CH#0 NON#41 =&gt; CH#0 CC#95</code></pre>
 <h2 id="part-5--snapshot-and-boot-persistence-draft">Part 5 — Snapshot and Boot Persistence <code>[draft]</code></h2>
 <p>Save the complete rig as a snapshot and set it to auto-load on boot.</p>
 <h3 id="step-1--save-snapshot">Step 1 — Save snapshot</h3>
-<p>Open <code>http://zynthian.local</code> → <strong>Library</strong> → <strong>Snapshots</strong>.</p>
-<p>Type a name in the <strong>Name:</strong> field — for example, <code>live-looper</code>.</p>
-<p>Click the checkmark icon to save.</p>
+<p>Tap <strong>OPT/ADMIN</strong> (short) → <strong>Snapshots</strong> → navigate into <strong>000</strong> bank → <strong>Save as new snapshot</strong> → type name (<code>live-looper</code>) → confirm.</p>
+<blockquote><p>Navigate into the <strong>000</strong> bank folder first, then type the name and tap the checkmark icon. (Snapshots saved to the root level are invisible in the Zynthian UI.)</p></blockquote>
 <h3 id="step-2--set-as-boot-default">Step 2 — Set as boot default</h3>
-<p>Click <strong>Save as Last State</strong>.</p>
+<p>Tap <strong>OPT/ADMIN</strong> (short) → <strong>Admin</strong> → <strong>Save as Last State</strong>.</p>
 <p><strong>Verify:</strong> Reboot Zynthian:</p>
 <pre><code class="language-bash">ssh root@zynthian.local
 reboot</code></pre>
@@ -268,7 +267,7 @@ reboot</code></pre>
 <p>Test one transport button and one pad to confirm routing is intact.</p>
 <hr>
 <h2 id="going-further">Going Further</h2>
-<ul><li>Add more instrument chains (FluidSynth bass, setBfree organ) and route each into SooperLooper for layered loops.</li><li>Use the <strong>overdub</strong> button to layer multiple passes on a single loop slot.</li><li>Assign SMC-PAD knobs 1–8 to SooperLooper <strong>feedback</strong>, <strong>wet</strong>, and <strong>dry</strong> controls via CC Learn — shape the decay of loops in real time.</li><li>Use the <strong>multiply</strong> function (tap <strong>multiply</strong> while a loop plays) to extend the loop length by integer multiples.</li><li>Save multiple snapshots for different performance setups and load them from webconf between songs.</li></ul>
+<ul><li>Add more instrument chains (FluidSynth bass, setBfree organ) and route each into SooperLooper for layered loops.</li><li>Use the <strong>overdub</strong> button to layer multiple passes on a single loop slot.</li><li>Assign SMC-PAD knobs 1–8 to SooperLooper <strong>feedback</strong>, <strong>wet</strong>, and <strong>dry</strong> controls via CC Learn — shape the decay of loops in real time.</li><li>Use the <strong>multiply</strong> function (tap <strong>multiply</strong> while a loop plays) to extend the loop length by integer multiples.</li><li>Save multiple snapshots for different performance setups and load them via <strong>ZS3/SHOT</strong> (bold hold) → <strong>000</strong> bank between songs.</li></ul>
 </article>
 </main>
 <div id="toc-column"></div>

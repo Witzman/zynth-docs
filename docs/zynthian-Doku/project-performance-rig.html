@@ -127,13 +127,13 @@ systemctl status maschine-mk2.service --no-pager</code></pre>
 <pre><code class="language-bash">systemctl start maschine-mk2.service</code></pre>
 <p><strong>Verify:</strong> <code>aconnect -l</code> shows <code>maschine.rs</code> client.</p>
 <h3 id="step-4--add-chain-1-bass-engine-ch1">Step 4 — Add Chain 1: bass engine (ch1)</h3>
-<p>On the touchscreen, tap <strong>+</strong> → <strong>Instrument</strong> → <strong>ZynAddSubFX</strong>.</p>
+<p>Tap <strong>+</strong> at right edge of Mixer → <strong>Instrument</strong> → <strong>ZynAddSubFX</strong>.</p>
 <p>Browse to bank <strong>A VDX</strong> and select <strong>Analog Bass</strong> — a deep, sustained bass sound with clear low-end weight.</p>
 <p>Set the chain to MIDI channel 1:</p>
 <ul><li>Tap the chain → <strong>Chain Options</strong> → <strong>MIDI Channel</strong> → select <strong>1</strong>.</li></ul>
 <p><strong>Verify:</strong> Chain 1 shows channel 1 in the chain view.</p>
 <h3 id="step-5--add-chain-2-melodic-pad-engine-ch2">Step 5 — Add Chain 2: melodic pad engine (ch2)</h3>
-<p>Tap <strong>+</strong> → <strong>Instrument</strong> → <strong>ZynAddSubFX</strong>.</p>
+<p>Tap <strong>+</strong> at right edge of Mixer → <strong>Instrument</strong> → <strong>ZynAddSubFX</strong>.</p>
 <p>Browse to bank <strong>Cris Owl Alvarez</strong> and select <strong>ambient choirs</strong> — a slowly evolving pad texture that works well over the bass.</p>
 <p>Set the chain to MIDI channel 2: tap the chain → <strong>Chain Options</strong> → <strong>MIDI Channel</strong> → select <strong>2</strong>.</p>
 <p><strong>Verify:</strong> Chain 2 shows channel 2.</p>
@@ -205,10 +205,8 @@ amidi -p hw:$(aconnect -l | grep -i "SMC\|SINCO" | grep -oP 'client \K[0-9]+' | 
 <ul><li>Maschine MK2 pads: bass triggers on Chain 1</li><li>SMC-PAD pads: harmonic bass triggers on Chain 1, knobs 1–8 shaping the bass tone</li><li>Xboard: melodic pad on Chain 2, 16 knobs shaping the pad texture, aftertouch adding expression</li></ul>
 <p><strong>Verify:</strong> All three controllers operate simultaneously without conflict. Each shapes its designated chain.</p>
 <h3 id="step-5--save-as-auto-loading-boot-state">Step 5 — Save as auto-loading boot state</h3>
-<p>Save the current state as the default startup snapshot:</p>
-<pre><code class="language-bash">ssh root@zynthian.local
-cp /zynthian/zynthian-my-data/snapshots/$(ls -t /zynthian/zynthian-my-data/snapshots/ | head -1) /zynthian/zynthian-my-data/snapshots/last_state.zss</code></pre>
-<p>Or, go to <strong>Library → Snapshots</strong> → type <code>last_state</code> in the <strong>Name:</strong> field → click the checkmark button to save.</p>
+<p>Tap <strong>OPT/ADMIN</strong> (short) → <strong>Snapshots</strong> → navigate into <strong>000</strong> bank → <strong>Save as new snapshot</strong> → type <code>last_state</code> → confirm.</p>
+<p>Navigate into the <strong>000</strong> bank folder first, then type the name and tap the checkmark icon. (Snapshots saved to the root level are invisible in the Zynthian UI.)</p>
 <p>On next boot, Zynthian loads this snapshot automatically — both chains ready, all CC bindings restored, without any manual intervention.</p>
 <p><strong>Verify:</strong></p>
 <pre><code class="language-bash">reboot</code></pre>

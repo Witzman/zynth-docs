@@ -102,7 +102,7 @@
 <main>
 <article>
 <h1 id="maschine-mk2-step-sequencer">Maschine MK2 Step Sequencer</h1>
-<p><strong>Goal:</strong> Use the MaschineMK2_linux daemon's built-in 16-step sequencer to trigger Zynthian synth engines — no Native Instruments software required. <strong>Prerequisites:</strong> <a href="project-maschine-mk2.html">Maschine MK2 Controller</a> tutorial complete — daemon installed, systemd service active, JACK routing wired to ZynMidiRouter. <strong>Access:</strong> SSH · VNC</p>
+<p><strong>Goal:</strong> Use the MaschineMK2_linux daemon's built-in 16-step sequencer to trigger Zynthian synth engines — no Native Instruments software required. <strong>Prerequisites:</strong> <a href="project-maschine-mk2.html">Maschine MK2 Controller</a> tutorial complete — daemon installed, systemd service active, JACK routing wired to ZynMidiRouter. <strong>Access:</strong> SSH · Touchscreen · VNC</p>
 <hr>
 <h2 id="part-1--first-sequence-draft">Part 1 — First Sequence <code>[draft]</code></h2>
 <p>The daemon's step sequencer outputs MIDI on <strong>channel 2</strong> — one channel above the normal pad output on channel 1. A chain set to MIDI channel 2 responds only to the sequencer; the pads (channel 1) leave it silent.</p>
@@ -114,7 +114,7 @@ systemctl status maschine-mk2.service --no-pager</code></pre>
 <pre><code class="language-bash">systemctl start maschine-mk2.service</code></pre>
 <p><strong>Verify:</strong> Service is active.</p>
 <h3 id="step-2--add-a-chain-for-the-sequencer">Step 2 — Add a chain for the sequencer</h3>
-<p>In the Zynthian VNC desktop, tap <strong>+</strong> in the mixer.</p>
+<p>Tap <strong>+</strong> at right edge of Mixer.</p>
 <ol><li>Tap <strong>Instrument</strong></li><li>Choose an engine — <strong>ZynAddSubFX</strong> with any preset works for this test</li><li>Tap the new chain to open it, then open <strong>Chain Options</strong></li><li>Set <strong>MIDI Channel</strong> to <strong>2</strong></li></ol>
 <p><strong>Verify:</strong> Chain appears in the mixer with an engine loaded and MIDI channel set to 2.</p>
 <h3 id="step-3--enter-sequencer-mode">Step 3 — Enter sequencer mode</h3>
@@ -167,7 +167,8 @@ systemctl status maschine-mk2.service --no-pager</code></pre>
 <p>[low] Whether Group transpose applies immediately to the playing step or only from the next step needs Pi verification.</p>
 <p><strong>Verify:</strong> Group button press shifts the pitch of the entire pattern up or down.</p>
 <h3 id="step-3--save-the-setup-as-a-snapshot">Step 3 — Save the setup as a snapshot</h3>
-<p>In webconf, go to <strong>Library</strong> → <strong>Snapshots</strong>. Enter a name in the <strong>Name:</strong> field and click the checkmark icon.</p>
+<p>Tap <strong>OPT/ADMIN</strong> (short) → <strong>Snapshots</strong> → navigate into <strong>000</strong> bank → <strong>Save as new snapshot</strong> → type name → confirm.</p>
+<p>Navigate into the <strong>000</strong> bank folder first, then type the name and tap the checkmark icon. (Snapshots saved to the root level are invisible in the Zynthian UI.)</p>
 <p>The snapshot saves the Zynthian chain configuration (engine, MIDI channel 2 assignment). It does not save the Maschine step pattern — that lives in the daemon's runtime state and resets when the daemon restarts.</p>
 <p><strong>Verify:</strong> Snapshot appears in the list and reloads the chain on channel 2.</p>
 <hr>

@@ -337,15 +337,13 @@ Save the complete rig as a snapshot and set it to auto-load on boot.
 
 ### Step 1 — Save snapshot
 
-Open `http://zynthian.local` → **Library** → **Snapshots**.
+Tap **OPT/ADMIN** (short) → **Snapshots** → navigate into **000** bank → **Save as new snapshot** → type name (`live-looper`) → confirm.
 
-Type a name in the **Name:** field — for example, `live-looper`.
-
-Click the checkmark icon to save.
+> Navigate into the **000** bank folder first, then type the name and tap the checkmark icon. (Snapshots saved to the root level are invisible in the Zynthian UI.)
 
 ### Step 2 — Set as boot default
 
-Click **Save as Last State**.
+Tap **OPT/ADMIN** (short) → **Admin** → **Save as Last State**.
 
 **Verify:** Reboot Zynthian:
 
@@ -366,4 +364,4 @@ Test one transport button and one pad to confirm routing is intact.
 - Use the **overdub** button to layer multiple passes on a single loop slot.
 - Assign SMC-PAD knobs 1–8 to SooperLooper **feedback**, **wet**, and **dry** controls via CC Learn — shape the decay of loops in real time.
 - Use the **multiply** function (tap **multiply** while a loop plays) to extend the loop length by integer multiples.
-- Save multiple snapshots for different performance setups and load them from webconf between songs.
+- Save multiple snapshots for different performance setups and load them via **ZS3/SHOT** (bold hold) → **000** bank between songs.

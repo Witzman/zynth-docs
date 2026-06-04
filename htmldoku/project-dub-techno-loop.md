@@ -1,8 +1,8 @@
 # Dub Techno Performance Loop
 
 **Goal:** Build a looping dub techno foundation — a 16-step drum pattern and a sparse bass line playing simultaneously — as the basis for a live dub techno performance rig.
-**Prerequisites:** Zynthian running and accessible via webconf and VNC. Audio output confirmed working (speakers or headphones connected to the ESI U46DJ mix output).
-**Access:** Webconf · VNC
+**Prerequisites:** Zynthian running and accessible via touchscreen and webconf. Audio output confirmed working (speakers or headphones connected to the ESI U46DJ mix output).
+**Access:** Touchscreen · Webconf
 
 ---
 
@@ -10,19 +10,15 @@
 
 Set up two chains — a drum kit and a bass synth — each with a looping 16-step pattern, to prove the sequenced foundation works before adding effects or performance controls.
 
-The two chains are pre-configured in a prepared snapshot. You load it, then build the patterns in the VNC step sequencer.
-
-> **V5 touch keypad:** This tutorial uses the V5 touch keypad (left-side panel). Key buttons: **OPT/ADMIN** (short = Main Menu), **MIX/LEVEL** (short = Mixer), **PAD/STEP** (short = Launcher), **BACK/NO** (Back). Transport row at bottom: **PLAY (▶)**, **STOP (■)**.
+The two chains are pre-configured in a prepared snapshot. You load it, then build the patterns in the touchscreen step sequencer.
 
 ---
 
 ### Step 1 — Load the prepared snapshot
 
-In a browser, open `http://zynthian.local` (or `http://192.168.2.123`) → **Library → Snapshots**.
+Tap **ZS3/SHOT** (bold hold, 300ms) → navigate into the **000** bank → select **dub-techno-p1**.
 
-Find **dub-techno-p1** in the list and load it.
-
-**Verify:** In VNC, the mixer shows two chain strips — one for FluidSynth (drums) and one for ZynAddSubFX (bass). Both load automatically with the correct presets: **System/FluidDrums / Standard** and **A VDX / Analog Bass**.
+**Verify:** The mixer shows two chain strips — one for FluidSynth (drums) and one for ZynAddSubFX (bass). Both load automatically with the correct presets: **System/FluidDrums / Standard** and **A VDX / Analog Bass**.
 
 ---
 
@@ -146,9 +142,9 @@ Tap **STOP (■)** in the V5 keypad transport row.
 
 ### Step 19 — Save the snapshot with patterns
 
-In a browser, go to `http://zynthian.local` → **Library → Snapshots**.
+Tap **OPT/ADMIN** (short) → **Snapshots** → navigate into the **000** bank → **Save as new snapshot** → type `dub-techno-p1` → confirm.
 
-In the **Name:** field, type `dub-techno-p1`. Tap the checkmark icon.
+Navigate into the **000** bank folder first, then type the name and tap the checkmark icon. (Snapshots saved to the root level are invisible in the Zynthian UI.)
 
 **Verify:** Snapshot `dub-techno-p1` appears in the list. The snapshot now includes both patterns.
 

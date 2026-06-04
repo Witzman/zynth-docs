@@ -124,13 +124,13 @@ Save the chain/channel map as a named snapshot and set it as the boot default so
 
 ### Step 1 — Save a named snapshot
 
-Open `http://zynthian.local` → **Library → Snapshots**.
+Tap **OPT/ADMIN** (short) → **Snapshots** → navigate into the **000** bank → **Save as new snapshot** → type `midi-channel-map` → confirm.
 
-Type a name (e.g. `midi-channel-map`) in the **Name:** field and click the checkmark button to save.
+Navigate into the **000** bank folder first, then type the name and tap the checkmark icon. (Snapshots saved to the root level are invisible in the Zynthian UI.)
 
 ### Step 2 — Set as boot default
 
-In the snapshot list, select `midi-channel-map`. Click **Save as Last State**.
+In the snapshot list, select `midi-channel-map`. Tap **Save as Last State**.
 
 This writes the snapshot to `last_state.zss` — Zynthian loads this file automatically on every boot.
 

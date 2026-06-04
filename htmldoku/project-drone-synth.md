@@ -159,7 +159,7 @@ Repeat the long-press on touchscreen → turn SMC-PAD knob process for each rema
 | 7 | Reverb / Effect Level | Space — wet/dry |
 | 8 | Volume (CC 7) | Overall level |
 
-Map each one: long-press target parameter in VNC → turn the SMC-PAD knob.
+Map each one: long-press target parameter on touchscreen → turn the SMC-PAD knob.
 
 **Verify:** Each knob produces an audible change when turned while a drone note is held.
 
@@ -171,7 +171,7 @@ Hold a drone note (press and hold a pad, or use PLAY if it sends CC per Step 4A 
 
 ### Step 5 — Save final snapshot
 
-In webconf, go to **Library → Snapshots**. Type `drone-final` in the **Name:** field and click the checkmark button to save. CC bindings are stored with the snapshot.
+Tap **OPT/ADMIN** (short) → **Snapshots** → navigate into **000** bank → **Save as new snapshot** → type `drone-final` → confirm. Navigate into the **000** bank folder first, then type the name and tap the checkmark icon. (Snapshots saved to the root level are invisible in the Zynthian UI.) CC bindings are stored with the snapshot.
 
 **Verify:** Snapshot saved. Reload it and confirm bindings survive.
 
