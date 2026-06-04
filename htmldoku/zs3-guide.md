@@ -17,12 +17,19 @@ A **ZS3** (Zynthian Sub-Snapshot) is a partial state save that can be recalled i
 | Load time | 1–5s (engine restart) | Instant (<100ms) |
 | Typical use | Between songs | Between sections within a song |
 | Max per session | One per file | Dozens per snapshot |
+| Stored in | Separate `.zss` file in a bank subdir | Inside the loaded `.zss` file |
 
 ---
 
 ## ZS3 Screen
 
-**Access:** Main Menu → **ZS3** (or SW4 short on V5 default mapping).
+**From the touch keypad:** Tap **ZS3/SHOT** (short) — opens the ZS3 list directly.
+
+**Alternatively:** Tap **OPT/ADMIN** (short) → **ZS3**.
+
+**V5 hardware:** SW4 short.
+
+> **ZS3/SHOT bold hold (300ms)** opens the Snapshots screen (`.zss` files) instead — not the ZS3 list.
 
 The list shows three sections:
 
