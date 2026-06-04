@@ -39,6 +39,23 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
 
 ---
 
+- [ ] **Complete TOGGLE_SEQ mappings in webconf**
+  - [ ] Open webconf → Interface → MIDI Options → Master Key Actions
+  - [ ] Add notes 36–47 and 49–51 mapped to TOGGLE_SEQ (see MIDI Reference Conflict 4 for full block)
+  - [ ] Verify all 16 SMC-PAD pads toggle correct launcher slots
+  - [ ] Update MIDI Reference Section 2 matrix: SMC-PAD pads 1–12 and 14–16 → `[verified]`
+
+---
+
+- [ ] **Verify Xboard 25 factory CC defaults**
+  - [ ] Run `amidi -d -p hw:X,0,0` (X = Xboard card number from `aconnect -l`)
+  - [ ] Turn each of 16 knobs, record CC number and channel
+  - [ ] Check against SMC-PAD CCs (16/17/18/30/80/81/82/31) and common engine CCs
+  - [ ] Update MIDI Reference Section 1 Xboard table with confirmed defaults
+  - [ ] Remove `[low]` tag from Xboard knob row
+
+---
+
 ## Backlog
 
 <!-- Add future cross-cutting tasks here -->

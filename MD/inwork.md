@@ -8,6 +8,7 @@ Status: `[~]` drafting · `[t]` user testing · `[>]` ready to publish · `[ ]` 
 
 ## Tutorials
 
+- [>] **MIDI Reference** — published; update after each tutorial verification
 - [~] **Custom MIDI Channel Routing** — Xboard channels 1–4 each drive a dedicated chain; snapshot persists on boot
 - [~] **SMC-PAD Launcher Control** — 16 pads trigger 4×4 sequencer grid via MIDI master channel + CUIA TOGGLE_SEQ
 - [~] **SMC-PAD Drum Computer** — 16 pads as live GM drum kit + step-sequenced beat launcher; pads 13–16 launch patterns
