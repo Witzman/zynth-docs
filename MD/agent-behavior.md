@@ -168,7 +168,7 @@ git push
 
 ## Documentation Updates
 
-If a code dive was needed to fill a documentation gap, update the relevant `htmldoku/` page before ending the session — not after. The rule: information extracted from code must not stay only in code.
+When investigating source code to answer a documentation question, findings must be written to the relevant `htmldoku/` page immediately, then `generate-html.py` run, full `docs/zynthian-Doku/` committed and pushed — before continuing. No confirmation prompt.
 
 After adding to `htmldoku/`:
 ```bash
