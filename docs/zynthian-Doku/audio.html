@@ -106,6 +106,7 @@
 <hr>
 <h2 id="choosing-an-audio-device">Choosing an Audio Device</h2>
 <p>Open <code>http://zynthian.local</code> → <strong>Hardware</strong> → <strong>Audio</strong>. The <strong>Soundcard</strong> dropdown lists all detected audio devices. Select your device and click Save, then Reboot.</p>
+<blockquote><p><strong>Audio device and JACK settings require webconf</strong> — not available from the touchscreen UI.</p></blockquote>
 <p>Available device types:</p>
 <table><thead><tr><th>Type</th><th>Notes</th></tr></thead><tbody><tr><td><strong>USB Audio</strong></td><td>Plug-and-play. Appears by ALSA name. Sample rate must match device capability.</td></tr><tr><td><strong>HifiBerry DAC+</strong></td><td>I2S HAT, high quality. Detected automatically by <code>zynthian_autoconfig.py</code>.</td></tr><tr><td><strong>ZynADAC</strong></td><td>Official Zynthian audio HAT — best quality option.</td></tr><tr><td><strong>bcm2835 Headphones</strong></td><td>Built-in 3.5mm jack. Works but lower quality and higher noise than a dedicated device.</td></tr></tbody></table>
 <hr>
@@ -140,6 +141,10 @@ rmmod snd-usb-audio &amp;&amp; modprobe snd-usb-audio</code></pre>
 <ul><li><strong>512 frames at 44100 Hz</strong> ≈ 11.6ms round-trip (good for most use)</li><li><strong>256 frames at 44100 Hz</strong> ≈ 5.8ms (low latency; needs stable USB/HAT device)</li><li><strong>128 frames</strong> — only stable with I2S HATs on Pi 4</li></ul>
 <p>Monitor XRUNs in the JACK log:</p>
 <pre><code class="language-bash">journalctl -u jack2 -f | grep -i xrun</code></pre>
+<hr>
+<h2 id="monitoring-levels-from-the-touchscreen">Monitoring Levels from the Touchscreen</h2>
+<p>Tap <strong>MIX/LEVEL</strong> (short) to open the Zynthian audio mixer — per-chain volume faders and mute/solo.</p>
+<p>Tap <strong>MIX/LEVEL</strong> (bold hold, 300ms) to open the ALSA hardware mixer — adjust soundcard input/output levels without webconf.</p>
 <hr>
 <h2 id="whats-next">What's Next</h2>
 <ul><li><a href="getting-started.html">Getting Started</a> — initial audio device selection</li><li><a href="troubleshooting.html">Troubleshooting</a> — JACK errors and no-sound situations</li><li><a href="hardware.html">Hardware Setup</a> — I2S HAT installation</li></ul>

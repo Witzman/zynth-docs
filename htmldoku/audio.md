@@ -8,6 +8,8 @@ Zynthian uses JACK as its audio engine. This page covers selecting an audio devi
 
 Open `http://zynthian.local` → **Hardware** → **Audio**. The **Soundcard** dropdown lists all detected audio devices. Select your device and click Save, then Reboot.
 
+> **Audio device and JACK settings require webconf** — not available from the touchscreen UI.
+
 Available device types:
 
 | Type | Notes |
@@ -87,6 +89,14 @@ Monitor XRUNs in the JACK log:
 ```bash
 journalctl -u jack2 -f | grep -i xrun
 ```
+
+---
+
+## Monitoring Levels from the Touchscreen
+
+Tap **MIX/LEVEL** (short) to open the Zynthian audio mixer — per-chain volume faders and mute/solo.
+
+Tap **MIX/LEVEL** (bold hold, 300ms) to open the ALSA hardware mixer — adjust soundcard input/output levels without webconf.
 
 ---
 
