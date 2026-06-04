@@ -199,25 +199,9 @@ chmod +x /usr/local/bin/maschine-jack-connect.sh</code></pre>
 <p>Load a chain with any engine (e.g. ZynAddSubFX with a default preset). Press any pad on the Maschine MK2.</p>
 <p><strong>Verify:</strong> A note plays through audio output when a pad is pressed.</p>
 <hr>
-<h2 id="part-2--map-buttons-and-encoders-via-cc-learn-draft">Part 2 — Map Buttons and Encoders via CC Learn <code>[draft]</code></h2>
-<p>Bind Maschine buttons and encoders to synth parameters using Zynthian's CC Learn system.</p>
-<h3 id="step-1--open-a-synth-chain">Step 1 — Open a synth chain</h3>
-<p>On the touchscreen, tap a chain to open its control screen. Parameter knobs (e.g. Cutoff, Resonance, Volume) should be visible.</p>
-<p><strong>Verify:</strong> Chain control screen with parameter knobs is visible.</p>
-<h3 id="step-2--enter-cc-learn-on-a-parameter">Step 2 — Enter CC Learn on a parameter</h3>
-<p>Long-press a parameter knob on the touchscreen (~600ms). The knob highlights orange — CC Learn is now active for that parameter.</p>
-<p><strong>Verify:</strong> Knob turns orange.</p>
-<h3 id="step-3--move-a-maschine-button-or-encoder">Step 3 — Move a Maschine button or encoder</h3>
-<p>While the knob is orange, press a Maschine button or turn a Maschine encoder. Zynthian captures the CC number and binds it.</p>
-<p>Note on encoders: they send absolute CC values (0–127), not relative increments. They work best for parameters where jumping to a value is acceptable. Buttons send CC 127 on press — useful for on/off toggles.</p>
-<p><strong>Verify:</strong> Knob returns to normal colour. Moving the same Maschine control now affects the parameter.</p>
-<h3 id="step-4--repeat-for-other-parameters">Step 4 — Repeat for other parameters</h3>
-<p>Repeat Steps 2–3 for each parameter you want to control.</p>
-<p><strong>Verify:</strong> All desired CC bindings respond correctly.</p>
-<h3 id="step-5--save-a-snapshot">Step 5 — Save a snapshot</h3>
-<p>CC bindings are stored in snapshots. Save now so they survive reboots:</p>
-<p>In webconf, go to <strong>Library → Snapshots</strong>. Type a name in the <strong>Name:</strong> field and click the checkmark button to save.</p>
-<p><strong>Verify:</strong> Snapshot appears in the list.</p>
+<h2 id="part-2--map-encoders-and-buttons-draft">Part 2 — Map Encoders and Buttons <code>[draft]</code></h2>
+<blockquote><p><strong>Note:</strong> Zynthian's CC Learn does not work with the Maschine MK2 daemon. The encoders send RPN14 (14-bit RPN, not standard CC) and the transport buttons send RPN7 (also not standard CC). Zynthian CC Learn only captures standard CC 0–119. This part needs to be redesigned around MIDI filter rules that remap RPN → CC before reaching Zynthian's routing layer.</p></blockquote>
+<p>This part is pending redesign. See the Driver Reference section below for the full MIDI output spec.</p>
 <hr>
 <h2 id="part-3--run-as-a-systemd-service-verified">Part 3 — Run as a Systemd Service <code>[verified]</code></h2>
 <p>Auto-start the daemon on boot so the Maschine is ready without manual SSH.</p>
@@ -257,6 +241,29 @@ systemctl status maschine-mk2.service --no-pager
 aconnect -l | grep maschine
 jack_lsp -c 2&gt;/dev/null | grep 'maschine.*ZynMidiRouter\|ZynMidiRouter.*dev3'</code></pre>
 <p><strong>Verify:</strong> Service is <code>active (running)</code>, <code>maschine.rs</code> appears in <code>aconnect -l</code>, and the JACK connection to <code>ZynMidiRouter:dev3_in</code> is present — all without any manual steps.</p>
+<hr>
+<h2 id="driver-reference">Driver Reference</h2>
+<p>The <code>MaschineMK2_linux</code> daemon reads HID data from <code>/dev/maschine</code> and outputs ALSA MIDI on the <code>Pads MIDI</code> port (Ch1). All MIDI goes out on channel 1.</p>
+<h3 id="pads-16">Pads (16)</h3>
+<ul><li><strong>Note On/Off</strong> — velocity from pressure, exponential curve (power 0.4)</li><li><strong>Polyphonic aftertouch</strong> — compiled in, disabled in current build</li><li><strong>Note layout:</strong> pad positions map to offsets <code>[12,13,14,15, 8,9,10,11, 4,5,6,7, 0,1,2,3]</code> added to the current note base</li><li><strong>Pad lights</strong> — RGB color + brightness, refreshed at ~60 fps</li></ul>
+<h3 id="group-buttons-ah">Group Buttons A–H</h3>
+<p>Set the MIDI note base for all pads:</p>
+<table><thead><tr><th>Button</th><th>Note base</th></tr></thead><tbody><tr><td>A</td><td>24 (C1)</td></tr><tr><td>B</td><td>36 (C2)</td></tr><tr><td>C</td><td>48 (C3)</td></tr><tr><td>D</td><td>60 (C4, middle C)</td></tr><tr><td>E</td><td>72 (C5)</td></tr><tr><td>F</td><td>84 (C6)</td></tr><tr><td>G</td><td>96 (C7)</td></tr><tr><td>H</td><td>108 (C8)</td></tr></tbody></table>
+<h3 id="8-encoders">8 Encoders</h3>
+<p>Send <strong>RPN14</strong> (14-bit, 4-message CC sequence) on Ch1, mapped to RPN numbers 16–23. Values range 0–8191. <strong>Standard MIDI CC Learn cannot capture these.</strong></p>
+<h3 id="transport-and-function-buttons">Transport and Function Buttons</h3>
+<p>Send <strong>RPN7</strong> (3-message CC sequence) on Ch1. <strong>Standard MIDI CC Learn cannot capture these.</strong></p>
+<table><thead><tr><th>Button</th><th>RPN number</th></tr></thead><tbody><tr><td>Play</td><td>1</td></tr><tr><td>Stop (Erase button)</td><td>2</td></tr><tr><td>Rec</td><td>3</td></tr><tr><td>Grid</td><td>4</td></tr><tr><td>Step Left</td><td>5</td></tr><tr><td>Step Right</td><td>6</td></tr><tr><td>Restart</td><td>7</td></tr><tr><td>Browse</td><td>8</td></tr><tr><td>Sampling</td><td>9</td></tr><tr><td>Note Repeat</td><td>10</td></tr><tr><td>Control</td><td>11</td></tr><tr><td>Nav</td><td>12</td></tr><tr><td>Nav Left</td><td>13</td></tr><tr><td>Nav Right</td><td>14</td></tr><tr><td>Main</td><td>24</td></tr><tr><td>Scene</td><td>25</td></tr><tr><td>Pattern</td><td>26</td></tr><tr><td>Pad Mode</td><td>27</td></tr><tr><td>View</td><td>28</td></tr><tr><td>Duplicate</td><td>29</td></tr><tr><td>Select</td><td>30</td></tr><tr><td>Solo</td><td>31</td></tr><tr><td>Step</td><td>32</td></tr><tr><td>Mute</td><td>33</td></tr><tr><td>Navigate</td><td>34</td></tr><tr><td>Tempo</td><td>35</td></tr><tr><td>Enter</td><td>36</td></tr><tr><td>Auto</td><td>37</td></tr><tr><td>All</td><td>38</td></tr><tr><td>F1–F8</td><td>39–46</td></tr><tr><td>Page Right</td><td>47</td></tr><tr><td>Page Left</td><td>48</td></tr></tbody></table>
+<h3 id="shift-button">Shift Button</h3>
+<p>Hold Shift to activate modifier state. Shift + Pad Mode enters pad mode 1. Shift + encoder B6 sets the step sequencer speed.</p>
+<h3 id="step-sequencer-pad-mode-2">Step Sequencer (Pad Mode 2)</h3>
+<p>Activated by Shift + Pad Mode a second time. Pads toggle steps on/off instead of playing notes. Play/Stop control playback. Speed set by Shift + encoder B6.</p>
+<h3 id="osc-interface">OSC Interface</h3>
+<p>The daemon listens on <code>127.0.0.1:42434</code> and sends to <code>127.0.0.1:42435</code>.</p>
+<p><strong>Incoming (control the hardware LEDs):</strong></p>
+<table><thead><tr><th>Path</th><th>Arguments</th><th>Effect</th></tr></thead><tbody><tr><td><code>/maschine/button/&lt;name&gt;</code></td><td><code>brightness</code></td><td>Set button LED white at brightness</td></tr><tr><td><code>/maschine/button/&lt;name&gt;</code></td><td><code>color_int brightness</code></td><td>Set button LED color + brightness</td></tr><tr><td><code>/maschine/pad</code></td><td><code>pad_idx color_int brightness</code></td><td>Set pad LED</td></tr><tr><td><code>/maschine/midi_note_base</code></td><td><code>base</code></td><td>Set MIDI note base remotely</td></tr></tbody></table>
+<p><strong>Outgoing (every hardware event):</strong></p>
+<ul><li>Each button event: <code>/&lt;button_name&gt; &lt;value&gt;</code></li><li>Each encoder step: encoder index + value</li></ul>
 <hr>
 <h2 id="going-further">Going Further</h2>
 <ul><li>Use Group buttons A–H to switch octaves and cover different note ranges across the 16 pads</li><li>Map Play and Stop buttons to Zynthian transport controls via CC Learn</li><li>Assign all 8 encoders to different synth parameters for a custom performance layout</li><li>Save a named snapshot with all CC bindings — Zynthian restores them automatically on load</li></ul>

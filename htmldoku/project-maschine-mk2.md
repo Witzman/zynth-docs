@@ -203,43 +203,11 @@ Load a chain with any engine (e.g. ZynAddSubFX with a default preset). Press any
 
 ---
 
-## Part 2 — Map Buttons and Encoders via CC Learn `[draft]`
+## Part 2 — Map Encoders and Buttons `[draft]`
 
-Bind Maschine buttons and encoders to synth parameters using Zynthian's CC Learn system.
+> **Note:** Zynthian's CC Learn does not work with the Maschine MK2 daemon. The encoders send RPN14 (14-bit RPN, not standard CC) and the transport buttons send RPN7 (also not standard CC). Zynthian CC Learn only captures standard CC 0–119. This part needs to be redesigned around MIDI filter rules that remap RPN → CC before reaching Zynthian's routing layer.
 
-### Step 1 — Open a synth chain
-
-On the touchscreen, tap a chain to open its control screen. Parameter knobs (e.g. Cutoff, Resonance, Volume) should be visible.
-
-**Verify:** Chain control screen with parameter knobs is visible.
-
-### Step 2 — Enter CC Learn on a parameter
-
-Long-press a parameter knob on the touchscreen (~600ms). The knob highlights orange — CC Learn is now active for that parameter.
-
-**Verify:** Knob turns orange.
-
-### Step 3 — Move a Maschine button or encoder
-
-While the knob is orange, press a Maschine button or turn a Maschine encoder. Zynthian captures the CC number and binds it.
-
-Note on encoders: they send absolute CC values (0–127), not relative increments. They work best for parameters where jumping to a value is acceptable. Buttons send CC 127 on press — useful for on/off toggles.
-
-**Verify:** Knob returns to normal colour. Moving the same Maschine control now affects the parameter.
-
-### Step 4 — Repeat for other parameters
-
-Repeat Steps 2–3 for each parameter you want to control.
-
-**Verify:** All desired CC bindings respond correctly.
-
-### Step 5 — Save a snapshot
-
-CC bindings are stored in snapshots. Save now so they survive reboots:
-
-In webconf, go to **Library → Snapshots**. Type a name in the **Name:** field and click the checkmark button to save.
-
-**Verify:** Snapshot appears in the list.
+This part is pending redesign. See the Driver Reference section below for the full MIDI output spec.
 
 ---
 
@@ -310,6 +278,103 @@ jack_lsp -c 2>/dev/null | grep 'maschine.*ZynMidiRouter\|ZynMidiRouter.*dev3'
 ```
 
 **Verify:** Service is `active (running)`, `maschine.rs` appears in `aconnect -l`, and the JACK connection to `ZynMidiRouter:dev3_in` is present — all without any manual steps.
+
+---
+
+## Driver Reference
+
+The `MaschineMK2_linux` daemon reads HID data from `/dev/maschine` and outputs ALSA MIDI on the `Pads MIDI` port (Ch1). All MIDI goes out on channel 1.
+
+### Pads (16)
+
+- **Note On/Off** — velocity from pressure, exponential curve (power 0.4)
+- **Polyphonic aftertouch** — compiled in, disabled in current build
+- **Note layout:** pad positions map to offsets `[12,13,14,15, 8,9,10,11, 4,5,6,7, 0,1,2,3]` added to the current note base
+- **Pad lights** — RGB color + brightness, refreshed at ~60 fps
+
+### Group Buttons A–H
+
+Set the MIDI note base for all pads:
+
+| Button | Note base |
+|--------|-----------|
+| A | 24 (C1) |
+| B | 36 (C2) |
+| C | 48 (C3) |
+| D | 60 (C4, middle C) |
+| E | 72 (C5) |
+| F | 84 (C6) |
+| G | 96 (C7) |
+| H | 108 (C8) |
+
+### 8 Encoders
+
+Send **RPN14** (14-bit, 4-message CC sequence) on Ch1, mapped to RPN numbers 16–23. Values range 0–8191. **Standard MIDI CC Learn cannot capture these.**
+
+### Transport and Function Buttons
+
+Send **RPN7** (3-message CC sequence) on Ch1. **Standard MIDI CC Learn cannot capture these.**
+
+| Button | RPN number |
+|--------|-----------|
+| Play | 1 |
+| Stop (Erase button) | 2 |
+| Rec | 3 |
+| Grid | 4 |
+| Step Left | 5 |
+| Step Right | 6 |
+| Restart | 7 |
+| Browse | 8 |
+| Sampling | 9 |
+| Note Repeat | 10 |
+| Control | 11 |
+| Nav | 12 |
+| Nav Left | 13 |
+| Nav Right | 14 |
+| Main | 24 |
+| Scene | 25 |
+| Pattern | 26 |
+| Pad Mode | 27 |
+| View | 28 |
+| Duplicate | 29 |
+| Select | 30 |
+| Solo | 31 |
+| Step | 32 |
+| Mute | 33 |
+| Navigate | 34 |
+| Tempo | 35 |
+| Enter | 36 |
+| Auto | 37 |
+| All | 38 |
+| F1–F8 | 39–46 |
+| Page Right | 47 |
+| Page Left | 48 |
+
+### Shift Button
+
+Hold Shift to activate modifier state. Shift + Pad Mode enters pad mode 1. Shift + encoder B6 sets the step sequencer speed.
+
+### Step Sequencer (Pad Mode 2)
+
+Activated by Shift + Pad Mode a second time. Pads toggle steps on/off instead of playing notes. Play/Stop control playback. Speed set by Shift + encoder B6.
+
+### OSC Interface
+
+The daemon listens on `127.0.0.1:42434` and sends to `127.0.0.1:42435`.
+
+**Incoming (control the hardware LEDs):**
+
+| Path | Arguments | Effect |
+|------|-----------|--------|
+| `/maschine/button/<name>` | `brightness` | Set button LED white at brightness |
+| `/maschine/button/<name>` | `color_int brightness` | Set button LED color + brightness |
+| `/maschine/pad` | `pad_idx color_int brightness` | Set pad LED |
+| `/maschine/midi_note_base` | `base` | Set MIDI note base remotely |
+
+**Outgoing (every hardware event):**
+
+- Each button event: `/<button_name> <value>`
+- Each encoder step: encoder index + value
 
 ---
 

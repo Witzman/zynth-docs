@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dub Techno Performance Loop — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Get Started</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Using the UI</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="ui-navigation.html">UI Navigation</a></li>
+<li><a href="chain-management.html">Chains & Routing</a></li>
+<li><a href="control-screen.html">Control Screen</a></li>
+<li><a href="midi-cc-learn.html">MIDI CC Learning</a></li>
+<li><a href="zs3-guide.html">ZS3 Subsnapshots</a></li>
+<li><a href="pattern-editor.html">Pattern Editor</a></li>
+<li><a href="midi-recorder.html">MIDI Recorder</a></li>
+<li><a href="admin-guide.html">Admin & System</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Play & Create</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Configure</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Troubleshoot</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+<li><a href="performance-monitoring.html">Performance</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Personal Projects</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="project-midi-mapping.html">Personal MIDI Mapping</a></li>
+<li><a href="project-drone-synth.html">Generative Drone Synth</a></li>
+<li><a href="project-maschine-mk2.html">Maschine MK2 Controller</a></li>
+<li><a href="project-midi-channel-routing.html">MIDI Channel Routing</a></li>
+<li><a href="project-emu-cc-learn.html">EMU CC Knob Mapping</a></li>
+<li><a href="project-smc-pad-launcher.html">SMC-PAD Launcher Control</a></li>
+<li><a href="project-drum-computer.html">SMC-PAD Drum Computer</a></li>
+<li><a href="project-u46dj-audio-setup.html">ESI U46DJ Audio Setup</a></li>
+<li><a href="project-modui-effects.html">Audio FX Chain with MOD-UI</a></li>
+<li><a href="project-performance-rig.html">Multi-Controller Performance Rig</a></li>
+<li><a href="project-live-looper.html">Live Looper with SooperLooper</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Under the Hood</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="dub-techno-performance-loop">Dub Techno Performance Loop</h1>
+<p><strong>Goal:</strong> Build a looping dub techno foundation — a 16-step drum pattern and a sparse bass line playing simultaneously — as the basis for a live dub techno performance rig. <strong>Prerequisites:</strong> Zynthian running and accessible via webconf and VNC. Audio output confirmed working (speakers or headphones connected to the ESI U46DJ mix output). <strong>Access:</strong> Webconf · VNC</p>
+<hr>
+<h2 id="part-1--drums--bass-loop-draft">Part 1 — Drums + Bass Loop <code>[draft]</code></h2>
+<p>Set up two chains — a drum kit and a bass synth — each with a looping 16-step pattern, to prove the sequenced foundation works before adding effects or performance controls.</p>
+<h3 id="step-1--open-the-mixer-screen">Step 1 — Open the mixer screen</h3>
+<p>Connect to Zynthian via VNC. The main screen is the <strong>Mixer</strong> — it shows a row of chain strips (one per active sound source) with a <strong>+</strong> button at the bottom-left.</p>
+<p>If you see a different screen, tap <strong>Back</strong> or <strong>Home</strong> until the mixer strip row is visible.</p>
+<p><strong>Verify:</strong> The mixer screen shows chain strips (or an empty mixer with only the <strong>+</strong> button visible). No other overlay or dialog is open.</p>
+<h3 id="step-2--add-the-drum-chain">Step 2 — Add the drum chain</h3>
+<p>Tap <strong>+</strong> in the bottom-left of the mixer screen.</p>
+<p><strong>Verify:</strong> The <strong>Add Chain...</strong> screen appears, showing chain-type buttons.</p>
+<h3 id="step-3--select-chain-type-for-drums">Step 3 — Select chain type for drums</h3>
+<p>Tap <strong>Instrument</strong>.</p>
+<p><strong>Verify:</strong> An engine list appears. You should see entries including <strong>FluidSynth</strong> and <strong>ZynAddSubFX</strong>.</p>
+<blockquote><p><strong>Note:</strong> Zynthian uses <strong>Chains</strong> (its term for a signal path from engine to audio output). All synth engines — including drum kits — use the <strong>Instrument</strong> chain type. There is no dedicated drum type.</p></blockquote>
+<h3 id="step-4--select-the-fluidsynth-engine">Step 4 — Select the FluidSynth engine</h3>
+<p>Tap <strong>FluidSynth</strong> in the engine list.</p>
+<p><strong>Verify:</strong> A bank list appears.</p>
+<h3 id="step-5--select-the-drum-bank">Step 5 — Select the drum bank</h3>
+<p>Tap <strong>System/FluidDrums</strong> in the bank list.</p>
+<p><strong>Verify:</strong> A preset list appears showing drum kit presets.</p>
+<h3 id="step-6--select-the-standard-preset">Step 6 — Select the Standard preset</h3>
+<p>Tap <strong>Standard</strong> in the preset list.</p>
+<p><strong>Verify:</strong> The chain control screen opens and a new chain strip labelled with the FluidSynth preset name appears in the mixer. You should be looking at the drum chain's parameter view.</p>
+<h3 id="step-7--return-to-the-mixer">Step 7 — Return to the mixer</h3>
+<p>Tap <strong>Back</strong> to return to the mixer screen.</p>
+<p><strong>Verify:</strong> The mixer shows one chain strip for the drum kit. The strip is labelled with the preset or engine name.</p>
+<h3 id="step-8--switch-to-the-launcher">Step 8 — Switch to the Launcher</h3>
+<p>Tap the <strong>Launcher</strong> tab — this is the second tab in the mixer area, to the right of <strong>Mixer</strong>.</p>
+<blockquote><p><strong>Note:</strong> The <strong>Launcher</strong> is Zynthian's pattern grid — it shows a column of pattern pads for each chain. This is where you build and trigger step-sequencer patterns.</p></blockquote>
+<p><strong>Verify:</strong> The Launcher view appears showing a grid. The drum chain has a column of pattern pads.</p>
+<h3 id="step-9--open-the-drum-pattern-pad">Step 9 — Open the drum pattern pad</h3>
+<p>Tap the first pattern pad in the drum chain's column (top pad of the drum column).</p>
+<p><strong>Verify:</strong> The pad is selected or highlighted.</p>
+<h3 id="step-10--open-the-pattern-editor">Step 10 — Open the pattern editor</h3>
+<p>Tap the <strong>Edit</strong> button (pencil icon) in the toolbar, or long-press the pad and select <strong>Edit</strong> from the menu.</p>
+<p><strong>Verify:</strong> The Pattern Editor opens. You see a pitch/step grid — rows represent pitches (note names or numbers), columns represent steps.</p>
+<h3 id="step-11--set-pattern-length-to-16-steps">Step 11 — Set pattern length to 16 steps</h3>
+<p>In the Pattern Editor toolbar, find the <strong>Length</strong> control. Tap it and set the value to <strong>16</strong>.</p>
+<p><strong>Verify:</strong> The grid shows 16 step columns.</p>
+<h3 id="step-12--enter-the-kick-drum">Step 12 — Enter the kick drum</h3>
+<p>Find the row for <strong>C2</strong> (MIDI note 36 — Bass drum 1). In the pattern editor, rows are labelled by note name or number; C2 is MIDI note 36.</p>
+<blockquote><p><strong>Note — if the pattern editor shows note numbers instead of names:</strong> MIDI note 36 = C2 (kick), 38 = D2 (snare), 42 = F#2 (closed hi-hat). <code>[low]</code> — verify whether the editor displays note names or numbers on this Pi before publishing.</p></blockquote>
+<p>Tap steps <strong>1, 5, 9, and 13</strong> in the C2 row.</p>
+<p><strong>Verify:</strong> Four filled bars appear on the C2 row at steps 1, 5, 9, and 13. This places the kick on every beat of a 4/4 bar.</p>
+<h3 id="step-13--enter-the-snare">Step 13 — Enter the snare</h3>
+<p>Find the row for <strong>D2</strong> (MIDI note 38 — Acoustic snare).</p>
+<p>Tap steps <strong>5 and 13</strong>.</p>
+<p><strong>Verify:</strong> Two filled bars on the D2 row at steps 5 and 13. This places the snare on beats 2 and 4.</p>
+<h3 id="step-14--enter-the-closed-hi-hat">Step 14 — Enter the closed hi-hat</h3>
+<p>Find the row for <strong>F#2</strong> (MIDI note 42 — Closed hi-hat).</p>
+<p>Tap all <strong>16 steps</strong> in that row.</p>
+<p><strong>Verify:</strong> 16 filled bars on the F#2 row across all steps.</p>
+<h3 id="step-15--enable-loop-mode-for-the-drum-pattern-low">Step 15 — Enable loop mode for the drum pattern <code>[low]</code></h3>
+<blockquote><p><strong>Verify this step on the Pi before publishing.</strong> The exact UI control for setting a pattern to loop vs. one-shot is unconfirmed. Look in the Pattern Editor toolbar for a <strong>Loop</strong> toggle, a <strong>🔁</strong> icon, or a mode selector. Enable whichever control sets this pattern to loop continuously.</p></blockquote>
+<p>Enable loop mode for the drum pattern.</p>
+<p><strong>Verify:</strong> The loop indicator is active (icon highlighted or toggle set to on). When played, the pattern will repeat automatically.</p>
+<h3 id="step-16--return-to-the-mixer">Step 16 — Return to the mixer</h3>
+<p>Tap <strong>Back</strong> to return to the Launcher, then tap <strong>Back</strong> again (or the <strong>Mixer</strong> tab) to return to the mixer screen.</p>
+<p><strong>Verify:</strong> Mixer screen is visible. The drum chain strip is present.</p>
+<h3 id="step-17--add-the-bass-chain">Step 17 — Add the bass chain</h3>
+<p>Tap <strong>+</strong> in the mixer screen.</p>
+<p><strong>Verify:</strong> The <strong>Add Chain...</strong> screen appears.</p>
+<h3 id="step-18--select-chain-type-for-bass">Step 18 — Select chain type for bass</h3>
+<p>Tap <strong>Instrument</strong>.</p>
+<p><strong>Verify:</strong> Engine list appears.</p>
+<h3 id="step-19--select-the-zynaddsubfx-engine">Step 19 — Select the ZynAddSubFX engine</h3>
+<p>Tap <strong>ZynAddSubFX</strong> in the engine list.</p>
+<p><strong>Verify:</strong> A bank list appears.</p>
+<h3 id="step-20--select-the-bass-bank">Step 20 — Select the bass bank</h3>
+<p>Tap <strong>A VDX</strong> in the bank list.</p>
+<p><strong>Verify:</strong> A preset list appears.</p>
+<h3 id="step-21--select-the-analog-bass-preset">Step 21 — Select the Analog Bass preset</h3>
+<p>Tap <strong>Analog Bass</strong> in the preset list.</p>
+<p><strong>Verify:</strong> The chain control screen opens and a second chain strip appears in the mixer. The Analog Bass preset is a deep, sustained bass sound with clear low-end weight — appropriate for dub techno.</p>
+<h3 id="step-22--return-to-the-mixer">Step 22 — Return to the mixer</h3>
+<p>Tap <strong>Back</strong> to return to the mixer.</p>
+<p><strong>Verify:</strong> Two chain strips are visible — drum kit and bass.</p>
+<h3 id="step-23--open-the-launcher">Step 23 — Open the Launcher</h3>
+<p>Tap the <strong>Launcher</strong> tab.</p>
+<p><strong>Verify:</strong> Launcher view shows two columns — one for the drum chain, one for the bass chain.</p>
+<h3 id="step-24--open-the-bass-pattern-pad">Step 24 — Open the bass pattern pad</h3>
+<p>Tap the first pattern pad in the bass chain's column.</p>
+<p><strong>Verify:</strong> The pad is selected or highlighted.</p>
+<h3 id="step-25--open-the-bass-pattern-editor">Step 25 — Open the bass pattern editor</h3>
+<p>Tap <strong>Edit</strong> (pencil icon) in the toolbar, or long-press the pad and select <strong>Edit</strong>.</p>
+<p><strong>Verify:</strong> Pattern Editor opens for the bass chain.</p>
+<h3 id="step-26--set-bass-pattern-length-to-16-steps">Step 26 — Set bass pattern length to 16 steps</h3>
+<p>In the Pattern Editor toolbar, set <strong>Length</strong> to <strong>16</strong>.</p>
+<p><strong>Verify:</strong> The grid shows 16 step columns.</p>
+<h3 id="step-27--enter-the-bass-notes">Step 27 — Enter the bass notes</h3>
+<p>Place <strong>C2</strong> (MIDI note 36) on steps <strong>1, 3, 9, and 11</strong>.</p>
+<blockquote><p><strong>Note on pitch:</strong> C2 is a good starting point — the low-end weight of the Analog Bass preset sits best in the C1–C3 range. The pattern is intentionally sparse; dub techno bass breathes in the gaps. Steps 1, 3, 9, 11 give a syncopated two-note-per-half-bar feel typical of dub techno.</p></blockquote>
+<p><strong>Verify:</strong> Four filled bars on the C2 row at steps 1, 3, 9, and 11. Steps 2, 4, 5–8, 10, 12–16 are empty.</p>
+<h3 id="step-28--enable-loop-mode-for-the-bass-pattern-low">Step 28 — Enable loop mode for the bass pattern <code>[low]</code></h3>
+<blockquote><p><strong>Verify this step on the Pi before publishing.</strong> Same as Step 15 — find and enable the loop control in the Pattern Editor toolbar for the bass pattern.</p></blockquote>
+<p>Enable loop mode.</p>
+<p><strong>Verify:</strong> Loop indicator is active for the bass pattern.</p>
+<h3 id="step-29--start-transport-low">Step 29 — Start transport <code>[low]</code></h3>
+<blockquote><p><strong>Verify this step on the Pi before publishing.</strong> The exact label and location of the Play/transport button in the Launcher or Pattern Editor toolbar is unconfirmed. Look for a <strong>▶ Play</strong> button or transport controls in the Launcher toolbar.</p></blockquote>
+<p>Tap <strong>▶ Play</strong> (or the equivalent transport start control) to start both patterns.</p>
+<p><strong>Verify:</strong> Both the drum and bass patterns begin playing. You hear the kick/snare/hi-hat pattern with the sparse bass notes layered underneath. The patterns loop continuously without drift. The sound is dry — no reverb or delay yet.</p>
+<hr>
+<p><strong>Part 1 final verify:</strong> Both chains are playing simultaneously. Drum pattern: kick on every beat, snare on beats 2 and 4, closed hi-hat on every step. Bass pattern: four notes per bar at steps 1, 3, 9, 11. Both patterns loop in sync with no drift. Audio is clean and dry.</p>
+<hr>
+<h3 id="step-30--stop-transport">Step 30 — Stop transport</h3>
+<p>Tap <strong>⏹ Stop</strong> (or the equivalent transport stop control) to stop playback.</p>
+<p><strong>Verify:</strong> Both patterns stop. No sound.</p>
+<h3 id="step-31--save-a-snapshot">Step 31 — Save a snapshot</h3>
+<p>Open a browser and go to:</p>
+<pre><code>http://zynthian.local</code></pre>
+<p>Go to <strong>Library → Snapshots</strong>.</p>
+<p>In the <strong>Name:</strong> field, type <code>dub-techno-p1</code>.</p>
+<p>Tap the checkmark icon to save.</p>
+<p><strong>Verify:</strong> The snapshot <code>dub-techno-p1</code> appears in the snapshot list. Loading it will restore both chains and their patterns.</p>
+<p><strong>Part 1 complete.</strong> You have a working drums + bass foundation. Parts 2 and 3 will add dub-style effects and performance controls.</p>
+</article>
+</main>
+<div id="toc-column"></div>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
