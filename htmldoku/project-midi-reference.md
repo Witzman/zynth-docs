@@ -92,26 +92,26 @@ Row 3: C3  C#3  D3  D#3   (MIDI 48–51)
 
 Select Preset 1: **Shift + Pad 1**.
 
-All data below verified from tutorial testing and ctrldev driver source code.
+All data below verified from tutorial testing, ctrldev driver source code, and live MIDI capture on Pi (2026-06-05). **Pad channel is 6, not 7** — confirmed from raw MIDI debug (`status 0x95` = Note-On ch6 1-indexed).
 
 | Control | MIDI message | Ch | Value |
 |---|---|---|---|
-| Pad 1 (bottom-left) | Note 36 On/Off | 7 | velocity-sensitive + aftertouch |
-| Pad 2 | Note 37 | 7 | — |
-| Pad 3 | Note 38 | 7 | — |
-| Pad 4 | Note 39 | 7 | — |
-| Pad 5 | Note 40 | 7 | — |
-| Pad 6 | Note 41 | 7 | — |
-| Pad 7 | Note 42 | 7 | — |
-| Pad 8 | Note 43 | 7 | — |
-| Pad 9 | Note 44 | 7 | — |
-| Pad 10 | Note 45 | 7 | — |
-| Pad 11 | Note 46 | 7 | — |
-| Pad 12 | Note 47 | 7 | — |
-| Pad 13 | Note 48 | 7 | — |
-| Pad 14 | Note 49 | 7 | — |
-| Pad 15 | Note 50 | 7 | — |
-| Pad 16 (top-right) | Note 51 | 7 | — |
+| Pad 1 (bottom-left) | Note 36 On/Off | **6** | velocity-sensitive + aftertouch |
+| Pad 2 | Note 37 | **6** | — |
+| Pad 3 | Note 38 | **6** | — |
+| Pad 4 | Note 39 | **6** | — |
+| Pad 5 | Note 40 | **6** | — |
+| Pad 6 | Note 41 | **6** | — |
+| Pad 7 | Note 42 | **6** | — |
+| Pad 8 | Note 43 | **6** | — |
+| Pad 9 | Note 44 | **6** | — |
+| Pad 10 | Note 45 | **6** | — |
+| Pad 11 | Note 46 | **6** | — |
+| Pad 12 | Note 47 | **6** | — |
+| Pad 13 | Note 48 | **6** | — |
+| Pad 14 | Note 49 | **6** | — |
+| Pad 15 | Note 50 | **6** | — |
+| Pad 16 (top-right) | Note 51 | **6** | — |
 | Knob 7 (top-left col) | CC 16 | ? | 0–127 absolute |
 | Knob 5 | CC 17 | ? | 0–127 absolute |
 | Knob 3 | CC 18 | ? | 0–127 absolute |
@@ -135,7 +135,7 @@ All data below verified from tutorial testing and ctrldev driver source code.
 | CC 30 → | ZYNPOT_ABS 3 (bottom screen knob) | — |
 | CC 25 (press=127) → | PROGRAM_CHANGE − on drum chain | drum chain = MIDI ch 7, hardcoded |
 | CC 26 (press=127) → | PROGRAM_CHANGE + on drum chain | drum chain = MIDI ch 7, hardcoded |
-| Pad notes 36–51 ch 7 | pass through to chains | TOGGLE_SEQ still fires |
+| Pad notes 36–51 ch **6** | pass through to chains | TOGGLE_SEQ still fires |
 
 PAD BANK and KNOB BANK buttons switch to bank 2 assignments — not yet mapped.
 Preset 2 (DAW): **Shift + Pad 2** — transport buttons send Mackie Control; use in DAW mode only.
@@ -148,8 +148,8 @@ Preset 2 (DAW): **Shift + Pad 2** — transport buttons send Mackie Control; use
 
 | Setting | Value | Effect |
 |---|---|---|
-| Master MIDI channel | **7** | Notes on ch 7 trigger CUIA master key actions |
-| Master key actions | `48: TOGGLE_SEQ 0,0` | Only Pad 13 mapped — 15 of 16 pads unmapped |
+| Master MIDI channel | **6** | Notes on ch 6 trigger CUIA master key actions |
+| Master key actions | notes 36–51 → `TOGGLE_SEQ 0,0–3,3` | All 16 configured — see Conflict 10 for why toggle appears broken |
 | MIDI filter rules | *none* | No RPN→CC remapping, no channel redirects |
 | SINGLE_ACTIVE_CHANNEL | **ON** | All MIDI routes to the currently selected chain |
 | PROG_CHANGE_ZS3 | **ON** | Program Change recalls ZS3 subsnapshots |
@@ -182,9 +182,9 @@ Status tags: `[verified]` = Pi-tested · `[draft]` = written, not yet tested · 
 | Xboard 25 | Mod wheel | 1 | CC 1 | active chain engine | — | passive |
 | Xboard 25 | Pitch wheel | 1 | Pitch Bend | active chain engine | — | passive |
 | Xboard 25 | Aftertouch | 1 | Channel Pressure | active chain engine | — | passive |
-| SMC-PAD | Pads 1–12 | 7 | Note 36–47 | **unassigned** | SMC-PAD Launcher P3 | `[draft]` |
-| SMC-PAD | Pad 13 (note 48) | 7 | Note 48 | TOGGLE_SEQ 0,0 | SMC-PAD Launcher P3 | partial `[low]` |
-| SMC-PAD | Pads 14–16 (notes 49–51) | 7 | Note 49–51 | **unassigned** | SMC-PAD Launcher P3 | `[draft]` |
+| SMC-PAD | Pads 1–12 | **6** | Note 36–47 | **unassigned** | SMC-PAD Launcher P3 | `[draft]` |
+| SMC-PAD | Pad 13 (note 48) | **6** | Note 48 | TOGGLE_SEQ 0,0 | SMC-PAD Launcher P3 | partial `[low]` |
+| SMC-PAD | Pads 14–16 (notes 49–51) | **6** | Note 49–51 | **unassigned** | SMC-PAD Launcher P3 | `[draft]` |
 | SMC-PAD | Encoders left col | ? | CC 16/17/18/30 | Screen knobs 1–4 (ZYNPOT_ABS) | SMC-PAD Launcher P4 | `[verified]` |
 | SMC-PAD | Encoders right col | ? | CC 80/81/82/31 | **unassigned** | — | — |
 | SMC-PAD | Transport Left | 1 | CC 25 | PROGRAM_CHANGE − (drum ch 7) | SMC-PAD Drum Computer | `[low]` |
@@ -225,11 +225,11 @@ Both devices send notes on ch 1. With SINGLE_ACTIVE_CHANNEL=ON, both drive which
 
 ---
 
-### Conflict 3 — Master channel 7 = SMC-PAD channel
+### Conflict 3 — Master channel 6 = SMC-PAD channel
 
-Any device sending notes on ch 7 fires CUIA master key actions. Currently only note 48 is mapped, but if all 16 mappings are added, notes 36–51 on ch 7 will all fire TOGGLE_SEQ.
+Any device sending notes on ch 6 fires CUIA master key actions. Currently only note 48 is mapped, but if all 16 mappings are added, notes 36–51 on ch 6 will all fire TOGGLE_SEQ.
 
-**Resolution:** Ch 7 is reserved for SMC-PAD exclusively. Xboard must never be set to ch 7. Maschine Group B (note base 36) must not be used when SMC-PAD is connected.
+**Resolution:** Ch 6 is reserved for SMC-PAD exclusively. Xboard must never be set to ch 6. Maschine Group B (note base 36) must not be used when SMC-PAD is connected.
 
 ---
 
@@ -288,9 +288,25 @@ If any Xboard knob maps to CC 25 or CC 26 on ch 1, it unintentionally cycles dru
 
 ### Conflict 9 — dev3_in fan-in: SMC-PAD Master + Maschine daemon
 
-Both SINCO SMC-PAD Master and the Maschine daemon `Pads MIDI` port connect to `ZynMidiRouter:dev3_in` (JACK allows multiple inputs to one port). Both are active simultaneously. No hard conflict as long as channel discipline holds (Maschine on ch 1, SMC-PAD on ch 7). If USB enumeration order changes, SMC-PAD may shift off `system:midi_capture_4` and `dev3_in` would wire Maschine to a different slot.
+Both SINCO SMC-PAD Master and the Maschine daemon `Pads MIDI` port connect to `ZynMidiRouter:dev3_in` (JACK allows multiple inputs to one port). Both are active simultaneously. No hard conflict as long as channel discipline holds (Maschine on ch 1, SMC-PAD on ch 6). If USB enumeration order changes, SMC-PAD may shift off `system:midi_capture_4` and `dev3_in` would wire Maschine to a different slot.
 
 **Resolution:** Monitor in testing. If enumeration shifts, run `aconnect -l` and `jack_lsp -c` to diagnose.
+
+---
+
+### Conflict 10 — SINCO Private port mirrors all pad MIDI (double CUIA firing)
+
+SINCO SMC-PAD has three ALSA ports. Port 0 (Private = SINCO IN 1 = `system:midi_capture_3`) is supposed to carry internal device messages only — but on this firmware it mirrors all pad notes from Port 1 (Master = SINCO IN 2 = `system:midi_capture_4`). Both ports are connected to ZynMidiRouter by autoconnect. Both fire as master channel events, causing TOGGLE_SEQ (and all other master-channel CUIAs) to fire **twice per pad press** — double-toggle = no net change.
+
+**Confirmed:** live MIDI debug showed `EV izmip=2 head=0x95 chan=5` and `EV izmip=3 head=0x95 chan=5` for a single pad press — identical events from both ports.
+
+**Workaround (applied):** 50ms debounce on `cuia_queue.put_nowait` in `zynthian_state_manager.py` — same note within 50ms fires CUIA only once. Change is on the Pi, not committed to the zynthian-ui git repo.
+
+**Permanent fix options:**
+1. Patch `zynautoconnect` to skip ports whose JACK alias starts with `USB:…/SINCO IN 1`
+2. Use `lib_zyncore.zmip_set_flags(izmip, flags & ~FLAG_ZMIP_UI)` after identifying the Private port's zmip index at startup — clears UI flag so master-channel events from that port are silently consumed and not sent to Python
+
+**`ZYNTHIAN_MIDI_PORTS DISABLED_IN` does NOT work** — field exists in config but is not enforced by current autoconnect code.
 
 ---
 
@@ -310,8 +326,8 @@ What Zynthian can receive and respond to. Check here before assigning a device c
 | Preset recall | Program Change | active chain ch | standard |
 | ZS3 subsnapshot recall | Program Change | active chain ch | PROG_CHANGE_ZS3=ON *(currently ON)* |
 | Bank select | CC 0 (MSB) + CC 32 (LSB) + PC | active chain ch | MIDI_BANK_CHANGE setting |
-| Launcher slot toggle | Note On on master ch (7) | ch 7 only | webconf → MIDI Options → Master Key Actions |
-| Any CUIA action | Note On on master ch (7) | ch 7 only | webconf → MIDI Options → Master Key Actions |
+| Launcher slot toggle | Note On on master ch (6) | ch 6 only | webconf → MIDI Options → Master Key Actions |
+| Any CUIA action | Note On on master ch (6) | ch 6 only | webconf → MIDI Options → Master Key Actions |
 | Drum kit cycle (via ctrldev) | CC 25 / CC 26 press on ch 1 | ch 1 only | ctrldev driver active |
 | Channel aftertouch | Channel Pressure | per-chain ch | if engine supports |
 | Poly aftertouch | Poly Pressure | per-chain ch | if engine supports |
