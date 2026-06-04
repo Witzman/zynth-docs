@@ -8,7 +8,8 @@ The MIDI Recorder captures all MIDI activity to a Standard MIDI File (SMF), and 
 
 | Method | How |
 |--------|-----|
-| Main Menu | SW1 short → Main Menu → **MIDI Recorder** (piano-roll icon) |
+| Touch keypad | **OPT/ADMIN** (short) → **MIDI Player** |
+| V5 hardware | SW1 short → Main Menu → **MIDI Player** |
 | CUIA | `SCREEN_MIDI_RECORDER` action (hardware button or webconf mapping) |
 
 ---

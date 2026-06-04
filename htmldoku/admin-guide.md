@@ -8,9 +8,9 @@ The Admin screen provides system configuration, MIDI settings, audio options, ne
 
 | Method | How |
 |--------|-----|
-| Main Menu | Main Menu (SW1 short) → **Admin** |
-| V5 hardware | SW1 long hold → SCREEN_ADMIN |
-| From chain_control | SW2 bold press → Main Menu → Admin |
+| Touch keypad | **OPT/ADMIN** (bold hold, 300ms) → Admin screen directly |
+| Main Menu | **OPT/ADMIN** (short) → **Admin** |
+| V5 hardware | SW1 bold hold → SCREEN_ADMIN |
 
 ---
 

@@ -21,7 +21,7 @@ Zynthian can bind any physical controller knob, slider, or button to any synth p
 1. Navigate to the control screen for the chain you want to control.
 2. Navigate to the page containing the parameter you want to bind (encoder 3 in select mode, or touch the page list).
 3. Make sure the target parameter is one of the 4 visible knobs.
-4. **Long-press the encoder** for that knob (hold ~600ms). The knob border turns orange.
+4. **Long-press the parameter knob on screen** (hold ~600ms). The knob border turns orange. On V5 hardware, bold-press the corresponding encoder instead.
 5. Move the physical knob, fader, or slider on your MIDI controller.
 6. The CC number is captured. The knob shows the CC number badge. Learning ends.
 
