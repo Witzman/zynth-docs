@@ -104,6 +104,9 @@
 <h1 id="understanding-zynthian">Understanding Zynthian</h1>
 <p>This page explains how Zynthian thinks about music-making — the mental model behind chains, engines, snapshots, and the signal flow. Read this before diving into individual features.</p>
 <hr>
+<h2 id="getting-around">Getting Around</h2>
+<table><thead><tr><th>Goal</th><th>Touch keypad</th></tr></thead><tbody><tr><td>Open Main Menu</td><td><strong>OPT/ADMIN</strong> (short)</td></tr><tr><td>Add a chain</td><td>Tap <strong>+</strong> at right edge of Mixer</td></tr><tr><td>Open Launcher / step sequencer</td><td><strong>PAD/STEP</strong> (short)</td></tr><tr><td>Load a snapshot</td><td><strong>ZS3/SHOT</strong> (bold hold, 300ms)</td></tr><tr><td>Open chain control</td><td>Tap any chain strip in the Mixer</td></tr><tr><td>Go back</td><td><strong>BACK/NO</strong></td></tr><tr><td>Start / stop transport</td><td><strong>PLAY (▶)</strong> / <strong>STOP (■)</strong> in bottom row</td></tr><tr><td>Hardware levels</td><td><strong>MIX/LEVEL</strong> (bold hold, 300ms)</td></tr></tbody></table>
+<hr>
 <h2 id="what-zynthian-is">What Zynthian Is</h2>
 <p>Zynthian is a self-contained music computer built on Raspberry Pi. It runs a collection of free Linux synthesizer engines (ZynAddSubFX, FluidSynth, setBfree, and many LV2 plugins) inside a unified interface that handles MIDI routing, audio mixing, and state management.</p>
 <p>Unlike a plugin host on a desktop computer, Zynthian is designed to work without a screen, without a desktop OS, and without a keyboard and mouse — though all of those can be attached. The physical Zynthian box typically has four rotary encoders, a small touchscreen, and audio I/O. The web interface at <code>http://zynthian.local</code> provides full configuration from any browser on the network.</p>
@@ -156,7 +159,7 @@ flowchart LR
 <p>The status bar shows IP address, CPU%, tempo, MIDI/audio activity, and an update indicator (↻) when software updates are available.</p>
 <hr>
 <h2 id="main-menu">Main Menu</h2>
-<p>Press <strong>SW1 short</strong> (V5) or long-press Back from most screens to open the Main Menu — a 3×3 grid of quick-access buttons:</p>
+<p>Tap <strong>OPT/ADMIN</strong> (short) on the touch keypad, or press SW1 short (V5 hardware) to open the Main Menu — a 3×3 grid of quick-access buttons:</p>
 <table><thead><tr><th>Button</th><th>Opens</th><th>Use for</th></tr></thead><tbody><tr><td>Chain Manager</td><td>chain_manager</td><td>See and edit all chains in a graph</td></tr><tr><td>Snapshots</td><td>snapshot</td><td>Load/save full setups</td></tr><tr><td>ZS3</td><td>zs3</td><td>Recall sub-snapshots by Program Change</td></tr><tr><td>Tempo</td><td>tempo</td><td>Set BPM or tap tempo</td></tr><tr><td>Audio Player</td><td>audio_player</td><td>Play audio files through the system</td></tr><tr><td>MIDI Player</td><td>midi_player</td><td>Play MIDI files through loaded chains</td></tr><tr><td>Admin</td><td>admin</td><td>System settings, WiFi, Bluetooth, updates</td></tr><tr><td>Soundcard Levels</td><td>alsa_mixer</td><td>ALSA hardware mixer controls</td></tr><tr><td>Power</td><td>power</td><td>Shutdown / reboot</td></tr></tbody></table>
 <p>Source: <a href="../zynthian-ui/zyngui/zynthian_gui_main_menu.py"><code>zyngui/zynthian_gui_main_menu.py</code></a></p>
 <hr>
@@ -202,13 +205,14 @@ flowchart TD
 <h2 id="snapshots">Snapshots</h2>
 <p>A <strong>snapshot</strong> saves the complete Zynthian state: all chains, their engines, presets, MIDI routing, and mixer settings. One <code>.zss</code> file = one complete live setup. Load a snapshot to instantly switch between setups.</p>
 <p>The special file <code>last_state.zss</code> is auto-loaded on every boot. Save to it to make a setup permanent.</p>
-<p>Snapshots live in <code>/zynthian/zynthian-my-data/snapshots/</code>. See <a href="snapshots.html">Snapshots</a> for the full workflow.</p>
+<p>Snapshots live in <code>/zynthian/zynthian-my-data/snapshots/&amp;lt;bank&amp;gt;/</code> (they must be in a bank subfolder — <code>000/</code> is the default). See <a href="snapshots.html">Snapshots</a> for the full workflow including the bank subdir requirement.</p>
 <hr>
 <h2 id="touch-vs-encoders-vs-web">Touch vs. Encoders vs. Web</h2>
 <p>Zynthian supports three interaction modes simultaneously:</p>
-<p><strong>Touchscreen:</strong> tap chains, select engines, navigate menus directly. Most operations reachable in 2–3 taps.</p>
+<p><strong>V5 touch keypad:</strong> a software button panel on the left side of the display. Tap to navigate — OPT/ADMIN, PAD/STEP, ZS3/SHOT, transport controls. Primary interface for all tutorials. Activate via Admin → Touch Navigation → V5 keypad at left. See <a href="ui-navigation.html">UI Navigation</a> for the full button reference.</p>
+<p><strong>Touchscreen (direct):</strong> tap chains, select engines, navigate menus. Works alongside the touch keypad — the keypad handles navigation, the main area handles selection.</p>
 <p><strong>Rotary encoders (V5 kit):</strong> four encoders navigate menus and adjust parameters without looking at the screen. Push to select. Most useful during a live performance.</p>
-<p><strong>Web interface (<code>http://zynthian.local</code>):</strong> full configuration from any browser. Required for initial audio/display setup and for tasks not exposed on the touchscreen (MIDI port configuration, software updates). See <a href="webconf.html">Webconf Reference</a>.</p>
+<p><strong>Web interface (<code>http://zynthian.local</code>):</strong> full configuration from any browser. Required for audio/JACK settings, MIDI port enable/disable, and software updates — tasks not available from the touchscreen UI. See <a href="webconf.html">Webconf Reference</a>.</p>
 <hr>
 <h2 id="zs3--zynthian-subsnapshots">ZS3 — Zynthian Subsnapshots</h2>
 <p>ZS3 (Zynthian SubSnapshot 3) lets you store and recall partial state changes within a running performance — different from a full snapshot. ZS3 can save:</p>

@@ -4,6 +4,21 @@ This page explains how Zynthian thinks about music-making — the mental model b
 
 ---
 
+## Getting Around
+
+| Goal | Touch keypad |
+|------|-------------|
+| Open Main Menu | **OPT/ADMIN** (short) |
+| Add a chain | Tap **+** at right edge of Mixer |
+| Open Launcher / step sequencer | **PAD/STEP** (short) |
+| Load a snapshot | **ZS3/SHOT** (bold hold, 300ms) |
+| Open chain control | Tap any chain strip in the Mixer |
+| Go back | **BACK/NO** |
+| Start / stop transport | **PLAY (▶)** / **STOP (■)** in bottom row |
+| Hardware levels | **MIX/LEVEL** (bold hold, 300ms) |
+
+---
+
 ## What Zynthian Is
 
 Zynthian is a self-contained music computer built on Raspberry Pi. It runs a collection of free Linux synthesizer engines (ZynAddSubFX, FluidSynth, setBfree, and many LV2 plugins) inside a unified interface that handles MIDI routing, audio mixing, and state management.
@@ -98,7 +113,7 @@ The status bar shows IP address, CPU%, tempo, MIDI/audio activity, and an update
 
 ## Main Menu
 
-Press **SW1 short** (V5) or long-press Back from most screens to open the Main Menu — a 3×3 grid of quick-access buttons:
+Tap **OPT/ADMIN** (short) on the touch keypad, or press SW1 short (V5 hardware) to open the Main Menu — a 3×3 grid of quick-access buttons:
 
 | Button | Opens | Use for |
 |--------|-------|---------|
@@ -196,7 +211,7 @@ A **snapshot** saves the complete Zynthian state: all chains, their engines, pre
 
 The special file `last_state.zss` is auto-loaded on every boot. Save to it to make a setup permanent.
 
-Snapshots live in `/zynthian/zynthian-my-data/snapshots/`. See [Snapshots](snapshots.md) for the full workflow.
+Snapshots live in `/zynthian/zynthian-my-data/snapshots/<bank>/` (they must be in a bank subfolder — `000/` is the default). See [Snapshots](snapshots.html) for the full workflow including the bank subdir requirement.
 
 ---
 
@@ -204,11 +219,13 @@ Snapshots live in `/zynthian/zynthian-my-data/snapshots/`. See [Snapshots](snaps
 
 Zynthian supports three interaction modes simultaneously:
 
-**Touchscreen:** tap chains, select engines, navigate menus directly. Most operations reachable in 2–3 taps.
+**V5 touch keypad:** a software button panel on the left side of the display. Tap to navigate — OPT/ADMIN, PAD/STEP, ZS3/SHOT, transport controls. Primary interface for all tutorials. Activate via Admin → Touch Navigation → V5 keypad at left. See [UI Navigation](ui-navigation.html) for the full button reference.
+
+**Touchscreen (direct):** tap chains, select engines, navigate menus. Works alongside the touch keypad — the keypad handles navigation, the main area handles selection.
 
 **Rotary encoders (V5 kit):** four encoders navigate menus and adjust parameters without looking at the screen. Push to select. Most useful during a live performance.
 
-**Web interface (`http://zynthian.local`):** full configuration from any browser. Required for initial audio/display setup and for tasks not exposed on the touchscreen (MIDI port configuration, software updates). See [Webconf Reference](webconf.md).
+**Web interface (`http://zynthian.local`):** full configuration from any browser. Required for audio/JACK settings, MIDI port enable/disable, and software updates — tasks not available from the touchscreen UI. See [Webconf Reference](webconf.html).
 
 ---
 
