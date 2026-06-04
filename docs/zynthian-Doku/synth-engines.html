@@ -108,6 +108,11 @@
 <p>When you add a chain and select an engine, Zynthian starts the engine as a subprocess, connects it to JACK audio, and exposes its presets in the UI. The engine runs until the chain is removed or the snapshot changes. Multiple chains can run different engines simultaneously, subject to CPU limits.</p>
 <p>Presets are organized into <strong>banks</strong>. A bank is a folder of preset files on disk — for FluidSynth, a <code>.sf2</code> soundfont file; for ZynAddSubFX, a folder of <code>.xmz</code> patches. Browse banks and presets from the chain's selector screen.</p>
 <hr>
+<h2 id="accessing-engines">Accessing Engines</h2>
+<p><strong>Add a new engine:</strong> Tap <strong>+</strong> at the right edge of the Mixer → <strong>Instrument</strong> → select engine category → select engine → select bank → select preset.</p>
+<p><strong>Change preset on an existing chain:</strong> Tap the chain strip in the Mixer → tap <strong>CTRL/PRSET</strong> (bold hold, 300ms) to open bank/preset selection.</p>
+<p><strong>Browse presets only:</strong> Tap the chain strip → <strong>CTRL/PRSET</strong> (short) enters chain control, then <strong>CTRL/PRSET</strong> (bold hold) opens bank/preset.</p>
+<hr>
 <h2 id="zynaddsubfx">ZynAddSubFX</h2>
 <p><strong>Type:</strong> Polyphonic additive / subtractive / PAD synthesizer. <strong>Engine file:</strong> <code>zynthian_engine_zynaddsubfx.py</code> [<code>zynthian-ui/zyngine/zynthian_engine_zynaddsubfx.py</code>]</p>
 <p>The flagship Zynthian engine. Three synthesis modules work simultaneously within one patch: subtractive (SUB), additive (ADD), and PAD synthesis. Patches can combine all three for extremely complex, evolving timbres.</p>

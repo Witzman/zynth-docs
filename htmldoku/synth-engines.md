@@ -12,6 +12,16 @@ Presets are organized into **banks**. A bank is a folder of preset files on disk
 
 ---
 
+## Accessing Engines
+
+**Add a new engine:** Tap **+** at the right edge of the Mixer → **Instrument** → select engine category → select engine → select bank → select preset.
+
+**Change preset on an existing chain:** Tap the chain strip in the Mixer → tap **CTRL/PRSET** (bold hold, 300ms) to open bank/preset selection.
+
+**Browse presets only:** Tap the chain strip → **CTRL/PRSET** (short) enters chain control, then **CTRL/PRSET** (bold hold) opens bank/preset.
+
+---
+
 ## ZynAddSubFX
 
 **Type:** Polyphonic additive / subtractive / PAD synthesizer.
