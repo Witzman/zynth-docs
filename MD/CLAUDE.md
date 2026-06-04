@@ -24,13 +24,13 @@ Tutorial generator and teacher. Session rules, workflow, and writing rules in `M
 | Hardware | Raspberry Pi 4, ZynthianOS |
 | Kit / encoders | None — no physical hardware kit |
 | Touchscreen | Elecrow ESP32 5" 800×480 — HDMI (video) + USB (touch). Working. |
-| Access methods | SSH · webconf (`http://zynthian.local`) · VNC |
-| SSH | `ssh root@zynthian.local` |
+| Access methods | Touchscreen (V5 keypad active) · SSH · webconf (`http://zynthian.local`) · VNC |
+| SSH | `ssh root@192.168.2.123` (mDNS `.local` does not resolve from WSL2) |
 | Audio interface | ESI U46DJ — USB, 4-in 6-out. Class-compliant (no driver). 44.1 kHz → 4in/6out; 48 kHz → 4in/4out. Phono+Line+MIC+Hi-Z inputs. Mix out for monitors. |
 | MIDI keyboard | E-MU Xboard (25/49/61 series) — USB/MIDI keyboard controller, 16 CC knobs, pitch/mod wheels, aftertouch |
 | MIDI pad controller | SMC-PAD — 16-pad USB/Bluetooth controller, 8 encoders, DAW transport, note repeat |
 
-All tutorial steps must be achievable via SSH, webconf, or VNC only. Never assume physical encoders, buttons, or touchscreen.
+Tutorial navigation uses V5 touch keypad (primary), SSH, and webconf. Never assume physical encoders or hardware kit buttons. Touchscreen (V5 keypad at left) is active and working — use it as the primary navigation method. Webconf stays only for: MIDI port enable/disable, audio/JACK settings.
 
 ---
 

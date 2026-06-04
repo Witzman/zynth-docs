@@ -17,7 +17,7 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
   - [ ] Publish — run generator, commit, push, move to `done.md`
   - Plan: `~/zynth/docs/superpowers/plans/2026-06-04-dub-techno-loop.md`
   - Tutorial file: `~/zynth-docs/htmldoku/project-dub-techno-loop.md`
-  - Snapshot on Pi: `/zynthian/zynthian-my-data/snapshots/dub-techno-p1.zss`
+  - Snapshot on Pi: `/zynthian/zynthian-my-data/snapshots/000/dub-techno-p1.zss` (moved to 000/ bank — was at root, invisible in UI)
 
 ---
 
