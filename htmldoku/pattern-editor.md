@@ -16,9 +16,11 @@ There are two views, switchable via tabs:
 
 ## Opening the Pattern Editor
 
-**From the launcher:** tap any clip pad to select it. Then open the editor via the edit button (pencil icon, or long-press the pad → Edit).
+**From the touch keypad:** Tap **PAD/STEP** (short) to open the Launcher. Tap any clip pad to select it, then long-press the pad → **Edit**, or tap the pencil icon in the toolbar.
 
-**Keyboard shortcut (V5):** with a clip pad selected, bold-press encoder 3.
+**Direct shortcut:** Tap **PAD/STEP** (bold hold, 300ms) to jump directly to the Pattern Editor for the currently selected clip.
+
+**V5 hardware encoder:** With a clip pad selected, bold-press encoder 3.
 
 ---
 
@@ -187,6 +189,15 @@ The toolbar shows transport buttons:
 | Length | Steps in pattern — tap to change (4–256 steps) |
 
 Playback synchronizes to the global Zynthian clock. If JACK transport is running, patterns follow it.
+
+**Touch keypad transport:**
+
+| Action | Touch keypad |
+|--------|-------------|
+| Start playback | **PLAY (▶)** in bottom row |
+| Stop playback | **STOP (■)** in bottom row |
+| Return to Launcher | **BACK/NO** |
+| Return to Mixer | **MIX/LEVEL** (short) |
 
 ---
 
