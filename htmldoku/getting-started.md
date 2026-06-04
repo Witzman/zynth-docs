@@ -72,7 +72,17 @@ For old 720p TVs, `hdmi_mode=4` (720p) works. For very old 480p displays, try `h
 
 ---
 
-## Step 5 — Configure Audio
+## Step 5 — Enable Touch Navigation
+
+Zynthian's V5 touch keypad is a software button panel that overlays the left side of the display. It replaces physical hardware buttons and is required for all tutorial navigation.
+
+In VNC (or directly on the display if it's showing the Zynthian UI), navigate to **Admin → Touch Navigation → V5 keypad at left**.
+
+The display reloads and shows a 160 px button panel on the left side. All tutorials assume this panel is active. See [UI Navigation](ui-navigation.html) for the full button reference.
+
+---
+
+## Step 6 — Configure Audio
 
 Open `http://zynthian.local` → **Hardware** → **Audio**. Select your audio device from the **Soundcard** dropdown.
 
@@ -84,7 +94,7 @@ Click Save, then Reboot.
 
 ---
 
-## Step 6 — Verify Audio
+## Step 7 — Verify Audio
 
 After reboot, check JACK is running via SSH:
 
@@ -96,9 +106,9 @@ The status should show `active (running)` with your chosen audio device. If JACK
 
 ---
 
-## Step 7 — Load a Synth and Play
+## Step 8 — Load a Synth and Play
 
-On the Zynthian screen, click an empty layer slot → select an engine (start with **ZynAddSubFX** or **FluidSynth**) → select a preset. Use the on-screen keyboard or connect a USB MIDI keyboard to play.
+Tap **+** at the right edge of the Mixer screen. The **Add Chain** screen appears — tap **Instrument**, select an engine (start with **ZynAddSubFX** or **FluidSynth**), pick a bank, and select a preset. Connect a USB MIDI keyboard and play.
 
 ---
 

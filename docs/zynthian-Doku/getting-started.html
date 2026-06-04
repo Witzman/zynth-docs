@@ -135,19 +135,24 @@ EOF
 reboot</code></pre>
 <p>For old 720p TVs, <code>hdmi_mode=4</code> (720p) works. For very old 480p displays, try <code>hdmi_mode=1</code>.</p>
 <hr>
-<h2 id="step-5--configure-audio">Step 5 — Configure Audio</h2>
+<h2 id="step-5--enable-touch-navigation">Step 5 — Enable Touch Navigation</h2>
+<p>Zynthian's V5 touch keypad is a software button panel that overlays the left side of the display. It replaces physical hardware buttons and is required for all tutorial navigation.</p>
+<p>In VNC (or directly on the display if it's showing the Zynthian UI), navigate to <strong>Admin → Touch Navigation → V5 keypad at left</strong>.</p>
+<p>The display reloads and shows a 160 px button panel on the left side. All tutorials assume this panel is active. See <a href="ui-navigation.html">UI Navigation</a> for the full button reference.</p>
+<hr>
+<h2 id="step-6--configure-audio">Step 6 — Configure Audio</h2>
 <p>Open <code>http://zynthian.local</code> → <strong>Hardware</strong> → <strong>Audio</strong>. Select your audio device from the <strong>Soundcard</strong> dropdown.</p>
 <p><strong>USB audio devices</strong> appear by their ALSA name (e.g. <code>Sound Blaster Play! 2</code> shows as <code>S2</code>). Set sample rate to <strong>44100</strong> for most USB devices — check <code>cat /proc/asound/card*/stream0</code> via SSH to confirm what your device supports.</p>
 <p><strong>Built-in headphone jack</strong> is available as <code>Headphones</code> but delivers lower quality than a dedicated soundcard.</p>
 <p>Click Save, then Reboot.</p>
 <hr>
-<h2 id="step-6--verify-audio">Step 6 — Verify Audio</h2>
+<h2 id="step-7--verify-audio">Step 7 — Verify Audio</h2>
 <p>After reboot, check JACK is running via SSH:</p>
 <pre><code class="language-bash">systemctl status jack2 --no-pager</code></pre>
 <p>The status should show <code>active (running)</code> with your chosen audio device. If JACK fails, check the troubleshooting page.</p>
 <hr>
-<h2 id="step-7--load-a-synth-and-play">Step 7 — Load a Synth and Play</h2>
-<p>On the Zynthian screen, click an empty layer slot → select an engine (start with <strong>ZynAddSubFX</strong> or <strong>FluidSynth</strong>) → select a preset. Use the on-screen keyboard or connect a USB MIDI keyboard to play.</p>
+<h2 id="step-8--load-a-synth-and-play">Step 8 — Load a Synth and Play</h2>
+<p>Tap <strong>+</strong> at the right edge of the Mixer screen. The <strong>Add Chain</strong> screen appears — tap <strong>Instrument</strong>, select an engine (start with <strong>ZynAddSubFX</strong> or <strong>FluidSynth</strong>), pick a bank, and select a preset. Connect a USB MIDI keyboard and play.</p>
 <hr>
 <h2 id="whats-next">What's Next</h2>
 <ul><li><a href="userguide.html">Understanding Zynthian</a> — learn about chains, engines, and snapshots</li><li><a href="audio.html">Audio Setup</a> — tune JACK buffer size and latency</li><li><a href="midi.html">MIDI Controllers</a> — connect a physical keyboard or pad controller</li><li><a href="troubleshooting.html">Troubleshooting</a> — if anything above didn't work</li></ul>
