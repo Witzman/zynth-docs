@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIDI Reference — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Get Started</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Using the UI</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="ui-navigation.html">UI Navigation</a></li>
+<li><a href="chain-management.html">Chains & Routing</a></li>
+<li><a href="control-screen.html">Control Screen</a></li>
+<li><a href="midi-cc-learn.html">MIDI CC Learning</a></li>
+<li><a href="zs3-guide.html">ZS3 Subsnapshots</a></li>
+<li><a href="pattern-editor.html">Pattern Editor</a></li>
+<li><a href="midi-recorder.html">MIDI Recorder</a></li>
+<li><a href="admin-guide.html">Admin & System</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Play & Create</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Configure</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Troubleshoot</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+<li><a href="performance-monitoring.html">Performance</a></li>
+</ul></div>
+<div class="track">
+<button class="track-header" aria-expanded="true"><span class="track-label">Personal Projects</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list">
+<li><a href="project-midi-reference.html" aria-current="page"><strong>MIDI Reference</strong></a></li>
+<li><a href="project-midi-mapping.html">Personal MIDI Mapping</a></li>
+<li><a href="project-drone-synth.html">Generative Drone Synth</a></li>
+<li><a href="project-maschine-mk2.html">Maschine MK2 Controller</a></li>
+<li><a href="project-midi-channel-routing.html">MIDI Channel Routing</a></li>
+<li><a href="project-emu-cc-learn.html">EMU CC Knob Mapping</a></li>
+<li><a href="project-smc-pad-launcher.html">SMC-PAD Launcher Control</a></li>
+<li><a href="project-drum-computer.html">SMC-PAD Drum Computer</a></li>
+<li><a href="project-u46dj-audio-setup.html">ESI U46DJ Audio Setup</a></li>
+<li><a href="project-modui-effects.html">Audio FX Chain with MOD-UI</a></li>
+<li><a href="project-performance-rig.html">Multi-Controller Performance Rig</a></li>
+<li><a href="project-live-looper.html">Live Looper with SooperLooper</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Under the Hood</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="midi-reference">MIDI Reference</h1>
+<p><strong>Purpose:</strong> Complete MIDI map for this hardware rig — device capabilities, active assignments, conflicts, and Zynthian feature triggers. Update this page whenever a tutorial is verified or configuration changes deliberately.</p>
+<p><strong>Hardware:</strong> Maschine MK2 (via MaschineMK2_linux daemon) · E-MU Xboard 25 · SMC-PAD (Preset 1) <strong>Access:</strong> SSH · Webconf</p>
+<hr>
+<h2 id="section-1--device-capabilities">Section 1 — Device Capabilities</h2>
+<h3 id="maschine-mk2-maschinemk2_linux-daemon">Maschine MK2 (MaschineMK2_linux daemon)</h3>
+<p>The Maschine MK2's native USB MIDI port sends no pad data without NI software. All pad MIDI comes from the <code>MaschineMK2_linux</code> daemon, which reads HID and outputs ALSA MIDI via the <code>Pads MIDI</code> port on <strong>channel 1</strong> (normal mode) and <strong>channel 2</strong> (sequencer mode).</p>
+<table><thead><tr><th>Control</th><th>MIDI message</th><th>Ch</th><th>Range / values</th></tr></thead><tbody><tr><td>16 pads — normal mode</td><td>Note On / Note Off</td><td>1</td><td>base + offset (see layout below), velocity from pressure</td></tr><tr><td>16 pads — sequencer mode</td><td>Note On / Note Off</td><td>2</td><td>stored per step</td></tr><tr><td>8 encoders</td><td><strong>RPN14</strong></td><td>1</td><td>RPN numbers 16–23, values 0–8191</td></tr><tr><td>~30 transport / function buttons</td><td><strong>RPN7</strong></td><td>1</td><td>RPN numbers 1–48 (see table below)</td></tr><tr><td>Group buttons A–H</td><td><em>(none — internal state only)</em></td><td>—</td><td>sets note base: A=24 B=36 C=48 D=60 E=72 F=84 G=96 H=108</td></tr></tbody></table>
+<blockquote><p><strong>Zynthian limitation:</strong> Encoders send RPN14, transport buttons send RPN7. Neither is standard CC 0–119. Zynthian CC Learn cannot capture them. MIDI filter rules remapping RPN → CC are required before any binding is possible.</p></blockquote>
+<p><strong>Pad note layout</strong> — offsets added to current note base. Pad rows top → bottom, left → right:</p>
+<pre><code>Row 0 (top): +12  +13  +14  +15
+Row 1:        +8   +9  +10  +11
+Row 2:        +4   +5   +6   +7
+Row 3 (bot):  +0   +1   +2   +3</code></pre>
+<p>With Group D active (base 60 = C4):</p>
+<pre><code>Row 0: C4  C#4  D4  D#4   (MIDI 60–63)
+Row 1: G#3  A3  A#3  B3   (MIDI 56–59)
+Row 2: E3   F3  F#3  G3   (MIDI 52–55)
+Row 3: C3  C#3  D3  D#3   (MIDI 48–51)</code></pre>
+<p><strong>Transport / function button RPN7 map (Ch 1):</strong></p>
+<table><thead><tr><th>Button</th><th>RPN</th><th>Button</th><th>RPN</th></tr></thead><tbody><tr><td>Play</td><td>1</td><td>Main</td><td>24</td></tr><tr><td>Stop (Erase)</td><td>2</td><td>Scene</td><td>25</td></tr><tr><td>Rec</td><td>3</td><td>Pattern</td><td>26</td></tr><tr><td>Grid</td><td>4</td><td>Pad Mode</td><td>27</td></tr><tr><td>Step Left</td><td>5</td><td>View</td><td>28</td></tr><tr><td>Step Right</td><td>6</td><td>Duplicate</td><td>29</td></tr><tr><td>Restart</td><td>7</td><td>Select</td><td>30</td></tr><tr><td>Browse</td><td>8</td><td>Solo</td><td>31</td></tr><tr><td>Sampling</td><td>9</td><td>Step</td><td>32</td></tr><tr><td>Note Repeat</td><td>10</td><td>Mute</td><td>33</td></tr><tr><td>Control</td><td>11</td><td>Navigate</td><td>34</td></tr><tr><td>Nav</td><td>12</td><td>Tempo</td><td>35</td></tr><tr><td>Nav Left</td><td>13</td><td>Enter</td><td>36</td></tr><tr><td>Nav Right</td><td>14</td><td>Auto</td><td>37</td></tr><tr><td>—</td><td>—</td><td>All</td><td>38</td></tr><tr><td>—</td><td>—</td><td>F1–F8</td><td>39–46</td></tr><tr><td>—</td><td>—</td><td>Page Right</td><td>47</td></tr><tr><td>—</td><td>—</td><td>Page Left</td><td>48</td></tr></tbody></table>
+<p><strong>OSC interface:</strong> daemon listens on <code>127.0.0.1:42434</code>, sends to <code>42435</code>. Supports remote LED control (<code>/maschine/button/&amp;lt;name&amp;gt;</code>, <code>/maschine/pad</code>) and setting MIDI note base (<code>/maschine/midi_note_base</code>).</p>
+<hr>
+<h3 id="e-mu-xboard-25">E-MU Xboard 25</h3>
+<table><thead><tr><th>Control</th><th>MIDI message</th><th>Ch</th><th>Range</th><th>Notes</th></tr></thead><tbody><tr><td>25 keys</td><td>Note On / Note Off</td><td>patch ch</td><td>full range ± 4 oct transpose</td><td>velocity-sensitive</td></tr><tr><td>Channel aftertouch</td><td>Channel Pressure</td><td>patch ch</td><td>0–127</td><td>configurable on/off</td></tr><tr><td>Pitch wheel</td><td>Pitch Bend</td><td>patch ch</td><td>±8192</td><td>springs to center</td></tr><tr><td>Mod wheel</td><td>CC 1</td><td>patch ch</td><td>0–127</td><td>CC number reassignable</td></tr><tr><td>16 CC knobs</td><td>CC</td><td>per-knob ch</td><td>0–127</td><td><strong>any CC 0–127, any channel, per patch</strong></td></tr><tr><td>Footswitch</td><td>CC 64 (sustain)</td><td>patch ch</td><td>0 / 127</td><td>or continuous pedal mode</td></tr><tr><td>Data slider</td><td>Universal Real Time SysEx</td><td>all</td><td>master volume</td><td>not standard CC</td></tr><tr><td>Snapshot button</td><td>bulk CC send</td><td>—</td><td>stored knob positions</td><td>sends all 16 knobs + wheels at once</td></tr><tr><td>Program Change</td><td>PC + Bank Select (CC 0 + CC 32)</td><td>per ch</td><td>0–127</td><td>per patch, per channel</td></tr><tr><td>Panic (Oct↑ + Oct↓ simultaneously)</td><td>All Notes Off + All Sounds Off + CC 64=0</td><td>ch 1–16</td><td>—</td><td>clears stuck notes</td></tr><tr><td>4 Zones</td><td>keys split across 4 MIDI channels</td><td>4 ch</td><td>key + velocity range per zone</td><td>requires Xboard Control software</td></tr></tbody></table>
+<blockquote><p><strong>[low] Factory CC defaults for the 16 knobs are not documented in the text manual.</strong> Verify with <code>amidi -d -p hw:X,0,0</code> (replace X with Xboard card number from <code>aconnect -l</code>) before assigning any knob. Until verified, treat CC 1, 7, 10, 11, 16–19, 30, 64, 71, 74 as potentially occupied.</p></blockquote>
+<hr>
+<h3 id="smc-pad-preset-1--performance-preset">SMC-PAD (Preset 1 — Performance preset)</h3>
+<p>Select Preset 1: <strong>Shift + Pad 1</strong>.</p>
+<p>All data below verified from tutorial testing and ctrldev driver source code.</p>
+<table><thead><tr><th>Control</th><th>MIDI message</th><th>Ch</th><th>Value</th></tr></thead><tbody><tr><td>Pad 1 (bottom-left)</td><td>Note 36 On/Off</td><td>7</td><td>velocity-sensitive + aftertouch</td></tr><tr><td>Pad 2</td><td>Note 37</td><td>7</td><td>—</td></tr><tr><td>Pad 3</td><td>Note 38</td><td>7</td><td>—</td></tr><tr><td>Pad 4</td><td>Note 39</td><td>7</td><td>—</td></tr><tr><td>Pad 5</td><td>Note 40</td><td>7</td><td>—</td></tr><tr><td>Pad 6</td><td>Note 41</td><td>7</td><td>—</td></tr><tr><td>Pad 7</td><td>Note 42</td><td>7</td><td>—</td></tr><tr><td>Pad 8</td><td>Note 43</td><td>7</td><td>—</td></tr><tr><td>Pad 9</td><td>Note 44</td><td>7</td><td>—</td></tr><tr><td>Pad 10</td><td>Note 45</td><td>7</td><td>—</td></tr><tr><td>Pad 11</td><td>Note 46</td><td>7</td><td>—</td></tr><tr><td>Pad 12</td><td>Note 47</td><td>7</td><td>—</td></tr><tr><td>Pad 13</td><td>Note 48</td><td>7</td><td>—</td></tr><tr><td>Pad 14</td><td>Note 49</td><td>7</td><td>—</td></tr><tr><td>Pad 15</td><td>Note 50</td><td>7</td><td>—</td></tr><tr><td>Pad 16 (top-right)</td><td>Note 51</td><td>7</td><td>—</td></tr><tr><td>Knob 7 (top-left col)</td><td>CC 16</td><td>?</td><td>0–127 absolute</td></tr><tr><td>Knob 5</td><td>CC 17</td><td>?</td><td>0–127 absolute</td></tr><tr><td>Knob 3</td><td>CC 18</td><td>?</td><td>0–127 absolute</td></tr><tr><td>Knob 1 (bottom-left col)</td><td>CC 30</td><td>?</td><td>0–127 absolute</td></tr><tr><td>Knob 8 (top-right col)</td><td>CC 80</td><td>?</td><td>0–127 absolute</td></tr><tr><td>Knob 6</td><td>CC 81</td><td>?</td><td>0–127 absolute</td></tr><tr><td>Knob 4</td><td>CC 82</td><td>?</td><td>0–127 absolute</td></tr><tr><td>Knob 2 (bottom-right col)</td><td>CC 31</td><td>?</td><td>0–127 absolute</td></tr><tr><td>Transport Left</td><td>CC 25</td><td>1</td><td>127 on press, 0 on release</td></tr><tr><td>Transport Right</td><td>CC 26</td><td>1</td><td>127 on press, 0 on release</td></tr></tbody></table>
+<blockquote><p><strong>[low] Encoder MIDI channel (marked ?) — verify with <code>amidi -d</code> capture.</strong></p></blockquote>
+<p><strong>ctrldev driver (<code>zynthian_ctrldev_sinco_smc_pad.py</code>) — active when SINCO IN 2 port has driver assigned:</strong></p>
+<table><thead><tr><th>Incoming</th><th>Action</th><th>Notes</th></tr></thead><tbody><tr><td>CC 16 →</td><td>ZYNPOT_ABS 0 (top screen knob)</td><td>absolute position</td></tr><tr><td>CC 17 →</td><td>ZYNPOT_ABS 1</td><td>—</td></tr><tr><td>CC 18 →</td><td>ZYNPOT_ABS 2</td><td>—</td></tr><tr><td>CC 30 →</td><td>ZYNPOT_ABS 3 (bottom screen knob)</td><td>—</td></tr><tr><td>CC 25 (press=127) →</td><td>PROGRAM_CHANGE − on drum chain</td><td>drum chain = MIDI ch 7, hardcoded</td></tr><tr><td>CC 26 (press=127) →</td><td>PROGRAM_CHANGE + on drum chain</td><td>drum chain = MIDI ch 7, hardcoded</td></tr><tr><td>Pad notes 36–51 ch 7</td><td>pass through to chains</td><td>TOGGLE_SEQ still fires</td></tr></tbody></table>
+<p>PAD BANK and KNOB BANK buttons switch to bank 2 assignments — not yet mapped. Preset 2 (DAW): <strong>Shift + Pad 2</strong> — transport buttons send Mackie Control; use in DAW mode only.</p>
+<hr>
+<h2 id="section-2--master-midi-assignment-matrix">Section 2 — Master MIDI Assignment Matrix</h2>
+<h3 id="global-settings-live--defaultsh">Global settings (live — <code>default.sh</code>)</h3>
+<table><thead><tr><th>Setting</th><th>Value</th><th>Effect</th></tr></thead><tbody><tr><td>Master MIDI channel</td><td><strong>7</strong></td><td>Notes on ch 7 trigger CUIA master key actions</td></tr><tr><td>Master key actions</td><td><code>48: TOGGLE_SEQ 0,0</code></td><td>Only Pad 13 mapped — 15 of 16 pads unmapped</td></tr><tr><td>MIDI filter rules</td><td><em>none</em></td><td>No RPN→CC remapping, no channel redirects</td></tr><tr><td>SINGLE_ACTIVE_CHANNEL</td><td><strong>ON</strong></td><td>All MIDI routes to the currently selected chain</td></tr><tr><td>PROG_CHANGE_ZS3</td><td><strong>ON</strong></td><td>Program Change recalls ZS3 subsnapshots</td></tr><tr><td>BLE MIDI</td><td>enabled</td><td>SMC-PAD BLE broken on kernel 6.12 — use USB</td></tr></tbody></table>
+<h3 id="jack-device-routing-live">JACK device routing (live)</h3>
+<table><thead><tr><th>ZynMidiRouter port</th><th>Physical device</th></tr></thead><tbody><tr><td>dev0_in</td><td>Maschine MK2 native USB MIDI <em>(no pad data — needs daemon)</em></td></tr><tr><td>dev1_in</td><td>E-MU Xboard 25</td></tr><tr><td>dev2_in</td><td>SINCO SMC-PAD Private port</td></tr><tr><td>dev3_in</td><td>SINCO SMC-PAD Master port (pads + CCs) <strong>and</strong> Maschine daemon <code>Pads MIDI</code> (fan-in)</td></tr><tr><td>dev4_in</td><td>SINCO SMC-PAD port 2</td></tr><tr><td>dev5_in</td><td>ttymidi (DIN-5)</td></tr></tbody></table>
+<h3 id="assignment-matrix">Assignment matrix</h3>
+<p>Status tags: <code>[verified]</code> = Pi-tested · <code>[draft]</code> = written, not yet tested · <code>[low]</code> = not yet verified · <code>[blocked]</code> = depends on unresolved issue · <code>passive</code> = standard MIDI, no explicit assignment needed</p>
+<table><thead><tr><th>Device</th><th>Control</th><th>Ch</th><th>Message</th><th>Zynthian target</th><th>Tutorial</th><th>Status</th></tr></thead><tbody><tr><td>Maschine MK2</td><td>Pads — Group C (default)</td><td>1</td><td>Note 48–63</td><td>active chain</td><td>Maschine MK2 P1</td><td><code>[verified]</code></td></tr><tr><td>Maschine MK2</td><td>Pads — Group D</td><td>1</td><td>Note 60–75</td><td>active chain</td><td>Step Seq P2</td><td><code>[draft]</code></td></tr><tr><td>Maschine MK2</td><td>Sequencer output</td><td>2</td><td>Note (any)</td><td>chain on ch 2</td><td>Step Seq P1</td><td><code>[draft]</code></td></tr><tr><td>Maschine MK2</td><td>8 Encoders</td><td>1</td><td>RPN14 16–23</td><td><strong>unmapped</strong></td><td>Maschine MK2 P2</td><td><code>[blocked]</code></td></tr><tr><td>Maschine MK2</td><td>Transport buttons</td><td>1</td><td>RPN7 1–48</td><td><strong>unmapped</strong></td><td>Maschine MK2 P2</td><td><code>[blocked]</code></td></tr><tr><td>Xboard 25</td><td>Keys</td><td>1</td><td>Note 0–127</td><td>active chain</td><td>MIDI Channel Routing</td><td><code>[draft]</code></td></tr><tr><td>Xboard 25</td><td>16 CC knobs</td><td>1</td><td>CC [unknown]</td><td><strong>unassigned</strong></td><td>Xboard CC Knob Map</td><td><code>[draft]</code></td></tr><tr><td>Xboard 25</td><td>Mod wheel</td><td>1</td><td>CC 1</td><td>active chain engine</td><td>—</td><td>passive</td></tr><tr><td>Xboard 25</td><td>Pitch wheel</td><td>1</td><td>Pitch Bend</td><td>active chain engine</td><td>—</td><td>passive</td></tr><tr><td>Xboard 25</td><td>Aftertouch</td><td>1</td><td>Channel Pressure</td><td>active chain engine</td><td>—</td><td>passive</td></tr><tr><td>SMC-PAD</td><td>Pads 1–12</td><td>7</td><td>Note 36–47</td><td><strong>unassigned</strong></td><td>SMC-PAD Launcher P3</td><td><code>[draft]</code></td></tr><tr><td>SMC-PAD</td><td>Pad 13 (note 48)</td><td>7</td><td>Note 48</td><td>TOGGLE_SEQ 0,0</td><td>SMC-PAD Launcher P3</td><td>partial <code>[low]</code></td></tr><tr><td>SMC-PAD</td><td>Pads 14–16 (notes 49–51)</td><td>7</td><td>Note 49–51</td><td><strong>unassigned</strong></td><td>SMC-PAD Launcher P3</td><td><code>[draft]</code></td></tr><tr><td>SMC-PAD</td><td>Encoders left col</td><td>?</td><td>CC 16/17/18/30</td><td>Screen knobs 1–4 (ZYNPOT_ABS)</td><td>SMC-PAD Launcher P4</td><td><code>[verified]</code></td></tr><tr><td>SMC-PAD</td><td>Encoders right col</td><td>?</td><td>CC 80/81/82/31</td><td><strong>unassigned</strong></td><td>—</td><td>—</td></tr><tr><td>SMC-PAD</td><td>Transport Left</td><td>1</td><td>CC 25</td><td>PROGRAM_CHANGE − (drum ch 7)</td><td>SMC-PAD Drum Computer</td><td><code>[low]</code></td></tr><tr><td>SMC-PAD</td><td>Transport Right</td><td>1</td><td>CC 26</td><td>PROGRAM_CHANGE + (drum ch 7)</td><td>SMC-PAD Drum Computer</td><td><code>[low]</code></td></tr></tbody></table>
+<h3 id="currently-loaded-chains">Currently loaded chains</h3>
+<p>From <code>dub-techno-p1</code> snapshot (bank 000):</p>
+<table><thead><tr><th>Chain</th><th>MIDI ch</th><th>Engine</th></tr></thead><tbody><tr><td>1</td><td>1</td><td>FluidSynth — drums</td></tr><tr><td>2</td><td>2</td><td>ZynAddSubFX — bass</td></tr></tbody></table>
+<hr>
+<h2 id="section-3--conflicts-and-design-decisions">Section 3 — Conflicts and Design Decisions</h2>
+<h3 id="conflict-1--maschine--xboard-both-on-midi-ch-1">Conflict 1 — Maschine + Xboard both on MIDI ch 1</h3>
+<p>Both devices send notes on ch 1. With SINGLE_ACTIVE_CHANNEL=ON, both drive whichever chain is currently selected. Can be intentional layering or accidental doubling.</p>
+<p><strong>Resolution:</strong> Set Xboard to ch 3 or ch 4 when used alongside Maschine. Document channel assignment in each tutorial that uses both simultaneously. <em>(Not yet implemented — pending MIDI Channel Routing tutorial.)</em></p>
+<hr>
+<h3 id="conflict-2--maschine-note-range-overlaps-smc-pad-pads">Conflict 2 — Maschine note range overlaps SMC-PAD pads</h3>
+<table><thead><tr><th>Group</th><th>Note base</th><th>Notes sent</th><th>Overlap with SMC-PAD (36–51)</th></tr></thead><tbody><tr><td>A</td><td>24</td><td>24–39</td><td>partial — notes 36–39 (pads 1–4)</td></tr><tr><td>B</td><td>36</td><td>36–51</td><td><strong>full overlap</strong></td></tr><tr><td>C</td><td>48</td><td>48–63</td><td>partial — notes 48–51 (pads 13–16)</td></tr><tr><td>D</td><td>60</td><td>60–75</td><td>none</td></tr><tr><td>E+</td><td>72+</td><td>72–87+</td><td>none</td></tr></tbody></table>
+<p><strong>Resolution:</strong> Use Group D or higher when SMC-PAD launcher is active. Note in each affected tutorial.</p>
+<hr>
+<h3 id="conflict-3--master-channel-7--smc-pad-channel">Conflict 3 — Master channel 7 = SMC-PAD channel</h3>
+<p>Any device sending notes on ch 7 fires CUIA master key actions. Currently only note 48 is mapped, but if all 16 mappings are added, notes 36–51 on ch 7 will all fire TOGGLE_SEQ.</p>
+<p><strong>Resolution:</strong> Ch 7 is reserved for SMC-PAD exclusively. Xboard must never be set to ch 7. Maschine Group B (note base 36) must not be used when SMC-PAD is connected.</p>
+<hr>
+<h3 id="conflict-4--only-1-of-16-toggle_seq-mappings-active">Conflict 4 — Only 1 of 16 TOGGLE_SEQ mappings active</h3>
+<p><code>default.sh</code> MASTER_NOTE_CUIA contains only <code>48: TOGGLE_SEQ 0,0</code>. SMC-PAD Launcher P3 planned:</p>
+<pre><code>36: TOGGLE_SEQ 0,0   37: TOGGLE_SEQ 0,1   38: TOGGLE_SEQ 0,2   39: TOGGLE_SEQ 0,3
+40: TOGGLE_SEQ 1,0   41: TOGGLE_SEQ 1,1   42: TOGGLE_SEQ 1,2   43: TOGGLE_SEQ 1,3
+44: TOGGLE_SEQ 2,0   45: TOGGLE_SEQ 2,1   46: TOGGLE_SEQ 2,2   47: TOGGLE_SEQ 2,3
+48: TOGGLE_SEQ 3,0   49: TOGGLE_SEQ 3,1   50: TOGGLE_SEQ 3,2   51: TOGGLE_SEQ 3,3</code></pre>
+<p><strong>Resolution:</strong> Complete SMC-PAD Launcher P3. Add all 16 lines in webconf → MIDI Options → Master Key Actions.</p>
+<hr>
+<h3 id="conflict-5--maschine-rpn14rpn7-invisible-to-cc-learn">Conflict 5 — Maschine RPN14/RPN7 invisible to CC Learn</h3>
+<p>Encoders (RPN14 16–23) and transport buttons (RPN7 1–48) cannot be captured by CC Learn. Blocks all Maschine MK2 Part 2 work.</p>
+<p><strong>Resolution:</strong> Design MIDI filter rules (<code>ZYNTHIAN_MIDI_FILTER_RULES</code>) to remap selected RPNs to CC numbers before the signal reaches chains. Example: <code>RPN 16 CH1 =&amp;gt; CC 20 CH1</code>. Requires Maschine MK2 P2 redesign.</p>
+<hr>
+<h3 id="conflict-6--xboard-cc-defaults-unknown">Conflict 6 — Xboard CC defaults unknown</h3>
+<p>Factory CC numbers for the 16 knobs not documented in text manual. Risk of collision with SMC-PAD CCs (16/17/18/30/80/81/82/31) or standard engine parameters.</p>
+<p><strong>Resolution:</strong> Before assigning any Xboard knob, run:</p>
+<pre><code class="language-bash">amidi -d -p hw:X,0,0    # replace X with Xboard card number from aconnect -l</code></pre>
+<p>Turn each knob and record CC number. Map conflicts before any tutorial uses the knobs.</p>
+<hr>
+<h3 id="conflict-7--ctrldev-drum_chan-hardcoded-to-ch-7">Conflict 7 — ctrldev DRUM_CHAN hardcoded to ch 7</h3>
+<p><code>zynthian_ctrldev_sinco_smc_pad.py</code> has <code>DRUM_CHAN = 6</code> (0-indexed = ch 7). SMC-PAD transport Left/Right cycle drum kits only if drum chain is on ch 7. Dub Techno snapshot puts drums on ch 1 — transport buttons target wrong chain if loaded with driver active.</p>
+<p><strong>Resolution:</strong> Maintain separate snapshots per use case: SMC-PAD Drum Computer snapshot = drums on ch 7; Dub Techno snapshot = drums on ch 1 (transport buttons inactive in this context). Or update driver <code>DRUM_CHAN</code> constant when switching snapshots.</p>
+<hr>
+<h3 id="conflict-8--cc-2526-ch-1-reserved-for-smc-pad-transport">Conflict 8 — CC 25/26 ch 1 reserved for SMC-PAD transport</h3>
+<p>If any Xboard knob maps to CC 25 or CC 26 on ch 1, it unintentionally cycles drum kits.</p>
+<p><strong>Resolution:</strong> Reserve CC 25 and CC 26 on ch 1 for SMC-PAD transport buttons only.</p>
+<hr>
+<h3 id="conflict-9--dev3_in-fan-in-smc-pad-master--maschine-daemon">Conflict 9 — dev3_in fan-in: SMC-PAD Master + Maschine daemon</h3>
+<p>Both SINCO SMC-PAD Master and the Maschine daemon <code>Pads MIDI</code> port connect to <code>ZynMidiRouter:dev3_in</code> (JACK allows multiple inputs to one port). Both are active simultaneously. No hard conflict as long as channel discipline holds (Maschine on ch 1, SMC-PAD on ch 7). If USB enumeration order changes, SMC-PAD may shift off <code>system:midi_capture_4</code> and <code>dev3_in</code> would wire Maschine to a different slot.</p>
+<p><strong>Resolution:</strong> Monitor in testing. If enumeration shifts, run <code>aconnect -l</code> and <code>jack_lsp -c</code> to diagnose.</p>
+<hr>
+<h2 id="section-4--zynthian-midi-feature-map">Section 4 — Zynthian MIDI Feature Map</h2>
+<p>What Zynthian can receive and respond to. Check here before assigning a device control to avoid collisions.</p>
+<table><thead><tr><th>Feature</th><th>MIDI trigger</th><th>Ch scope</th><th>Configure via</th></tr></thead><tbody><tr><td>Play note on chain</td><td>Note On</td><td>per-chain MIDI ch</td><td>Chain Options → MIDI Channel</td></tr><tr><td>Route all to active chain</td><td>Note On (any ch)</td><td>any</td><td>SINGLE_ACTIVE_CHANNEL=ON (currently ON)</td></tr><tr><td>CC → synth engine parameter</td><td>CC 0–119</td><td>per-chain ch</td><td>CC Learn: long-press param knob ~600 ms</td></tr><tr><td>CC → screen knob (absolute)</td><td>CC 16 / 17 / 18 / 30</td><td>any</td><td>ctrldev driver active on SINCO IN 2</td></tr><tr><td>Volume</td><td>CC 7</td><td>any</td><td>always active</td></tr><tr><td>Sustain</td><td>CC 64</td><td>any</td><td>always active</td></tr><tr><td>Modulation</td><td>CC 1</td><td>any</td><td>always active</td></tr><tr><td>Preset recall</td><td>Program Change</td><td>active chain ch</td><td>standard</td></tr><tr><td>ZS3 subsnapshot recall</td><td>Program Change</td><td>active chain ch</td><td>PROG_CHANGE_ZS3=ON <em>(currently ON)</em></td></tr><tr><td>Bank select</td><td>CC 0 (MSB) + CC 32 (LSB) + PC</td><td>active chain ch</td><td>MIDI_BANK_CHANGE setting</td></tr><tr><td>Launcher slot toggle</td><td>Note On on master ch (7)</td><td>ch 7 only</td><td>webconf → MIDI Options → Master Key Actions</td></tr><tr><td>Any CUIA action</td><td>Note On on master ch (7)</td><td>ch 7 only</td><td>webconf → MIDI Options → Master Key Actions</td></tr><tr><td>Drum kit cycle (via ctrldev)</td><td>CC 25 / CC 26 press on ch 1</td><td>ch 1 only</td><td>ctrldev driver active</td></tr><tr><td>Channel aftertouch</td><td>Channel Pressure</td><td>per-chain ch</td><td>if engine supports</td></tr><tr><td>Poly aftertouch</td><td>Poly Pressure</td><td>per-chain ch</td><td>if engine supports</td></tr><tr><td>Pitch bend</td><td>Pitch Bend</td><td>per-chain ch</td><td>standard</td></tr><tr><td>Panic</td><td>CC 123 (All Notes Off)</td><td>any</td><td>standard</td></tr><tr><td>Pitch bend range</td><td>RPN 0</td><td>standard</td><td>standard</td></tr><tr><td>Fine tuning</td><td>RPN 1 / RPN 2</td><td>standard</td><td>standard</td></tr><tr><td>RPN14 / RPN7 (Maschine encoders/buttons)</td><td>—</td><td>—</td><td><strong>not natively supported</strong> — needs MIDI filter RPN→CC rule</td></tr></tbody></table>
+<hr>
+<h2 id="going-further">Going Further</h2>
+<ul><li>Complete SMC-PAD Launcher P3: add all 16 TOGGLE_SEQ mappings in webconf</li><li>Verify Xboard CC defaults via <code>amidi -d</code>, then design Xboard CC Knob Mapping tutorial</li><li>Design MIDI filter rules for Maschine RPN→CC remapping, enabling Maschine MK2 P2</li><li>Verify SMC-PAD encoder MIDI channel with <code>amidi -d</code></li><li>Map SMC-PAD bank 2 (PAD BANK / KNOB BANK assignments)</li><li>Update this page after each tutorial is verified — change <code>[draft]</code> → <code>[verified]</code> in the assignment matrix</li></ul>
+</article>
+</main>
+<div id="toc-column"></div>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
