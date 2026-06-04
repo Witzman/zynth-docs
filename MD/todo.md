@@ -39,11 +39,37 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
 
 ---
 
-- [ ] **Complete TOGGLE_SEQ mappings in webconf**
-  - [ ] Open webconf → Interface → MIDI Options → Master Key Actions
-  - [ ] Add notes 36–47 and 49–51 mapped to TOGGLE_SEQ (see MIDI Reference Conflict 4 for full block)
-  - [ ] Verify all 16 SMC-PAD pads toggle correct launcher slots
-  - [ ] Update MIDI Reference Section 2 matrix: SMC-PAD pads 1–12 and 14–16 → `[verified]`
+- [~] **Debug and fix TOGGLE_SEQ — partially resolved, one issue remaining**
+
+  **What was found and fixed (2026-06-04):**
+  - SMC-PAD sends on **channel 6** (not 7 as tutorial stated — status byte `0x95` = ch6 1-indexed)
+  - Master channel corrected: `ZYNTHIAN_MIDI_MASTER_CHANNEL=6` in `/zynthian/config/midi-profiles/default.sh`
+  - All 16 mappings written to `ZYNTHIAN_MIDI_MASTER_NOTE_CUIA` with correct `\n` separators (not actual newlines)
+  - `ZYNTHIAN_MIDI_MASTER_NOTE_CUIA` parser requires literal `\n` separators — actual newlines silently fail
+  - SINCO Private port (card 4, port 0 = SINCO IN 1) mirrors all pad notes from SINCO Master (port 1 = SINCO IN 2)
+  - Double-routing causes TOGGLE_SEQ to fire twice per press → double-toggle → no net change
+  - Debounce added to `state_manager.py` on Pi: 50ms window per note (lines 836–840)
+  - **MIDI reference page needs correction:** SMC-PAD channel is 6, master channel is 6, not 7
+
+  **Remaining issue — TOGGLE_SEQ still not working after debounce:**
+  - Debounce was added but TOGGLE_SEQ still didn't toggle with Launcher open
+  - Possible causes not yet eliminated:
+    1. Launcher has no patterns → `togglePlayState` succeeds but nothing visible
+    2. `cuia_toggle_seq` uses flat sequence index — `TOGGLE_SEQ 0,0` passes `int(params[0])=0`, second param ignored
+    3. `togglePlayState(bank, 0)` — bank may not have sequences set up in current dub-techno-p1 snapshot
+    4. Debounce `_master_cuia_last` dict init may not have been applied correctly (check line ~234)
+  - [ ] Load a snapshot with launcher patterns, open Launcher view, press Pad 1 — check if slot 0 highlights
+  - [ ] Confirm `cuia_toggle_seq` receives correct params: add `print(cuia, params)` temporarily
+  - [ ] Check if `togglePlayState(bank, 0)` requires a pre-existing sequence to have visible effect
+
+  **Pi code state:**
+  - `/zynthian/zynthian-ui/zyngine/zynthian_state_manager.py` — modified with debounce (not committed to git)
+  - `/zynthian/config/midi-profiles/default.sh` — master channel = 6, 16 TOGGLE_SEQ mappings
+
+  **Update MIDI Reference page:**
+  - SMC-PAD channel: change 7 → 6 everywhere
+  - Master channel: change 7 → 6 everywhere
+  - SINCO Private port double-routing: document as Conflict 10
 
 ---
 
