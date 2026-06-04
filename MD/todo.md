@@ -30,6 +30,15 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
 
 ---
 
+- [ ] **Test Dub Techno Live Rig — Maschine Pad Layer Part 1 on Pi**
+  - [ ] Blocked: Maschine Step Sequencer Part 1 must pass first
+  - [ ] Add pad chain on Ch2, verify 3-layer playback simultaneous
+  - [ ] Test tempo drift over 8+ bars — document acceptable window
+  - [ ] Test Shift+encoder B6 speed control (marked "under construction")
+  - Tutorial file: `~/zynth-docs/htmldoku/project-dub-techno-maschine-pad.md`
+
+---
+
 ## Backlog
 
 <!-- Add future cross-cutting tasks here -->
