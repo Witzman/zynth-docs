@@ -4,6 +4,14 @@ The control screen is where you adjust synth engine parameters. It appears autom
 
 ---
 
+## Accessing the Control Screen
+
+**From the touch keypad:** Tap any chain strip in the Mixer to open chain control. The control screen (parameter knobs) is the default subscreen.
+
+**Return to control from anywhere:** Tap **CTRL/PRSET** (short) to jump to chain control for the current chain.
+
+---
+
 ## Layout
 
 ```
@@ -116,7 +124,7 @@ Bind a physical controller knob, fader, or slider to any parameter:
 ### Step-by-Step
 
 1. Make sure the parameter you want to bind is visible as one of the 4 knobs (navigate to the correct page).
-2. **Long-press** the encoder for that knob (hold ~600ms until the knob outline turns orange/yellow).
+2. **Long-press the parameter knob on screen** (hold ~600ms until the knob outline turns orange/yellow). On V5 hardware, bold-press the corresponding encoder instead.
 3. The screen shows "Learning CC..." next to that knob.
 4. Move the physical controller knob/fader. The first CC message received is captured.
 5. The CC number appears on the knob label. Learning ends automatically.
@@ -188,9 +196,9 @@ Source: [`zyngui/zynthian_gui_control_xy.py`](../zynthian-ui/zyngui/zynthian_gui
 | **ZS3 (subsnapshot)** | Selected chains/parameters | Between sections within a song |
 | **Preset** | Engine-internal parameters only | Reuse a sound in any setup |
 
-To save current parameters as a ZS3: Main Menu → ZS3 → **Save as new ZS3**. The current control screen values are included.
+To save current parameters as a ZS3: tap **ZS3/SHOT** (short) → **Save as new ZS3**. The current control screen values are included.
 
-To save as a snapshot: Main Menu → Snapshots → select a slot → Save.
+To save as a snapshot: tap **ZS3/SHOT** (bold hold) → navigate into a bank → **Save as new snapshot**.
 
 ---
 

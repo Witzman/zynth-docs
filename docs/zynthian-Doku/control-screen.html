@@ -104,6 +104,10 @@
 <h1 id="the-control-screen">The Control Screen</h1>
 <p>The control screen is where you adjust synth engine parameters. It appears automatically after loading a preset and is the main working view during performance and sound design.</p>
 <hr>
+<h2 id="accessing-the-control-screen">Accessing the Control Screen</h2>
+<p><strong>From the touch keypad:</strong> Tap any chain strip in the Mixer to open chain control. The control screen (parameter knobs) is the default subscreen.</p>
+<p><strong>Return to control from anywhere:</strong> Tap <strong>CTRL/PRSET</strong> (short) to jump to chain control for the current chain.</p>
+<hr>
 <h2 id="layout">Layout</h2>
 <pre><code>┌──────────────────┬──────────────────┬──────────────────────────────┐
 │                  │                  │  &gt; CHAIN                     │
@@ -163,7 +167,7 @@
 <h2 id="midi-cc-learning">MIDI CC Learning</h2>
 <p>Bind a physical controller knob, fader, or slider to any parameter:</p>
 <h3 id="step-by-step">Step-by-Step</h3>
-<ol><li>Make sure the parameter you want to bind is visible as one of the 4 knobs (navigate to the correct page).</li><li><strong>Long-press</strong> the encoder for that knob (hold ~600ms until the knob outline turns orange/yellow).</li><li>The screen shows "Learning CC..." next to that knob.</li><li>Move the physical controller knob/fader. The first CC message received is captured.</li><li>The CC number appears on the knob label. Learning ends automatically.</li></ol>
+<ol><li>Make sure the parameter you want to bind is visible as one of the 4 knobs (navigate to the correct page).</li><li><strong>Long-press the parameter knob on screen</strong> (hold ~600ms until the knob outline turns orange/yellow). On V5 hardware, bold-press the corresponding encoder instead.</li><li>The screen shows "Learning CC..." next to that knob.</li><li>Move the physical controller knob/fader. The first CC message received is captured.</li><li>The CC number appears on the knob label. Learning ends automatically.</li></ol>
 <h3 id="midi-learn-states">MIDI Learn States</h3>
 <table><thead><tr><th>Knob border color</th><th>State</th></tr></thead><tbody><tr><td>Normal</td><td>Not in learn mode</td></tr><tr><td>Orange highlight</td><td>Waiting for CC (learn mode active)</td></tr><tr><td>CC badge visible</td><td>CC bound — shows CC number</td></tr></tbody></table>
 <h3 id="chain-wide-vs-per-processor">Chain-Wide vs Per-Processor</h3>
@@ -187,8 +191,8 @@
 <hr>
 <h2 id="saving-parameter-state">Saving Parameter State</h2>
 <table><thead><tr><th>Save method</th><th>Captures</th><th>Use for</th></tr></thead><tbody><tr><td><strong>Snapshot</strong></td><td>All chains, all parameters, all routing</td><td>Between songs</td></tr><tr><td><strong>ZS3 (subsnapshot)</strong></td><td>Selected chains/parameters</td><td>Between sections within a song</td></tr><tr><td><strong>Preset</strong></td><td>Engine-internal parameters only</td><td>Reuse a sound in any setup</td></tr></tbody></table>
-<p>To save current parameters as a ZS3: Main Menu → ZS3 → <strong>Save as new ZS3</strong>. The current control screen values are included.</p>
-<p>To save as a snapshot: Main Menu → Snapshots → select a slot → Save.</p>
+<p>To save current parameters as a ZS3: tap <strong>ZS3/SHOT</strong> (short) → <strong>Save as new ZS3</strong>. The current control screen values are included.</p>
+<p>To save as a snapshot: tap <strong>ZS3/SHOT</strong> (bold hold) → navigate into a bank → <strong>Save as new snapshot</strong>.</p>
 <hr>
 <h2 id="parameter-types">Parameter Types</h2>
 <p>Zynthian parameters (zctrls) come in several types. The knob display adapts:</p>
