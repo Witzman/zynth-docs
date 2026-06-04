@@ -10,161 +10,165 @@
 
 Set up two chains — a drum kit and a bass synth — each with a looping 16-step pattern, to prove the sequenced foundation works before adding effects or performance controls.
 
+> **V5 touch keypad:** This tutorial uses the V5 touch keypad (left-side panel). Key buttons used: **OPT/ADMIN** (short = Main Menu), **MIX/LEVEL** (short = Mixer), **PAD/STEP** (short = Launcher), **BACK/NO** (Back). Transport row at bottom: **PLAY (▶)**, **STOP (■)**, **REC (●)**.
+
 ### Step 1 — Open the mixer screen
 
-Connect to Zynthian via VNC. The main screen is the **Mixer** — it shows a row of chain strips (one per active sound source) with a **+** button at the bottom-left.
+Connect to Zynthian via VNC.
 
-If you see a different screen, tap **Back** or **Home** until the mixer strip row is visible.
+If you see a screen other than the **Mixer**, tap **MIX/LEVEL** (short) on the V5 keypad to jump there directly.
 
-**Verify:** The mixer screen shows chain strips (or an empty mixer with only the **+** button visible). No other overlay or dialog is open.
+**Verify:** The Mixer screen shows chain strips (or an empty mixer). No overlay or dialog open.
 
-### Step 2 — Add the drum chain
+### Step 2 — Open Chain Manager
 
-Tap **+** in the bottom-left of the mixer screen.
+Tap **OPT/ADMIN** (short tap) on the V5 keypad.
 
-**Verify:** The **Add Chain...** screen appears, showing chain-type buttons.
+Tap **Chain Manager** in the Main Menu grid.
 
-### Step 3 — Select chain type for drums
+**Verify:** The Chain Manager screen appears — a visual graph of all active chains as columns.
+
+### Step 3 — Add the drum chain
+
+Tap **Add chain** in the Chain Manager.
+
+**Verify:** The **Add Chain...** screen appears, showing chain-type buttons (Instrument, Audio Input, etc.).
+
+### Step 4 — Select chain type for drums
 
 Tap **Instrument**.
 
-**Verify:** An engine list appears. You should see entries including **FluidSynth** and **ZynAddSubFX**.
-
 > **Note:** Zynthian uses **Chains** (its term for a signal path from engine to audio output). All synth engines — including drum kits — use the **Instrument** chain type. There is no dedicated drum type.
 
-### Step 4 — Select the FluidSynth engine
+**Verify:** An engine list appears, including **FluidSynth** and **ZynAddSubFX**.
 
-Tap **FluidSynth** in the engine list.
+### Step 5 — Select the FluidSynth engine
+
+Tap **FluidSynth**.
 
 **Verify:** A bank list appears.
 
-### Step 5 — Select the drum bank
+### Step 6 — Select the drum bank
 
-Tap **System/FluidDrums** in the bank list.
+Tap **System/FluidDrums**.
 
 **Verify:** A preset list appears showing drum kit presets.
 
-### Step 6 — Select the Standard preset
+### Step 7 — Select the Standard preset
 
-Tap **Standard** in the preset list.
+Tap **Standard**.
 
-**Verify:** The chain control screen opens and a new chain strip labelled with the FluidSynth preset name appears in the mixer. You should be looking at the drum chain's parameter view.
+**Verify:** The chain control screen opens. The drum chain strip appears in the mixer.
 
-### Step 7 — Return to the mixer
+### Step 8 — Return to the mixer
 
-Tap **Back** to return to the mixer screen.
+Tap **MIX/LEVEL** (short) on the V5 keypad.
 
-**Verify:** The mixer shows one chain strip for the drum kit. The strip is labelled with the preset or engine name.
+**Verify:** Mixer shows one chain strip for the drum kit.
 
-### Step 8 — Switch to the Launcher
+### Step 9 — Open the Launcher
 
-Tap the **Launcher** tab — this is the second tab in the mixer area, to the right of **Mixer**.
+Tap **PAD/STEP** (short) on the V5 keypad.
 
-> **Note:** The **Launcher** is Zynthian's pattern grid — it shows a column of pattern pads for each chain. This is where you build and trigger step-sequencer patterns.
+> **Note:** The **Launcher** is Zynthian's pattern grid — columns = chains, rows = pattern slots. This is where you build and trigger step-sequencer patterns.
 
-**Verify:** The Launcher view appears showing a grid. The drum chain has a column of pattern pads.
+**Verify:** The Launcher view appears. The drum chain has a column of pattern pads.
 
-### Step 9 — Open the drum pattern pad
+### Step 10 — Select the drum pattern pad
 
-Tap the first pattern pad in the drum chain's column (top pad of the drum column).
+Tap the first pattern pad in the drum chain's column (top pad).
 
 **Verify:** The pad is selected or highlighted.
 
-### Step 10 — Open the pattern editor
+### Step 11 — Open the pattern editor
 
-Tap the **Edit** button (pencil icon) in the toolbar, or long-press the pad and select **Edit** from the menu.
+Long-press the selected pad and tap **Edit**, or tap the pencil icon in the toolbar.
 
-**Verify:** The Pattern Editor opens. You see a pitch/step grid — rows represent pitches (note names or numbers), columns represent steps.
+**Verify:** The Pattern Editor opens. A pitch/step grid appears — rows = pitches (note names), columns = steps.
 
-### Step 11 — Set pattern length to 16 steps
+### Step 12 — Set pattern length to 16 steps
 
-In the Pattern Editor toolbar, find the **Length** control. Tap it and set the value to **16**.
+Tap **Length** in the toolbar. Set the value to **16**.
 
 **Verify:** The grid shows 16 step columns.
 
-### Step 12 — Enter the kick drum
+### Step 13 — Enter the kick drum
 
-Find the row for **C2** (MIDI note 36 — Bass drum 1). In the pattern editor, rows are labelled by note name or number; C2 is MIDI note 36.
+Find the row for **C2** (MIDI note 36 — Bass drum 1).
 
-> **Note — if the pattern editor shows note numbers instead of names:** MIDI note 36 = C2 (kick), 38 = D2 (snare), 42 = F#2 (closed hi-hat). `[low]` — verify whether the editor displays note names or numbers on this Pi before publishing.
+> **GM drum note reference:** C2 = kick (36), D2 = snare (38), F#2 = closed hi-hat (42). The editor shows note names by row.
 
 Tap steps **1, 5, 9, and 13** in the C2 row.
 
-**Verify:** Four filled bars appear on the C2 row at steps 1, 5, 9, and 13. This places the kick on every beat of a 4/4 bar.
+**Verify:** Four filled bars on the C2 row at steps 1, 5, 9, 13. This places the kick on every beat of a 4/4 bar.
 
-### Step 13 — Enter the snare
+### Step 14 — Enter the snare
 
 Find the row for **D2** (MIDI note 38 — Acoustic snare).
 
 Tap steps **5 and 13**.
 
-**Verify:** Two filled bars on the D2 row at steps 5 and 13. This places the snare on beats 2 and 4.
+**Verify:** Two filled bars on the D2 row at steps 5 and 13 (beats 2 and 4).
 
-### Step 14 — Enter the closed hi-hat
+### Step 15 — Enter the closed hi-hat
 
 Find the row for **F#2** (MIDI note 42 — Closed hi-hat).
 
 Tap all **16 steps** in that row.
 
-**Verify:** 16 filled bars on the F#2 row across all steps.
+**Verify:** 16 filled bars across the F#2 row.
 
-### Step 15 — Enable loop mode for the drum pattern `[low]`
+### Step 16 — Enable loop mode
 
-> **Verify this step on the Pi before publishing.** The exact UI control for setting a pattern to loop vs. one-shot is unconfirmed. Look in the Pattern Editor toolbar for a **Loop** toggle, a **🔁** icon, or a mode selector. Enable whichever control sets this pattern to loop continuously.
+Tap **🔁** (Loop) in the Pattern Editor toolbar.
 
-Enable loop mode for the drum pattern.
+**Verify:** The loop indicator is active. The pattern will repeat continuously when transport runs.
 
-**Verify:** The loop indicator is active (icon highlighted or toggle set to on). When played, the pattern will repeat automatically.
+### Step 17 — Return to mixer
 
-### Step 16 — Return to the mixer
+Tap **MIX/LEVEL** (short) on the V5 keypad.
 
-Tap **Back** to return to the Launcher, then tap **Back** again (or the **Mixer** tab) to return to the mixer screen.
+**Verify:** Mixer screen visible. Drum chain strip present.
 
-**Verify:** Mixer screen is visible. The drum chain strip is present.
+### Step 18 — Add the bass chain
 
-### Step 17 — Add the bass chain
-
-Tap **+** in the mixer screen.
+Tap **OPT/ADMIN** (short) → **Chain Manager** → **Add chain**.
 
 **Verify:** The **Add Chain...** screen appears.
 
-### Step 18 — Select chain type for bass
+### Step 19 — Select chain type for bass
 
 Tap **Instrument**.
 
 **Verify:** Engine list appears.
 
-### Step 19 — Select the ZynAddSubFX engine
+### Step 20 — Select the ZynAddSubFX engine
 
-Tap **ZynAddSubFX** in the engine list.
+Tap **ZynAddSubFX**.
 
 **Verify:** A bank list appears.
 
-### Step 20 — Select the bass bank
+### Step 21 — Select the bass bank
 
-Tap **A VDX** in the bank list.
+Tap **A VDX**.
 
 **Verify:** A preset list appears.
 
-### Step 21 — Select the Analog Bass preset
+### Step 22 — Select the Analog Bass preset
 
-Tap **Analog Bass** in the preset list.
+Tap **Analog Bass**.
 
-**Verify:** The chain control screen opens and a second chain strip appears in the mixer. The Analog Bass preset is a deep, sustained bass sound with clear low-end weight — appropriate for dub techno.
+> **Note:** Analog Bass is a deep, sustained bass sound with clear low-end weight — well suited to dub techno.
 
-### Step 22 — Return to the mixer
+**Verify:** Chain control screen opens. A second chain strip appears in the mixer.
 
-Tap **Back** to return to the mixer.
+### Step 23 — Return to the Launcher
 
-**Verify:** Two chain strips are visible — drum kit and bass.
+Tap **PAD/STEP** (short) on the V5 keypad.
 
-### Step 23 — Open the Launcher
+**Verify:** Launcher shows two columns — drum chain and bass chain.
 
-Tap the **Launcher** tab.
-
-**Verify:** Launcher view shows two columns — one for the drum chain, one for the bass chain.
-
-### Step 24 — Open the bass pattern pad
+### Step 24 — Select the bass pattern pad
 
 Tap the first pattern pad in the bass chain's column.
 
@@ -172,66 +176,56 @@ Tap the first pattern pad in the bass chain's column.
 
 ### Step 25 — Open the bass pattern editor
 
-Tap **Edit** (pencil icon) in the toolbar, or long-press the pad and select **Edit**.
+Long-press the pad and tap **Edit**, or tap the pencil icon.
 
 **Verify:** Pattern Editor opens for the bass chain.
 
 ### Step 26 — Set bass pattern length to 16 steps
 
-In the Pattern Editor toolbar, set **Length** to **16**.
+Tap **Length** → set to **16**.
 
-**Verify:** The grid shows 16 step columns.
+**Verify:** Grid shows 16 step columns.
 
 ### Step 27 — Enter the bass notes
 
-Place **C2** (MIDI note 36) on steps **1, 3, 9, and 11**.
+Find the row for **C2** (MIDI note 36).
 
-> **Note on pitch:** C2 is a good starting point — the low-end weight of the Analog Bass preset sits best in the C1–C3 range. The pattern is intentionally sparse; dub techno bass breathes in the gaps. Steps 1, 3, 9, 11 give a syncopated two-note-per-half-bar feel typical of dub techno.
+Tap steps **1, 3, 9, and 11**.
 
-**Verify:** Four filled bars on the C2 row at steps 1, 3, 9, and 11. Steps 2, 4, 5–8, 10, 12–16 are empty.
+> **Note on pitch and pattern:** C2 sits in the low-end weight range of the Analog Bass preset. The pattern is intentionally sparse — dub techno bass breathes in the gaps. Steps 1, 3, 9, 11 give a syncopated feel typical of the genre.
 
-### Step 28 — Enable loop mode for the bass pattern `[low]`
+**Verify:** Four filled bars on the C2 row at steps 1, 3, 9, 11. All other steps empty.
 
-> **Verify this step on the Pi before publishing.** Same as Step 15 — find and enable the loop control in the Pattern Editor toolbar for the bass pattern.
+### Step 28 — Enable loop mode
 
-Enable loop mode.
+Tap **🔁** (Loop) in the Pattern Editor toolbar.
 
 **Verify:** Loop indicator is active for the bass pattern.
 
-### Step 29 — Start transport `[low]`
+### Step 29 — Start transport
 
-> **Verify this step on the Pi before publishing.** The exact label and location of the Play/transport button in the Launcher or Pattern Editor toolbar is unconfirmed. Look for a **▶ Play** button or transport controls in the Launcher toolbar.
+Tap **PLAY (▶)** in the V5 keypad transport row (bottom of display).
 
-Tap **▶ Play** (or the equivalent transport start control) to start both patterns.
-
-**Verify:** Both the drum and bass patterns begin playing. You hear the kick/snare/hi-hat pattern with the sparse bass notes layered underneath. The patterns loop continuously without drift. The sound is dry — no reverb or delay yet.
+**Verify:** Both the drum and bass patterns begin playing simultaneously. You hear kick/snare/hi-hat with sparse bass notes underneath. Patterns loop continuously without drift. Sound is dry — no reverb or delay yet.
 
 ---
 
-**Part 1 final verify:** Both chains are playing simultaneously. Drum pattern: kick on every beat, snare on beats 2 and 4, closed hi-hat on every step. Bass pattern: four notes per bar at steps 1, 3, 9, 11. Both patterns loop in sync with no drift. Audio is clean and dry.
+**Verify:** Both chains playing in sync. Drum pattern: kick every beat, snare beats 2 and 4, closed hi-hat every step. Bass: four notes at steps 1, 3, 9, 11. Clean, dry signal.
 
 ---
 
 ### Step 30 — Stop transport
 
-Tap **⏹ Stop** (or the equivalent transport stop control) to stop playback.
+Tap **STOP (■)** in the V5 keypad transport row.
 
 **Verify:** Both patterns stop. No sound.
 
 ### Step 31 — Save a snapshot
 
-Open a browser and go to:
+In a browser, go to `http://zynthian.local` → **Library → Snapshots**.
 
-```
-http://zynthian.local
-```
+In the **Name:** field, type `dub-techno-p1`. Tap the checkmark icon to save.
 
-Go to **Library → Snapshots**.
+**Verify:** Snapshot `dub-techno-p1` appears in the list.
 
-In the **Name:** field, type `dub-techno-p1`.
-
-Tap the checkmark icon to save.
-
-**Verify:** The snapshot `dub-techno-p1` appears in the snapshot list. Loading it will restore both chains and their patterns.
-
-**Part 1 complete.** You have a working drums + bass foundation. Parts 2 and 3 will add dub-style effects and performance controls.
+**Part 1 complete.** Drums + bass foundation is working. Part 2 adds the pad layer and dub effects.
