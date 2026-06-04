@@ -53,7 +53,9 @@ Each step filters what follows. Selecting "Instrument" → "Sound Synthesis" sho
 
 ## Chain Manager
 
-**Access:** Main Menu → **Chain Manager**, or SW1 bold from chain_control.
+**From the touch keypad:** Tap **OPT/ADMIN** (short) → **Chain Manager**.
+
+**V5 hardware:** SW1 bold from chain_control.
 
 The chain manager shows all chains as columns in a visual graph. Each column:
 - Column header: chain name + MIDI channel
@@ -70,7 +72,7 @@ The chain manager shows all chains as columns in a visual graph. Each column:
 | Long-press a processor node | Open processor_options for that processor |
 | Encoder 3 rotate | Scroll between chains |
 | Encoder 4 rotate | Scroll between processor nodes |
-| Bold SW4 | Add chain |
+| Bold SW4 (V5 hardware) or tap **+** in Mixer | Add chain |
 
 ### Moving a Chain
 

@@ -128,11 +128,12 @@ control screen (ready to play)</code></pre>
 <p>Each step filters what follows. Selecting "Instrument" → "Sound Synthesis" shows only synth engines; selecting "LV2 Plugin" shows only LV2 plugins.</p>
 <hr>
 <h2 id="chain-manager">Chain Manager</h2>
-<p><strong>Access:</strong> Main Menu → <strong>Chain Manager</strong>, or SW1 bold from chain_control.</p>
+<p><strong>From the touch keypad:</strong> Tap <strong>OPT/ADMIN</strong> (short) → <strong>Chain Manager</strong>.</p>
+<p><strong>V5 hardware:</strong> SW1 bold from chain_control.</p>
 <p>The chain manager shows all chains as columns in a visual graph. Each column:</p>
 <ul><li>Column header: chain name + MIDI channel</li><li>Processor nodes stacked vertically: MIDI-FX → synth/engine → Audio-FX</li><li>Lines connecting serial and parallel processors</li></ul>
 <h3 id="chain-manager-interactions">Chain Manager Interactions</h3>
-<table><thead><tr><th>Action</th><th>Result</th></tr></thead><tbody><tr><td>Tap column header</td><td>Select that chain; enter chain_control for it</td></tr><tr><td>Tap a processor node</td><td>Enter chain_control focused on that processor</td></tr><tr><td>Long-press column header</td><td>Open chain_options for that chain</td></tr><tr><td>Long-press a processor node</td><td>Open processor_options for that processor</td></tr><tr><td>Encoder 3 rotate</td><td>Scroll between chains</td></tr><tr><td>Encoder 4 rotate</td><td>Scroll between processor nodes</td></tr><tr><td>Bold SW4</td><td>Add chain</td></tr></tbody></table>
+<table><thead><tr><th>Action</th><th>Result</th></tr></thead><tbody><tr><td>Tap column header</td><td>Select that chain; enter chain_control for it</td></tr><tr><td>Tap a processor node</td><td>Enter chain_control focused on that processor</td></tr><tr><td>Long-press column header</td><td>Open chain_options for that chain</td></tr><tr><td>Long-press a processor node</td><td>Open processor_options for that processor</td></tr><tr><td>Encoder 3 rotate</td><td>Scroll between chains</td></tr><tr><td>Encoder 4 rotate</td><td>Scroll between processor nodes</td></tr><tr><td>Bold SW4 (V5 hardware) or tap <strong>+</strong> in Mixer</td><td>Add chain</td></tr></tbody></table>
 <h3 id="moving-a-chain">Moving a Chain</h3>
 <p>chain_options → <strong>Move chain</strong> — the chain manager opens with the chain highlighted. Use encoder 4 to slide the chain left/right to a new position. Confirm with select.</p>
 <p>Source: <a href="../zynthian-ui/zyngui/zynthian_gui_chain_manager.py"><code>zyngui/zynthian_gui_chain_manager.py</code></a></p>
