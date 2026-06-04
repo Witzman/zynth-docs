@@ -125,7 +125,7 @@
 
 </style>
 <h1 id="sprint-board">Sprint Board</h1>
-<div class="sb-stats"><div class="sb-stat">Active <span>13</span></div><div class="sb-stat">Needs PR <span>0</span></div><div class="sb-stat">Todo <span>1</span></div><div class="sb-stat">Done <span>5</span></div></div>
+<div class="sb-stats"><div class="sb-stat">Active <span>14</span></div><div class="sb-stat">Needs PR <span>0</span></div><div class="sb-stat">Todo <span>3</span></div><div class="sb-stat">Done <span>5</span></div></div>
 <div class="sb-section"><h2>In Work</h2><div class="sb-items">
 <div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**Custom MIDI Channel Routing** — Xboard channels 1–4 each drive a dedicated chain; snapshot persists on boot</span></div>
 <div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**SMC-PAD Launcher Control** — 16 pads trigger 4×4 sequencer grid via MIDI master channel + CUIA TOGGLE_SEQ</span></div>
@@ -138,11 +138,14 @@
 <div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**EMU Xboard CC Knob Mapping** — static and follow-channel CC bindings across 4 chains; depends on MIDI Channel Routing tutorial</span></div>
 <div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**Dub Techno Performance Loop** — drums + bass + pad via step sequencer, delay/reverb effects, SMC-PAD live mute control</span></div>
 <div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**Maschine MK2 Step Sequencer** — 16-step sequencer via MaschineMK2_linux daemon; sequencer fires on Ch2; melodic note assignment; no NI software required; prereq: Maschine MK2 Controller tutorial</span></div>
-<div class="sb-item"><span class="sb-badge status-todo">Todo</span><span class="sb-text">**ZynAddSubFX Sound Design from Scratch** — build custom evolving pad from ADD + PAD synth modules, no presets</span></div>
+<div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**Dub Techno Live Rig — Maschine Pad Layer** — Maschine Ch2 pad layer over Zynthian drum+bass; dub delay+reverb; live step toggle techniques; prereqs: Dub Techno Part 1 + Maschine Step Sequencer Part 1</span></div>
 <div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**Live Looper with SooperLooper** — synth + U46DJ live audio into SooperLooper; SMC-PAD transport controls record/play/overdub; pads trigger individual loop slots</span></div>
+<div class="sb-item"><span class="sb-badge status-todo">Todo</span><span class="sb-text">**ZynAddSubFX Sound Design from Scratch** — build custom evolving pad from ADD + PAD synth modules, no presets</span></div>
+<div class="sb-item"><span class="sb-badge status-todo">Todo</span><span class="sb-text">**MaschineMK2_linux MIDI Clock Sync** — add ALSA MIDI clock input to daemon so Zynthian transport drives Maschine step rate; eliminates drift; requires Rust code contribution to MaschineMK2_linux</span></div>
 </div></div>
 <div class="sb-section"><h2>Backlog</h2><div class="sb-items">
 <div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**Complete Dub Techno Performance Loop tutorial**</span></div>
+<div class="sb-item"><span class="sb-badge status-todo">Todo</span><span class="sb-text">**Test Maschine MK2 Step Sequencer Part 1 on Pi**</span></div>
 </div></div>
 <div class="sb-section"><h2>Done</h2><div class="sb-items">
 <div class="sb-item"><span class="sb-badge status-done">Done</span><span class="sb-text">**Custom MIDI Channel Routing** — EMU channel switch = instrument switch, one chain per MIDI channel (published draft, not yet Pi-tested) → `htmldoku/project-midi-channel-routing.md`</span></div>
