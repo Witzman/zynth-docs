@@ -19,20 +19,10 @@ Status: `[~]` drafting · `[t]` user testing · `[>]` ready to publish · `[ ]` 
 - [~] **EMU Xboard CC Knob Mapping** — static and follow-channel CC bindings across 4 chains; depends on MIDI Channel Routing tutorial
 - [~] **Dub Techno Performance Loop** — drums + bass + pad via step sequencer, delay/reverb effects, SMC-PAD live mute control
 - [~] **Maschine MK2 Step Sequencer** — 16-step sequencer via MaschineMK2_linux daemon; sequencer fires on Ch2; melodic note assignment; no NI software required; prereq: Maschine MK2 Controller tutorial
-
-
-## Documentation Updates
-
-<!-- Add active items as: - [~] **Title** — one-line description -->
+- [~] **Live Looper with SooperLooper** — synth + U46DJ live audio into SooperLooper; SMC-PAD transport controls record/play/overdub; pads trigger individual loop slots
 
 ---
 
 ## Future Tutorial Candidates
 
 - [ ] **ZynAddSubFX Sound Design from Scratch** — build custom evolving pad from ADD + PAD synth modules, no presets
-
----
-
-## Active (promoted from candidates)
-
-- [~] **Live Looper with SooperLooper** — synth + U46DJ live audio into SooperLooper; SMC-PAD transport controls record/play/overdub; pads trigger individual loop slots

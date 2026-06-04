@@ -21,6 +21,15 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
 
 ---
 
+- [ ] **Test Maschine MK2 Step Sequencer Part 1 on Pi**
+  - [ ] Confirm sequencer mode activates (Shift+Pad Mode twice)
+  - [ ] Confirm pads toggle steps (no note fired)
+  - [ ] Confirm Play starts sequence, Erase stops it
+  - [ ] Confirm MIDI Ch2 reaches Zynthian chain
+  - Tutorial file: `~/zynth-docs/htmldoku/project-maschine-step-sequencer.md`
+
+---
+
 ## Backlog
 
 <!-- Add future cross-cutting tasks here -->
