@@ -16,7 +16,9 @@ aconnect -l
 
 The controller appears as a MIDI client (e.g. `client 32: 'SINCO' [type=kernel,card=4]`). Zynthian's ZynMidiRouter connects all detected MIDI inputs to the active chains automatically [`zynthian-ui/zyngine/zynthian_engine_midi_control.py`].
 
-To configure which ports route where, open `http://zynthian.local` → **MIDI** → **Ports**. Enable each port you want active.
+To configure which ports route where, open `http://zynthian.local` → **Interface** → **MIDI Options** → **MIDI Devices**. Enable each port you want active.
+
+> **MIDI port configuration requires webconf** — not available from the touchscreen UI.
 
 ---
 
@@ -24,9 +26,9 @@ To configure which ports route where, open `http://zynthian.local` → **MIDI** 
 
 By default, MIDI channel 1 drives the first chain, channel 2 the second, and so on. You can change channel assignments per chain in the UI:
 
-1. Tap the chain in the layer view.
-2. Open chain options → **MIDI Channel**.
-3. Select the incoming channel (or **Omni** to respond to all channels).
+1. Tap the chain strip in the Mixer.
+2. Tap **Chain Options** (sidebar button in the chain control screen).
+3. Tap **MIDI Channel** → select the incoming channel (or **Omni** to respond to all).
 
 ---
 
@@ -69,8 +71,8 @@ Zynthian supports QMidiNet (for network MIDI across devices on the same LAN). En
 
 Zynthian can bind any physical controller knob or slider to any synth parameter via MIDI CC Learn:
 
-1. Open the control screen for the chain you want to control.
-2. Long-press the encoder for the parameter you want to bind (hold ~600ms — knob highlights orange).
+1. Tap the chain strip in the Mixer to open chain control.
+2. Long-press the parameter knob on screen (hold ~600ms — knob highlights orange). On V5 hardware, bold-press the corresponding encoder instead.
 3. Move the physical knob/fader on your MIDI controller.
 4. The CC number is captured and the binding is active.
 

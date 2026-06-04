@@ -109,11 +109,12 @@
 <p>To verify detection, SSH in and run:</p>
 <pre><code class="language-bash">aconnect -l</code></pre>
 <p>The controller appears as a MIDI client (e.g. <code>client 32: 'SINCO' [type=kernel,card=4]</code>). Zynthian's ZynMidiRouter connects all detected MIDI inputs to the active chains automatically [<code>zynthian-ui/zyngine/zynthian_engine_midi_control.py</code>].</p>
-<p>To configure which ports route where, open <code>http://zynthian.local</code> → <strong>MIDI</strong> → <strong>Ports</strong>. Enable each port you want active.</p>
+<p>To configure which ports route where, open <code>http://zynthian.local</code> → <strong>Interface</strong> → <strong>MIDI Options</strong> → <strong>MIDI Devices</strong>. Enable each port you want active.</p>
+<blockquote><p><strong>MIDI port configuration requires webconf</strong> — not available from the touchscreen UI.</p></blockquote>
 <hr>
 <h2 id="midi-channel-routing">MIDI Channel Routing</h2>
 <p>By default, MIDI channel 1 drives the first chain, channel 2 the second, and so on. You can change channel assignments per chain in the UI:</p>
-<ol><li>Tap the chain in the layer view.</li><li>Open chain options → <strong>MIDI Channel</strong>.</li><li>Select the incoming channel (or <strong>Omni</strong> to respond to all channels).</li></ol>
+<ol><li>Tap the chain strip in the Mixer.</li><li>Tap <strong>Chain Options</strong> (sidebar button in the chain control screen).</li><li>Tap <strong>MIDI Channel</strong> → select the incoming channel (or <strong>Omni</strong> to respond to all).</li></ol>
 <hr>
 <h2 id="bluetooth-midi">Bluetooth MIDI</h2>
 <p>Bluetooth MIDI uses the BLE MIDI profile. Zynthian supports it via the system bluetooth service.</p>
@@ -137,7 +138,7 @@ bluetoothctl connect XX:XX:XX:XX:49:23:90</code></pre>
 <hr>
 <h2 id="midi-cc-learning">MIDI CC Learning</h2>
 <p>Zynthian can bind any physical controller knob or slider to any synth parameter via MIDI CC Learn:</p>
-<ol><li>Open the control screen for the chain you want to control.</li><li>Long-press the encoder for the parameter you want to bind (hold ~600ms — knob highlights orange).</li><li>Move the physical knob/fader on your MIDI controller.</li><li>The CC number is captured and the binding is active.</li></ol>
+<ol><li>Tap the chain strip in the Mixer to open chain control.</li><li>Long-press the parameter knob on screen (hold ~600ms — knob highlights orange). On V5 hardware, bold-press the corresponding encoder instead.</li><li>Move the physical knob/fader on your MIDI controller.</li><li>The CC number is captured and the binding is active.</li></ol>
 <p>CC bindings are saved with snapshots. See <a href="midi-cc-learn.html">MIDI CC Learning</a> for the full workflow including range editing, CC routing, and MIDI profiles.</p>
 <hr>
 <h2 id="midi-config-screen">MIDI Config Screen</h2>
