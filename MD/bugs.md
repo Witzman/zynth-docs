@@ -102,6 +102,20 @@
 
 ---
 
+### Maschine daemon — connect script corrupted again (2026-06-06, third incident)
+
+**Symptom:** `maschine-mk2.service` crash-looping (114+ restarts). Journal: `syntax error near unexpected token '2'` line 4. Pads dark, no MIDI.
+
+**Root cause:** `/usr/local/bin/maschine-jack-connect.sh` was corrupted — `$(seq 1 30)` expanded to individual numbers each on its own line, `PORT=$(jack_lsp ...)` reduced to `PORT=`. Script could not parse. Happened after previous DBUS fix session; exact cause unknown (likely SSH heredoc from previous session without quoted EOF).
+
+**Fix (applied 2026-06-06):** Wrote corrected script locally, deployed via `scp`. DBUS line not re-added (jack_lsp connects without it in current systemd env). `exit 1` corrected to `exit 0` so timeout is non-fatal. Service confirmed running: `Connected: a2j:maschine rs [129] (capture): Pads MIDI`.
+
+**Prevention:** Always deploy this script via `scp` from a local file. Never use heredoc or SSH inline commands — shell expansion corrupts it.
+
+**Affects:** Maschine MK2 daemon — all MIDI silently broken.
+
+---
+
 ### Maschine daemon — JACK connection missing after restart (2026-06-06)
 
 **Symptom:** Pads light up and ALSA port `129:0 → 128:0` shows connected, but pads produce no sound. ZynMidiRouter `dev3_in` has no connections.

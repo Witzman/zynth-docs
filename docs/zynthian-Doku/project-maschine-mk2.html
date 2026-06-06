@@ -169,8 +169,9 @@ systemctl restart a2jmidid.service</code></pre>
 <p>Expected: <code>/usr/bin/a2jmidid -e</code></p>
 <h3 id="step-8--create-the-jack-connect-script">Step 8 — Create the JACK connect script</h3>
 <p>The daemon's ALSA MIDI port is bridged to JACK by a2jmidid, but Zynthian's autoconnect does not pick it up automatically (it only connects physical ports). This script finds the port by name and connects it to ZynMidiRouter on every start.</p>
-<pre><code class="language-bash">cat &gt; /usr/local/bin/maschine-jack-connect.sh &lt;&lt; 'EOF'
-#!/bin/bash
+<p>Create the file locally on your Windows machine, then copy it to the Pi. Do not use a heredoc or inline SSH command — shell expansion corrupts the variables.</p>
+<p>Create <code>/tmp/maschine-jack-connect.sh</code> on your local machine with this exact content:</p>
+<pre><code class="language-bash">#!/bin/bash
 for i in $(seq 1 30); do
     PORT=$(jack_lsp 2&gt;/dev/null | grep -m1 'a2j:maschine rs.*Pads MIDI')
     if [ -n "$PORT" ]; then
@@ -179,11 +180,13 @@ for i in $(seq 1 30); do
     sleep 1
 done
 echo 'Maschine a2j port not found after 30s'
-exit 1
-EOF
-chmod +x /usr/local/bin/maschine-jack-connect.sh</code></pre>
+exit 0</code></pre>
+<p>Then copy it to the Pi:</p>
+<pre><code class="language-bash">scp /tmp/maschine-jack-connect.sh root@192.168.2.123:/usr/local/bin/maschine-jack-connect.sh
+ssh root@192.168.2.123 "chmod +x /usr/local/bin/maschine-jack-connect.sh"</code></pre>
 <p><strong>Verify:</strong></p>
-<pre><code class="language-bash">ls -lh /usr/local/bin/maschine-jack-connect.sh</code></pre>
+<pre><code class="language-bash">ssh root@192.168.2.123 "cat -A /usr/local/bin/maschine-jack-connect.sh"</code></pre>
+<p>Every line must end with <code>$</code> only (Unix line endings). If you see <code>^M$</code> the file has Windows CRLF — re-copy with a text editor set to LF.</p>
 <h3 id="step-9--run-the-daemon">Step 9 — Run the daemon</h3>
 <pre><code class="language-bash">cd ~/zynth/MaschineMK2_linux
 ./target/release/maschine /dev/maschine any &amp;</code></pre>

@@ -143,8 +143,11 @@ Expected: `/usr/bin/a2jmidid -e`
 
 The daemon's ALSA MIDI port is bridged to JACK by a2jmidid, but Zynthian's autoconnect does not pick it up automatically (it only connects physical ports). This script finds the port by name and connects it to ZynMidiRouter on every start.
 
+Create the file locally on your Windows machine, then copy it to the Pi. Do not use a heredoc or inline SSH command — shell expansion corrupts the variables.
+
+Create `/tmp/maschine-jack-connect.sh` on your local machine with this exact content:
+
 ```bash
-cat > /usr/local/bin/maschine-jack-connect.sh << 'EOF'
 #!/bin/bash
 for i in $(seq 1 30); do
     PORT=$(jack_lsp 2>/dev/null | grep -m1 'a2j:maschine rs.*Pads MIDI')
@@ -154,16 +157,23 @@ for i in $(seq 1 30); do
     sleep 1
 done
 echo 'Maschine a2j port not found after 30s'
-exit 1
-EOF
-chmod +x /usr/local/bin/maschine-jack-connect.sh
+exit 0
+```
+
+Then copy it to the Pi:
+
+```bash
+scp /tmp/maschine-jack-connect.sh root@192.168.2.123:/usr/local/bin/maschine-jack-connect.sh
+ssh root@192.168.2.123 "chmod +x /usr/local/bin/maschine-jack-connect.sh"
 ```
 
 **Verify:**
 
 ```bash
-ls -lh /usr/local/bin/maschine-jack-connect.sh
+ssh root@192.168.2.123 "cat -A /usr/local/bin/maschine-jack-connect.sh"
 ```
+
+Every line must end with `$` only (Unix line endings). If you see `^M$` the file has Windows CRLF — re-copy with a text editor set to LF.
 
 ### Step 9 — Run the daemon
 
