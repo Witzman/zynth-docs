@@ -88,5 +88,31 @@
 
 ---
 
+### Maschine daemon — display floods USB, pads stop working (2026-06-06)
+
+**Symptom:** After driver update (13 commits), pads lit but sent no MIDI. Display showed random pixels in upper portion of both screens. Daemon stuck in kernel D state.
+
+**Root cause:** `send_display_bits()` sends one byte per 521-byte HID report. `write_display()` calls it for a 1024-byte buffer per display × 2 displays = 2048 USB writes per 100ms call. USB write queue saturates → daemon blocks in uninterruptible D state → `readable()` never called → no pad events.
+
+**Fix (applied 2026-06-06):** Disabled `write_display()` with early return in `mikro.rs`. Display shows blank. `send_display_bits` needs rewrite to pack all display bytes into proper 512-byte bulk HID chunks before display can be re-enabled.
+
+**Commit:** `ffc8f2b` in MaschineMK2_linux.
+
+**Affects:** All driver versions that call `write_display()` at runtime. Pre-update version never called it, so display worked (blank = cleared once at startup).
+
+---
+
+### Maschine daemon — JACK connection missing after restart (2026-06-06)
+
+**Symptom:** Pads light up and ALSA port `129:0 → 128:0` shows connected, but pads produce no sound. ZynMidiRouter `dev3_in` has no connections.
+
+**Root cause:** `maschine-jack-connect.sh` post-start script ran `jack_lsp` without `DBUS_SESSION_BUS_ADDRESS` set — JACK uses SHM IPC and requires the correct DBUS env to connect from systemd context. Script always timed out, was rewritten to exit 0, leaving `a2j:maschine rs [129] (capture): Pads MIDI` unconnected to `ZynMidiRouter:dev3_in`. ALSA `128:0` connection is not the active MIDI path — Zynthian uses JACK `devN_in` ports.
+
+**Fix (applied 2026-06-06):** Rewrote `/usr/local/bin/maschine-jack-connect.sh` to set `DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket` before calling `jack_lsp`/`jack_connect`. Script exits 0 on timeout (non-fatal) so daemon stays alive. Manual `jack_connect` applied immediately.
+
+**Affects:** Every daemon restart — MIDI silently broken until manual `jack_connect`.
+
+---
+
 ## Closed
 
