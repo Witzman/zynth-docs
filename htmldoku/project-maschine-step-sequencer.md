@@ -6,7 +6,7 @@
 
 ---
 
-## Part 1 — First Sequence `[draft]`
+## Part 1 — First Sequence `[verified]`
 
 The daemon's step sequencer outputs MIDI on **channel 2** — one channel above the normal pad output on channel 1. A chain set to MIDI channel 2 responds only to the sequencer; the pads (channel 1) leave it silent.
 

@@ -105,7 +105,7 @@
 <h1 id="maschine-mk2-step-sequencer">Maschine MK2 Step Sequencer</h1>
 <p><strong>Goal:</strong> Use the MaschineMK2_linux daemon's built-in 16-step sequencer to trigger Zynthian synth engines — no Native Instruments software required. <strong>Prerequisites:</strong> <a href="project-maschine-mk2.html">Maschine MK2 Controller</a> tutorial complete — daemon installed, systemd service active, JACK routing wired to ZynMidiRouter. <strong>Access:</strong> SSH · Touchscreen · VNC</p>
 <hr>
-<h2 id="part-1--first-sequence-draft">Part 1 — First Sequence <code>[draft]</code></h2>
+<h2 id="part-1--first-sequence-verified">Part 1 — First Sequence <code>[verified]</code></h2>
 <p>The daemon's step sequencer outputs MIDI on <strong>channel 2</strong> — one channel above the normal pad output on channel 1. A chain set to MIDI channel 2 responds only to the sequencer; the pads (channel 1) leave it silent.</p>
 <h3 id="step-1--confirm-the-daemon-is-running">Step 1 — Confirm the daemon is running</h3>
 <pre><code class="language-bash">ssh root@zynthian.local
