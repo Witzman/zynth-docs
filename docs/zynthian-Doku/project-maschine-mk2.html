@@ -201,8 +201,8 @@ chmod +x /usr/local/bin/maschine-jack-connect.sh</code></pre>
 <p><strong>Verify:</strong> A note plays through audio output when a pad is pressed.</p>
 <hr>
 <h2 id="part-2--map-encoders-and-buttons-draft">Part 2 — Map Encoders and Buttons <code>[draft]</code></h2>
-<blockquote><p><strong>Note:</strong> Zynthian's CC Learn does not work with the Maschine MK2 daemon. The encoders send RPN14 (14-bit RPN, not standard CC) and the transport buttons send RPN7 (also not standard CC). Zynthian CC Learn only captures standard CC 0–119. This part needs to be redesigned around MIDI filter rules that remap RPN → CC before reaching Zynthian's routing layer.</p></blockquote>
-<p>This part is pending redesign. See the Driver Reference section below for the full MIDI output spec.</p>
+<blockquote><p><strong>Update (2026-06-06):</strong> The daemon now sends standard CC for both encoders (CC 16–23) and transport buttons (CC 1–14, 24–48). Zynthian CC Learn can capture these. This part is ready to be designed and tested. See the Driver Reference below for CC numbers.</p></blockquote>
+<p>This part is ready for implementation. Encoders send CC 16–23 (configurable); transport buttons send CC 1–14 and 24–48 (127 = press, 0 = release).</p>
 <hr>
 <h2 id="part-3--run-as-a-systemd-service-verified">Part 3 — Run as a Systemd Service <code>[verified]</code></h2>
 <p>Auto-start the daemon on boot so the Maschine is ready without manual SSH.</p>
@@ -251,14 +251,19 @@ jack_lsp -c 2&gt;/dev/null | grep 'maschine.*ZynMidiRouter\|ZynMidiRouter.*dev3'
 <p>Set the MIDI note base for all pads:</p>
 <table><thead><tr><th>Button</th><th>Note base</th></tr></thead><tbody><tr><td>A</td><td>24 (C1)</td></tr><tr><td>B</td><td>36 (C2)</td></tr><tr><td>C</td><td>48 (C3)</td></tr><tr><td>D</td><td>60 (C4, middle C)</td></tr><tr><td>E</td><td>72 (C5)</td></tr><tr><td>F</td><td>84 (C6)</td></tr><tr><td>G</td><td>96 (C7)</td></tr><tr><td>H</td><td>108 (C8)</td></tr></tbody></table>
 <h3 id="8-encoders">8 Encoders</h3>
-<p>Send <strong>RPN14</strong> (14-bit, 4-message CC sequence) on Ch1, mapped to RPN numbers 16–23. Values range 0–8191. <strong>Standard MIDI CC Learn cannot capture these.</strong></p>
+<p>Send standard <strong>CC</strong> on Ch1. Default CC numbers: 16–23 (Encoder 1 = CC 16, Encoder 8 = CC 23). Values 0–127. CC Learn can capture these.</p>
+<p>CC numbers are configurable per-encoder via <code>maschine.json</code> or the web editor (see Part 4).</p>
 <h3 id="transport-and-function-buttons">Transport and Function Buttons</h3>
-<p>Send <strong>RPN7</strong> (3-message CC sequence) on Ch1. <strong>Standard MIDI CC Learn cannot capture these.</strong></p>
-<table><thead><tr><th>Button</th><th>RPN number</th></tr></thead><tbody><tr><td>Play</td><td>1</td></tr><tr><td>Stop (Erase button)</td><td>2</td></tr><tr><td>Rec</td><td>3</td></tr><tr><td>Grid</td><td>4</td></tr><tr><td>Step Left</td><td>5</td></tr><tr><td>Step Right</td><td>6</td></tr><tr><td>Restart</td><td>7</td></tr><tr><td>Browse</td><td>8</td></tr><tr><td>Sampling</td><td>9</td></tr><tr><td>Note Repeat</td><td>10</td></tr><tr><td>Control</td><td>11</td></tr><tr><td>Nav</td><td>12</td></tr><tr><td>Nav Left</td><td>13</td></tr><tr><td>Nav Right</td><td>14</td></tr><tr><td>Main</td><td>24</td></tr><tr><td>Scene</td><td>25</td></tr><tr><td>Pattern</td><td>26</td></tr><tr><td>Pad Mode</td><td>27</td></tr><tr><td>View</td><td>28</td></tr><tr><td>Duplicate</td><td>29</td></tr><tr><td>Select</td><td>30</td></tr><tr><td>Solo</td><td>31</td></tr><tr><td>Step</td><td>32</td></tr><tr><td>Mute</td><td>33</td></tr><tr><td>Navigate</td><td>34</td></tr><tr><td>Tempo</td><td>35</td></tr><tr><td>Enter</td><td>36</td></tr><tr><td>Auto</td><td>37</td></tr><tr><td>All</td><td>38</td></tr><tr><td>F1–F8</td><td>39–46</td></tr><tr><td>Page Right</td><td>47</td></tr><tr><td>Page Left</td><td>48</td></tr></tbody></table>
+<p>Send standard <strong>CC</strong> on Ch1. Value 127 = button pressed, 0 = button released. CC Learn can capture these.</p>
+<table><thead><tr><th>Button</th><th>CC number</th></tr></thead><tbody><tr><td>Play</td><td>1</td></tr><tr><td>Stop (Erase button)</td><td>2</td></tr><tr><td>Rec</td><td>3</td></tr><tr><td>Grid</td><td>4</td></tr><tr><td>Step Left</td><td>5</td></tr><tr><td>Step Right</td><td>6</td></tr><tr><td>Restart</td><td>7</td></tr><tr><td>Browse</td><td>8</td></tr><tr><td>Sampling</td><td>9</td></tr><tr><td>Note Repeat</td><td>10</td></tr><tr><td>Control</td><td>11</td></tr><tr><td>Nav</td><td>12</td></tr><tr><td>Nav Left</td><td>13</td></tr><tr><td>Nav Right</td><td>14</td></tr><tr><td>Main</td><td>24</td></tr><tr><td>Scene</td><td>25</td></tr><tr><td>Pattern</td><td>26</td></tr><tr><td>Pad Mode</td><td>27</td></tr><tr><td>View</td><td>28</td></tr><tr><td>Duplicate</td><td>29</td></tr><tr><td>Select</td><td>30</td></tr><tr><td>Solo</td><td>31</td></tr><tr><td>Step</td><td>32</td></tr><tr><td>Mute</td><td>33</td></tr><tr><td>Navigate</td><td>34</td></tr><tr><td>Tempo</td><td>35</td></tr><tr><td>Enter</td><td>36</td></tr><tr><td>Auto</td><td>37</td></tr><tr><td>All</td><td>38</td></tr><tr><td>F1–F8</td><td>39–46</td></tr><tr><td>Page Right</td><td>47</td></tr><tr><td>Page Left</td><td>48</td></tr></tbody></table>
 <h3 id="shift-button">Shift Button</h3>
 <p>Hold Shift to activate modifier state. Shift + Pad Mode enters pad mode 1. Shift + encoder B6 sets the step sequencer speed.</p>
 <h3 id="step-sequencer-pad-mode-2">Step Sequencer (Pad Mode 2)</h3>
-<p>Activated by Shift + Pad Mode a second time. Pads toggle steps on/off instead of playing notes. Play/Stop control playback. Speed set by Shift + encoder B6.</p>
+<p>Activated by Shift + Pad Mode a second time. Pads toggle steps on/off instead of playing notes. Play starts playback; Erase stops it. Speed set by Shift + encoder B6 [low].</p>
+<p><strong>Group buttons A–H</strong> switch between 8 independent 16-step pages in sequencer mode (not note base — that is pad mode behaviour).</p>
+<p><strong>Per-step editing:</strong> tap a step to select it (orange LED), then Encoder 1 = velocity (0–127), Encoder 2 = note offset (0–127).</p>
+<p><strong>Euclidean fill:</strong> Shift + Group A–H fills the current page with 1–8 evenly distributed hits.</p>
+<p><strong>MIDI clock sync:</strong> external MIDI clock received on the <code>MIDI Control</code> input port locks the step rate (6 ticks = one 16th-note step). Fallback to internal BPM after 500 ms of clock silence.</p>
 <h3 id="osc-interface">OSC Interface</h3>
 <p>The daemon listens on <code>127.0.0.1:42434</code> and sends to <code>127.0.0.1:42435</code>.</p>
 <p><strong>Incoming (control the hardware LEDs):</strong></p>

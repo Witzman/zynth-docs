@@ -205,9 +205,9 @@ Load a chain with any engine (e.g. ZynAddSubFX with a default preset). Press any
 
 ## Part 2 — Map Encoders and Buttons `[draft]`
 
-> **Note:** Zynthian's CC Learn does not work with the Maschine MK2 daemon. The encoders send RPN14 (14-bit RPN, not standard CC) and the transport buttons send RPN7 (also not standard CC). Zynthian CC Learn only captures standard CC 0–119. This part needs to be redesigned around MIDI filter rules that remap RPN → CC before reaching Zynthian's routing layer.
+> **Update (2026-06-06):** The daemon now sends standard CC for both encoders (CC 16–23) and transport buttons (CC 1–14, 24–48). Zynthian CC Learn can capture these. This part is ready to be designed and tested. See the Driver Reference below for CC numbers.
 
-This part is pending redesign. See the Driver Reference section below for the full MIDI output spec.
+This part is ready for implementation. Encoders send CC 16–23 (configurable); transport buttons send CC 1–14 and 24–48 (127 = press, 0 = release).
 
 ---
 
@@ -309,13 +309,15 @@ Set the MIDI note base for all pads:
 
 ### 8 Encoders
 
-Send **RPN14** (14-bit, 4-message CC sequence) on Ch1, mapped to RPN numbers 16–23. Values range 0–8191. **Standard MIDI CC Learn cannot capture these.**
+Send standard **CC** on Ch1. Default CC numbers: 16–23 (Encoder 1 = CC 16, Encoder 8 = CC 23). Values 0–127. CC Learn can capture these.
+
+CC numbers are configurable per-encoder via `maschine.json` or the web editor (see Part 4).
 
 ### Transport and Function Buttons
 
-Send **RPN7** (3-message CC sequence) on Ch1. **Standard MIDI CC Learn cannot capture these.**
+Send standard **CC** on Ch1. Value 127 = button pressed, 0 = button released. CC Learn can capture these.
 
-| Button | RPN number |
+| Button | CC number |
 |--------|-----------|
 | Play | 1 |
 | Stop (Erase button) | 2 |
@@ -356,7 +358,15 @@ Hold Shift to activate modifier state. Shift + Pad Mode enters pad mode 1. Shift
 
 ### Step Sequencer (Pad Mode 2)
 
-Activated by Shift + Pad Mode a second time. Pads toggle steps on/off instead of playing notes. Play/Stop control playback. Speed set by Shift + encoder B6.
+Activated by Shift + Pad Mode a second time. Pads toggle steps on/off instead of playing notes. Play starts playback; Erase stops it. Speed set by Shift + encoder B6 [low].
+
+**Group buttons A–H** switch between 8 independent 16-step pages in sequencer mode (not note base — that is pad mode behaviour).
+
+**Per-step editing:** tap a step to select it (orange LED), then Encoder 1 = velocity (0–127), Encoder 2 = note offset (0–127).
+
+**Euclidean fill:** Shift + Group A–H fills the current page with 1–8 evenly distributed hits.
+
+**MIDI clock sync:** external MIDI clock received on the `MIDI Control` input port locks the step rate (6 ticks = one 16th-note step). Fallback to internal BPM after 500 ms of clock silence.
 
 ### OSC Interface
 
