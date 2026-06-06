@@ -74,9 +74,9 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
   - [ ] Remove `[low]` tag from Xboard knob row
 
 - [ ] **Test Maschine MK2 Part 4 on Pi (web editor, MIDI IN)**
-  - [ ] Set up SSH tunnel: `ssh -L 9001:127.0.0.1:9001 root@192.168.2.123 -N`
-  - [ ] Confirm web editor loads at http://127.0.0.1:9001
-  - [ ] Confirm pad LED changes on color set
+  - [x] SSH tunnel no longer needed — web editor at http://192.168.2.123:9000 (maschine-web.service)
+  - [x] Confirm web editor loads — verified LAN access working
+  - [x] Confirm pad LED changes on color set — fixed LED mapping (commit 1fb62eb), verified working
   - [ ] Confirm maschine.json persists after restart
   - [ ] Confirm MIDI Control IN drives pad LEDs
 

@@ -128,6 +128,20 @@
 
 ---
 
+### Maschine web editor — pad LED color targets wrong physical pad (2026-06-06, fixed)
+
+**Symptom:** Setting color for pad N in the web editor lights a different physical pad on the hardware.
+
+**Root cause:** `set_pad_light(pad, ...)` in `mikro.rs` used `pad` directly as the LED HID report index. The LED output report uses display order (top-left first, matching `PAD_DISPLAY_ORDER`), but the input report uses bottom-up row-major order. Index 0 in the LED report = top-left physical pad, but input index 0 = bottom-left physical pad.
+
+**Fix (applied 2026-06-06):** Added `PAD_LED_MAP = [12,13,14,15,8,9,10,11,4,5,6,7,0,1,2,3]` remapping in `set_pad_light`. This is identical to `PAD_DISPLAY_ORDER`, which is its own inverse (an involution), so it correctly maps input index → LED buffer position in both directions.
+
+**Commit:** `1fb62eb` in MaschineMK2_linux.
+
+**Affects:** Web editor pad color commands and any `set_pad_light` call using input-order pad indices.
+
+---
+
 ## Closed
 
 ### Touchscreen double-click — X11 claiming device as pointer (2026-06-06, fixed)
