@@ -189,13 +189,14 @@ systemctl status maschine-mk2.service --no-pager</code></pre>
 <hr>
 <h2 id="part-4--euclidean-fill-draft">Part 4 — Euclidean Fill <code>[draft]</code></h2>
 <p>Hold <strong>Shift</strong> and press any Group button (A–H) to fill the current sequencer page with an evenly-distributed rhythm. Group A = 1 hit, Group H = 8 hits. The hits are distributed using the Bresenham (Euclidean) algorithm — the first hit always falls on step 0.</p>
+<p>Note: bare Group buttons (without Shift) switch pages — that is Part 2 behaviour. Shift+Group fills the current page without switching.</p>
 <table><thead><tr><th>Shift + Group</th><th>Hits</th><th>Approximate pattern across 16 steps</th></tr></thead><tbody><tr><td>A</td><td>1</td><td>step 0 only</td></tr><tr><td>B</td><td>2</td><td>steps 0, 8</td></tr><tr><td>C</td><td>3</td><td>steps 0, 5, 10</td></tr><tr><td>D</td><td>4</td><td>steps 0, 4, 8, 12</td></tr><tr><td>E</td><td>5</td><td>steps 0, 3, 6, 9, 12</td></tr><tr><td>F</td><td>6</td><td>steps 0, 2, 5, 7, 10, 13</td></tr><tr><td>G</td><td>7</td><td>steps 0, 2, 4, 6, 8, 10, 12</td></tr><tr><td>H</td><td>8</td><td>steps 0, 2, 4, 6, 8, 10, 12, 14</td></tr></tbody></table>
 <p>[low] Exact step positions for each density need Pi verification — positions shown are approximate.</p>
 <h3 id="step-1--switch-to-an-empty-page">Step 1 — Switch to an empty page</h3>
-<p>In sequencer mode, press <strong>Group B</strong> to switch to page 2. Confirm no steps are lit (empty page).</p>
-<p>If page 2 has steps, tap each lit pad to deactivate it before proceeding.</p>
-<p><strong>Verify:</strong> No step pads are lit on page 2.</p>
-<h3 id="step-2--apply-a-4-hit-euclidean-fill">Step 2 — Apply a 4-hit euclidean fill</h3>
+<p>In sequencer mode, press <strong>Group C</strong> to switch to page 3. If you completed Part 2, pages 1 and 2 already have patterns — page 3 should be empty.</p>
+<p>If page 3 has steps, tap each lit pad to deactivate it before proceeding.</p>
+<p><strong>Verify:</strong> No step pads are lit on page 3.</p>
+<h3 id="step-2--apply-a-4-hit-euclidean-fill">Step 2 — Apply a 4-hit Euclidean fill</h3>
 <p>Hold <strong>Shift</strong> and press <strong>Group D</strong> (4 hits).</p>
 <p><strong>Verify:</strong> 4 step pads light up, evenly spaced across the 16 positions (steps 0, 4, 8, 12).</p>
 <h3 id="step-3--start-playback">Step 3 — Start playback</h3>
@@ -224,6 +225,7 @@ aconnect -l | grep -A3 maschine</code></pre>
 <p>[low] Zynthian MIDI clock output port name needs Pi verification. Run:</p>
 <pre><code class="language-bash">aconnect -l</code></pre>
 <p>Look for a Zynthian or JACK MIDI output port that sends MIDI clock. Common candidates: <code>ZynMidiRouter</code> or a port bridged via <code>a2jmidid</code>.</p>
+<p><strong>Verify:</strong> At least one candidate MIDI clock output port is visible in <code>aconnect -l</code> — note the client number and port number for use in Step 3.</p>
 <h3 id="step-3--connect-the-clock-source">Step 3 — Connect the clock source</h3>
 <pre><code class="language-bash">aconnect &lt;clock-source-client&gt;:&lt;port&gt; 28:1</code></pre>
 <p>Replace <code>&amp;lt;clock-source-client&amp;gt;:&amp;lt;port&amp;gt;</code> with the clock output found in Step 2, and <code>28</code> with the actual maschine.rs client number.</p>

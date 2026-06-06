@@ -190,6 +190,8 @@ The snapshot saves the Zynthian chain configuration (engine, MIDI channel 2 assi
 
 Hold **Shift** and press any Group button (A–H) to fill the current sequencer page with an evenly-distributed rhythm. Group A = 1 hit, Group H = 8 hits. The hits are distributed using the Bresenham (Euclidean) algorithm — the first hit always falls on step 0.
 
+Note: bare Group buttons (without Shift) switch pages — that is Part 2 behaviour. Shift+Group fills the current page without switching.
+
 | Shift + Group | Hits | Approximate pattern across 16 steps |
 |---|---|---|
 | A | 1 | step 0 only |
@@ -205,13 +207,13 @@ Hold **Shift** and press any Group button (A–H) to fill the current sequencer 
 
 ### Step 1 — Switch to an empty page
 
-In sequencer mode, press **Group B** to switch to page 2. Confirm no steps are lit (empty page).
+In sequencer mode, press **Group C** to switch to page 3. If you completed Part 2, pages 1 and 2 already have patterns — page 3 should be empty.
 
-If page 2 has steps, tap each lit pad to deactivate it before proceeding.
+If page 3 has steps, tap each lit pad to deactivate it before proceeding.
 
-**Verify:** No step pads are lit on page 2.
+**Verify:** No step pads are lit on page 3.
 
-### Step 2 — Apply a 4-hit euclidean fill
+### Step 2 — Apply a 4-hit Euclidean fill
 
 Hold **Shift** and press **Group D** (4 hits).
 
@@ -270,6 +272,8 @@ aconnect -l
 ```
 
 Look for a Zynthian or JACK MIDI output port that sends MIDI clock. Common candidates: `ZynMidiRouter` or a port bridged via `a2jmidid`.
+
+**Verify:** At least one candidate MIDI clock output port is visible in `aconnect -l` — note the client number and port number for use in Step 3.
 
 ### Step 3 — Connect the clock source
 
