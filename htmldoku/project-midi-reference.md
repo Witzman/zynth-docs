@@ -18,7 +18,7 @@ The Maschine MK2's native USB MIDI port sends no pad data without NI software. A
 | 16 pads — normal mode | Note On / Note Off | 1 | base + offset (see layout below), velocity from pressure |
 | 16 pads — sequencer mode | Note On / Note Off | 2 | stored per step |
 | 8 encoders | **CC** | 1 | CC 16–23 (configurable via `maschine.json` or web editor), absolute 0–127 |
-| ~30 transport / function buttons | **CC** | 1 | CC 1–14 (see table below), value 127 = press, 0 = release |
+| ~30 transport / function buttons | **CC** | 1 | CC 1–14 and 24–48 (see table below), value 127 = press, 0 = release |
 | Group buttons A–H — pad mode | *(none — internal state only)* | — | sets note base: A=24 B=36 C=48 D=60 E=72 F=84 G=96 H=108 |
 | Group buttons A–H — sequencer mode | *(none — internal state only)* | — | switches active sequencer page (1–8) |
 | `MIDI Control` ALSA input port | accepts NoteOn/Off 0–15, Clock, Start, Stop | — | NoteOn 0–15 → pad LED color/brightness; Clock/Start/Stop → forwarded to `Pads MIDI` output |
@@ -179,7 +179,7 @@ Status tags: `[verified]` = Pi-tested · `[draft]` = written, not yet tested · 
 | Maschine MK2 | Pads — Group D | 1 | Note 60–75 | active chain | Step Seq P2 | `[draft]` |
 | Maschine MK2 | Sequencer output | 2 | Note (any) | chain on ch 2 | Step Seq P1 | `[draft]` |
 | Maschine MK2 | 8 Encoders | 1 | CC 16–23 (configurable) | **unassigned** | Maschine MK2 P2 | `[draft]` |
-| Maschine MK2 | Transport buttons | 1 | CC 1–14 (127/0) | **unassigned** | Maschine MK2 P2 | `[draft]` |
+| Maschine MK2 | Transport buttons | 1 | CC 1–14, 24–48 (127/0) | **unassigned** | Maschine MK2 P2 | `[draft]` |
 | Maschine MK2 | MIDI Control IN → pad LEDs | — | NoteOn 0–15 | pad LED color/brightness | Maschine MK2 P4 | `[draft]` |
 | Xboard 25 | Keys | 1 | Note 0–127 | active chain | MIDI Channel Routing | `[draft]` |
 | Xboard 25 | 16 CC knobs | 1 | CC [unknown] | **unassigned** | Xboard CC Knob Map | `[draft]` |
