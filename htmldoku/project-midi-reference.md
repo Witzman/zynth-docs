@@ -178,8 +178,9 @@ Status tags: `[verified]` = Pi-tested · `[draft]` = written, not yet tested · 
 | Maschine MK2 | Pads — Group C (default) | 1 | Note 48–63 | active chain | Maschine MK2 P1 | `[verified]` |
 | Maschine MK2 | Pads — Group D | 1 | Note 60–75 | active chain | Step Seq P2 | `[draft]` |
 | Maschine MK2 | Sequencer output | 2 | Note (any) | chain on ch 2 | Step Seq P1 | `[draft]` |
-| Maschine MK2 | 8 Encoders | 1 | RPN14 16–23 | **unmapped** | Maschine MK2 P2 | `[blocked]` |
-| Maschine MK2 | Transport buttons | 1 | RPN7 1–48 | **unmapped** | Maschine MK2 P2 | `[blocked]` |
+| Maschine MK2 | 8 Encoders | 1 | CC 16–23 (configurable) | **unassigned** | Maschine MK2 P2 | `[draft]` |
+| Maschine MK2 | Transport buttons | 1 | CC 1–14 (127/0) | **unassigned** | Maschine MK2 P2 | `[draft]` |
+| Maschine MK2 | MIDI Control IN → pad LEDs | — | NoteOn 0–15 | pad LED color/brightness | Maschine MK2 P4 | `[draft]` |
 | Xboard 25 | Keys | 1 | Note 0–127 | active chain | MIDI Channel Routing | `[draft]` |
 | Xboard 25 | 16 CC knobs | 1 | CC [unknown] | **unassigned** | Xboard CC Knob Map | `[draft]` |
 | Xboard 25 | Mod wheel | 1 | CC 1 | active chain engine | — | passive |
@@ -251,11 +252,11 @@ Any device sending notes on ch 6 fires CUIA master key actions. Currently only n
 
 ---
 
-### Conflict 5 — Maschine RPN14/RPN7 invisible to CC Learn
+### Conflict 5 — ~~Maschine RPN14/RPN7 invisible to CC Learn~~ RESOLVED (2026-06-06)
 
-Encoders (RPN14 16–23) and transport buttons (RPN7 1–48) cannot be captured by CC Learn. Blocks all Maschine MK2 Part 2 work.
+Encoders now send standard CC 16–23 (configurable). Transport buttons now send CC 1–14 (value 127 press, 0 release). Both are standard CC 0–119 — Zynthian CC Learn can capture them. Maschine MK2 Part 2 redesign is now unblocked.
 
-**Resolution:** Design MIDI filter rules (`ZYNTHIAN_MIDI_FILTER_RULES`) to remap selected RPNs to CC numbers before the signal reaches chains. Example: `RPN 16 CH1 => CC 20 CH1`. Requires Maschine MK2 P2 redesign.
+**Previous issue:** Encoders sent RPN14, buttons sent RPN7 — neither capturable by CC Learn. MIDI filter rules were planned as a workaround. No longer needed.
 
 ---
 
@@ -338,7 +339,6 @@ What Zynthian can receive and respond to. Check here before assigning a device c
 | Panic | CC 123 (All Notes Off) | any | standard |
 | Pitch bend range | RPN 0 | standard | standard |
 | Fine tuning | RPN 1 / RPN 2 | standard | standard |
-| RPN14 / RPN7 (Maschine encoders/buttons) | — | — | **not natively supported** — needs MIDI filter RPN→CC rule |
 
 ---
 
@@ -346,7 +346,7 @@ What Zynthian can receive and respond to. Check here before assigning a device c
 
 - Complete SMC-PAD Launcher P3: add all 16 TOGGLE_SEQ mappings in webconf
 - Verify Xboard CC defaults via `amidi -d`, then design Xboard CC Knob Mapping tutorial
-- Design MIDI filter rules for Maschine RPN→CC remapping, enabling Maschine MK2 P2
+- Map Maschine encoder CCs to Zynthian synth parameters via CC Learn (Maschine MK2 Part 2)
 - Verify SMC-PAD encoder MIDI channel with `amidi -d`
 - Map SMC-PAD bank 2 (PAD BANK / KNOB BANK assignments)
 - Update this page after each tutorial is verified — change `[draft]` → `[verified]` in the assignment matrix
