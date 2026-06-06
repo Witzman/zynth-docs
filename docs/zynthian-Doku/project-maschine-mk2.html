@@ -249,6 +249,49 @@ systemctl status maschine-mk2.service --no-pager
 aconnect -l | grep maschine
 jack_lsp -c 2&gt;/dev/null | grep 'maschine.*ZynMidiRouter\|ZynMidiRouter.*dev3'</code></pre>
 <p><strong>Verify:</strong> Service is <code>active (running)</code>, <code>maschine.rs</code> appears in <code>aconnect -l</code>, and the JACK connection to <code>ZynMidiRouter:dev3_in</code> is present — all without any manual steps.</p>
+<h3 id="step-4--install-the-zynthian-bpm-clock-bridge">Step 4 — Install the Zynthian BPM clock bridge</h3>
+<p>This service reads Zynthian's current BPM from JACK transport and sends MIDI clock (0xF8 at 24 PPQN) to the Maschine daemon continuously. The Maschine step sequencer locks to this clock when Play is pressed.</p>
+<p>Create <code>/tmp/maschine-clock-bridge.py</code> on your local machine — get the current version from <code>~/zynth/MaschineMK2_linux</code> or copy it from the Pi at <code>/usr/local/bin/maschine-clock-bridge.py</code>.</p>
+<p>Create <code>/tmp/maschine-clock-connect.sh</code> locally:</p>
+<pre><code class="language-bash">#!/bin/bash
+for i in $(seq 1 30); do
+    CLOCK=$(aconnect -l 2&gt;/dev/null | grep -m1 'RtMidiOut' | grep -oP 'client \K[0-9]+')
+    MASCHINE=$(aconnect -l 2&gt;/dev/null | grep -m1 'maschine.rs' | grep -oP 'client \K[0-9]+')
+    if [ -n "$CLOCK" ] &amp;&amp; [ -n "$MASCHINE" ]; then
+        aconnect "$CLOCK:0" "$MASCHINE:1" 2&gt;/dev/null &amp;&amp; echo "Clock connected: $CLOCK:0 -&gt; $MASCHINE:1" &amp;&amp; exit 0
+    fi
+    sleep 1
+done
+echo 'maschine-clock or maschine.rs port not found after 30s'
+exit 0</code></pre>
+<p>Deploy both via scp:</p>
+<pre><code class="language-bash">scp /tmp/maschine-clock-bridge.py root@192.168.2.123:/usr/local/bin/maschine-clock-bridge.py
+scp /tmp/maschine-clock-connect.sh root@192.168.2.123:/usr/local/bin/maschine-clock-connect.sh
+ssh root@192.168.2.123 "chmod +x /usr/local/bin/maschine-clock-connect.sh"</code></pre>
+<p>Create the service file on the Pi:</p>
+<pre><code class="language-bash">cat &gt; /etc/systemd/system/maschine-clock.service &lt;&lt; 'EOF'
+[Unit]
+Description=Maschine MK2 JACK transport clock bridge
+After=jack2.service maschine-mk2.service
+Requires=jack2.service
+Wants=maschine-mk2.service
+
+[Service]
+ExecStart=/usr/bin/python3 /usr/local/bin/maschine-clock-bridge.py
+ExecStartPost=/usr/local/bin/maschine-clock-connect.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF
+systemctl daemon-reload
+systemctl enable maschine-clock.service
+systemctl start maschine-clock.service</code></pre>
+<p><strong>Verify:</strong></p>
+<pre><code class="language-bash">systemctl status maschine-clock.service --no-pager
+aconnect -l | grep -A4 'maschine.rs'</code></pre>
+<p>Expected: service <code>active (running)</code>, <code>MIDI Control</code> shows <code>Connected From: 128:0, 130:0</code>.</p>
 <hr>
 <h2 id="part-4--web-editor-config-persistence-and-midi-in-draft">Part 4 — Web Editor, Config Persistence, and MIDI IN <code>[draft]</code></h2>
 <p>The daemon includes a browser-based editor for pad LED colors and MIDI configuration, a JSON config file that persists settings across restarts, and an ALSA MIDI input port (<code>MIDI Control</code>) that accepts NoteOn messages to drive pad LEDs from an external source.</p>

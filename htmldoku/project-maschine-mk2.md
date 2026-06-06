@@ -298,6 +298,69 @@ jack_lsp -c 2>/dev/null | grep 'maschine.*ZynMidiRouter\|ZynMidiRouter.*dev3'
 
 **Verify:** Service is `active (running)`, `maschine.rs` appears in `aconnect -l`, and the JACK connection to `ZynMidiRouter:dev3_in` is present — all without any manual steps.
 
+### Step 4 — Install the Zynthian BPM clock bridge
+
+This service reads Zynthian's current BPM from JACK transport and sends MIDI clock (0xF8 at 24 PPQN) to the Maschine daemon continuously. The Maschine step sequencer locks to this clock when Play is pressed.
+
+Create `/tmp/maschine-clock-bridge.py` on your local machine — get the current version from `~/zynth/MaschineMK2_linux` or copy it from the Pi at `/usr/local/bin/maschine-clock-bridge.py`.
+
+Create `/tmp/maschine-clock-connect.sh` locally:
+
+```bash
+#!/bin/bash
+for i in $(seq 1 30); do
+    CLOCK=$(aconnect -l 2>/dev/null | grep -m1 'RtMidiOut' | grep -oP 'client \K[0-9]+')
+    MASCHINE=$(aconnect -l 2>/dev/null | grep -m1 'maschine.rs' | grep -oP 'client \K[0-9]+')
+    if [ -n "$CLOCK" ] && [ -n "$MASCHINE" ]; then
+        aconnect "$CLOCK:0" "$MASCHINE:1" 2>/dev/null && echo "Clock connected: $CLOCK:0 -> $MASCHINE:1" && exit 0
+    fi
+    sleep 1
+done
+echo 'maschine-clock or maschine.rs port not found after 30s'
+exit 0
+```
+
+Deploy both via scp:
+
+```bash
+scp /tmp/maschine-clock-bridge.py root@192.168.2.123:/usr/local/bin/maschine-clock-bridge.py
+scp /tmp/maschine-clock-connect.sh root@192.168.2.123:/usr/local/bin/maschine-clock-connect.sh
+ssh root@192.168.2.123 "chmod +x /usr/local/bin/maschine-clock-connect.sh"
+```
+
+Create the service file on the Pi:
+
+```bash
+cat > /etc/systemd/system/maschine-clock.service << 'EOF'
+[Unit]
+Description=Maschine MK2 JACK transport clock bridge
+After=jack2.service maschine-mk2.service
+Requires=jack2.service
+Wants=maschine-mk2.service
+
+[Service]
+ExecStart=/usr/bin/python3 /usr/local/bin/maschine-clock-bridge.py
+ExecStartPost=/usr/local/bin/maschine-clock-connect.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF
+systemctl daemon-reload
+systemctl enable maschine-clock.service
+systemctl start maschine-clock.service
+```
+
+**Verify:**
+
+```bash
+systemctl status maschine-clock.service --no-pager
+aconnect -l | grep -A4 'maschine.rs'
+```
+
+Expected: service `active (running)`, `MIDI Control` shows `Connected From: 128:0, 130:0`.
+
 ---
 
 ## Part 4 — Web Editor, Config Persistence, and MIDI IN `[draft]`

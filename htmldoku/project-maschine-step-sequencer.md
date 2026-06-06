@@ -239,86 +239,57 @@ Hold **Shift** + press **Group A** — fills page with 1 hit (step 0 only).
 
 ---
 
-## Part 5 — MIDI Clock Sync `[draft]`
+## Part 5 — Zynthian BPM Sync `[verified]`
 
-Connect any MIDI clock source (Zynthian, a DAW, or a hardware sequencer) to the daemon's `MIDI Control` ALSA input port. The sequencer locks to the external clock: 24 pulses per quarter note (ppqn), 6 ticks = one 16th-note step. A MIDI Start message resets the sequencer to step 0 and begins playback; Stop halts it and preserves position. If no clock tick arrives for 500 ms, the sequencer falls back to its internal BPM timer automatically.
+The `maschine-clock` systemd service reads the current BPM from JACK transport (via BBT position) and sends MIDI clock (0xF8) at 24 PPQN to the daemon's `MIDI Control` ALSA input. The daemon's sequencer locks to this clock when **Play** is pressed: pressing Play now activates external clock mode, so incoming 0xF8 ticks advance steps instead of the internal timer. The clock bridge runs continuously — no need to start Zynthian transport.
 
-**Prerequisites:** Part 1 complete. A MIDI clock source available — Zynthian transport or a DAW connected to the same machine.
+**Prerequisites:** Part 1 complete. `maschine-clock.service` installed and running (set up as part of the [Maschine MK2 Controller](project-maschine-mk2.html) tutorial, Part 3 extension).
 
-### Step 1 — Find port numbers
+### Step 1 — Confirm both services running
 
 ```bash
 ssh root@192.168.2.123
-aconnect -l | grep -A3 maschine
+systemctl status maschine-mk2.service maschine-clock.service --no-pager | grep Active
 ```
 
-Look for:
-```
-client 28: 'maschine.rs' [...]
-    0 'Pads MIDI   '
-    1 'MIDI Control'
-```
+Both must show `active (running)`.
 
-Note the client number (e.g. `28`). The `MIDI Control` port is `28:1`.
+**Verify:** Clock connection confirmed in service log: `Clock connected: 130:0 -> 129:1`
 
-[low] Client number varies. Verify on Pi.
-
-### Step 2 — Find the Zynthian MIDI clock output
-
-[low] Zynthian MIDI clock output port name needs Pi verification. Run:
+### Step 2 — Confirm ALSA connection
 
 ```bash
-aconnect -l
+aconnect -l | grep -A4 'maschine.rs'
 ```
 
-Look for a Zynthian or JACK MIDI output port that sends MIDI clock. Common candidates: `ZynMidiRouter` or a port bridged via `a2jmidid`.
+Expected: `MIDI Control` port shows `Connected From: 128:0, 130:0` — both ZynMidiRouter and the clock bridge connected.
 
-**Verify:** At least one candidate MIDI clock output port is visible in `aconnect -l` — note the client number and port number for use in Step 3.
+### Step 3 — Set tempo in Zynthian
 
-### Step 3 — Connect the clock source
+Set a tempo in Zynthian (e.g. via the step sequencer BPM field or transport controls).
 
-```bash
-aconnect <clock-source-client>:<port> 28:1
-```
+### Step 4 — Start the Maschine sequencer
 
-Replace `<clock-source-client>:<port>` with the clock output found in Step 2, and `28` with the actual maschine.rs client number.
+Enter sequencer mode (Shift + Pad Mode twice), program a pattern, then press **Play** on the Maschine MK2.
 
-Verify the connection:
-```bash
-aconnect -l | grep -A6 maschine
-```
+**Verify:** Sequencer steps at the Zynthian BPM.
 
-The clock source should appear listed as a sender to the maschine.rs client.
+### Step 5 — Change tempo and verify sync
 
-**Verify:** Connection is visible in `aconnect -l`.
+Change the BPM in Zynthian.
 
-### Step 4 — Start the clock and verify sync
-
-Start transport in Zynthian (or the clock source). Press **Play** on the Maschine MK2.
-
-**Verify:** Steps advance in sync with the Zynthian tempo. Changing tempo in Zynthian changes the step rate on the Maschine within 1–2 steps.
-
-### Step 5 — Stop and verify position hold
-
-Stop transport in Zynthian.
-
-**Verify:** The sequencer halts. The last active step pad stays lit — position is not reset to step 0 on stop.
-
-### Step 6 — Test fallback to internal clock
-
-With the clock connected and sequencer running, disconnect:
-
-```bash
-aconnect -d <clock-source-client>:<port> 28:1
-```
-
-Wait 2–3 seconds.
-
-**Verify:** The sequencer does not stall or freeze. After approximately 500 ms, it continues stepping at the last estimated BPM on the internal timer.
+**Verify:** Maschine sequencer speed changes within 1–2 steps.
 
 ---
 
-**Verify (Part 5 complete):** Sequencer locks to external clock, stops on transport stop, falls back on clock silence.
+**Notes:**
+- Clock bridge polls JACK BBT position — ~1 ms timing jitter, sufficient for sequencer use
+- Pressing Play activates external clock mode; pressing Erase (Stop) returns to internal mode on next Play
+- If `maschine-clock.service` is not running, sequencer falls back to internal BPM automatically after 500 ms
+
+---
+
+**Verify (Part 5 complete):** Sequencer follows Zynthian BPM. Tempo change in Zynthian updates Maschine step rate within 1–2 steps.
 
 ---
 
