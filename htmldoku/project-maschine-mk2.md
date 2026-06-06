@@ -281,6 +281,128 @@ jack_lsp -c 2>/dev/null | grep 'maschine.*ZynMidiRouter\|ZynMidiRouter.*dev3'
 
 ---
 
+## Part 4 — Web Editor, Config Persistence, and MIDI IN `[draft]`
+
+The daemon includes a browser-based editor for pad LED colors and MIDI configuration, a JSON config file that persists settings across restarts, and an ALSA MIDI input port (`MIDI Control`) that accepts NoteOn messages to drive pad LEDs from an external source.
+
+### Step 1 — Sync and rebuild the daemon
+
+From the machine where the source lives (not the Pi):
+
+```bash
+rsync -av --exclude='target/' ~/zynth/MaschineMK2_linux/ root@192.168.2.123:~/zynth/MaschineMK2_linux/
+```
+
+Then on the Pi:
+
+```bash
+ssh root@192.168.2.123
+cd ~/zynth/MaschineMK2_linux
+source "$HOME/.cargo/env"
+cargo build --release 2>&1 | tail -3
+```
+
+Expected last line: `Finished 'release' profile [optimized] target(s) in ...`
+
+**Verify:**
+```bash
+ls -lh ~/zynth/MaschineMK2_linux/target/release/maschine
+```
+File exists. Size is typically 600K–1M.
+
+### Step 2 — Restart the daemon service
+
+```bash
+systemctl restart maschine-mk2.service
+systemctl status maschine-mk2.service --no-pager
+```
+
+Expected: `Active: active (running)`
+
+**Verify:** Service is running after restart.
+
+### Step 3 — Open the web editor
+
+Open a browser and navigate to:
+
+```
+http://192.168.2.123:9001
+```
+
+Wait up to 5 seconds for the WebSocket connection to establish.
+
+> Use the Pi's IP address (`192.168.2.123`), not `zynthian.local` — mDNS does not resolve from a browser on Windows hosts.
+
+**Verify:** The web editor loads and shows a pad grid or connection status.
+
+[low] Exact web UI layout and control labels need Pi verification.
+
+### Step 4 — Change a pad LED color
+
+In the web editor, click any pad in the grid. Select a color.
+
+**Verify:** The corresponding pad on the Maschine MK2 hardware lights in the selected color within 1–2 seconds.
+
+### Step 5 — Verify config persistence
+
+In the web editor config panel, change the CC number for Encoder 1 from 16 to a different value (e.g. 20).
+
+Then restart the daemon:
+
+```bash
+systemctl restart maschine-mk2.service
+```
+
+Check the saved config:
+
+```bash
+cat ~/zynth/MaschineMK2_linux/maschine.json
+```
+
+Expected: `encoder_ccs` shows `20` in the first position.
+
+**Verify:** Encoder CC change survives a daemon restart.
+
+### Step 6 — Drive pad LEDs from MIDI IN
+
+Connect any MIDI source to the `MIDI Control` ALSA port:
+
+```bash
+aconnect -l | grep -A3 maschine
+```
+
+Note the client number (e.g. `28`) and port `1` (MIDI Control). Connect a source:
+
+```bash
+aconnect <source-client>:<port> 28:1
+```
+
+Replace `28` with the actual maschine.rs client number. For a quick test, connect the Xboard:
+
+```bash
+aconnect <xboard-client>:0 28:1
+```
+
+Press keys in the range MIDI notes 0–15 on the connected source (on a standard keyboard, these are very low notes — C-1 to D#0).
+
+**Verify:** Pad LEDs on the Maschine light in response to incoming NoteOn messages. Velocity controls brightness.
+
+[low] Exact `aconnect` client numbers and best test procedure need Pi verification.
+
+### Step 7 — Check the display
+
+Look at the Maschine MK2's 128×64 OLED display while the daemon is running.
+
+**Verify:** The display shows note names or encoder CC values.
+
+[low] Display content and layout need Pi verification.
+
+---
+
+**Verify (Part 4 complete):** Web editor loads and connects, pad LED changes on color set, `maschine.json` shows updated CC after restart, NoteOn to MIDI Control port lights corresponding pads.
+
+---
+
 ## Driver Reference
 
 The `MaschineMK2_linux` daemon reads HID data from `/dev/maschine` and outputs ALSA MIDI on the `Pads MIDI` port (Ch1). All MIDI goes out on channel 1.
