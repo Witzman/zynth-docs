@@ -130,3 +130,15 @@
 
 ## Closed
 
+### Touchscreen double-click — X11 claiming device as pointer (2026-06-06, fixed)
+
+**Symptom:** Single tap on touchscreen registered as double-click in Zynthian UI.
+
+**Root cause:** `/etc/X11/xorg.conf.d/99-elecrow-touch.conf` had `Option "Ignore" "false"`. X11 registered `wch.cn USB2IIC_CTP_CONTROL` as a slave pointer and generated X pointer events. `multitouch.py` reads the same device via `/dev/input/event0` directly (evdev). Every physical tap produced one X11 pointer event + one multitouch.py event → two actions.
+
+`multitouch.py` has xinput-disable logic in `open_device()` to prevent this, but it was not firing reliably — `open_device()` silently swallows exceptions and the disable was not confirmed working at startup.
+
+**Fix (applied 2026-06-06):** Set `Option "Ignore" "true"` in `/etc/X11/xorg.conf.d/99-elecrow-touch.conf`. X11 no longer claims the device as a pointer. `multitouch.py` still reads `/dev/input/event0` directly — touch works normally, no double events. Takes effect after X11 restart (reboot applied).
+
+**Affects:** All UI interaction — every tap triggered two actions.
+
