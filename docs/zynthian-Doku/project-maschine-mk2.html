@@ -144,14 +144,18 @@ move picture to target folder</code></pre>
 <p><strong>Verify:</strong></p>
 <pre><code class="language-bash">ls -lh ~/zynth/MaschineMK2_linux/target/release/maschine</code></pre>
 <p>File exists (around 600K–700K).</p>
-<h3 id="step-6--add-a-udev-rule-for-stable-device-access">Step 6 — Add a udev rule for stable device access</h3>
-<p>Replace <code>XXXX</code> with the product ID from Step 2 (e.g. <code>1140</code>):</p>
-<pre><code class="language-bash">echo 'SUBSYSTEM=="hidraw", ATTRS{idVendor}=="17cc", ATTRS{idProduct}=="XXXX", MODE="0664", GROUP="audio", SYMLINK+="maschine"' &gt; /etc/udev/rules.d/99-maschine.rules
-udevadm control --reload-rules
-udevadm trigger</code></pre>
-<p>This creates a stable path <code>/dev/maschine</code> regardless of USB port or boot order.</p>
+<h3 id="step-6--add-udev-rules-for-stable-access-and-hotplug">Step 6 — Add udev rules for stable access and hotplug</h3>
+<p>Replace <code>XXXX</code> with the product ID from Step 2 (e.g. <code>1140</code>). Write the file locally, then copy it to the Pi — do not use an inline echo command (quote escaping corrupts the <code>==</code> operators):</p>
+<p>Create <code>/tmp/99-maschine.rules</code> on your local machine:</p>
+<pre><code>SUBSYSTEM=="hidraw", ATTRS{idVendor}=="17cc", ATTRS{idProduct}=="XXXX", MODE="0664", GROUP="audio", SYMLINK+="maschine"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="17cc", ATTRS{idProduct}=="XXXX", ACTION=="add", RUN+="/bin/systemctl --no-block restart maschine-mk2.service"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="17cc", ATTRS{idProduct}=="XXXX", ACTION=="remove", RUN+="/bin/systemctl --no-block stop maschine-mk2.service"</code></pre>
+<p>Copy and reload:</p>
+<pre><code class="language-bash">scp /tmp/99-maschine.rules root@192.168.2.123:/etc/udev/rules.d/99-maschine.rules
+ssh root@192.168.2.123 "udevadm control --reload-rules &amp;&amp; udevadm trigger"</code></pre>
+<p>The three rules together: create a stable <code>/dev/maschine</code> symlink, stop the daemon when the USB cable is unplugged, and restart it when plugged back in. The service re-opens the device on each start, so hotplug works cleanly.</p>
 <p><strong>Verify:</strong></p>
-<pre><code class="language-bash">ls -la /dev/maschine</code></pre>
+<pre><code class="language-bash">ssh root@192.168.2.123 "ls -la /dev/maschine"</code></pre>
 <p>Expected: a symlink pointing to <code>/dev/hidrawX</code>.</p>
 <h3 id="step-7--configure-a2jmidid-to-export-software-midi-clients">Step 7 — Configure a2jmidid to export software MIDI clients</h3>
 <p>Zynthian uses <code>a2jmidid</code> to bridge ALSA MIDI to JACK. By default it only bridges hardware ports. The daemon creates a software ALSA MIDI client, so <code>a2jmidid</code> needs the <code>-e</code> (export) flag to bridge it.</p>
@@ -219,8 +223,8 @@ Requires=jack2.service
 [Service]
 ExecStart=/root/zynth/MaschineMK2_linux/target/release/maschine /dev/maschine any
 ExecStartPost=/usr/local/bin/maschine-jack-connect.sh
-Restart=on-failure
-RestartSec=3
+Restart=always
+RestartSec=5
 WorkingDirectory=/root/zynth/MaschineMK2_linux
 
 [Install]

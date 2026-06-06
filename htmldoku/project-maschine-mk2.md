@@ -94,22 +94,31 @@ ls -lh ~/zynth/MaschineMK2_linux/target/release/maschine
 
 File exists (around 600K–700K).
 
-### Step 6 — Add a udev rule for stable device access
+### Step 6 — Add udev rules for stable access and hotplug
 
-Replace `XXXX` with the product ID from Step 2 (e.g. `1140`):
+Replace `XXXX` with the product ID from Step 2 (e.g. `1140`). Write the file locally, then copy it to the Pi — do not use an inline echo command (quote escaping corrupts the `==` operators):
 
-```bash
-echo 'SUBSYSTEM=="hidraw", ATTRS{idVendor}=="17cc", ATTRS{idProduct}=="XXXX", MODE="0664", GROUP="audio", SYMLINK+="maschine"' > /etc/udev/rules.d/99-maschine.rules
-udevadm control --reload-rules
-udevadm trigger
+Create `/tmp/99-maschine.rules` on your local machine:
+
+```
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="17cc", ATTRS{idProduct}=="XXXX", MODE="0664", GROUP="audio", SYMLINK+="maschine"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="17cc", ATTRS{idProduct}=="XXXX", ACTION=="add", RUN+="/bin/systemctl --no-block restart maschine-mk2.service"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="17cc", ATTRS{idProduct}=="XXXX", ACTION=="remove", RUN+="/bin/systemctl --no-block stop maschine-mk2.service"
 ```
 
-This creates a stable path `/dev/maschine` regardless of USB port or boot order.
+Copy and reload:
+
+```bash
+scp /tmp/99-maschine.rules root@192.168.2.123:/etc/udev/rules.d/99-maschine.rules
+ssh root@192.168.2.123 "udevadm control --reload-rules && udevadm trigger"
+```
+
+The three rules together: create a stable `/dev/maschine` symlink, stop the daemon when the USB cable is unplugged, and restart it when plugged back in. The service re-opens the device on each start, so hotplug works cleanly.
 
 **Verify:**
 
 ```bash
-ls -la /dev/maschine
+ssh root@192.168.2.123 "ls -la /dev/maschine"
 ```
 
 Expected: a symlink pointing to `/dev/hidrawX`.
@@ -237,8 +246,8 @@ Requires=jack2.service
 [Service]
 ExecStart=/root/zynth/MaschineMK2_linux/target/release/maschine /dev/maschine any
 ExecStartPost=/usr/local/bin/maschine-jack-connect.sh
-Restart=on-failure
-RestartSec=3
+Restart=always
+RestartSec=5
 WorkingDirectory=/root/zynth/MaschineMK2_linux
 
 [Install]
