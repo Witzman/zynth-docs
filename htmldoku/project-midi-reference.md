@@ -44,7 +44,7 @@ Row 3: C3  C#3  D3  D#3   (MIDI 48–51)
 
 **Transport / function button CC map (Ch 1, value 127 = press, 0 = release):**
 
-| Button | RPN | Button | RPN |
+| Button | CC | Button | CC |
 |---|---|---|---|
 | Play | 1 | Main | 24 |
 | Stop (Erase) | 2 | Scene | 25 |
