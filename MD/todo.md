@@ -21,15 +21,6 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
 
 ---
 
-- [ ] **Test Maschine MK2 Step Sequencer Part 1 on Pi**
-  - [ ] Confirm sequencer mode activates (Shift+Pad Mode twice)
-  - [ ] Confirm pads toggle steps (no note fired)
-  - [ ] Confirm Play starts sequence, Erase stops it
-  - [ ] Confirm MIDI Ch2 reaches Zynthian chain
-  - Tutorial file: `~/zynth-docs/htmldoku/project-maschine-step-sequencer.md`
-
----
-
 - [ ] **Test Dub Techno Live Rig — Maschine Pad Layer Part 1 on Pi**
   - [ ] Blocked: Maschine Step Sequencer Part 1 must pass first
   - [ ] Add pad chain on Ch2, verify 3-layer playback simultaneous
@@ -67,9 +58,11 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
   - `/zynthian/config/midi-profiles/default.sh` — master channel = 6, 16 TOGGLE_SEQ mappings
 
   **Update MIDI Reference page:**
-  - SMC-PAD channel: change 7 → 6 everywhere
-  - Master channel: change 7 → 6 everywhere
-  - SINCO Private port double-routing: document as Conflict 10
+  - [x] SMC-PAD channel: change 7 → 6 everywhere — already done in current reference
+  - [x] Master channel: change 7 → 6 everywhere — already done in current reference
+  - [x] SINCO Private port double-routing: document as Conflict 10 — already present
+  - [x] Maschine encoder/button MIDI type: updated RPN → standard CC (2026-06-06)
+  - [x] Conflict 5 resolved — CC Learn now works for encoders and buttons (2026-06-06)
 
 ---
 
@@ -79,6 +72,39 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
   - [ ] Check against SMC-PAD CCs (16/17/18/30/80/81/82/31) and common engine CCs
   - [ ] Update MIDI Reference Section 1 Xboard table with confirmed defaults
   - [ ] Remove `[low]` tag from Xboard knob row
+
+- [ ] **Test Maschine MK2 Part 4 on Pi (web editor, MIDI IN)**
+  - [ ] Set up SSH tunnel: `ssh -L 9001:127.0.0.1:9001 root@192.168.2.123 -N`
+  - [ ] Confirm web editor loads at http://127.0.0.1:9001
+  - [ ] Confirm pad LED changes on color set
+  - [ ] Confirm maschine.json persists after restart
+  - [ ] Confirm MIDI Control IN drives pad LEDs
+
+- [ ] **Test Maschine MK2 Step Sequencer Part 1 on Pi**
+  - [ ] Confirm sequencer mode activates (Shift+Pad Mode twice)
+  - [ ] Confirm pads toggle steps (no note fired)
+  - [ ] Confirm Play starts sequence, Erase stops it
+  - [ ] Confirm MIDI Ch2 reaches Zynthian chain
+  - Tutorial file: `~/zynth-docs/htmldoku/project-maschine-step-sequencer.md`
+
+- [ ] **Test Maschine MK2 Step Sequencer Part 2 on Pi (pages, per-step note/vel)**
+  - [ ] Confirm Group A–H switch pages in sequencer mode
+  - [ ] Confirm step selection (orange LED)
+  - [ ] Confirm Encoder 1 = velocity, Encoder 2 = note offset
+  - [ ] Blocked: Part 1 must pass first
+
+- [ ] **Test Maschine MK2 Step Sequencer Part 4 on Pi (euclidean fill)**
+  - [ ] Confirm Shift+Group D = 4 evenly-spaced hits on page 3
+  - [ ] Verify exact step positions match table in tutorial
+  - [ ] Blocked: Part 2 must pass first
+
+- [ ] **Test Maschine MK2 Step Sequencer Part 5 on Pi (MIDI clock sync)**
+  - [ ] Identify Zynthian MIDI clock output port via `aconnect -l`
+  - [ ] Confirm sequencer locks to external clock
+  - [ ] Confirm MIDI Start resets to step 0
+  - [ ] Confirm MIDI Stop halts and preserves position
+  - [ ] Confirm fallback on clock silence (500ms)
+  - [ ] Blocked: Part 2 must pass first
 
 ---
 
