@@ -249,8 +249,9 @@ jack_lsp -c 2&gt;/dev/null | grep 'maschine.*ZynMidiRouter\|ZynMidiRouter.*dev3'
 <p>From the machine where the source lives (not the Pi):</p>
 <pre><code class="language-bash">rsync -av --exclude='target/' ~/zynth/MaschineMK2_linux/ root@192.168.2.123:~/zynth/MaschineMK2_linux/</code></pre>
 <p>Then on the Pi:</p>
-<pre><code class="language-bash">ssh root@192.168.2.123
-cd ~/zynth/MaschineMK2_linux
+<pre><code class="language-bash">ssh root@192.168.2.123</code></pre>
+<p>Once on the Pi:</p>
+<pre><code class="language-bash">cd ~/zynth/MaschineMK2_linux
 source "$HOME/.cargo/env"
 cargo build --release 2&gt;&amp;1 | tail -3</code></pre>
 <p>Expected last line: <code>Finished 'release' profile [optimized] target(s) in ...</code></p>
@@ -262,16 +263,18 @@ cargo build --release 2&gt;&amp;1 | tail -3</code></pre>
 systemctl status maschine-mk2.service --no-pager</code></pre>
 <p>Expected: <code>Active: active (running)</code></p>
 <p><strong>Verify:</strong> Service is running after restart.</p>
-<h3 id="step-3--open-the-web-editor">Step 3 — Open the web editor</h3>
-<p>Open a browser and navigate to:</p>
-<pre><code>http://192.168.2.123:9001</code></pre>
+<h3 id="step-3--open-the-web-editor-via-ssh-tunnel">Step 3 — Open the web editor via SSH tunnel</h3>
+<p>The daemon's WebSocket server binds to <code>127.0.0.1:9001</code> — only accessible locally on the Pi. To reach it from your Windows machine, open an SSH tunnel in a separate terminal:</p>
+<pre><code class="language-bash">ssh -L 9001:127.0.0.1:9001 root@192.168.2.123 -N</code></pre>
+<p>Keep this terminal open. Then open a browser on your Windows machine and navigate to:</p>
+<pre><code>http://127.0.0.1:9001</code></pre>
 <p>Wait up to 5 seconds for the WebSocket connection to establish.</p>
-<blockquote><p>Use the Pi's IP address (<code>192.168.2.123</code>), not <code>zynthian.local</code> — mDNS does not resolve from a browser on Windows hosts.</p></blockquote>
 <p><strong>Verify:</strong> The web editor loads and shows a pad grid or connection status.</p>
 <p>[low] Exact web UI layout and control labels need Pi verification.</p>
 <h3 id="step-4--change-a-pad-led-color">Step 4 — Change a pad LED color</h3>
 <p>In the web editor, click any pad in the grid. Select a color.</p>
 <p><strong>Verify:</strong> The corresponding pad on the Maschine MK2 hardware lights in the selected color within 1–2 seconds.</p>
+<p>[low] Requires working SSH tunnel from Step 3.</p>
 <h3 id="step-5--verify-config-persistence">Step 5 — Verify config persistence</h3>
 <p>In the web editor config panel, change the CC number for Encoder 1 from 16 to a different value (e.g. 20).</p>
 <p>Then restart the daemon:</p>
@@ -280,6 +283,7 @@ systemctl status maschine-mk2.service --no-pager</code></pre>
 <pre><code class="language-bash">cat ~/zynth/MaschineMK2_linux/maschine.json</code></pre>
 <p>Expected: <code>encoder_ccs</code> shows <code>20</code> in the first position.</p>
 <p><strong>Verify:</strong> Encoder CC change survives a daemon restart.</p>
+<p>[low] Requires working SSH tunnel from Step 3.</p>
 <h3 id="step-6--drive-pad-leds-from-midi-in">Step 6 — Drive pad LEDs from MIDI IN</h3>
 <p>Connect any MIDI source to the <code>MIDI Control</code> ALSA port:</p>
 <pre><code class="language-bash">aconnect -l | grep -A3 maschine</code></pre>

@@ -297,6 +297,11 @@ Then on the Pi:
 
 ```bash
 ssh root@192.168.2.123
+```
+
+Once on the Pi:
+
+```bash
 cd ~/zynth/MaschineMK2_linux
 source "$HOME/.cargo/env"
 cargo build --release 2>&1 | tail -3
@@ -321,17 +326,21 @@ Expected: `Active: active (running)`
 
 **Verify:** Service is running after restart.
 
-### Step 3 — Open the web editor
+### Step 3 — Open the web editor via SSH tunnel
 
-Open a browser and navigate to:
+The daemon's WebSocket server binds to `127.0.0.1:9001` — only accessible locally on the Pi. To reach it from your Windows machine, open an SSH tunnel in a separate terminal:
+
+```bash
+ssh -L 9001:127.0.0.1:9001 root@192.168.2.123 -N
+```
+
+Keep this terminal open. Then open a browser on your Windows machine and navigate to:
 
 ```
-http://192.168.2.123:9001
+http://127.0.0.1:9001
 ```
 
 Wait up to 5 seconds for the WebSocket connection to establish.
-
-> Use the Pi's IP address (`192.168.2.123`), not `zynthian.local` — mDNS does not resolve from a browser on Windows hosts.
 
 **Verify:** The web editor loads and shows a pad grid or connection status.
 
@@ -342,6 +351,8 @@ Wait up to 5 seconds for the WebSocket connection to establish.
 In the web editor, click any pad in the grid. Select a color.
 
 **Verify:** The corresponding pad on the Maschine MK2 hardware lights in the selected color within 1–2 seconds.
+
+[low] Requires working SSH tunnel from Step 3.
 
 ### Step 5 — Verify config persistence
 
@@ -362,6 +373,8 @@ cat ~/zynth/MaschineMK2_linux/maschine.json
 Expected: `encoder_ccs` shows `20` in the first position.
 
 **Verify:** Encoder CC change survives a daemon restart.
+
+[low] Requires working SSH tunnel from Step 3.
 
 ### Step 6 — Drive pad LEDs from MIDI IN
 
