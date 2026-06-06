@@ -135,46 +135,118 @@ systemctl status maschine-mk2.service --no-pager</code></pre>
 <p>The <strong>Erase</strong> button acts as Stop in sequencer mode. The <strong>Play</strong> button only starts.</p>
 <p><strong>Verify:</strong> Playback stops.</p>
 <hr>
-<h2 id="part-2--melodic-pattern-draft">Part 2 — Melodic Pattern <code>[draft]</code></h2>
-<p>By default all 16 steps play C3 (MIDI 48). To build a melody, assign different notes to different steps. The 16 pads act as a note keyboard when Shift is held: each pad maps to a pitch based on its position plus the current note base set by the Group buttons.</p>
-<p>Default note base (no Group button pressed): C3 (MIDI 48). Group D sets it to C4 (MIDI 60).</p>
-<p>Pad layout with <strong>Group D</strong> selected (note base C4, MIDI 60):</p>
-<pre><code>[ C4  C#4  D4  D#4 ]   ← top row    (pads 0–3)
-[ G#3  A3  A#3  B3 ]   ← row 3      (pads 4–7)
-[ E3  F3  F#3  G3  ]   ← row 2      (pads 8–11)
-[ C3  C#3  D3  D#3 ]   ← bottom row (pads 12–15)</code></pre>
-<h3 id="step-1--set-note-base-to-c4">Step 1 — Set note base to C4</h3>
-<p>Press <strong>Group D</strong> on the Maschine MK2.</p>
-<p>All unassigned steps now play C4 instead of C3.</p>
-<p><strong>Verify:</strong> Press Play — pattern plays C4.</p>
-<h3 id="step-2--assign-a-note-to-a-step">Step 2 — Assign a note to a step</h3>
-<p>To change the note on step 0 (top-left pad) to D4:</p>
-<ol><li>Hold <strong>Shift</strong>, tap <strong>pad 0</strong> — selects step 0 as the target for note assignment</li><li>Hold <strong>Shift</strong>, tap <strong>pad 2</strong> (top row, third from left, D4 with Group D) — assigns D4 to step 0</li></ol>
-<p>[low] Visual feedback for the selected-step state needs Pi verification.</p>
-<p>Repeat for other steps. Use the note layout above to map pads to pitches. Any step can be assigned any note in the current two-octave range shown.</p>
-<p><strong>Verify:</strong> Press Play — step 0 plays D4, other steps play C4.</p>
-<h3 id="step-3--build-a-melody">Step 3 — Build a melody</h3>
-<p>Assign different notes across several active steps to create a phrase. Use the chromatic pad layout above as a reference.</p>
-<p><strong>Verify:</strong> The sequence plays distinct pitches in the programmed order.</p>
+<h2 id="part-2--8-pages-and-per-step-notevelocity-draft">Part 2 — 8 Pages and Per-Step Note/Velocity <code>[draft]</code></h2>
+<p>The sequencer has 8 independent 16-step pages. In sequencer mode, <strong>Group A–H switch pages</strong> — each button corresponds to one page. The lit Group button shows the active page.</p>
+<p>Per-step note and velocity editing: tap any active step (its LED turns <strong>orange</strong> — selected), then turn Encoder 1 to adjust velocity (0–127) or Encoder 2 to adjust note offset (0–127).</p>
+<p>Set the note base <strong>before</strong> entering sequencer mode: in pad mode, Group A–H set the note base (A = C1 through H = C8). Once you enter sequencer mode, those same buttons switch pages instead.</p>
+<h3 id="step-1--set-note-base-in-pad-mode">Step 1 — Set note base in pad mode</h3>
+<p>Before entering sequencer mode, press <strong>Group D</strong> on the Maschine MK2 (while still in normal pad mode).</p>
+<p>Group D sets the note base to <strong>60 (C4)</strong> — all steps with no note offset play C4.</p>
+<p><strong>Verify:</strong> Press a pad in pad mode — it plays C4 (requires a chain on MIDI ch 1 with a synth loaded).</p>
+<h3 id="step-2--enter-sequencer-mode">Step 2 — Enter sequencer mode</h3>
+<ol><li>Hold <strong>Shift</strong>, press <strong>Pad Mode</strong> — enters pad mode 1</li><li>Hold <strong>Shift</strong>, press <strong>Pad Mode</strong> a second time — enters sequencer mode</li></ol>
+<p><strong>Verify:</strong> Pressing a pad toggles a step (no note plays; LED brightens or dims).</p>
+<h3 id="step-3--navigate-pages-with-group-buttons">Step 3 — Navigate pages with Group buttons</h3>
+<p>In sequencer mode, pressing <strong>Group A</strong> switches to page 1, <strong>Group B</strong> to page 2, and so on. The lit Group button shows the active page.</p>
+<ol><li>Press <strong>Group A</strong> — page 1 is active. Program a short pattern: tap 3–4 pads to activate steps.</li><li>Press <strong>Group B</strong> — page 2 is active. Tap different pads to program a different pattern.</li><li>Press <strong>Group A</strong> again — the original page 1 pattern is still there.</li></ol>
+<p><strong>Verify:</strong> Switching pages changes which step pads are lit. Each page holds its own independent pattern.</p>
+<h3 id="step-4--select-a-step-for-editing">Step 4 — Select a step for editing</h3>
+<p>Tap any lit (active) step pad. Its LED turns <strong>orange</strong> — this step is selected for per-step editing.</p>
+<p><strong>Verify:</strong> One pad glows orange while other active pads stay at normal brightness.</p>
+<h3 id="step-5--adjust-velocity">Step 5 — Adjust velocity</h3>
+<p>With a step selected (orange LED), turn <strong>Encoder 1</strong> clockwise to raise velocity, counterclockwise to lower it.</p>
+<p>Range: 0 (silent) to 127 (full velocity).</p>
+<p>Press <strong>Play</strong>, then press <strong>Erase</strong> to stop. Listen for volume variation across steps.</p>
+<p><strong>Verify:</strong> The selected step plays at a noticeably different volume from unedited steps.</p>
+<h3 id="step-6--adjust-note-offset">Step 6 — Adjust note offset</h3>
+<p>With a step selected (orange LED), turn <strong>Encoder 2</strong> clockwise to raise the note offset, counterclockwise to lower it.</p>
+<p>The note offset is added to the current note base. With Group D set before entering sequencer mode (base = 60 = C4):</p>
+<ul><li>Offset 0 → C4</li><li>Offset 7 → G4</li><li>Offset 12 → C5</li></ul>
+<p>Press <strong>Play</strong> and listen for pitch variation across steps.</p>
+<p><strong>Verify:</strong> The selected step plays a different pitch from unedited steps.</p>
+<h3 id="step-7--build-a-phrase">Step 7 — Build a phrase</h3>
+<p>Program a 4–8 step pattern. Select each step and assign different note offsets and velocities to create a melody.</p>
+<p><strong>Verify:</strong> Playback produces distinct pitches and volumes per step as programmed.</p>
+<hr>
+<p><strong>Verify (Part 2 complete):</strong> Pages are independent, Group buttons switch pages in sequencer mode, per-step velocity and note offset are audible on playback.</p>
 <hr>
 <h2 id="part-3--tempo-and-snapshot-draft">Part 3 — Tempo and Snapshot <code>[draft]</code></h2>
 <h3 id="step-1--adjust-tempo">Step 1 — Adjust tempo</h3>
 <p>[low] Hold <strong>Shift</strong> and turn <strong>encoder B6</strong> (second encoder in the top row) to change the step rate. Turn right to speed up, left to slow down. The README marks speed control as "under construction" — behavior needs Pi verification.</p>
 <p>The default step rate is approximately 75 BPM in 16th notes (200 ms per step).</p>
 <p><strong>Verify:</strong> Turning the encoder changes the playback rate.</p>
-<h3 id="step-2--transpose-with-group-buttons">Step 2 — Transpose with Group buttons</h3>
-<p>Press any Group button (A–H) while the sequencer is running to shift the note base of all steps:</p>
-<table><thead><tr><th>Button</th><th>Note base</th><th>Register</th></tr></thead><tbody><tr><td>A</td><td>C1</td><td>sub-bass</td></tr><tr><td>B</td><td>C2</td><td>bass</td></tr><tr><td>C</td><td>C3 (default)</td><td>mid-low</td></tr><tr><td>D</td><td>C4 (middle C)</td><td>mid</td></tr><tr><td>E</td><td>C5</td><td>mid-high</td></tr><tr><td>F</td><td>C6</td><td>high</td></tr><tr><td>G</td><td>C7</td><td>very high</td></tr><tr><td>H</td><td>C8</td><td>extreme high</td></tr></tbody></table>
-<p>[low] Whether Group transpose applies immediately to the playing step or only from the next step needs Pi verification.</p>
-<p><strong>Verify:</strong> Group button press shifts the pitch of the entire pattern up or down.</p>
+<h3 id="step-2--change-note-base-between-patterns">Step 2 — Change note base between patterns</h3>
+<p>Group buttons A–H set the note base <strong>in pad mode only</strong>. In sequencer mode they switch pages. To shift the entire pattern's pitch range, exit sequencer mode first.</p>
+<p>To change note base and return to sequencer mode:</p>
+<ol><li>Press <strong>Erase</strong> to stop playback</li><li>Hold <strong>Shift</strong>, press <strong>Pad Mode</strong> — returns to pad mode 1</li><li>Hold <strong>Shift</strong>, press <strong>Pad Mode</strong> again — returns to normal pad mode</li><li>Press a <strong>Group</strong> button to set note base (A = C1 … H = C8)</li><li>Re-enter sequencer mode: Shift + Pad Mode twice</li><li>Resume playback with <strong>Play</strong></li></ol>
+<p>[low] Exact steps to navigate between pad mode and sequencer mode need Pi verification.</p>
+<p><strong>Verify:</strong> After setting a different Group button and re-entering sequencer mode, steps play at the new note base.</p>
 <h3 id="step-3--save-the-setup-as-a-snapshot">Step 3 — Save the setup as a snapshot</h3>
 <p>Tap <strong>OPT/ADMIN</strong> (short) → <strong>Snapshots</strong> → navigate into <strong>000</strong> bank → <strong>Save as new snapshot</strong> → type name → confirm.</p>
 <p>Navigate into the <strong>000</strong> bank folder first, then type the name and tap the checkmark icon. (Snapshots saved to the root level are invisible in the Zynthian UI.)</p>
 <p>The snapshot saves the Zynthian chain configuration (engine, MIDI channel 2 assignment). It does not save the Maschine step pattern — that lives in the daemon's runtime state and resets when the daemon restarts.</p>
 <p><strong>Verify:</strong> Snapshot appears in the list and reloads the chain on channel 2.</p>
 <hr>
+<h2 id="part-4--euclidean-fill-draft">Part 4 — Euclidean Fill <code>[draft]</code></h2>
+<p>Hold <strong>Shift</strong> and press any Group button (A–H) to fill the current sequencer page with an evenly-distributed rhythm. Group A = 1 hit, Group H = 8 hits. The hits are distributed using the Bresenham (Euclidean) algorithm — the first hit always falls on step 0.</p>
+<table><thead><tr><th>Shift + Group</th><th>Hits</th><th>Approximate pattern across 16 steps</th></tr></thead><tbody><tr><td>A</td><td>1</td><td>step 0 only</td></tr><tr><td>B</td><td>2</td><td>steps 0, 8</td></tr><tr><td>C</td><td>3</td><td>steps 0, 5, 10</td></tr><tr><td>D</td><td>4</td><td>steps 0, 4, 8, 12</td></tr><tr><td>E</td><td>5</td><td>steps 0, 3, 6, 9, 12</td></tr><tr><td>F</td><td>6</td><td>steps 0, 2, 5, 7, 10, 13</td></tr><tr><td>G</td><td>7</td><td>steps 0, 2, 4, 6, 8, 10, 12</td></tr><tr><td>H</td><td>8</td><td>steps 0, 2, 4, 6, 8, 10, 12, 14</td></tr></tbody></table>
+<p>[low] Exact step positions for each density need Pi verification — positions shown are approximate.</p>
+<h3 id="step-1--switch-to-an-empty-page">Step 1 — Switch to an empty page</h3>
+<p>In sequencer mode, press <strong>Group B</strong> to switch to page 2. Confirm no steps are lit (empty page).</p>
+<p>If page 2 has steps, tap each lit pad to deactivate it before proceeding.</p>
+<p><strong>Verify:</strong> No step pads are lit on page 2.</p>
+<h3 id="step-2--apply-a-4-hit-euclidean-fill">Step 2 — Apply a 4-hit euclidean fill</h3>
+<p>Hold <strong>Shift</strong> and press <strong>Group D</strong> (4 hits).</p>
+<p><strong>Verify:</strong> 4 step pads light up, evenly spaced across the 16 positions (steps 0, 4, 8, 12).</p>
+<h3 id="step-3--start-playback">Step 3 — Start playback</h3>
+<p>Press <strong>Play</strong>.</p>
+<p><strong>Verify:</strong> 4 evenly-spaced notes play in a repeating loop at the current step rate.</p>
+<h3 id="step-4--try-different-densities">Step 4 — Try different densities</h3>
+<p>Hold <strong>Shift</strong> + press <strong>Group H</strong> — fills page with 8 hits.</p>
+<p>Hold <strong>Shift</strong> + press <strong>Group A</strong> — fills page with 1 hit (step 0 only).</p>
+<p><strong>Verify:</strong> Pad LEDs update immediately to show each new pattern.</p>
+<hr>
+<p><strong>Verify (Part 4 complete):</strong> Shift+Group fills page with correct number of evenly-spaced hits; LED display matches; plays correctly; switching densities mid-playback works.</p>
+<hr>
+<h2 id="part-5--midi-clock-sync-draft">Part 5 — MIDI Clock Sync <code>[draft]</code></h2>
+<p>Connect any MIDI clock source (Zynthian, a DAW, or a hardware sequencer) to the daemon's <code>MIDI Control</code> ALSA input port. The sequencer locks to the external clock: 24 pulses per quarter note (ppqn), 6 ticks = one 16th-note step. A MIDI Start message resets the sequencer to step 0 and begins playback; Stop halts it and preserves position. If no clock tick arrives for 500 ms, the sequencer falls back to its internal BPM timer automatically.</p>
+<p><strong>Prerequisites:</strong> Part 1 complete. A MIDI clock source available — Zynthian transport or a DAW connected to the same machine.</p>
+<h3 id="step-1--find-port-numbers">Step 1 — Find port numbers</h3>
+<pre><code class="language-bash">ssh root@192.168.2.123
+aconnect -l | grep -A3 maschine</code></pre>
+<p>Look for:</p>
+<pre><code>client 28: 'maschine.rs' [...]
+    0 'Pads MIDI   '
+    1 'MIDI Control'</code></pre>
+<p>Note the client number (e.g. <code>28</code>). The <code>MIDI Control</code> port is <code>28:1</code>.</p>
+<p>[low] Client number varies. Verify on Pi.</p>
+<h3 id="step-2--find-the-zynthian-midi-clock-output">Step 2 — Find the Zynthian MIDI clock output</h3>
+<p>[low] Zynthian MIDI clock output port name needs Pi verification. Run:</p>
+<pre><code class="language-bash">aconnect -l</code></pre>
+<p>Look for a Zynthian or JACK MIDI output port that sends MIDI clock. Common candidates: <code>ZynMidiRouter</code> or a port bridged via <code>a2jmidid</code>.</p>
+<h3 id="step-3--connect-the-clock-source">Step 3 — Connect the clock source</h3>
+<pre><code class="language-bash">aconnect &lt;clock-source-client&gt;:&lt;port&gt; 28:1</code></pre>
+<p>Replace <code>&amp;lt;clock-source-client&amp;gt;:&amp;lt;port&amp;gt;</code> with the clock output found in Step 2, and <code>28</code> with the actual maschine.rs client number.</p>
+<p>Verify the connection:</p>
+<pre><code class="language-bash">aconnect -l | grep -A6 maschine</code></pre>
+<p>The clock source should appear listed as a sender to the maschine.rs client.</p>
+<p><strong>Verify:</strong> Connection is visible in <code>aconnect -l</code>.</p>
+<h3 id="step-4--start-the-clock-and-verify-sync">Step 4 — Start the clock and verify sync</h3>
+<p>Start transport in Zynthian (or the clock source). Press <strong>Play</strong> on the Maschine MK2.</p>
+<p><strong>Verify:</strong> Steps advance in sync with the Zynthian tempo. Changing tempo in Zynthian changes the step rate on the Maschine within 1–2 steps.</p>
+<h3 id="step-5--stop-and-verify-position-hold">Step 5 — Stop and verify position hold</h3>
+<p>Stop transport in Zynthian.</p>
+<p><strong>Verify:</strong> The sequencer halts. The last active step pad stays lit — position is not reset to step 0 on stop.</p>
+<h3 id="step-6--test-fallback-to-internal-clock">Step 6 — Test fallback to internal clock</h3>
+<p>With the clock connected and sequencer running, disconnect:</p>
+<pre><code class="language-bash">aconnect -d &lt;clock-source-client&gt;:&lt;port&gt; 28:1</code></pre>
+<p>Wait 2–3 seconds.</p>
+<p><strong>Verify:</strong> The sequencer does not stall or freeze. After approximately 500 ms, it continues stepping at the last estimated BPM on the internal timer.</p>
+<hr>
+<p><strong>Verify (Part 5 complete):</strong> Sequencer locks to external clock, stops on transport stop, falls back on clock silence.</p>
+<hr>
 <h2 id="going-further">Going Further</h2>
-<ul><li>Keep a chain on channel 1 for live pad play and a chain on channel 2 for the step sequencer — different engines, different roles, simultaneously active</li><li>Program a bass pattern on the sequencer while improvising a melody with the pads</li><li>Pre-assign step notes via OSC: the daemon listens on <code>127.0.0.1:42434</code> for <code>/maschine/midi_note_base</code> messages — scriptable from the Pi</li><li>Combine with the Multi-Controller Performance Rig tutorial to add the Xboard and SMC-PAD alongside the Maschine sequencer</li></ul>
+<ul><li>Keep a chain on channel 1 for live pad play and a chain on channel 2 for the step sequencer — different engines, different roles, simultaneously active</li><li>Program a bass pattern on the sequencer while improvising a melody with the pads</li><li>Pre-assign step notes via OSC: the daemon listens on <code>127.0.0.1:42434</code> for <code>/maschine/midi_note_base</code> messages — scriptable from the Pi</li><li>Combine with the Multi-Controller Performance Rig tutorial to add the Xboard and SMC-PAD alongside the Maschine sequencer</li><li>Use MIDI clock sync (Part 5) with Zynthian's transport to keep the Maschine sequencer in tempo without manual BPM matching</li><li>Combine euclidean patterns on multiple pages for polyrhythmic structures — page 1: 4 hits, page 2: 3 hits, alternate playback</li></ul>
 </article>
 </main>
 <div id="toc-column"></div>
