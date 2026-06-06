@@ -17,11 +17,12 @@ The Maschine MK2's native USB MIDI port sends no pad data without NI software. A
 |---|---|---|---|
 | 16 pads — normal mode | Note On / Note Off | 1 | base + offset (see layout below), velocity from pressure |
 | 16 pads — sequencer mode | Note On / Note Off | 2 | stored per step |
-| 8 encoders | **RPN14** | 1 | RPN numbers 16–23, values 0–8191 |
-| ~30 transport / function buttons | **RPN7** | 1 | RPN numbers 1–48 (see table below) |
-| Group buttons A–H | *(none — internal state only)* | — | sets note base: A=24 B=36 C=48 D=60 E=72 F=84 G=96 H=108 |
+| 8 encoders | **CC** | 1 | CC 16–23 (configurable via `maschine.json` or web editor), absolute 0–127 |
+| ~30 transport / function buttons | **CC** | 1 | CC 1–14 (see table below), value 127 = press, 0 = release |
+| Group buttons A–H — pad mode | *(none — internal state only)* | — | sets note base: A=24 B=36 C=48 D=60 E=72 F=84 G=96 H=108 |
+| Group buttons A–H — sequencer mode | *(none — internal state only)* | — | switches active sequencer page (1–8) |
+| `MIDI Control` ALSA input port | accepts NoteOn/Off 0–15, Clock, Start, Stop | — | NoteOn 0–15 → pad LED color/brightness; Clock/Start/Stop → forwarded to `Pads MIDI` output |
 
-> **Zynthian limitation:** Encoders send RPN14, transport buttons send RPN7. Neither is standard CC 0–119. Zynthian CC Learn cannot capture them. MIDI filter rules remapping RPN → CC are required before any binding is possible.
 
 **Pad note layout** — offsets added to current note base. Pad rows top → bottom, left → right:
 
@@ -41,7 +42,7 @@ Row 2: E3   F3  F#3  G3   (MIDI 52–55)
 Row 3: C3  C#3  D3  D#3   (MIDI 48–51)
 ```
 
-**Transport / function button RPN7 map (Ch 1):**
+**Transport / function button CC map (Ch 1, value 127 = press, 0 = release):**
 
 | Button | RPN | Button | RPN |
 |---|---|---|---|
@@ -65,6 +66,8 @@ Row 3: C3  C#3  D3  D#3   (MIDI 48–51)
 | — | — | Page Left | 48 |
 
 **OSC interface:** daemon listens on `127.0.0.1:42434`, sends to `42435`. Supports remote LED control (`/maschine/button/<name>`, `/maschine/pad`) and setting MIDI note base (`/maschine/midi_note_base`).
+
+**MIDI IN (`MIDI Control` ALSA input port):** Connect any MIDI source to drive pad LEDs and sync the sequencer. NoteOn note 0 = bottom-left pad (offset 0), note 15 = top-right pad (offset 15). Velocity maps to LED brightness. Clock/Start/Stop messages are forwarded to `Pads MIDI` output and can lock the built-in step sequencer. Connect with `aconnect <source>:<port> <maschine-client>:1`.
 
 ---
 
