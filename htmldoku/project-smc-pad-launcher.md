@@ -55,7 +55,7 @@ Press each pad one at a time — from **Pad 1** (bottom-left) to **Pad 16** (top
 ```
 
 The three values are:
-- Byte 1: MIDI status byte — upper nibble = event type, lower nibble = channel. `96` = note-on on channel 7. `90` = note-on on channel 1. `99` = note-on on channel 10.
+- Byte 1: MIDI status byte — upper nibble = event type, lower nibble = channel. `95` = note-on on channel 6. `90` = note-on on channel 1. `99` = note-on on channel 10.
 - Byte 2: Note number in hex. `24` hex = 36 decimal.
 - Byte 3: Velocity.
 
@@ -86,7 +86,7 @@ The table below shows the verified note numbers for **Preset 1** (Performance pr
 | 15 | top          | 50 |
 | 16 | top-right    | 51 |
 
-Also note the **MIDI channel** from byte 1. Lower nibble of the status byte = channel index (0-based). Add 1 to get the channel number. Example: `96` → lower nibble `6` → channel 7.
+Also note the **MIDI channel** from byte 1. Lower nibble of the status byte = channel index (0-based). Add 1 to get the channel number. Example: `95` → lower nibble `5` → channel 6.
 
 Press `Ctrl+C` to stop the monitor.
 
@@ -171,7 +171,7 @@ Log in if prompted (default: admin/raspberry).
 
 Find the **Master MIDI Channel** field. Set it to the channel number you recorded in Part 1, Step 3.
 
-Example: if byte 1 was `96` (channel 7), enter `7`.
+Example: if byte 1 was `95` (channel 6), enter `6`.
 
 **Verify:** Master MIDI Channel is set to your pad channel.
 

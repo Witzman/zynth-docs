@@ -128,12 +128,12 @@ aconnect -l</code></pre>
 <p>Press each pad one at a time — from <strong>Pad 1</strong> (bottom-left) to <strong>Pad 16</strong> (top-right). Each press prints one line showing three bytes in hex, for example:</p>
 <pre><code>96 24 64</code></pre>
 <p>The three values are:</p>
-<ul><li>Byte 1: MIDI status byte — upper nibble = event type, lower nibble = channel. <code>96</code> = note-on on channel 7. <code>90</code> = note-on on channel 1. <code>99</code> = note-on on channel 10.</li><li>Byte 2: Note number in hex. <code>24</code> hex = 36 decimal.</li><li>Byte 3: Velocity.</li></ul>
+<ul><li>Byte 1: MIDI status byte — upper nibble = event type, lower nibble = channel. <code>95</code> = note-on on channel 6. <code>90</code> = note-on on channel 1. <code>99</code> = note-on on channel 10.</li><li>Byte 2: Note number in hex. <code>24</code> hex = 36 decimal.</li><li>Byte 3: Velocity.</li></ul>
 <p>Record the note number (byte 2) for each pad. Convert hex to decimal using:</p>
 <pre><code class="language-bash">printf '%d\n' 0xNN   # replace NN with the hex value</code></pre>
 <p>The table below shows the verified note numbers for <strong>Preset 1</strong> (Performance preset — select with <strong>Shift + Pad 1</strong>). If you are using a different preset, fill in your own values here.</p>
 <table><thead><tr><th>Pad</th><th>Position</th><th>MIDI note (decimal)</th></tr></thead><tbody><tr><td>1</td><td>bottom-left</td><td>36</td></tr><tr><td>2</td><td>bottom</td><td>37</td></tr><tr><td>3</td><td>bottom</td><td>38</td></tr><tr><td>4</td><td>bottom-right</td><td>39</td></tr><tr><td>5</td><td>left</td><td>40</td></tr><tr><td>6</td><td></td><td>41</td></tr><tr><td>7</td><td></td><td>42</td></tr><tr><td>8</td><td>right</td><td>43</td></tr><tr><td>9</td><td>left</td><td>44</td></tr><tr><td>10</td><td></td><td>45</td></tr><tr><td>11</td><td></td><td>46</td></tr><tr><td>12</td><td>right</td><td>47</td></tr><tr><td>13</td><td>top-left</td><td>48</td></tr><tr><td>14</td><td>top</td><td>49</td></tr><tr><td>15</td><td>top</td><td>50</td></tr><tr><td>16</td><td>top-right</td><td>51</td></tr></tbody></table>
-<p>Also note the <strong>MIDI channel</strong> from byte 1. Lower nibble of the status byte = channel index (0-based). Add 1 to get the channel number. Example: <code>96</code> → lower nibble <code>6</code> → channel 7.</p>
+<p>Also note the <strong>MIDI channel</strong> from byte 1. Lower nibble of the status byte = channel index (0-based). Add 1 to get the channel number. Example: <code>95</code> → lower nibble <code>5</code> → channel 6.</p>
 <p>Press <code>Ctrl+C</code> to stop the monitor.</p>
 <p><strong>Verify:</strong> You have 16 different note numbers (one per pad) and one channel number that all pads share.</p>
 <h3 id="step-4--note-encoder-cc-numbers">Step 4 — Note encoder CC numbers</h3>
@@ -172,7 +172,7 @@ aconnect -l</code></pre>
 <p><strong>Verify:</strong> MIDI Options page loads.</p>
 <h3 id="step-2--set-the-master-midi-channel">Step 2 — Set the master MIDI channel</h3>
 <p>Find the <strong>Master MIDI Channel</strong> field. Set it to the channel number you recorded in Part 1, Step 3.</p>
-<p>Example: if byte 1 was <code>96</code> (channel 7), enter <code>7</code>.</p>
+<p>Example: if byte 1 was <code>95</code> (channel 6), enter <code>6</code>.</p>
 <p><strong>Verify:</strong> Master MIDI Channel is set to your pad channel.</p>
 <h3 id="step-3--add-the-16-toggle_seq-mappings">Step 3 — Add the 16 TOGGLE_SEQ mappings</h3>
 <p>Find the <strong>Master Key Actions</strong> field. It contains a text area with existing note→action lines (one per line, format: <code>note_number: ACTION</code>).</p>
