@@ -158,7 +158,7 @@ Preset 2 (DAW): **Shift + Pad 2** — transport buttons send Mackie Control; use
 | Setting | Value | Effect |
 |---|---|---|
 | Master MIDI channel | **6** | Notes on ch 6 trigger CUIA master key actions |
-| Master key actions | notes 36–51 → `TOGGLE_SEQ 0,0–3,3` | All 16 configured — see Conflict 10 for why toggle appears broken |
+| Master key actions | *none* | Cleared 2026-06-07 — pads are drums, not launcher triggers |
 | MIDI filter rules | *none* | No RPN→CC remapping, no channel redirects |
 | SINGLE_ACTIVE_CHANNEL | **ON** | All MIDI routes to the currently selected chain |
 | PROG_CHANGE_ZS3 | **ON** | Program Change recalls ZS3 subsnapshots |
