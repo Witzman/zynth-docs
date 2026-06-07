@@ -197,8 +197,11 @@ Status tags: `[verified]` = Pi-tested · `[draft]` = written, not yet tested · 
 | SMC-PAD | Pads 14–16 (notes 49–51) | **6** | Note 49–51 | **unassigned** | SMC-PAD Launcher P3 | `[draft]` |
 | SMC-PAD | Encoders left col | ? | CC 16/17/18/30 | Screen knobs 1–4 (ZYNPOT_ABS) | SMC-PAD Launcher P4 | `[verified]` |
 | SMC-PAD | Encoders right col | ? | CC 80/81/82/31 | **unassigned** | — | — |
-| SMC-PAD | Transport Left | 1 | CC 25 | PROGRAM_CHANGE − (drum ch 7) | SMC-PAD Drum Computer | `[low]` |
-| SMC-PAD | Transport Right | 1 | CC 26 | PROGRAM_CHANGE + (drum ch 7) | SMC-PAD Drum Computer | `[low]` |
+| SMC-PAD | Transport Left | 1 | CC 25 | PROGRAM_CHANGE − (drum ch 6) | SMC-PAD Drum Computer | `[low]` |
+| SMC-PAD | Transport Right | 1 | CC 26 | PROGRAM_CHANGE + (drum ch 6) | SMC-PAD Drum Computer | `[low]` |
+| SMC-PAD | Transport PLAY | 1 | CC 27 | TOGGLE_PLAY (ctrldev) | rig-v1 | `[verified]` |
+| SMC-PAD | Transport STOP | 1 | CC 28 | STOP (ctrldev) | rig-v1 | `[verified]` |
+| SMC-PAD | Transport REC | 1 | CC 29 | TOGGLE_RECORD (ctrldev) | rig-v1 | `[verified]` |
 
 ### Currently loaded chains
 
@@ -235,11 +238,11 @@ Both devices send notes on ch 1. With SINGLE_ACTIVE_CHANNEL=ON, both drive which
 
 ---
 
-### Conflict 3 — Master channel 6 = SMC-PAD channel
+### Conflict 3 — Master channel 6 = SMC-PAD channel — RESOLVED (2026-06-07)
 
-Any device sending notes on ch 6 fires CUIA master key actions. Currently only note 48 is mapped, but if all 16 mappings are added, notes 36–51 on ch 6 will all fire TOGGLE_SEQ.
+When master channel = 6, `zynmidirouter.c` intercepts all ch 6 events and routes them to the CUIA queue — bypassing chain routing entirely. The drum chain (also ch 6 in rig-v1) received no note events.
 
-**Resolution:** Ch 6 is reserved for SMC-PAD exclusively. Xboard must never be set to ch 6. Maschine Group B (note base 36) must not be used when SMC-PAD is connected.
+**Resolution:** Master channel is now **disabled** (`ZYNTHIAN_MIDI_MASTER_CHANNEL=0`) in rig-v1. Ch 6 events reach the drum chain directly. TOGGLE_SEQ launcher functionality requires a separate snapshot where master channel = 6 and no instrument chain is on ch 6.
 
 ---
 
@@ -280,11 +283,11 @@ Turn each knob and record CC number. Map conflicts before any tutorial uses the 
 
 ---
 
-### Conflict 7 — ctrldev DRUM_CHAN hardcoded to ch 7
+### Conflict 7 — ctrldev DRUM_CHAN hardcoded to ch 6
 
-`zynthian_ctrldev_sinco_smc_pad.py` has `DRUM_CHAN = 6` (0-indexed = ch 7). SMC-PAD transport Left/Right cycle drum kits only if drum chain is on ch 7. Dub Techno snapshot puts drums on ch 1 — transport buttons target wrong chain if loaded with driver active.
+`zynthian_ctrldev_sinco_smc_pad.py` has `DRUM_CHAN = 5` (0-indexed = ch 6). SMC-PAD transport Left/Right cycle drum kits only if drum chain is on ch 6. Dub Techno snapshot puts drums on ch 1 — transport buttons target wrong chain if loaded with driver active.
 
-**Resolution:** Maintain separate snapshots per use case: SMC-PAD Drum Computer snapshot = drums on ch 7; Dub Techno snapshot = drums on ch 1 (transport buttons inactive in this context). Or update driver `DRUM_CHAN` constant when switching snapshots.
+**Resolution:** Maintain separate snapshots per use case: SMC-PAD Drum Computer snapshot = drums on ch 6; Dub Techno snapshot = drums on ch 1 (transport Left/Right inactive in that context). Or update `DRUM_CHAN` constant in the driver when switching snapshots.
 
 ---
 

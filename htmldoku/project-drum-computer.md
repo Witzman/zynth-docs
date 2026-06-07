@@ -10,7 +10,7 @@
 
 Wire the SMC-PAD's 16 pads to a FluidSynth GM drumkit. Every pad press produces a drum sound immediately — no sequencer involved yet.
 
-SMC-PAD Preset 1 sends notes 36–51 on channel 7. Those notes map directly onto the GM drum map:
+SMC-PAD Preset 1 sends notes 36–51 on channel 6. Those notes map directly onto the GM drum map:
 
 | Pad | Note | Drum sound |
 |-----|------|-----------|

@@ -126,86 +126,45 @@ Follow Part 1 Steps 5–6, but this time play the Xboard AND make sound through 
 
 ## Part 3 — SMC-PAD Transport Binding `[draft]`
 
-Map the SMC-PAD **RECORD**, **PLAY**, and **STOP** transport buttons to SooperLooper controls via MIDI filter rules and CC Learn.
+Map the SMC-PAD **RECORD**, **PLAY**, and **STOP** transport buttons to SooperLooper controls via CC Learn.
 
-The SMC-PAD transport buttons send Mackie Control MIDI messages — Note On events, not MIDI CC. Zynthian's MIDI filter rules can remap these Note On messages to CC so that CC Learn can bind them to SooperLooper controls.
+The SMC-PAD transport buttons send standard MIDI CC messages on channel 1 — no MIDI filter rules are needed:
 
-**Mackie Control MIDI notes sent by SMC-PAD transport buttons** [low — verify on Pi with `amidi` before entering these rules]:
+| Button | CC | Channel | Value on press |
+|--------|----|---------|----|
+| PLAY   | 27 | 1       | 127 |
+| STOP   | 28 | 1       | 127 |
+| RECORD | 29 | 1       | 127 |
 
-| Button | MIDI event | Note | Channel |
-|--------|-----------|------|---------|
-| RECORD | Note On | 95 | 1 (CH#0 in filter) |
-| PLAY | Note On | 94 | 1 (CH#0 in filter) |
-| STOP | Note On | 93 | 1 (CH#0 in filter) |
+> **Note:** The SMC-PAD ctrldev (`zynthian_ctrldev_sinco_smc_pad.py`) intercepts CC 27/28/29 and fires Zynthian transport CUIAs (TOGGLE_PLAY, STOP, TOGGLE_RECORD). For this tutorial, the ctrldev must **not** be active on the SINCO IN 2 port — otherwise CC 27/28/29 are consumed before reaching SooperLooper. If you previously configured the ctrldev, go to **OPT/ADMIN → MIDI → MIDI Input Devices**, find **SINCO IN 2**, and set its driver to **None**.
 
 ### Step 1 — Verify SMC-PAD transport MIDI output
 
-Connect to Zynthian via SSH:
+```bash
+ssh root@192.168.2.123
+aconnect -l | grep -A3 SINCO
+```
+
+Note the card number. Monitor the Master port (port 1):
 
 ```bash
-ssh root@zynthian.local
+amidi -p hw:N,0,1 -d
 ```
 
-Find the SMC-PAD MIDI port:
-
-```bash
-aconnect -l
-# → Look for a line like: client 32: 'SMC-PAD' [type=kernel,card=N]
-```
-
-Monitor raw MIDI from the SMC-PAD:
-
-```bash
-amidi -p hw:N,0,0 -d
-# Replace N with the card number from aconnect output
-```
-
-Press **RECORD** on the SMC-PAD. Note the hex bytes printed. Expected: `90 5F 7F` (channel 1, Note On, note 95, velocity 127). [low — record actual values here during testing]
-
-Press **PLAY** — expected: `90 5E 7F` (note 94). [low]
-
-Press **STOP** — expected: `90 5D 7F` (note 93). [low]
-
-Press **Ctrl+C** to stop monitoring.
-
-### Step 2 — Add MIDI filter rules
-
-Open `http://zynthian.local` → **Interface** → **MIDI Options**.
-
-Scroll to **Midi filter rules**.
-
-Add the following rules. Enter each rule on its own line.
-
-Map RECORD (single_pedal — needs both press and release):
+Press **PLAY** on the SMC-PAD. Expected output:
 
 ```
-MAP CH#0 NON#95 => CH#0 CC#85
-MAP CH#0 NOFF#95 => CH#0 CC#85
+B0 1B 7F   ← CC 27, value 127 (press)
+B0 1B 00   ← CC 27, value 0   (release)
 ```
 
-Map PLAY (trigger — press only):
+Press **STOP** — expected `B0 1C 7F`. Press **RECORD** — expected `B0 1D 7F`.
 
-```
-MAP CH#0 NON#94 => CH#0 CC#86
-```
+Press **Ctrl+C** to stop.
 
-Map STOP (pause — press only):
+**Verify:** Each transport button produces a CC message matching the table above.
 
-```
-MAP CH#0 NON#93 => CH#0 CC#87
-```
-
-Click **Save** and then **Restart UI** to apply.
-
-**Verify:**
-
-```bash
-amidi -p hw:N,0,0 -d
-```
-
-Press each transport button. The raw output should now show CC messages (`B0 55 7F`, `B0 56 7F`, `B0 57 7F`) instead of Note On events. [low — confirm with actual values]
-
-### Step 3 — CC Learn: bind RECORD to single_pedal
+### Step 2 — CC Learn: bind RECORD to single_pedal
 
 `single_pedal` mode is an intelligent single-button looper control:
 - Idle → starts recording (first press)
@@ -223,9 +182,9 @@ Long-press the **single pedal** control (~600ms) until it highlights orange — 
 
 Press **RECORD** on the SMC-PAD.
 
-**Verify:** The **single pedal** control shows the bound CC number (85). Pressing RECORD on the SMC-PAD now cycles through idle → record → play → overdub → play.
+**Verify:** The **single pedal** control shows CC 29. Pressing RECORD on the SMC-PAD cycles through idle → record → play → overdub → play.
 
-### Step 4 — CC Learn: bind PLAY to trigger
+### Step 3 — CC Learn: bind PLAY to trigger
 
 Navigate to the **Loop control** control page in SooperLooper.
 
@@ -233,15 +192,15 @@ Long-press the **trigger** control until it highlights orange.
 
 Press **PLAY** on the SMC-PAD.
 
-**Verify:** The **trigger** control shows CC 86. Pressing PLAY triggers the selected loop to play from the start.
+**Verify:** The **trigger** control shows CC 27. Pressing PLAY triggers the selected loop to play from the start.
 
-### Step 5 — CC Learn: bind STOP to pause
+### Step 4 — CC Learn: bind STOP to pause
 
 Long-press the **pause** control until it highlights orange.
 
 Press **STOP** on the SMC-PAD.
 
-**Verify:** The **pause** control shows CC 87. Pressing STOP pauses the selected loop.
+**Verify:** The **pause** control shows CC 28. Pressing STOP pauses the selected loop.
 
 ### Step 6 — Full transport test
 
