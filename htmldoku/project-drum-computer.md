@@ -51,11 +51,11 @@ A preset list appears. Select **Standard**.
 
 Tap the new chain strip in the Mixer to open its control screen. Tap **Chain Options** in the sidebar.
 
-Find **MIDI Channel** and set it to **7** (the channel SMC-PAD Preset 1 sends on).
+Find **MIDI Channel** and set it to **6** (the channel SMC-PAD Preset 1 sends on).
 
 Tap **Back** to return to the mixer.
 
-**Verify:** Chain Options shows MIDI Channel = 7.
+**Verify:** Chain Options shows MIDI Channel = 6.
 
 ### Step 3 — Test live pad play
 
@@ -156,7 +156,7 @@ The master MIDI channel and TOGGLE_SEQ pad mappings are already configured on th
 http://zynthian.local/ui-midi-options
 ```
 
-Check that **Master MIDI Channel** shows **7** and **Master Key Actions** contains:
+Check that **Master MIDI Channel** shows **6** and **Master Key Actions** contains:
 
 ```
 48: TOGGLE_SEQ 0,0
@@ -167,7 +167,7 @@ Check that **Master MIDI Channel** shows **7** and **Master Key Actions** contai
 
 If either is missing, add or correct the values and click **Save**.
 
-**Verify:** Master MIDI Channel = 7 and 4 TOGGLE_SEQ lines are present.
+**Verify:** Master MIDI Channel = 6 and 4 TOGGLE_SEQ lines are present.
 
 ### Step 5 — Test launcher control
 

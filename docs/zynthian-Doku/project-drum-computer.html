@@ -88,7 +88,7 @@
 <li><a href="project-drum-computer.html" aria-current="page"><strong>SMC-PAD Drum Computer</strong></a></li>
 <li><a href="project-u46dj-audio-setup.html">ESI U46DJ Audio Setup</a></li>
 <li><a href="project-modui-effects.html">Audio FX Chain with MOD-UI</a></li>
-<li><a href="project-performance-rig.html">Multi-Controller Performance Rig</a></li>
+<li><a href="project-multi-controller-rig.html">Multi-Controller Rig (rig-v1)</a></li>
 <li><a href="project-live-looper.html">Live Looper with SooperLooper</a></li>
 </ul></div>
 <div class="track" data-collapsed="true">
@@ -119,9 +119,9 @@
 <p><strong>Verify:</strong> A new chain strip appears in the mixer labelled with the FluidSynth preset name.</p>
 <h3 id="step-2--set-the-chain-midi-channel">Step 2 — Set the chain MIDI channel</h3>
 <p>Tap the new chain strip in the Mixer to open its control screen. Tap <strong>Chain Options</strong> in the sidebar.</p>
-<p>Find <strong>MIDI Channel</strong> and set it to <strong>7</strong> (the channel SMC-PAD Preset 1 sends on).</p>
+<p>Find <strong>MIDI Channel</strong> and set it to <strong>6</strong> (the channel SMC-PAD Preset 1 sends on).</p>
 <p>Tap <strong>Back</strong> to return to the mixer.</p>
-<p><strong>Verify:</strong> Chain Options shows MIDI Channel = 7.</p>
+<p><strong>Verify:</strong> Chain Options shows MIDI Channel = 6.</p>
 <h3 id="step-3--test-live-pad-play">Step 3 — Test live pad play</h3>
 <p>Press any pad on the SMC-PAD. You should hear the corresponding drum sound immediately.</p>
 <p>Press pads 1–4 in sequence (bass drum, side stick, snare, hand clap).</p>
@@ -169,13 +169,13 @@
 <h3 id="step-3--verify-master-midi-channel-and-key-actions">Step 3 — Verify master MIDI channel and key actions</h3>
 <p>The master MIDI channel and TOGGLE_SEQ pad mappings are already configured on this system. Confirm via webconf:</p>
 <pre><code>http://zynthian.local/ui-midi-options</code></pre>
-<p>Check that <strong>Master MIDI Channel</strong> shows <strong>7</strong> and <strong>Master Key Actions</strong> contains:</p>
+<p>Check that <strong>Master MIDI Channel</strong> shows <strong>6</strong> and <strong>Master Key Actions</strong> contains:</p>
 <pre><code>48: TOGGLE_SEQ 0,0
 49: TOGGLE_SEQ 0,1
 50: TOGGLE_SEQ 0,2
 51: TOGGLE_SEQ 0,3</code></pre>
 <p>If either is missing, add or correct the values and click <strong>Save</strong>.</p>
-<p><strong>Verify:</strong> Master MIDI Channel = 7 and 4 TOGGLE_SEQ lines are present.</p>
+<p><strong>Verify:</strong> Master MIDI Channel = 6 and 4 TOGGLE_SEQ lines are present.</p>
 <h3 id="step-5--test-launcher-control">Step 5 — Test launcher control</h3>
 <p>Press pad 13 (top-left) on the SMC-PAD. In the launcher view, the phrase 1 clip should start playing (active indicator).</p>
 <p>Press pad 13 again — the clip stops.</p>

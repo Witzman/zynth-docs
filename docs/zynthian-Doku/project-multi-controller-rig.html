@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multi-Controller Performance Rig — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Get Started</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Using the UI</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="ui-navigation.html">UI Navigation</a></li>
+<li><a href="chain-management.html">Chains & Routing</a></li>
+<li><a href="control-screen.html">Control Screen</a></li>
+<li><a href="midi-cc-learn.html">MIDI CC Learning</a></li>
+<li><a href="zs3-guide.html">ZS3 Subsnapshots</a></li>
+<li><a href="pattern-editor.html">Pattern Editor</a></li>
+<li><a href="midi-recorder.html">MIDI Recorder</a></li>
+<li><a href="admin-guide.html">Admin & System</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Play & Create</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Configure</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Troubleshoot</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+<li><a href="performance-monitoring.html">Performance</a></li>
+</ul></div>
+<div class="track">
+<button class="track-header" aria-expanded="true"><span class="track-label">Personal Projects</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list">
+<li><a href="project-midi-reference.html">MIDI Reference</a></li>
+<li><a href="project-midi-mapping.html">Personal MIDI Mapping</a></li>
+<li><a href="project-drone-synth.html">Generative Drone Synth</a></li>
+<li><a href="project-maschine-mk2.html">Maschine MK2 Controller</a></li>
+<li><a href="project-midi-channel-routing.html">MIDI Channel Routing</a></li>
+<li><a href="project-emu-cc-learn.html">EMU CC Knob Mapping</a></li>
+<li><a href="project-smc-pad-launcher.html">SMC-PAD Launcher Control</a></li>
+<li><a href="project-drum-computer.html">SMC-PAD Drum Computer</a></li>
+<li><a href="project-u46dj-audio-setup.html">ESI U46DJ Audio Setup</a></li>
+<li><a href="project-modui-effects.html">Audio FX Chain with MOD-UI</a></li>
+<li><a href="project-multi-controller-rig.html" aria-current="page"><strong>Multi-Controller Rig (rig-v1)</strong></a></li>
+<li><a href="project-live-looper.html">Live Looper with SooperLooper</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Under the Hood</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="multi-controller-performance-rig">Multi-Controller Performance Rig</h1>
+<p><strong>Goal:</strong> Four simultaneous chains driven by three controllers — SMC-PAD triggers a live drum kit, the Maschine MK2 step sequencer drives a bass chain, the Xboard switches between a strings chain and a lead chain — saved as snapshot <code>rig-v1</code>. <strong>Prerequisites:</strong> Zynthian running, audio output working. Maschine MK2 daemon running (<code>maschine-mk2.service</code>). SMC-PAD connected via USB. E-MU Xboard connected via USB. SMC-PAD ctrldev deployed (see <a href="project-smc-pad-launcher.html">SMC-PAD Launcher Control</a> Part 4). <strong>Access:</strong> SSH · Touchscreen · Webconf</p>
+<hr>
+<h2 id="channel-map">Channel map</h2>
+<table><thead><tr><th>Controller</th><th>Mode</th><th>MIDI ch</th><th>Chain</th></tr></thead><tbody><tr><td>SMC-PAD</td><td>Pads (Preset 1)</td><td>6</td><td>Drums</td></tr><tr><td>SMC-PAD</td><td>Transport (CC 27/28/29)</td><td>1</td><td>Zynthian transport — via ctrldev</td></tr><tr><td>SMC-PAD</td><td>Left/Right (CC 25/26)</td><td>1</td><td>Cycle drum kits — via ctrldev</td></tr><tr><td>Maschine MK2</td><td>Step sequencer playback</td><td>2</td><td>Bass</td></tr><tr><td>Maschine MK2</td><td>Live pads (normal mode)</td><td>1</td><td>— (reserved for future use)</td></tr><tr><td>E-MU Xboard</td><td>Selected channel</td><td>3</td><td>Strings</td></tr><tr><td>E-MU Xboard</td><td>Selected channel</td><td>4</td><td>Lead</td></tr></tbody></table>
+<hr>
+<h2 id="part-1--build-the-four-chains-draft">Part 1 — Build the four chains <code>[draft]</code></h2>
+<p>Create the four instrument chains with the correct MIDI channel assignments.</p>
+<h3 id="step-1--enable-midi-ports">Step 1 — Enable MIDI ports</h3>
+<p>Open <code>http://zynthian.local/ui-midi-options</code> → <strong>MIDI Devices</strong>. Enable all three controller ports:</p>
+<ul><li>E-MU Xboard (<code>E-MU Xboard25</code> or <code>USB Device 0x41e:0x3f00</code>)</li><li>SMC-PAD (<code>SINCO IN 2</code>)</li><li>Maschine MK2 daemon (<code>maschine.rs</code> → <code>Pads MIDI</code>)</li></ul>
+<p>Click <strong>Save</strong>.</p>
+<p><strong>Verify:</strong> All three ports are toggled on.</p>
+<h3 id="step-2--turn-off-single-active-channel">Step 2 — Turn off Single Active Channel</h3>
+<p>Open <code>http://zynthian.local/ui-midi-options</code>. Find <strong>Single Active Channel</strong> and set it to <strong>Off</strong>.</p>
+<p>Click <strong>Save</strong>.</p>
+<p>With this off, every chain responds to its own MIDI channel independently. Multiple chains can play simultaneously.</p>
+<p><strong>Verify:</strong> Single Active Channel is off.</p>
+<h3 id="step-3--add-the-drums-chain-ch-6">Step 3 — Add the Drums chain (ch 6)</h3>
+<p>On the touchscreen, tap <strong>+</strong> → <strong>Instrument</strong> → <strong>FluidSynth</strong>.</p>
+<p>Select bank <strong>System/FluidDrums</strong> → preset <strong>Standard</strong>.</p>
+<p>Tap the new chain strip → <strong>Chain Options</strong> → <strong>MIDI Channel</strong> → set to <strong>6</strong>.</p>
+<p><strong>Verify:</strong> Drums chain shows MIDI Channel = 6 in Chain Options.</p>
+<h3 id="step-4--add-the-bass-chain-ch-2">Step 4 — Add the Bass chain (ch 2)</h3>
+<p>Tap <strong>+</strong> → <strong>Instrument</strong> → <strong>ZynAddSubFX</strong>.</p>
+<p>Browse to bank <strong>A VDX</strong> → select <strong>Analog Bass</strong>.</p>
+<p>Tap the chain → <strong>Chain Options</strong> → <strong>MIDI Channel</strong> → set to <strong>2</strong>.</p>
+<p><strong>Verify:</strong> Bass chain shows MIDI Channel = 2.</p>
+<h3 id="step-5--add-the-strings-chain-ch-3">Step 5 — Add the Strings chain (ch 3)</h3>
+<p>Tap <strong>+</strong> → <strong>Instrument</strong> → <strong>ZynAddSubFX</strong>.</p>
+<p>Browse to bank <strong>A VDX</strong> → select <strong>Vangelis Strings 1</strong>.</p>
+<p>Tap the chain → <strong>Chain Options</strong> → <strong>MIDI Channel</strong> → set to <strong>3</strong>.</p>
+<p><strong>Verify:</strong> Strings chain shows MIDI Channel = 3.</p>
+<h3 id="step-6--add-the-lead-chain-ch-4">Step 6 — Add the Lead chain (ch 4)</h3>
+<p>Tap <strong>+</strong> → <strong>Instrument</strong> → <strong>ZynAddSubFX</strong>.</p>
+<p>Browse to bank <strong>A VDX</strong> → select <strong>Analog Lead</strong>.</p>
+<p>Tap the chain → <strong>Chain Options</strong> → <strong>MIDI Channel</strong> → set to <strong>4</strong>.</p>
+<p><strong>Verify:</strong> Lead chain shows MIDI Channel = 4.</p>
+<hr>
+<h2 id="part-2--smc-pad-drums-and-transport-draft">Part 2 — SMC-PAD: drums and transport <code>[draft]</code></h2>
+<p>Wire the SMC-PAD pads to the drum chain and confirm the transport buttons control Zynthian playback.</p>
+<h3 id="step-1--confirm-smc-pad-ctrldev-is-active">Step 1 — Confirm SMC-PAD ctrldev is active</h3>
+<p>Tap <strong>OPT/ADMIN</strong> (bold hold, 300ms) → <strong>MIDI</strong> → <strong>MIDI Input Devices</strong>.</p>
+<p>Find <strong>SINCO IN 2</strong>. It should show <strong>SINCO SMC-PAD</strong> as its driver. If not, long-press it and select <strong>SINCO SMC-PAD</strong>.</p>
+<p><strong>Verify:</strong> SINCO IN 2 shows driver = SINCO SMC-PAD.</p>
+<h3 id="step-2--confirm-master-midi-channel-is-disabled">Step 2 — Confirm master MIDI channel is disabled</h3>
+<p>Open <code>http://zynthian.local/ui-midi-options</code>. Find <strong>Master MIDI Channel</strong>. It must be set to <strong>0</strong> (disabled).</p>
+<blockquote><p><strong>Why:</strong> The master channel intercepts ALL events on that channel before they reach chains. If set to 6, SMC-PAD pad notes are consumed and the drum chain receives nothing.</p></blockquote>
+<p>If it shows any value other than 0, clear it and click <strong>Save</strong>.</p>
+<p><strong>Verify:</strong> Master MIDI Channel = 0.</p>
+<h3 id="step-3--test-drum-pads">Step 3 — Test drum pads</h3>
+<p>Press any SMC-PAD pad. You should hear a drum sound immediately.</p>
+<p>The pad-to-sound mapping for Preset 1 (select with <strong>Shift + Pad 1</strong>):</p>
+<table><thead><tr><th>Pads</th><th>Notes</th><th>Sounds</th></tr></thead><tbody><tr><td>1–4</td><td>36–39</td><td>Bass drum, side stick, snare, hand clap</td></tr><tr><td>5–8</td><td>40–43</td><td>Electric snare, floor tom, hi-hat, floor tom</td></tr><tr><td>9–12</td><td>44–47</td><td>Pedal hi-hat, low tom, open hi-hat, low-mid tom</td></tr><tr><td>13–16</td><td>48–51</td><td>Hi tom, crash, high tom, ride</td></tr></tbody></table>
+<p><strong>Verify:</strong> Each pad produces a distinct drum sound.</p>
+<h3 id="step-4--test-transport-buttons">Step 4 — Test transport buttons</h3>
+<p>Press <strong>PLAY</strong> on the SMC-PAD. The Zynthian transport starts (same effect as tapping PLAY on the touchscreen).</p>
+<p>Press <strong>STOP</strong> — transport stops.</p>
+<p>Press <strong>REC</strong> — record mode toggles.</p>
+<p><strong>Verify:</strong> SMC-PAD transport buttons behave identically to the V5 touchscreen transport buttons.</p>
+<h3 id="step-5--test-drum-kit-cycling">Step 5 — Test drum kit cycling</h3>
+<p>Press <strong>Left</strong> (→ left transport button) on the SMC-PAD. The drum kit changes to the previous FluidSynth program.</p>
+<p>Press <strong>Right</strong> — advances to the next kit.</p>
+<p><strong>Verify:</strong> Drum kit changes with Left/Right. Press a pad after each change to hear the new kit.</p>
+<hr>
+<h2 id="part-3--maschine-mk2-step-sequencer-to-bass-chain-draft">Part 3 — Maschine MK2: step sequencer to bass chain <code>[draft]</code></h2>
+<p>The Maschine MK2 daemon outputs two MIDI streams: live pad presses on ch 1, and step sequencer playback on ch 2. Ch 2 is routed to the Bass chain.</p>
+<h3 id="step-1--confirm-daemon-is-running">Step 1 — Confirm daemon is running</h3>
+<pre><code class="language-bash">ssh root@192.168.2.123
+systemctl status maschine-mk2.service --no-pager</code></pre>
+<p>Expected: <code>Active: active (running)</code>.</p>
+<p><strong>Verify:</strong> Daemon is running.</p>
+<h3 id="step-2--confirm-pads-midi-port-is-connected">Step 2 — Confirm Pads MIDI port is connected</h3>
+<pre><code class="language-bash">aconnect -l | grep -A2 'maschine.rs'</code></pre>
+<p>Expected output contains <code>Connecting To: 128:0</code> — the Maschine daemon's Pads MIDI port is wired to ZynMidiRouter.</p>
+<p><strong>Verify:</strong> <code>Connecting To: 128:0</code> appears under <code>Pads MIDI</code>.</p>
+<h3 id="step-3--enter-sequencer-mode">Step 3 — Enter sequencer mode</h3>
+<p>On the Maschine MK2, press <strong>Pad Mode</strong> twice to enter sequencer mode (padmode 2). The pad LEDs change to show the current step pattern.</p>
+<blockquote><p>In sequencer mode, pressing a pad toggles a step on or off — no note is sent to Zynthian. Playback is driven by the internal sequencer timer or external MIDI clock.</p></blockquote>
+<h3 id="step-4--program-a-bass-pattern">Step 4 — Program a bass pattern</h3>
+<p>Press <strong>Play</strong> on the Maschine MK2 to start the sequencer.</p>
+<p>Toggle pads to add steps. Each active step plays a note on ch 2 → Bass chain when the sequencer reaches it.</p>
+<p>To stop: press <strong>Erase</strong> (acts as stop in sequencer mode).</p>
+<p><strong>Verify:</strong> Steps you toggle play back on the Bass chain. The bass sound plays in time.</p>
+<h3 id="step-5--return-to-live-mode">Step 5 — Return to live mode</h3>
+<p>Press <strong>Pad Mode</strong> once to exit sequencer mode. Pads now send live NoteOn messages on ch 1. Ch 1 has no chain assigned — pressing pads produces no sound (by design; ch 1 is reserved for future use such as a live improv chain).</p>
+<p><strong>Verify:</strong> Pressing pads in normal mode produces no output. Entering sequencer mode and pressing Play resumes bass playback.</p>
+<hr>
+<h2 id="part-4--e-mu-xboard-instrument-switching-draft">Part 4 — E-MU Xboard: instrument switching <code>[draft]</code></h2>
+<p>The Xboard transmits on whichever MIDI channel you select. Switching channels switches which chain responds.</p>
+<h3 id="step-1--set-xboard-to-channel-3-strings">Step 1 — Set Xboard to channel 3 (Strings)</h3>
+<p>On the E-MU Xboard:</p>
+<ol><li>Press the <strong>MIDI Channel</strong> button. The MIDI Channel LED illuminates.</li><li>Use <strong>Octave Transpose +</strong> / <strong>−</strong> or the data slider to select channel <strong>3</strong>.</li><li>Press <strong>Enter</strong> to confirm.</li></ol>
+<p>Play any key. Only the Strings chain should respond.</p>
+<p><strong>Verify:</strong> Strings (Vangelis Strings 1) plays. Drums and Bass are silent.</p>
+<h3 id="step-2--switch-xboard-to-channel-4-lead">Step 2 — Switch Xboard to channel 4 (Lead)</h3>
+<p>Press <strong>MIDI Channel</strong> → select channel <strong>4</strong> → <strong>Enter</strong>.</p>
+<p>Play any key. Only the Lead chain should respond.</p>
+<p><strong>Verify:</strong> Lead (Analog Lead) plays. No other chains respond.</p>
+<h3 id="step-3--confirm-simultaneous-operation">Step 3 — Confirm simultaneous operation</h3>
+<p>With Xboard on ch 3 or ch 4:</p>
+<ul><li>Press SMC-PAD pads — drums play.</li><li>Start the Maschine sequencer — bass plays.</li><li>Play the Xboard — strings or lead plays.</li></ul>
+<p>All three play simultaneously without interfering.</p>
+<p><strong>Verify:</strong> All three controllers sound their designated chains at the same time.</p>
+<hr>
+<h2 id="part-5--save-as-rig-v1-draft">Part 5 — Save as rig-v1 <code>[draft]</code></h2>
+<p>Save the complete setup as a named snapshot.</p>
+<h3 id="step-1--save-the-snapshot">Step 1 — Save the snapshot</h3>
+<p>Tap <strong>OPT/ADMIN</strong> (short) → <strong>Snapshots</strong> → navigate into the <strong>000</strong> bank.</p>
+<p>Tap the checkmark icon. Type <code>rig-v1</code>. Confirm.</p>
+<p><strong>Verify:</strong> <code>rig-v1</code> appears in the snapshot list under bank 000.</p>
+<h3 id="step-2--set-as-boot-default">Step 2 — Set as boot default</h3>
+<p>In the snapshot list, select <code>rig-v1</code>. Tap <strong>Save as Last State</strong>.</p>
+<p><strong>Verify:</strong> On next boot, all four chains load automatically with the correct channel assignments.</p>
+<hr>
+<h2 id="going-further">Going Further</h2>
+<ul><li>Add a fifth chain on ch 1 for Maschine live pad improv — pads now trigger a second melodic instrument alongside the sequencer.</li><li>Use the SMC-PAD's PAD BANK button to switch to a second pad bank and map it to a second drum kit or a different instrument on a spare channel.</li><li>Assign the SMC-PAD's 8 left-column encoders to drum chain parameters via MIDI CC Learn — long-press a parameter in the chain control screen, then turn an encoder.</li><li>Use Maschine Group buttons A–H to switch sequencer pages and run up to 8 different bass patterns per session.</li><li>Add a MOD-UI effects chain after the Strings or Lead chain for reverb and delay.</li></ul>
+</article>
+</main>
+<div id="toc-column"></div>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

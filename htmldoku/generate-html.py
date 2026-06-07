@@ -62,7 +62,7 @@ SIDEBAR = [
         ("SMC-PAD Drum Computer", "project-drum-computer.html"),
         ("ESI U46DJ Audio Setup", "project-u46dj-audio-setup.html"),
         ("Audio FX Chain with MOD-UI", "project-modui-effects.html"),
-        ("Multi-Controller Performance Rig", "project-performance-rig.html"),
+        ("Multi-Controller Rig (rig-v1)", "project-multi-controller-rig.html"),
         ("Live Looper with SooperLooper", "project-live-looper.html"),
     ]),
     ("Under the Hood", [

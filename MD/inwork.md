@@ -16,7 +16,7 @@ Status: `[~]` drafting · `[t]` user testing · `[>]` ready to publish · `[ ]` 
 - [~] **Maschine MK2 Controller** — Parts 1+3 verified; Part 2 (CC Learn, now unblocked — encoders send standard CC); Part 4 (web editor, MIDI IN, display) draft
 - [~] **Generative Drone Synth** — self-evolving ZynAddSubFX drone, SMC-PAD pads shift root note, 8 knobs shape texture
 - [~] **Audio FX Chain with MOD-UI** — route ESI mic (CH 1/2) and line (CH 3/4) inputs through MOD-UI pedalboard, output on ESI
-- [~] **Multi-Controller Performance Rig** — Xboard + SMC-PAD + Maschine MK2 simultaneous roles, saved as performance snapshot
+- [~] **Multi-Controller Rig (rig-v1)** — SMC-PAD drums (ch6) + transport ctrldev, Maschine seq→bass (ch2), Xboard strings/lead (ch3/ch4); replaces old performance-rig tutorial
 - [~] **EMU Xboard CC Knob Mapping** — static and follow-channel CC bindings across 4 chains; depends on MIDI Channel Routing tutorial
 - [~] **Dub Techno Performance Loop** — drums + bass + pad via step sequencer, delay/reverb effects, SMC-PAD live mute control
 - [~] **Maschine MK2 Step Sequencer** — 8-page 16-step sequencer; per-step note/velocity via encoders; euclidean fill; MIDI clock sync; no NI software required; prereq: Maschine MK2 Controller tutorial
