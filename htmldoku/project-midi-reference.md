@@ -125,6 +125,9 @@ All data below verified from tutorial testing, ctrldev driver source code, and l
 | Knob 2 (bottom-right col) | CC 31 | ? | 0–127 absolute |
 | Transport Left | CC 25 | 1 | 127 on press, 0 on release |
 | Transport Right | CC 26 | 1 | 127 on press, 0 on release |
+| PLAY button | CC 27 | 1 | 127 on press, 0 on release — verified 2026-06-07 |
+| STOP button | CC 28 | 1 | 127 on press, 0 on release — verified 2026-06-07 |
+| REC button | CC 29 | 1 | 127 on press, 0 on release — verified 2026-06-07 |
 
 > **[low] Encoder MIDI channel (marked ?) — verify with `amidi -d` capture.**
 
@@ -136,9 +139,12 @@ All data below verified from tutorial testing, ctrldev driver source code, and l
 | CC 17 → | ZYNPOT_ABS 1 | — |
 | CC 18 → | ZYNPOT_ABS 2 | — |
 | CC 30 → | ZYNPOT_ABS 3 (bottom screen knob) | — |
-| CC 25 (press=127) → | PROGRAM_CHANGE − on drum chain | drum chain = MIDI ch 7, hardcoded |
-| CC 26 (press=127) → | PROGRAM_CHANGE + on drum chain | drum chain = MIDI ch 7, hardcoded |
-| Pad notes 36–51 ch **6** | pass through to chains | TOGGLE_SEQ still fires |
+| CC 25 (press=127) → | PROGRAM_CHANGE − on drum chain | drum chain = MIDI ch 6 (0-indexed=5) |
+| CC 26 (press=127) → | PROGRAM_CHANGE + on drum chain | drum chain = MIDI ch 6 (0-indexed=5) |
+| CC 27 (press=127) → | TOGGLE_MIDI_PLAY | Zynthian transport play/pause |
+| CC 28 (press=127) → | STOP_MIDI_PLAY | Zynthian transport stop |
+| CC 29 (press=127) → | TOGGLE_MIDI_RECORD | Zynthian transport record toggle |
+| Pad notes 36–51 ch **6** | pass through to chains | no CUIA mapping — pure drum hits |
 
 PAD BANK and KNOB BANK buttons switch to bank 2 assignments — not yet mapped.
 Preset 2 (DAW): **Shift + Pad 2** — transport buttons send Mackie Control; use in DAW mode only.
