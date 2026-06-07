@@ -19,7 +19,7 @@ Status: `[~]` drafting · `[t]` user testing · `[>]` ready to publish · `[ ]` 
 - [~] **Multi-Controller Rig (rig-v1)** — SMC-PAD drums (ch6) + transport ctrldev, Maschine seq→bass (ch2), Xboard strings/lead (ch3/ch4); replaces old performance-rig tutorial
 - [~] **EMU Xboard CC Knob Mapping** — static and follow-channel CC bindings across 4 chains; depends on MIDI Channel Routing tutorial
 - [~] **Dub Techno Performance Loop** — drums + bass + pad via step sequencer, delay/reverb effects, SMC-PAD live mute control
-- [~] **Maschine MK2 Step Sequencer** — 8-page 16-step sequencer; per-step note/velocity via encoders; euclidean fill; MIDI clock sync; no NI software required; prereq: Maschine MK2 Controller tutorial
+- [~] **Maschine MK2 Step Sequencer** — Parts 1+5 verified; Part 2 (pages + per-step note/vel) blocking Part 4 (euclidean); Part 3 (tempo encoder) uncertain — daemon marks it "under construction"
 - [~] **Dub Techno Live Rig — Maschine Pad Layer** — Maschine Ch2 pad layer over Zynthian drum+bass; dub delay+reverb; live step toggle techniques; prereqs: Dub Techno Part 1 + Maschine Step Sequencer Part 1
 - [~] **Live Looper with SooperLooper** — synth + U46DJ live audio into SooperLooper; SMC-PAD transport controls record/play/overdub; pads trigger individual loop slots
 

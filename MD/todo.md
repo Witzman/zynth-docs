@@ -80,12 +80,7 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
   - [x] Confirm maschine.json persists after restart — verified 2026-06-06 (pad note survives daemon restart)
   - [ ] Confirm MIDI Control IN drives pad LEDs
 
-- [ ] **Test Maschine MK2 Step Sequencer Part 1 on Pi**
-  - [ ] Confirm sequencer mode activates (Shift+Pad Mode twice)
-  - [ ] Confirm pads toggle steps (no note fired)
-  - [ ] Confirm Play starts sequence, Erase stops it
-  - [ ] Confirm MIDI Ch2 reaches Zynthian chain
-  - Tutorial file: `~/zynth-docs/htmldoku/project-maschine-step-sequencer.md`
+- [x] **Test Maschine MK2 Step Sequencer Part 1 on Pi** — verified (see tutorial)
 
 - [ ] **Test Maschine MK2 Step Sequencer Part 2 on Pi (pages, per-step note/vel)**
   - [ ] Confirm Group A–H switch pages in sequencer mode
@@ -98,13 +93,7 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
   - [ ] Verify exact step positions match table in tutorial
   - [ ] Blocked: Part 2 must pass first
 
-- [ ] **Test Maschine MK2 Step Sequencer Part 5 on Pi (MIDI clock sync)**
-  - [ ] Identify Zynthian MIDI clock output port via `aconnect -l`
-  - [ ] Confirm sequencer locks to external clock
-  - [ ] Confirm MIDI Start resets to step 0
-  - [ ] Confirm MIDI Stop halts and preserves position
-  - [ ] Confirm fallback on clock silence (500ms)
-  - [ ] Blocked: Part 2 must pass first
+- [x] **Test Maschine MK2 Step Sequencer Part 5 on Pi (MIDI clock sync)** — verified 2026-06-07, latest driver commits
 
 ---
 
