@@ -77,7 +77,7 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
   - [x] SSH tunnel no longer needed — web editor at http://192.168.2.123:9000 (maschine-web.service)
   - [x] Confirm web editor loads — verified LAN access working
   - [x] Confirm pad LED changes on color set — fixed LED mapping (commit 1fb62eb), verified working
-  - [ ] Confirm maschine.json persists after restart
+  - [x] Confirm maschine.json persists after restart — verified 2026-06-06 (pad note survives daemon restart)
   - [ ] Confirm MIDI Control IN drives pad LEDs
 
 - [ ] **Test Maschine MK2 Step Sequencer Part 1 on Pi**
@@ -110,4 +110,9 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
 
 ## Backlog
 
-<!-- Add future cross-cutting tasks here -->
+- [ ] **Fix Maschine MK2 display (partially working — continue from investigation notes)**
+  - Current state: `HEIGHT=64`, 2 reports (`byte3=0` then `byte3=32`), raw row-major → "readable but too big"
+  - Investigation notes: `MD/display-investigation.md`
+  - Next steps (in order): column offset test (buf[1]=64), bit reversal test, USB capture with usbmon
+  - Source: `MaschineMK2_linux/src/devices/mk2/mikro.rs:431` (`send_display_bits`)
+  - No commits needed for current state — it's the working baseline
