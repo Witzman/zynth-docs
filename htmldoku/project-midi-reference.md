@@ -160,7 +160,7 @@ Preset 2 (DAW): **Shift + Pad 2** — transport buttons send Mackie Control; use
 | Master MIDI channel | **6** | Notes on ch 6 trigger CUIA master key actions |
 | Master key actions | *none* | Cleared 2026-06-07 — pads are drums, not launcher triggers |
 | MIDI filter rules | *none* | No RPN→CC remapping, no channel redirects |
-| SINGLE_ACTIVE_CHANNEL | **ON** | All MIDI routes to the currently selected chain |
+| SINGLE_ACTIVE_CHANNEL | **OFF** | MIDI routes per channel — each chain responds to its assigned channel only |
 | PROG_CHANGE_ZS3 | **ON** | Program Change recalls ZS3 subsnapshots |
 | BLE MIDI | enabled | SMC-PAD BLE broken on kernel 6.12 — use USB |
 
