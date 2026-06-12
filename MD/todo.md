@@ -99,6 +99,15 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
 
 ## Backlog
 
+- [ ] **Hardware patch bay for Cardinal standalone on Pi (future idea)**
+  - Concept: physical breadboard patch bay → jumper wires trigger MIDI CC → Cardinal VCA matrix routes signals
+  - Stack: Arduino Leonardo (USB MIDI) → matrix scan GPIO → Cardinal standalone on Pi (no Zynthian)
+  - Cardinal patch: 2× VCO, sequencer, 2× ADSR, LFO, VCF, mixer, delay send, reverb send + 7×8 VCA matrix (56 VCAs)
+  - Physical: 7 output pins (VCO1, VCO2, LFO, ADSR1, ADSR2, Seq CV, Seq Gate) + 8 input pins (VCF audio, VCF cutoff, VCA1 CV, VCA2 CV, VCO1 FM, VCO2 FM, delay send, reverb send)
+  - CPU estimate: ~50% Pi 4 standalone — comfortable
+  - Note: Cardinal can't dynamically create/destroy virtual cables via MIDI — VCA matrix (gain-controlled routing) is the implementation pattern
+  - Parts needed: Arduino Leonardo (~€8), half-size breadboard, header pins, 10k pull-down resistors, jumper wires
+
 - [ ] **Fix Maschine MK2 display (partially working — continue from investigation notes)**
   - Current state: `HEIGHT=64`, 2 reports (`byte3=0` then `byte3=32`), raw row-major → "readable but too big"
   - Investigation notes: `MD/display-investigation.md`
