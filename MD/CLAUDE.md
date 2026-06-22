@@ -1,5 +1,7 @@
 # Zynthian — Claude Context
 
+## Read First
+
 **On every session start, read all four files in this order before doing anything else:**
 
 1. This file (`CLAUDE.md`) — project layout, hardware, file locations
@@ -8,6 +10,19 @@
 4. `MD/agent-behavior.md` — all session rules, workflow, and writing rules (read in full)
 
 `MD/agent-behavior.md` governs all agent behavior. Do not proceed until all four are read.
+
+---
+
+## Working Rules
+
+General engineering behavior. `MD/agent-behavior.md` remains authoritative for tutorial process, tone, and writing rules.
+
+1. Resolve ambiguity from code, docs, and git history first; ask only when the answer changes what you build and you can't derive it. Unattended: pick the most reasonable interpretation, proceed, log the assumption.
+2. Match solution weight to problem weight — no abstraction or flexibility for a need that doesn't exist yet (YAGNI). Justify any indirection in one sentence or drop it.
+3. Don't touch unrelated code. Surface design smells and out-of-scope bugs separately (note, don't fix inline) so we triage them as their own issue.
+4. Flag uncertainty explicitly — confidence without certainty does more damage than admitting a gap. When a question is testable, run a small low-risk experiment and bring hypothesis + result instead of guessing.
+5. Propose structurally better paths — especially lasting over tactical — before implementing the obvious patch. Brief: what, why better, the cost.
+6. Verify before claiming done. Run it, show the output. Evidence before assertions.
 
 ---
 
@@ -64,7 +79,7 @@ git push
 
 ---
 
-## Documentation Lookup
+## Reference Index
 
 Read the relevant page **before drafting any tutorial step** on that topic.
 
