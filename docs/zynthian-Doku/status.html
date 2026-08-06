@@ -126,7 +126,7 @@
 
 </style>
 <h1 id="sprint-board">Sprint Board</h1>
-<div class="sb-stats"><div class="sb-stat">Active <span>15</span></div><div class="sb-stat">Needs PR <span>1</span></div><div class="sb-stat">Todo <span>11</span></div><div class="sb-stat">Done <span>7</span></div></div>
+<div class="sb-stats"><div class="sb-stat">Active <span>17</span></div><div class="sb-stat">Needs PR <span>1</span></div><div class="sb-stat">Todo <span>11</span></div><div class="sb-stat">Done <span>7</span></div></div>
 <div class="sb-section"><h2>In Work</h2><div class="sb-items">
 <div class="sb-item"><span class="sb-badge status-pr">Needs PR</span><span class="sb-text">**MIDI Reference** — published; update after each tutorial verification</span></div>
 <div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**Custom MIDI Channel Routing** — Xboard channels 1–4 each drive a dedicated chain; snapshot persists on boot</span></div>
@@ -142,10 +142,12 @@
 <div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**Maschine MK2 Step Sequencer** — Parts 1+5 verified; Part 2 (pages + per-step note/vel) blocking Part 4 (euclidean); Part 3 (tempo encoder) uncertain — daemon marks it &quot;under construction&quot;</span></div>
 <div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**Dub Techno Live Rig — Maschine Pad Layer** — Maschine Ch2 pad layer over Zynthian drum+bass; dub delay+reverb; live step toggle techniques; prereqs: Dub Techno Part 1 + Maschine Step Sequencer Part 1</span></div>
 <div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**Live Looper with SooperLooper** — synth + U46DJ live audio into SooperLooper; SMC-PAD transport controls record/play/overdub; pads trigger individual loop slots</span></div>
+<div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**Maschine MK2 Drum Rig** — 8 groups x 16 steps euclidean drum sequencer via a new ctrldev driver; zynseq holds the patterns. NOT a tutorial yet — implementation plan in progress, see the RESUME HERE section of CLAUDE.md. Tasks 1-7 done, resume at task 8.</span></div>
 <div class="sb-item"><span class="sb-badge status-todo">Todo</span><span class="sb-text">**ZynAddSubFX Sound Design from Scratch** — build custom evolving pad from ADD + PAD synth modules, no presets</span></div>
 <div class="sb-item"><span class="sb-badge status-todo">Todo</span><span class="sb-text">**MaschineMK2_linux MIDI Clock Sync** — add ALSA MIDI clock input to daemon so Zynthian transport drives Maschine step rate; eliminates drift; requires Rust code contribution to MaschineMK2_linux</span></div>
 </div></div>
 <div class="sb-section"><h2>Backlog</h2><div class="sb-items">
+<div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**Maschine MK2 Drum Rig — implementation plan** (paused 2026-08-07, resume at task 8)</span></div>
 <div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**Complete Dub Techno Performance Loop tutorial**</span></div>
 <div class="sb-item"><span class="sb-badge status-todo">Todo</span><span class="sb-text">**Test Dub Techno Live Rig — Maschine Pad Layer Part 1 on Pi**</span></div>
 <div class="sb-item"><span class="sb-badge status-partial">In Progress</span><span class="sb-text">**Debug and fix TOGGLE_SEQ — partially resolved, one issue remaining**</span></div>

@@ -25,6 +25,10 @@ Status: `[~]` drafting · `[t]` user testing · `[>]` ready to publish · `[ ]` 
 
 ---
 
+- [~] **Maschine MK2 Drum Rig** — 8 groups x 16 steps euclidean drum sequencer via a new ctrldev driver; zynseq holds the patterns. NOT a tutorial yet — implementation plan in progress, see the RESUME HERE section of CLAUDE.md. Tasks 1-7 done, resume at task 8.
+
+---
+
 ## Future Tutorial Candidates
 
 - [ ] **ZynAddSubFX Sound Design from Scratch** — build custom evolving pad from ADD + PAD synth modules, no presets

@@ -8,6 +8,17 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
 
 ## Active
 
+- [~] **Maschine MK2 Drum Rig — implementation plan** (paused 2026-08-07, resume at task 8)
+  - Read first: `~/zynth/zynthian-ui/.superpowers/sdd/2026-08-06-maschine-drum-rig/progress.md` (ledger), then the plan and spec in `docs/superpowers/`
+  - [ ] User hardware-test of task 7: per-group pad colours, full-brightness active steps, group buttons 50/100%, white playhead, Play starting all 8 groups
+  - [ ] Task 8 — euclid encoders 1-3 (hits / division / rotation)
+  - [ ] Task 9 — mutes F1-F8, filter enc 4/5, pad preview, Erase clears group
+  - [ ] Task 10 — snapshot round-trip, tutorial page, tracking-file updates
+  - [ ] Map the group-button RGB layout (report 0x81) by byte-probing with the user; buttons are RGB but the daemon writes one byte each
+  - [ ] Cold-boot ordering race: check whether `zynthian.service` scans MIDI before the JACK alias exists; fix is `After=maschine-mk2.service`
+  - [ ] Re-run `tools/patch-autoconnect-maschine.py` after any Zynthian update, or the driver silently stops binding
+  - [ ] Sub-project 2 — two Turing-machine voices on the SMC-PAD: needs its own spec and plan
+
 - [~] **Complete Dub Techno Performance Loop tutorial**
   - [~] Test Part 1 on Pi — load snapshot `dub-techno-p1`, build patterns, verify playback
   - [ ] Draft Part 2 (pad + delay/reverb) — after Part 1 verified

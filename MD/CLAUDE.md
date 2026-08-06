@@ -13,6 +13,40 @@
 
 ---
 
+## RESUME HERE — Maschine MK2 Drum Rig (paused 2026-08-07)
+
+Active work is **not** a tutorial. It is an implementation plan being executed task-by-task with the `superpowers:subagent-driven-development` skill. Pick it up exactly here.
+
+**Read these three before doing anything on it:**
+
+| What | Where |
+|---|---|
+| Progress ledger — authoritative, read first | `~/zynth/zynthian-ui/.superpowers/sdd/2026-08-06-maschine-drum-rig/progress.md` |
+| Plan (tasks, code, verification steps) | `docs/superpowers/plans/2026-08-06-maschine-drum-rig.md` |
+| Spec (design + rejected alternatives) | `docs/superpowers/specs/2026-08-06-maschine-drum-rig-design.md` |
+
+Task briefs and per-task reports: `~/zynth/MaschineMK2_linux/.superpowers/sdd/2026-08-06-maschine-drum-rig/`
+
+**State:** tasks 1, 1b, 2, 3, 4, 5, 6, 7 complete. **Next: task 8** (euclid encoders 1-3), then 9 (mutes F1-F8, filter enc 4/5, pad preview, Erase), then 10 (snapshot round-trip, tutorial page, tracking files).
+
+**First action next session:** the user must hardware-test task 7 — per-group pad colours, active steps at full brightness, group buttons 50%/100%, white playhead sweeping while Play runs, Play starting/stopping all 8 groups. It is deployed and the driver loads, but nobody has pressed a pad since.
+
+**Hard-won facts — do not relearn these:**
+
+- The Pi's installed Zynthian and `libzynseq.so` are **older** than the `~/zynth/zynthian-ui` checkout. Never write a `libseq.*` call from local headers; audit it first with
+  `ssh root@192.168.2.123 'nm -D --defined-only /zynthian/zynthian-ui/zynlibs/zynseq/build/libzynseq.so | awk "\$2==\"T\"{print \$3}" | sort'`
+  This has already broken three times (call arity, `clearPattern`, `getNoteAtIndex`).
+- zynseq addresses sequences as `(bank, sequence, track)` via `self.zynseq.bank`; there is no scene/phrase level. `getSteps()`, `getClocksPerStep()`, `setStepsPerBeat()`, `setBeatsInPattern()` and `clear()` take no pattern argument — `selectPattern()` first. Pattern ids in the prepared snapshot are 10-17, so always resolve via `getPattern(...)`.
+- The Pi **cannot fetch from GitHub** (root has no auth). Move commits with `git bundle create` on WSL, then `git fetch /tmp/x.bundle main:refs/remotes/origin/main` on the Pi. A bare `git reset --hard origin/main` there once rewound the tree because the fetch had silently failed — check fetch exit status first.
+- `~/zynth-docs/tools/patch-autoconnect-maschine.py` must be **re-run after any Zynthian update**, or Zynthian never gives the daemon's virtual port a zmip slot and the driver is "Found" but never "Loaded" — the rig then does nothing at all, with no error.
+- MK2 input dying after seconds was a kernel hidraw fault, fixed by a close-then-reopen watchdog in the daemon (`MaschineMK2_linux` `0b36cd9`). Full diagnosis and everything already ruled out: `htmldoku/project-midi-reference.md`, "Conflict 12". Journal lines `watchdog: input stalled, reopened ...` every ~8s are healthy.
+- Step 0 is the **top-left** pad. LED index for a step is `PAD_OFFSETS[step]` with `PAD_OFFSETS = [12,13,14,15,8,9,10,11,4,5,6,7,0,1,2,3]` (its own inverse). The daemon's `set_rgb_light` halves brightness, so the driver passes 2.0 for full.
+- `ZYNTHIAN_LOG_LEVEL=20` is currently set on the Pi so ctrldev load lines are visible. Clear it with `systemctl unset-environment ZYNTHIAN_LOG_LEVEL` once debugging is done.
+
+**Open items not yet in the plan:** group-button RGB layout is unmapped (needs a byte-probing experiment with the user — the buttons *are* RGB, but the daemon writes one byte each); cold-boot ordering race between `zynthian.service` and `maschine-mk2.service`; and sub-project 2 (two Turing-machine voices on the SMC-PAD) has no spec yet.
+
+---
+
 ## Working Rules
 
 General engineering behavior. `MD/agent-behavior.md` remains authoritative for tutorial process, tone, and writing rules.
