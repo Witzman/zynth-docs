@@ -27,7 +27,12 @@ Turn the Maschine MK2 into an 8-track × 16-step euclidean drum sequencer for li
 
 Verified facts the design rests on:
 
-- Daemon buttons and encoders already emit plain 7-bit CC on ch 1 (`midi_parse.rs:25`; `Message::RPN7` is this library's name for a 7-bit CC, not an RPN).
+- Daemon buttons and encoders already emit plain 7-bit CC on ch 1 (`midi_parse.rs:25`; `Message::RPN7` is this library's name for a 7-bit CC, not an RPN). Exact numbers from `main.rs:795-1010`: Play = CC 1, Erase = CC 2 (its OSC name is `"stop"`, `main.rs:349`), Rec = CC 3, Grid = CC 4, Restart = CC 7, F1–F8 = CC 39–46. Press sends 127, release sends 0 (`cc_math.rs:6`).
+- Encoder CC numbers are configurable per encoder at runtime (`encoder_ccs`, `main.rs:271`, `WsCommand::SetEncoderCC`), persisted in `maschine.json`.
+- **Group A–H emit no MIDI.** They only set the daemon's internal note base in pad mode, or the page in sequencer mode, then go out over OSC and websocket (`main.rs:1087-1151`). A small Rust patch is required to emit CC for them — see "Required daemon patch".
+- Pad NoteOn numbers are `note base + pad index`, and the note base is what Group A–H change: A = 24, B = 36, C = 48, D = 60, E = 72, F = 84, G = 96, H = 108 (`main.rs:1092-1141`). The driver derives pad index as `note − base[selected group]`.
+- `getPatternPlayhead()` does not work from inside a ctrldev driver — noted explicitly at `akai_apc_key25_mk2.py:2182`. The working method is `getClocksPerStep(pattern)` plus `getPlayPosition(scene, sequence)`, minus the pattern's clock offset in the track (`akai_apc_key25_mk2.py:2181-2191`).
+- zynseq addressing arity is ambiguous in this checkout: `zynseq.h:876` declares `toggleMute(scene, phrase, sequence, track)` but `zynthian_gui_arranger.py:299` calls `toggleMute(scene, sequence, track)`. ctypes will not catch a mismatch. The arity that the Pi's installed `libzynseq.so` actually expects must be confirmed before writing any zynseq call, and every zynseq call in the driver goes through a single wrapper method so only one place changes if it is wrong.
 - Daemon OSC server on `127.0.0.1:42434` accepts per-pad RGB + brightness (`/maschine/pad i,i,f`) and per-button RGB + brightness (`/maschine/button/<name> i,f`) — `main.rs:609-665`. **No Rust changes are needed for LED feedback.**
 - The MIDI-in LED path is weaker than OSC: NoteOn note < 16 only, global pad colour, no button LEDs (`main.rs:93-105`). OSC is therefore the LED transport.
 - F1–F8 are the real names of the 8 buttons above the displays (`maschine.rs:25-32`). The transport row enum is `Restart, Grid, Play, Rec, Erase` — there is no `Stop`.
@@ -47,8 +52,9 @@ Verified facts the design rests on:
 ```
 MK2 hardware
   │ USB HID
-MaschineMK2_linux daemon         ← unchanged code, runs in plain pad mode
-  │ pads → NoteOn ch1 · F1-F8/Group/Play/Restart → CC ch1 · encoders → CC ch1
+MaschineMK2_linux daemon         ← one small patch (Group A-H → CC), plain pad mode
+  │ pads → NoteOn ch1 (base+index) · F1-F8/Play/Restart/Erase → CC ch1
+  │ Group A-H → CC 80-87 (patched) · encoders → CC 16-23
   ▼ ALSA
 zynthian_ctrldev_maschine_mk2.py      ← NEW, the whole brain
   │  euclid math · group select · mute · transport · LED render
@@ -62,6 +68,14 @@ zynseq playback ─────┴──► 8 chains, MIDI ch 1-8, shared fluids
 ### Chosen approach and rejected alternatives
 
 **Chosen: Zynthian ctrldev driver.** The daemon degrades to a dumb control surface. All sequencing lives in zynseq.
+
+### Required daemon patch
+
+One change, in `MaschineMK2_linux/src/main.rs`, inside the `send_osc_button_msg` match: Group A–H emit CC 80–87 on ch 1 (127 on press, 0 on release) in addition to their current internal note-base behaviour. Range 80–87 is free in the daemon's map (which uses 1–14, 24–48) and matches the NI factory convention of Group A–D on CC 80–83.
+
+The note-base side effect is kept, not removed — the driver relies on it to decode pad indices.
+
+Rejected alternatives for group select: reading the daemon's outgoing OSC (single UDP listener, would fight other consumers), opening a websocket client from inside the driver (needs a thread and a websocket library in the ctrldev process), and inferring the group from the pad note base (the 12-semitone base spacing overlaps the 16-pad span, so it is ambiguous).
 
 Consequences that motivated the choice:
 
@@ -99,21 +113,23 @@ Exact GM note numbers per instrument are set in the prepared snapshot, not hardc
 
 ## Control map
 
-| Control | Function |
-|---|---|
-| Group A–H | select group; pads and enc 1–5 follow selection |
-| 16 pads | toggle a step of the selected group |
-| Enc 1 | euclid hits, 0 to *step count* — regenerates the group's pattern |
-| Enc 2 | division: 1/32, 1/16, 1/8, 1/16T, 1/8T (`setStepsPerBeat` 8, 4, 2, 6, 3) |
-| Enc 3 | rotate pattern, 0 to *step count* − 1 |
+| Control | MIDI in | Function |
+|---|---|---|
+| Group A–H | CC 80–87 (after daemon patch) | select group; pads and enc 1–5 follow selection |
+| 16 pads | NoteOn ch 1, note = base + index | toggle a step of the selected group |
+| Enc 1 | CC 16 | euclid hits, 0 to *step count* — regenerates the group's pattern |
+| Enc 2 | CC 17 | division: 1/32, 1/16, 1/8, 1/16T, 1/8T (`setStepsPerBeat` 8, 4, 2, 6, 3) |
+| Enc 3 | CC 18 | rotate pattern, 0 to *step count* − 1 |
+| Enc 4 | CC 19 | `'filter cutoff'` zctrl of the selected group's chain |
+| Enc 5 | CC 20 | `'filter resonance'` zctrl of the selected group's chain |
+| F1–F8 | CC 39–46 | mute track 1–8, independent of the selected group (`toggleMute`) |
+| Play | CC 1 | toggle Zynthian transport |
+| Restart | CC 7 | all patterns to step 0 |
+| Erase | CC 2 | clears the selected group's pattern |
+
+Encoder CC numbers 16–20 are the values the rig configures via `encoder_ccs` in `maschine.json`; they are not a daemon default.
 
 *Step count* is 16 on straight divisions and 12 on the two triplet divisions, so the enc 1 and enc 3 ranges shrink on triplet groups. A hit count or rotation held over from a straight division is clamped to the new step count when the division changes.
-| Enc 4 | `'filter cutoff'` zctrl of the selected group's chain |
-| Enc 5 | `'filter resonance'` zctrl of the selected group's chain |
-| F1–F8 | mute track 1–8, independent of the selected group (`toggleMute`) |
-| Play | toggle Zynthian transport |
-| Restart | all patterns to step 0 |
-| Erase | reserved — clears the selected group's pattern |
 
 Encoders 6–8 and the remaining buttons stay unassigned in this sub-project.
 
@@ -174,6 +190,9 @@ A ctrldev driver claims the MK2 input port exclusively, so pad notes never reach
 | `setStepsPerBeat` note rescaling | edits mangled on division change | always regenerate the pattern from euclid after a division change |
 | Playhead jitter | blink lands a frame late | LED refresh runs on the ctrldev refresh tick, not the audio clock. ~8 steps/sec at 130 BPM 16ths. Cosmetic only |
 | Duplicate MIDI events | every press acts twice | SMC-PAD hit exactly this through a mirrored port. Check the MK2 for the same during Part 1 |
+| zynseq call arity wrong (3 vs 4 args) | silent garbage argument, mutes or notes land on the wrong sequence | confirm against the Pi's installed `libzynseq.so` and `zynseq.h` before the first zynseq call; route every call through one wrapper method |
+| Group note base drifts | pad index decoded wrong, steps toggle in the wrong place | driver decodes `note − base[selected group]` and ignores anything outside 0–15; the daemon patch keeps note-base behaviour intact so the mapping stays deterministic |
+| Encoder CCs not set to 16–20 | enc 1–5 do nothing | set `encoder_ccs` in `maschine.json` (web editor at `http://<pi>:9000`) as an explicit setup step, and verify with a MIDI dump |
 | Deploy gap | testing stale code | driver lives in `~/zynth/zynthian-ui/zyngine/ctrldev/` but must be copied to the Pi's `/zynthian/zynthian-ui/` each cycle. Every test part starts with the copy step |
 
 ---
