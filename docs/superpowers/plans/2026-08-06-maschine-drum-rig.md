@@ -17,7 +17,8 @@
 - Every helper module in `zyngine/ctrldev/` must expose a class named after the file with `dev_ids = []`, otherwise the loader logs an error at every startup.
 - The helper module must import nothing from Zynthian — tests import it by path, and `import zyngine` pulls in every engine (`zyngine/__init__.py:29-53`).
 - No pytest on the dev machine. Tests use stdlib `unittest`, run with `python3 -m unittest`.
-- Local dev repo: `/home/witzman/zynth/zynthian-ui` (git). Runtime on Pi: `/zynthian/zynthian-ui`. Every Pi task starts by copying changed files across.
+- Local dev repo: `/home/witzman/zynth/zynthian-ui` (git, branch `vangelis`). Runtime on Pi: `/zynthian/zynthian-ui`. Every Pi task starts by copying changed files across.
+- **The Pi's installed Zynthian is an older API than the local checkout, and the Pi is authoritative.** Verified on 2026-08-06 against `/zynthian/zynthian-ui`: zynseq addresses sequences as `(bank, sequence, track)` with `self.zynseq.bank` — there is no `scene`/`phrase` level; `getSteps()`, `getClocksPerStep()`, `getStepsPerBeat()`, `setStepsPerBeat()`, `setBeatsInPattern()` and `clear()` all act on the *selected* pattern and take no pattern argument; `getPattern(bank, sequence, track, position)`; `getPlayPosition(bank, sequence)`; `setPlayPosition(bank, sequence, clock)`; `toggleMute(bank, sequence, track)`; `isMuted(bank, sequence, track)`; there is no `clearPattern(index)`. The zynseq subsignal constants live on the zynseq object (`self.zynseq.SS_SEQ_PROGRESS`), not on `zynsigman`. The base ctrldev class does **not** set `self.zynseq` — only its zynpad subclass does. Never write a zynseq call from memory or from the local checkout's header; every signature in this plan was read off the Pi.
 - Pi access: `ssh root@<PI_IP>`. `zynthian.local` does not resolve from WSL2 — use the IP. As of 2026-08-06 the last known IP (192.168.2.123) does not respond; confirm the current IP before Task 1.
 - Euclid placement must match the daemon's existing algorithm for parity with the published tutorial: hit `i` at `floor(i * steps / hits)` (`MaschineMK2_linux/src/sequencer.rs:1-12`).
 - Button CC values: press = 127, release = 0. Act on press only (`cc_math.rs:6`).
@@ -90,7 +91,7 @@ Expected: pad 1 → `90 30 vv` if Group C is the current base (note 48), F1 → 
 
 If Group A does emit something, the Task 2 Rust patch is unnecessary — note that and skip it.
 
-- [ ] **Step 4: Resolve the zynseq call arity**
+- [ ] **Step 4: Resolve the zynseq call arity** — *done 2026-08-06, findings are in Global Constraints; re-run only to confirm nothing changed*
 
 ```bash
 ssh root@$PI 'grep -n "void toggleMute\|bool isMuted\|uint32_t getPlayPosition\|void addPattern\|getSteps\|getClocksPerStep\|getPattern(" /zynthian/zynthian-ui/zynlibs/zynseq/zynseq.h'
@@ -744,7 +745,6 @@ BRIGHT_OFF = 0.05
 
 # Task 1 findings
 DEV_ID = "DEV_ID_FROM_TASK_1"
-SEQ_ADDR_HAS_PHRASE = True
 
 
 class zynthian_ctrldev_maschine_mk2(zynthian_ctrldev_base):
@@ -756,6 +756,9 @@ class zynthian_ctrldev_maschine_mk2(zynthian_ctrldev_base):
 
     def __init__(self, state_manager, idev_in, idev_out=None):
         super().__init__(state_manager, idev_in, idev_out)
+        # The installed base class sets self.zynseq only in its zynpad
+        # subclass, so this driver wires it up itself.
+        self.zynseq = state_manager.zynseq
         self.libseq = self.zynseq.libseq
         self.group = 0                       # selected group, 0 = A
         self.leds = lib.led_cache()
@@ -770,20 +773,23 @@ class zynthian_ctrldev_maschine_mk2(zynthian_ctrldev_base):
             logging.error(f"Maschine OSC send failed: {e}")
 
     def _seq_addr(self, group):
-        """Sequence address tuple for a group, matching the installed
-        libzynseq arity. Every zynseq call routes through here so a wrong
-        arity is a one-line fix."""
+        """Sequence address for a group, as the installed libzynseq expects:
+        (bank, sequence, track). Every zynseq call routes through here."""
 
-        if SEQ_ADDR_HAS_PHRASE:
-            return (self.zynseq.scene, 0, group, 0)
-        return (self.zynseq.scene, group, 0)
+        return (self.zynseq.bank, group, 0)
 
     def _pattern_of(self, group):
-        """Pattern id backing a group, read from zynseq (not cached)"""
+        """Pattern id backing a group, read from zynseq (not cached).
+        Installed signature: getPattern(bank, sequence, track, position)"""
 
-        return self.libseq.getPattern(*self._seq_addr(group), 0)
+        return self.libseq.getPattern(self.zynseq.bank, group, 0, 0)
 
     def _select_pattern(self, group):
+        """Select a group's pattern and return its id. The installed API is
+        selection-based — getSteps(), setStepsPerBeat(), setBeatsInPattern()
+        and clear() all act on the selected pattern and take no pattern
+        argument, so every read or write is preceded by this call."""
+
         pattern = self._pattern_of(group)
         self.libseq.selectPattern(pattern)
         return pattern
@@ -835,8 +841,8 @@ class zynthian_ctrldev_maschine_mk2(zynthian_ctrldev_base):
         self._render_all()
 
     def _toggle_step(self, step):
-        pattern = self._select_pattern(self.group)
-        steps = self.libseq.getSteps(pattern)
+        self._select_pattern(self.group)
+        steps = self.libseq.getSteps()
         if step >= steps:
             return
         note = self._group_note(self.group)
@@ -859,8 +865,8 @@ class zynthian_ctrldev_maschine_mk2(zynthian_ctrldev_base):
     # --- LEDs ----------------------------------------------------------
 
     def _render_pads(self):
-        pattern = self._select_pattern(self.group)
-        steps = self.libseq.getSteps(pattern)
+        self._select_pattern(self.group)
+        steps = self.libseq.getSteps()
         note = self._group_note(self.group)
         for pad in range(16):
             if pad >= steps:
@@ -977,7 +983,8 @@ Extend the CC branch of `midi_event`, before the group check:
                 return True
             if cc_num == CC_RESTART:
                 for group in range(8):
-                    self.libseq.setPlayPosition(*self._seq_addr(group)[:-1], 0)
+                    # Installed signature: setPlayPosition(bank, sequence, clock)
+                    self.libseq.setPlayPosition(self.zynseq.bank, group, 0)
                 return True
 ```
 
@@ -988,14 +995,16 @@ Extend the CC branch of `midi_event`, before the group check:
 ```python
     def _playhead(self):
         """Current step of the selected group's pattern, or None when stopped.
-        getPatternPlayhead() does not work here (see apc_key25_mk2.py:2182)."""
+        getPatternPlayhead() is unreliable from a ctrldev driver (see the note
+        at apc_key25_mk2.py:2182), so derive it from clocks instead.
+        Installed signatures: getClocksPerStep() takes no argument and acts on
+        the selected pattern; getPlayPosition(bank, sequence)."""
 
-        pattern = self._pattern_of(self.group)
-        cps = self.libseq.getClocksPerStep(pattern)
+        self._select_pattern(self.group)
+        cps = self.libseq.getClocksPerStep()
         if cps <= 0:
             return None
-        addr = self._seq_addr(self.group)
-        playpos = self.libseq.getPlayPosition(*addr[:-1])
+        playpos = self.libseq.getPlayPosition(self.zynseq.bank, self.group)
         if playpos < 0:
             return None
         return playpos // cps
@@ -1026,15 +1035,17 @@ Add to `init`, after `super().init()`:
 
 ```python
         zynsigman.register_queued(
-            zynsigman.S_STEPSEQ, zynsigman.SS_SEQ_PROGRESS, self._on_progress)
+            zynsigman.S_STEPSEQ, self.zynseq.SS_SEQ_PROGRESS, self._on_progress)
 ```
 
 and the matching unregister at the top of `end`:
 
 ```python
         zynsigman.unregister(
-            zynsigman.S_STEPSEQ, zynsigman.SS_SEQ_PROGRESS, self._on_progress)
+            zynsigman.S_STEPSEQ, self.zynseq.SS_SEQ_PROGRESS, self._on_progress)
 ```
+
+The subsignal constants live on the zynseq object, not on `zynsigman` — the installed base class does exactly this at `zyngine/ctrldev/zynthian_ctrldev_base.py:208`. `SS_SEQ_PROGRESS` is defined at `zynlibs/zynseq/zynseq.py:85`.
 
 The callback goes through a wrapper because signal handlers are called with the signal's own arguments, which `_render_pads` does not take:
 
@@ -1049,13 +1060,7 @@ with the import:
 from zyngine.zynthian_signal_manager import zynsigman
 ```
 
-Confirm the exact signal name first:
-
-```bash
-ssh root@$PI 'grep -n "SS_SEQ_" /zynthian/zynthian-ui/zyngine/zynthian_signal_manager.py'
-```
-
-Use the progress/step signal that exists there. If none exists, fall back to the base class `refresh()` cadence and note the reduced smoothness.
+Already verified on the Pi: `S_STEPSEQ = 9` in `zyngine/zynthian_signal_manager.py:46`, and `SS_SEQ_PLAY_STATE = 1`, `SS_SEQ_REFRESH = 2`, `SS_SEQ_PROGRESS = 3` in `zynlibs/zynseq/zynseq.py:83-85`. `SS_SEQ_PROGRESS` is emitted from `zynseq.py:168`.
 
 - [ ] **Step 5: Deploy and verify**
 
@@ -1154,12 +1159,14 @@ The daemon sends absolute 0–127 encoder positions (`cc_math.rs:1-4`), so scale
 
         div_idx = self.div[group]
         label, spb, beats = lib.DIVISIONS[div_idx]
-        pattern_id = self._select_pattern(group)
+        self._select_pattern(group)
         note = self._group_note(group)
 
-        self.libseq.setBeatsInPattern(pattern_id, beats)
+        # All three act on the selected pattern and take no pattern argument.
+        # There is no clearPattern(index) in the installed API — clear() is it.
+        self.libseq.setBeatsInPattern(beats)
         self.libseq.setStepsPerBeat(spb)
-        self.libseq.clearPattern(pattern_id)
+        self.libseq.clear()
         for step, on in enumerate(lib.build_pattern(div_idx, self.hits[group], self.rot[group])):
             if on:
                 self.libseq.addNote(step, note, 100, 1.0, 0.0)
@@ -1185,14 +1192,14 @@ Replace `_select_group` from Task 6:
         real values after a snapshot load. Rotation is not recoverable — it
         stays at whatever the driver last set."""
 
-        pattern = self._select_pattern(group)
+        self._select_pattern(group)
         spb = self.libseq.getStepsPerBeat()
         for idx, (_, div_spb, _) in enumerate(lib.DIVISIONS):
             if div_spb == spb:
                 self.div[group] = idx
                 break
         note = self._group_note(group)
-        steps = self.libseq.getSteps(pattern)
+        steps = self.libseq.getSteps()
         self.hits[group] = sum(
             1 for step in range(steps) if self.libseq.getNoteVelocity(step, note))
 ```
@@ -1320,8 +1327,8 @@ and add:
         lib_zyncore.ui_send_note_off(self.group, note, 0)
 
     def _clear_group(self):
-        pattern = self._select_pattern(self.group)
-        self.libseq.clearPattern(pattern)
+        self._select_pattern(self.group)
+        self.libseq.clear()             # acts on the selected pattern
         self.libseq.updateSequenceInfo()
         self.hits[self.group] = 0
         self._render_pads()
@@ -1333,13 +1340,15 @@ with the import:
 from zyncoder.zyncore import lib_zyncore
 ```
 
-Confirm the note-send function names before relying on them:
+**The note-send call above is a placeholder and must be replaced with a verified name before this method is written.** The Pi's `zyncoder/zyncore.py` contains no `note_on` or `note_off` wrapper at all, and the only note sends in the installed ctrldev drivers are `lib_zyncore.dev_send_note_on(idev, chan, note, vel)` — which sends *to* a device for LED feedback, not into the chains. Find the real injection path:
 
 ```bash
-ssh root@$PI 'grep -n "ui_send_note_on\|ui_send_note_off\|dev_send_note_on" /zynthian/zynthian-ui/zyncoder/zyncore.py'
+ssh root@$PI 'grep -rn "write_zynmidi\|zynmidi_send\|send_note_on" /zynthian/zynthian-ui/zyncoder/ /zynthian/zynthian-ui/zyngui/zynthian_gui_pated*.py /zynthian/zynthian-ui/zynlibs/zynseq/zynseq.py | head -20'
 ```
 
-Use the names that exist there. If only `dev_send_*` variants exist, they take the device index as first argument instead of the channel.
+The pattern editor plays a preview note when a step is selected, so whatever call it uses is the one to copy — use that name and argument order verbatim.
+
+If no usable injection call exists, drop the preview instead of inventing one. It is a nice-to-have, and the obvious workaround (setting `unroute_from_chains = False`) is worse than silence: every pad tap would also trigger group A's chain directly, on every group.
 
 - [ ] **Step 6: Deploy and verify**
 
