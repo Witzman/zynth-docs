@@ -108,6 +108,18 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
   - Note: Cardinal can't dynamically create/destroy virtual cables via MIDI — VCA matrix (gain-controlled routing) is the implementation pattern
   - Parts needed: Arduino Leonardo (~€8), half-size breadboard, header pins, 10k pull-down resistors, jumper wires
 
+- [ ] **MaschineMK2_linux — MIDI-mode compatibility (from CE analysis, 2026-08-06)**
+  - Source of truth: `htmldoku/project-midi-reference.md` §"Maschine MK2 — factory MIDI mode"
+  - Option A: make daemon's CC map match NI factory MIDI mode (Play=108, Rec=109, Group A–D=80–83, knobs CC 14–21 / 22–29, F1–F8 CC 46–53 / 54–61). Would make stock MK2 DAW templates work unchanged; breaks current tutorials that cite CC 1–14 / 24–48
+  - Option B: leave map as-is, add a selectable "NI compat" profile in `maschine.json`
+  - Related: `MIDI Control` IN currently takes NoteOn 0–15 for pad LEDs. NI convention is HSB triplets sharing one note across ch 1/2/3. Conversion reference: `toHSB()` in `CE/Template Support Files/Ableton Live 9/Maschine_Mk2/MIDI_Map.py`
+  - Confirmed dead end: Controller Editor exposes no display access — no MIDI path to the LCD
+
+- [ ] **Confirm which preset is flashed on the SMC-PAD**
+  - `~/zynth/SMC Pad/` is a NiFox preset pack for Koala Sampler (iPad) — pads ch 10 notes 36–67, CCs on ch 1
+  - If flashed, every channel-6 assumption in the MIDI reference and 4 tutorials is stale
+  - [ ] Run `amidi -d -p hw:X,0,0`, hit pad 1, read status byte — `0x95` = factory preset 1, `0x99` = NiFox
+
 - [ ] **Fix Maschine MK2 display (partially working — continue from investigation notes)**
   - Current state: `HEIGHT=64`, 2 reports (`byte3=0` then `byte3=32`), raw row-major → "readable but too big"
   - Investigation notes: `MD/display-investigation.md`

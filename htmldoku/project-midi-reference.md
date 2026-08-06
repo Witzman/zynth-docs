@@ -71,6 +71,75 @@ Row 3: C3  C#3  D3  D#3   (MIDI 48–51)
 
 ---
 
+### Maschine MK2 — factory MIDI mode (Native Instruments Controller Editor)
+
+**This map is not what the Pi sees.** It documents what the MK2 firmware emits in NI's stand-alone MIDI mode, configured by Controller Editor on Windows/macOS. The `MaschineMK2_linux` daemon bypasses MIDI mode entirely and reads raw USB HID, so the daemon's own map (above) is what applies on Zynthian. This section exists as a compatibility reference — matching it would make the daemon drop-in compatible with DAW templates written for a stock MK2.
+
+Source: `~/zynth/CE/` — Controller Editor 2.7.6 Windows install. `base.ncc` and `Configuration.ncc` are **plain XML** (`<ni-controller-midi-map version="3">`), readable and editable on Linux without running the app. Extract the MK2 block by slicing between `<controller type="Maschine Controller MK2">` and the next `<controller type=`.
+
+**Pads** — channel 1, Note On/Off, `gate` behaviour, velocity curve 3. Eight pad pages, selected on the device:
+
+| Page | Notes | Page | Notes |
+|---|---|---|---|
+| A | 12–27 | E | 60–75 |
+| B | 24–39 | F | 72–87 |
+| C | 36–51 | G | 84–99 |
+| D | 48–63 | H | 96–111 |
+
+Page stride is 12 semitones but each page spans 16 notes — **adjacent pages overlap by 4 notes**. This is NI's factory default, not an error in transcription. The Linux daemon uses a 12-semitone base per group button (A=24 … H=108) with the same consequence.
+
+Each pad additionally exposes a `Pressure1..16` control (subtype `pressure`) — assignable independently of the trigger.
+
+**Encoders and display buttons** — channel 1, two switchable pages:
+
+| Control | Page 1 | Page 2 |
+|---|---|---|
+| Knob 1–8 | CC 14–21 | CC 22–29 |
+| Button F1–F8 | CC 46–53 | CC 54–61 |
+
+**Transport / mode buttons** — channel 1, CC, toggle, fires on press:
+
+| Button | CC | Button | CC | Button | CC |
+|---|---|---|---|---|---|
+| Tempo | 3 | Sampling | 88 | StepR | 106 |
+| Volume | 7 | All | 89 | Grid | 107 |
+| Swing | 9 | AutoWrite | 90 | Play | 108 |
+| Group A–D | 80–83 | Group E–H | 91–94 | Rec | 109 |
+| Control | 85 | MasterL | 98 | Erase | 110 |
+| Step | 86 | MasterR | 99 | NoteRep | 111 |
+| Browse | 87 | Enter | 100 | Scene | 112 |
+| | | Dial (wheel turn) | 101 | Pattern | 113 |
+| | | Push (wheel click) | 102 | PadMode | 114 |
+| | | Restart | 104 | Navigate | 115 |
+| | | StepL | 105 | Duplicate | 116 |
+| | | | | Select | 117 |
+| | | | | Solo | 118 |
+| | | | | Mute | 119 |
+
+37 buttons plus the wheel. Controller Editor exposes no **Shift** — the firmware consumes it as the page/template modifier — and no **Main** or **View**. It exposes no display access at all, confirming the LCD is USB-only with no MIDI path.
+
+**LED colour model — HSB across three channels.** Every RGB LED is addressed as three separate targets that share one note (pads) or CC (group buttons) and differ only by channel:
+
+| Suffix | Channel | Component |
+|---|---|---|
+| `…H` | 0 | Hue |
+| `…S` | 1 | Saturation |
+| `…B` | 2 | Brightness |
+
+Pad 1's LED is `Pad1H` note 12 ch 0, `Pad1S` note 12 ch 1, `Pad1B` note 12 ch 2. Group button A is `GroupAH/AS/AB` on CC 80, channels 0/1/2.
+
+NI's own RGB→HSB conversion is readable in `CE/Template Support Files/Ableton Live 9/Maschine_Mk2/MIDI_Map.py` (`toHSB`, plaintext). It returns a pair of 7-bit HSB triplets — lit and unlit state:
+
+```python
+hue = <0..255 from standard RGB hexcone>
+on  = (hue/2, min(sat/2 + 20, 127), bright/2)
+off = (hue/2, min(sat/2 + 15, 127), max(bright/2 - 90, 5))
+```
+
+The Linux daemon writes raw RGB bytes over USB instead (`src/devices/mk2/mikro.rs:453`), which is correct for the HID path. Relevant only if the daemon's `MIDI Control` input is ever extended to accept NI-style colour: it would need HSB triplets on channels 1/2/3, not a single RGB value.
+
+---
+
 ### E-MU Xboard 25
 
 | Control | MIDI message | Ch | Range | Notes |
@@ -148,6 +217,36 @@ All data below verified from tutorial testing, ctrldev driver source code, and l
 
 PAD BANK and KNOB BANK buttons switch to bank 2 assignments — not yet mapped.
 Preset 2 (DAW): **Shift + Pad 2** — transport buttons send Mackie Control; use in DAW mode only.
+
+---
+
+### SMC-PAD — NiFox preset pack for Koala Sampler
+
+`~/zynth/SMC Pad/` holds a third-party preset pack (NiFox) that reflashes the SMC-PAD for **Koala Sampler on iPad**. It is not a Zynthian configuration. Recorded here because loading it **replaces the factory map documented above**, and every channel-6 assumption on this page then breaks.
+
+| File | Role |
+|---|---|
+| `*.spc` × 5 | Device presets, flashed with `MidiSuite/MidiSuite.exe` (Windows) |
+| `MIDI Map for Koala.json` | Koala-side import — **Settings → Extras → MIDI Map → Import** |
+| `Tutorial + Cheat Sheet/` | Cheat sheets, bank layout images, demo video |
+
+Presets: `1. NiFox Color+` · `1.2 Extra Color+` (banks C/D) · `2. NiFox FX+Control` · `3. DAW Control` · `EXTRA - YARG`.
+
+Map in `1. NiFox Color+`, from the Koala JSON:
+
+| Control | MIDI message | Ch |
+|---|---|---|
+| 32 pads (banks A+B) | Notes 36–67 | **10** |
+| 8 encoders, bank A | CC 30–37 — eq gain/freq, sampleStart, sampleLength, VOL, PITCH | 1 |
+| 8 encoders, bank B | CC 38–48 — mixer vols, fx STUTTER/CUTTER/CRUSH/TALKBOX/FILTER/RING/COMB | 1 |
+| Transport buttons | CC 25–29 — mute, solo, play, fxHold, rec | 1 |
+| Seq / mixer buttons | Notes 111–126 | 1 |
+
+Pad-to-note order is row-reversed relative to Zynthian's expectation: note 36 → Koala pad index 12.
+
+`.spc` is a binary of fixed 22-byte records — byte 0 is the control type (`0x02` = CC, `0x09` = note), byte 2 the CC or note number. The CC numbers in the dump match the JSON exactly, so the file is decodable without MidiSuite if a Linux-side editor is ever needed.
+
+> **[low] Which preset is currently flashed to the device is not confirmed.** If the SMC-PAD has been used with Koala since the last Zynthian session, verify with `amidi -d` before trusting the channel-6 map above.
 
 ---
 

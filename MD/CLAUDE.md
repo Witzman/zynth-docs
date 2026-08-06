@@ -56,6 +56,11 @@ Tutorial navigation uses V5 touch keypad (primary), SSH, and webconf. Never assu
     zynthian-sys/              ← git repo: system scripts, config, boot, sbin
     zynthian-ui/               ← git repo: Python UI + synth engine
     zynthian-webconf/          ← git repo: web config interface (Python/Tornado)
+    zynthian-hw/               ← git repo: hardware — PCBs, schematics, parts specs, pin assignments
+    MaschineMK2_linux/         ← git repo: Rust HID daemon for Maschine MK2
+    CE/                        ← NI Controller Editor 2.7.6 (Windows install) — MK2 factory MIDI-mode templates
+    SMC Pad/                   ← NiFox preset pack — SMC-PAD as Koala Sampler controller (iPad), not Zynthian
+    manuals/                   ← controller and interface manuals (txt/pdf)
     MD/   →  symlink           ← ~/zynth-docs/MD/
     CLAUDE.md  →  symlink      ← ~/zynth-docs/MD/CLAUDE.md
 
@@ -102,6 +107,9 @@ Read the relevant page **before drafting any tutorial step** on that topic.
 | System architecture, boot sequence | `~/zynth-docs/htmldoku/architecture.md` |
 | All env vars / configuration variables | `~/zynth-docs/htmldoku/configuration-reference.md` |
 | LV2 plugin install and management | `~/zynth-docs/htmldoku/lv2-plugins.md` |
+| PCBs, schematics, parts specs, pin assignments | `~/zynth/zynthian-hw/` — per-board dirs (`V5_main`, `ZynScreen_v1.5`, `Zynaptik_v3`, …), plus `doc/`, `lib/`, `fritzing_parts/` |
+| Maschine MK2 factory MIDI-mode map, pad LED HSB model | `~/zynth-docs/htmldoku/project-midi-reference.md` §"factory MIDI mode" — raw source is `~/zynth/CE/*.ncc` (plain XML) |
+| SMC-PAD Koala Sampler preset pack | `~/zynth-docs/htmldoku/project-midi-reference.md` §"NiFox preset pack" — raw source is `~/zynth/SMC Pad/` |
 
 ---
 
