@@ -19,7 +19,9 @@
 - No pytest on the dev machine. Tests use stdlib `unittest`, run with `python3 -m unittest`.
 - Local dev repo: `/home/witzman/zynth/zynthian-ui` (git, branch `vangelis`). Runtime on Pi: `/zynthian/zynthian-ui`. Every Pi task starts by copying changed files across.
 - **The Pi's installed Zynthian is an older API than the local checkout, and the Pi is authoritative.** Verified on 2026-08-06 against `/zynthian/zynthian-ui`: zynseq addresses sequences as `(bank, sequence, track)` with `self.zynseq.bank` — there is no `scene`/`phrase` level; `getSteps()`, `getClocksPerStep()`, `getStepsPerBeat()`, `setStepsPerBeat()`, `setBeatsInPattern()` and `clear()` all act on the *selected* pattern and take no pattern argument; `getPattern(bank, sequence, track, position)`; `getPlayPosition(bank, sequence)`; `setPlayPosition(bank, sequence, clock)`; `toggleMute(bank, sequence, track)`; `isMuted(bank, sequence, track)`; there is no `clearPattern(index)`. The zynseq subsignal constants live on the zynseq object (`self.zynseq.SS_SEQ_PROGRESS`), not on `zynsigman`. The base ctrldev class does **not** set `self.zynseq` — only its zynpad subclass does. Never write a zynseq call from memory or from the local checkout's header; every signature in this plan was read off the Pi.
-- Pi access: `ssh root@<PI_IP>`. `zynthian.local` does not resolve from WSL2 — use the IP. As of 2026-08-06 the last known IP (192.168.2.123) does not respond; confirm the current IP before Task 1.
+- Pi access: `ssh root@192.168.2.123` — reachable and verified 2026-08-06, including across a reboot. `zynthian.local` does not resolve from WSL2, so use the IP.
+- **ALSA card numbers, ALSA client numbers and USB device numbers are not stable across reboots.** Verified by rebooting on 2026-08-06: SINCO moved from card 4 / client 32 to card 2 / client 24, `f_midi` moved the opposite way, and `maschine.rs` went from client 130 to 129 — and its a2j port name embeds that number. Never hardcode `hw:X,0,0` or a client number; resolve them at use time from `aconnect -l` or `/proc/asound/cards`. JACK port aliases and the `ZynMidiRouter:devN_in` wiring did survive the reboot, so those are safe to depend on.
+- Device ids come from JACK port aliases, and only real USB MIDI ports get one. Verified post-reboot: `system:midi_capture_2` → uid `USB:1.1.1/SINCO IN 2` → id `SINCO IN 2`; `system:midi_capture_4` → uid `USB:1.1.3/Maschine Controller MK2 IN 1` (the MK2's own native port, which carries no pad data). The daemon's `a2j:maschine rs [...] (capture): Pads MIDI` has no alias at all, hence Task 1b. Aliases written by Task 1b use a `virtual:` prefix, not `USB:` — the latter is reserved for ports with a real bus path and is parsed as such.
 - Euclid placement must match the daemon's existing algorithm for parity with the published tutorial: hit `i` at `floor(i * steps / hits)` (`MaschineMK2_linux/src/sequencer.rs:1-12`).
 - Button CC values: press = 127, release = 0. Act on press only (`cc_math.rs:6`).
 - All 8 drum chains use one shared FluidSynth process; per-group filter is CC 74 / CC 71, exposed as the controllers `'filter cutoff'` and `'filter resonance'` (`zynthian_engine_fluidsynth.py:66-67`).
@@ -146,7 +148,7 @@ The alias is safe from being clobbered: `update_hw_midi_ports` only rewrites ali
 
 **Interfaces:**
 - Consumes: nothing.
-- Produces: `DEV_ID = "Maschine MK2 Pads"` — the string Task 6's driver puts in `dev_ids`. The uid written is `USB:maschine.rs/Maschine MK2 Pads`; `get_midi_in_devid` returns everything after the first `/`.
+- Produces: `DEV_ID = "Maschine MK2 Pads"` — the string Task 6's driver puts in `dev_ids`. The uid written is `virtual:maschine.rs/Maschine MK2 Pads`; `get_midi_in_devid` returns everything after the first `/`.
 
 - [ ] **Step 1: Copy the deployed script into version control**
 
@@ -177,7 +179,7 @@ try:
     port = client.get_port_by_name(port_name)
     for alias in list(port.aliases):
         port.unset_alias(alias)
-    port.set_alias("USB:maschine.rs/Maschine MK2 Pads")
+    port.set_alias("virtual:maschine.rs/Maschine MK2 Pads")
     print(f"Alias set: {port.aliases}")
 finally:
     client.close()
@@ -194,7 +196,7 @@ ssh root@$PI 'chmod +x /usr/local/bin/maschine-jack-connect.sh && systemctl rese
 ssh root@$PI 'journalctl -u maschine-mk2.service --no-pager -n 10'
 ```
 
-Expected in the log: `Connected: a2j:maschine rs [...] (capture): Pads MIDI` followed by `Alias set: ['USB:maschine.rs/Maschine MK2 Pads']`.
+Expected in the log: `Connected: a2j:maschine rs [...] (capture): Pads MIDI` followed by `Alias set: ['virtual:maschine.rs/Maschine MK2 Pads']`.
 
 - [ ] **Step 4: Verify the derived device id**
 
@@ -857,7 +859,7 @@ COLOR_STEP_OFF = 0x101010
 BRIGHT_ON = 0.9
 BRIGHT_OFF = 0.05
 
-# Set by Task 1b's alias helper: uid "USB:maschine.rs/Maschine MK2 Pads",
+# Set by Task 1b's alias helper: uid "virtual:maschine.rs/Maschine MK2 Pads",
 # and Zynthian's device id is everything after the first '/'.
 DEV_ID = "Maschine MK2 Pads"
 
