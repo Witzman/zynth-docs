@@ -2,7 +2,7 @@
 
 **Purpose:** Complete MIDI map for this hardware rig — device capabilities, active assignments, conflicts, and Zynthian feature triggers. Update this page whenever a tutorial is verified or configuration changes deliberately.
 
-**Hardware:** Maschine MK2 (via MaschineMK2_linux daemon) · E-MU Xboard 25 · SMC-PAD (Preset 1)
+**Hardware:** Maschine MK2 (via MaschineMK2_linux daemon) · E-MU Xboard 25 · SMC-PAD (**NiFox Koala preset — pads on ch 10, see Conflict 11**)
 **Access:** SSH · Webconf
 
 ---
@@ -160,7 +160,9 @@ The Linux daemon writes raw RGB bytes over USB instead (`src/devices/mk2/mikro.r
 
 ---
 
-### SMC-PAD (Preset 1 — Performance preset)
+### SMC-PAD (Preset 1 — Performance preset) — SUPERSEDED 2026-08-06
+
+> **The NiFox Koala preset pack is now flashed to the device.** Pads send on **channel 10**, not channel 6. The table below describes the factory preset and no longer matches the hardware. It is kept because every current tutorial and the live `default.sh` still assume it. See "NiFox preset pack" below for the active map and Conflict 11 for the fix.
 
 Select Preset 1: **Shift + Pad 1**.
 
@@ -222,7 +224,7 @@ Preset 2 (DAW): **Shift + Pad 2** — transport buttons send Mackie Control; use
 
 ### SMC-PAD — NiFox preset pack for Koala Sampler
 
-`~/zynth/SMC Pad/` holds a third-party preset pack (NiFox) that reflashes the SMC-PAD for **Koala Sampler on iPad**. It is not a Zynthian configuration. Recorded here because loading it **replaces the factory map documented above**, and every channel-6 assumption on this page then breaks.
+`~/zynth/SMC Pad/` holds a third-party preset pack (NiFox) that reflashes the SMC-PAD for **Koala Sampler on iPad**. It is not a Zynthian configuration. **It is currently installed on the device** (confirmed 2026-08-06), so this — not the factory table above — is what the Pi receives.
 
 | File | Role |
 |---|---|
@@ -244,9 +246,21 @@ Map in `1. NiFox Color+`, from the Koala JSON:
 
 Pad-to-note order is row-reversed relative to Zynthian's expectation: note 36 → Koala pad index 12.
 
-`.spc` is a binary of fixed 22-byte records — byte 0 is the control type (`0x02` = CC, `0x09` = note), byte 2 the CC or note number. The CC numbers in the dump match the JSON exactly, so the file is decodable without MidiSuite if a Linux-side editor is ever needed.
+`.spc` is a binary of fixed 22-byte records — byte 0 is the control type (`0x02` = CC, `0x09` = note), byte 2 the CC or note number. The CC numbers in the dump match the JSON exactly, so the file is decodable without MidiSuite if a Linux-side editor is ever needed. Pad records carry a `0x96` byte — Note-On status for channel 10 — corroborating the JSON channel.
 
-> **[low] Which preset is currently flashed to the device is not confirmed.** If the SMC-PAD has been used with Koala since the last Zynthian session, verify with `amidi -d` before trusting the channel-6 map above.
+**What survived the reflash, and what did not:**
+
+| Element | Factory preset 1 | NiFox Color+ | Impact |
+|---|---|---|---|
+| Pad channel | 6 | **10** | breaks master channel, drum chain routing, `DRUM_CHAN` |
+| Pad notes, bank A | 36–51 | **36–51 — unchanged** | all 16 TOGGLE_SEQ note mappings stay valid |
+| Pad notes, bank B | — | 52–67 (new) | widens the overlap with Maschine pages C/D |
+| Transport CC 25–29 ch 1 | Left/Right/Play/Stop/Rec | mute/solo/play/fxHold/rec | **same CC, same channel** — ctrldev transport unaffected |
+| Encoder CCs | 16, 17, 18, 30, 80, 81, 82, 31 | 30–37 (bank A) | ctrldev `ZYNPOT_ABS` on CC 16/17/18 dead; only CC 30 survives |
+
+> **[low] Which of the five presets occupies which device slot is unconfirmed**, as is whether the encoder CC channel really is 1. The table above assumes `1. NiFox Color+`. Verify on the Pi with `amidi -d -p hw:X,0,0`: hit pad 1 (expect `99 24 vv`), then turn each encoder.
+
+The seq/mixer note mappings at notes 111–126 ch 1 in the Koala JSON do not correspond to any control identified on the SMC-PAD so far — possibly a different preset in the pack, possibly Shift-layer output. Unresolved. The JSON also assigns `seq 3` to note 127 on ch 10 while `seq 0–2` are ch 1 — almost certainly an export bug in the pack.
 
 ---
 
@@ -419,6 +433,37 @@ SINCO SMC-PAD has three ALSA ports. Port 0 (Private = SINCO IN 1 = `system:midi_
 2. Use `lib_zyncore.zmip_set_flags(izmip, flags & ~FLAG_ZMIP_UI)` after identifying the Private port's zmip index at startup — clears UI flag so master-channel events from that port are silently consumed and not sent to Python
 
 **`ZYNTHIAN_MIDI_PORTS DISABLED_IN` does NOT work** — field exists in config but is not enforced by current autoconnect code.
+
+---
+
+### Conflict 11 — SMC-PAD reflashed to Koala preset: pads now on ch 10 (2026-08-06)
+
+The device carries the NiFox Koala preset pack. Pads send on **channel 10**; the whole rig is built around channel 6. Nothing on the Zynthian side has changed, so pads currently reach no drum chain and fire no master-channel CUIA.
+
+Affected, in order of how quietly they fail:
+
+| What | Where | Symptom |
+|---|---|---|
+| `ZYNTHIAN_MIDI_MASTER_CHANNEL=6` | `/zynthian/config/midi-profiles/default.sh` | no CUIA fires; pads look dead in Launcher |
+| Drum chain on ch 6 | rig-v1, Drum Computer, Dub Techno snapshots | pads play nothing |
+| `DRUM_CHAN = 5` | `zynthian_ctrldev_sinco_smc_pad.py` | transport Left/Right cycle the wrong chain — see Conflict 7 |
+| `ZYNPOT_ABS` on CC 16/17/18 | same driver | three of four screen knobs dead; CC 30 still works |
+
+**Recommended fix — one filter rule, nothing else changes:**
+
+```
+MAP CH#9 => CH#5
+```
+
+Add in webconf → **Interface → MIDI Options → Midi filter rules**. Channels in filter rules are **0-indexed**, so `CH#9` = channel 10 and `CH#5` = channel 6. Bank A pad notes are still 36–51, so once the channel is translated every existing mapping — master key actions, drum chain, `DRUM_CHAN` — works untouched. Syntax verified against `zynthian-ui/zyngine/zynthian_midi_filter.py` (see `test_map_rules`, e.g. `MAP CH#0:15 CC#45 => CH#15 CC#76`).
+
+Two caveats. The rule is global, not per-port — any other device sending ch 10 is also remapped; nothing in this rig does. And a bare `MAP CH#a => CH#b` covers all event types on that channel, which is what is wanted here since the NiFox CCs sit on ch 1.
+
+**Alternative** — change `ZYNTHIAN_MIDI_MASTER_CHANNEL` to 10 and move every drum chain to ch 10. More edits, more places to forget, and it collides with the GM drum convention. Not recommended.
+
+The dead encoder CCs are a separate matter: the filter rule does not fix them, since NiFox reassigned the CC numbers themselves. Either remap in the ctrldev driver (CC 16/17/18 → the NiFox bank-A numbers) or add `MAP CH#0 CC#31,32,33 => CH#0 CC#16,17,18` once the real encoder CCs are confirmed on the Pi.
+
+**Not yet verified on hardware** — Pi was unreachable when this was written (`No route to host`, 192.168.2.123). Confirm with `amidi -d` before applying.
 
 ---
 

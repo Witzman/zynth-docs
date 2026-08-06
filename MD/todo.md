@@ -115,10 +115,15 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
   - Related: `MIDI Control` IN currently takes NoteOn 0–15 for pad LEDs. NI convention is HSB triplets sharing one note across ch 1/2/3. Conversion reference: `toHSB()` in `CE/Template Support Files/Ableton Live 9/Maschine_Mk2/MIDI_Map.py`
   - Confirmed dead end: Controller Editor exposes no display access — no MIDI path to the LCD
 
-- [ ] **Confirm which preset is flashed on the SMC-PAD**
-  - `~/zynth/SMC Pad/` is a NiFox preset pack for Koala Sampler (iPad) — pads ch 10 notes 36–67, CCs on ch 1
-  - If flashed, every channel-6 assumption in the MIDI reference and 4 tutorials is stale
-  - [ ] Run `amidi -d -p hw:X,0,0`, hit pad 1, read status byte — `0x95` = factory preset 1, `0x99` = NiFox
+- [ ] **SMC-PAD is reflashed to NiFox Koala preset — pads now ch 10 (confirmed 2026-08-06)**
+  - Every ch-6 assumption in the rig is stale: master channel, drum chains, `DRUM_CHAN`, ctrldev ZYNPOT CCs
+  - Full analysis: `htmldoku/project-midi-reference.md` Conflict 11
+  - Fix is one filter rule — `MAP CH#9 => CH#5` in webconf → Interface → MIDI Options → Midi filter rules (channels 0-indexed). Bank A pad notes are still 36–51, so nothing else needs touching
+  - [ ] Verify on Pi: `amidi -d -p hw:X,0,0`, hit pad 1 → expect `99 24 vv`
+  - [ ] Capture the 8 encoder CCs — NiFox moved them to 30–37, ctrldev still listens on CC 16/17/18/30
+  - [ ] Apply filter rule, retest drum chain + Launcher
+  - [ ] Decide: keep NiFox permanently (filter rule stays) or reflash factory preset 1 when using Zynthian
+  - Unresolved: which of the 5 presets sits in which device slot; what sends notes 111–126 ch 1
 
 - [ ] **Fix Maschine MK2 display (partially working — continue from investigation notes)**
   - Current state: `HEIGHT=64`, 2 reports (`byte3=0` then `byte3=32`), raw row-major → "readable but too big"
