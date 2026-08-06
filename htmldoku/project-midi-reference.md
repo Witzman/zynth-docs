@@ -294,11 +294,13 @@ Status tags: `[verified]` = Pi-tested · `[draft]` = written, not yet tested · 
 
 | Device | Control | Ch | Message | Zynthian target | Tutorial | Status |
 |---|---|---|---|---|---|---|
-| Maschine MK2 | Pads — Group C (default) | 1 | Note 48–63 | active chain | Maschine MK2 P1 | `[verified]` |
+| Maschine MK2 | Pads — Group C (default) | 1 | Note = 48 + `pad_notes[pad]` | active chain | Maschine MK2 P1 | `[verified]` |
 | Maschine MK2 | Pads — Group D | 1 | Note 60–75 | active chain | Step Seq P2 | `[draft]` |
 | Maschine MK2 | Sequencer output | 2 | Note (any) | chain on ch 2 | Step Seq P1 | `[draft]` |
-| Maschine MK2 | 8 Encoders | 1 | CC 16–23 (configurable) | **unassigned** | Maschine MK2 P2 | `[draft]` |
-| Maschine MK2 | Transport buttons | 1 | CC 1–14, 24–48 (127/0) | **unassigned** | Maschine MK2 P2 | `[draft]` |
+| Maschine MK2 | 8 Encoders | 1 | CC 16–23 (`encoder_ccs` in `maschine.json`) | **unassigned** | Maschine MK2 P2 | `[verified]` |
+| Maschine MK2 | Play / Erase / Rec / Grid / Restart | 1 | CC 1 / 2 / 3 / 4 / 7 (127 press, 0 release) | **unassigned** | Drum Rig | `[verified]` |
+| Maschine MK2 | F1–F8 (above displays) | 1 | CC 39–46 (127 press, 0 release) | **unassigned** | Drum Rig | `[verified]` |
+| Maschine MK2 | Group A–H | — | **nothing** — sets internal note base only | — | Drum Rig | `[verified]` |
 | Maschine MK2 | MIDI Control IN → pad LEDs | — | NoteOn 0–15 | pad LED color/brightness | Maschine MK2 P4 | `[draft]` |
 | Xboard 25 | Keys | 1 | Note 0–127 | active chain | MIDI Channel Routing | `[draft]` |
 | Xboard 25 | 16 CC knobs | 1 | CC [unknown] | **unassigned** | Xboard CC Knob Map | `[draft]` |
@@ -464,6 +466,21 @@ Two caveats. The rule is global, not per-port — any other device sending ch 10
 The dead encoder CCs are a separate matter: the filter rule does not fix them, since NiFox reassigned the CC numbers themselves. Either remap in the ctrldev driver (CC 16/17/18 → the NiFox bank-A numbers) or add `MAP CH#0 CC#31,32,33 => CH#0 CC#16,17,18` once the real encoder CCs are confirmed on the Pi.
 
 **Not yet verified on hardware** — Pi was unreachable when this was written (`No route to host`, 192.168.2.123). Confirm with `amidi -d` before applying.
+
+### Conflict 12 — Maschine HID input dies after seconds: kernel hidraw stops delivering — RESOLVED (2026-08-06)
+
+**Symptom.** Pads, buttons and encoders produce no MIDI 6–37 s after the daemon starts, while pad LEDs still work. A daemon restart brings input back for a few more seconds. This had been latent for weeks: the Step Sequencer Part 5 verification passed on 2026-06-07 only because it was tested within seconds of a restart.
+
+**Cause.** The MK2 streams ~750 HID reports/s unconditionally (endpoint `ep_82`, 125 µs interval) whether or not anything is touched. The kernel's hidraw layer stops delivering those reports to an open file descriptor after a few seconds at that rate: `poll()` goes permanently quiet and `read()` returns `EAGAIN` forever, while `usbmon` shows the URBs still completing with report data. Kernel `6.12.47+rpt-rpi-v8`, `HIDRAW_BUFFER_SIZE = 64` — about 85 ms of buffering at that rate.
+
+**Ruled out by measurement**, so don't re-chase these: the USB hub (the `2109:3431 VIA Labs` device is the Pi 4's internal VL805, not an external hub — the MK2 is direct), USB autosuspend (`power/control = on`), LED writes, display writes, drain rate, periodic keepalive writes, stale file descriptors, and the aftertouch path. `HID SET_IDLE(0)` is accepted and `GET_IDLE` reads back 0, but the device ignores it, so the rate cannot be reduced at the source. `snd-usb-caiaq` has no alias for `17cc:1140`, so there is no in-kernel driver alternative.
+
+**Fix** (in `MaschineMK2_linux`, commit `0b36cd9`): an input watchdog reopens the device when no report arrives for 50 ms. Two details matter:
+
+- The **close must happen before the reopen**. `usbhid` only tears down and resubmits the interrupt URB when the device user count drops to zero, so opening first keeps a user held and the reopen does nothing at all.
+- `readable()` drains until `EAGAIN` rather than taking one report per poll iteration (drain rate ~220/s → ~1400/s), `write_lights()` writes only on change, and the display writes are disabled.
+
+**Result:** sustained input, ~14 transparent reopens per 110 s, roughly 0.6 % dead time.
 
 ---
 
