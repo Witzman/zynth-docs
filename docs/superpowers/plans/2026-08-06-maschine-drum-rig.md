@@ -62,6 +62,8 @@ ssh root@$PI 'systemctl is-active maschine-mk2.service; systemctl is-active zynt
 
 Expected: both print `active`. If `maschine-mk2.service` is inactive, start it with `systemctl start maschine-mk2.service` before continuing.
 
+Recon already done on 2026-08-06 for Steps 2 and 4 — findings below and in Global Constraints. Hardware is present and confirmed: MK2 as `17cc:1140` with `/dev/maschine → hidraw1`, daemon `active`, ALSA client `maschine.rs` exposing `Pads MIDI` (out, wired to `ZynMidiRouter:dev3_in`) and `MIDI Control` (in, for LEDs). SMC-PAD also present as `4353:4b4d Jieli Technology SINCO`, ALSA client 32, its Private port on `dev2_in`. Step 2's outcome is that the port has **no alias**, which is what Task 1b exists to fix. Steps 1, 3, 5 and 6 still need running — Step 3 needs a human pressing pads.
+
 - [ ] **Step 2: Capture the exact ALSA port name**
 
 ```bash
@@ -120,6 +122,118 @@ cd ~/zynth-docs
 python3 htmldoku/generate-html.py
 git add htmldoku/project-midi-reference.md docs/zynthian-Doku/
 git commit -m "docs: record verified Maschine MK2 CC map for the drum rig"
+```
+
+---
+
+## Task 1b: Give the daemon's MIDI port a stable JACK alias
+
+Without this, the driver can never bind. Verified on the Pi 2026-08-06: `a2j:maschine rs [130] (capture): Pads MIDI` has `aliases: []`, so `get_midi_in_devid()` (`zynautoconnect/zynthian_autoconnect.py:262`, which does `aliases[0].split('/', 1)[1]`) raises and returns `None`, and `load_driver`'s autoload path bails at `dev_id not in self.available_drivers`. The manual-assignment path is also unusable: the MIDI Input Device menu builder dereferences `port.aliases[0]` at `zyngui/zynthian_gui_midi_config.py:421` and its caller swallows the exception, so the menu never opens for an alias-less port.
+
+Setting the alias from an outside JACK client works — verified live on the Pi:
+
+```
+before: []
+after : ['USB:maschine/Pads MIDI']
+devid would be: Pads MIDI
+```
+
+The alias is safe from being clobbered: `update_hw_midi_ports` only rewrites aliases for `is_physical=True` ports plus a fixed whitelist of virtual port names (`zynthian_autoconnect.py:524-556`), and the daemon's a2j ports are neither — which is exactly why they had no alias to begin with.
+
+**Files:**
+- Modify on the Pi: `/usr/local/bin/maschine-jack-connect.sh`
+- Create: `~/zynth-docs/tools/maschine-jack-connect.sh` (version-controlled copy of the deployed script — it currently exists only on the Pi)
+
+**Interfaces:**
+- Consumes: nothing.
+- Produces: `DEV_ID = "Maschine MK2 Pads"` — the string Task 6's driver puts in `dev_ids`. The uid written is `USB:maschine.rs/Maschine MK2 Pads`; `get_midi_in_devid` returns everything after the first `/`.
+
+- [ ] **Step 1: Copy the deployed script into version control**
+
+```bash
+mkdir -p ~/zynth-docs/tools
+scp root@$PI:/usr/local/bin/maschine-jack-connect.sh ~/zynth-docs/tools/maschine-jack-connect.sh
+```
+
+The current contents poll for the port for 30 s, `jack_connect` it to `ZynMidiRouter:dev3_in`, and exit.
+
+- [ ] **Step 2: Add alias assignment to the script**
+
+Insert this immediately after the successful `jack_connect`, replacing the `&& echo "Connected: $PORT" && exit 0` tail so the alias is set before the script exits:
+
+```bash
+        if jack_connect "$PORT" ZynMidiRouter:dev3_in 2>/dev/null; then
+            echo "Connected: $PORT"
+            python3 - "$PORT" <<'PYEOF'
+import sys
+import jack
+
+# Zynthian derives a control-device id from the part of a JACK port alias
+# after the first '/'. a2j gives user-client ports no alias at all, so the
+# ctrldev driver could never bind without this.
+port_name = sys.argv[1]
+client = jack.Client("maschine-alias", no_start_server=True)
+try:
+    port = client.get_port_by_name(port_name)
+    for alias in list(port.aliases):
+        port.unset_alias(alias)
+    port.set_alias("USB:maschine.rs/Maschine MK2 Pads")
+    print(f"Alias set: {port.aliases}")
+finally:
+    client.close()
+PYEOF
+            exit 0
+        fi
+```
+
+- [ ] **Step 3: Deploy and restart the daemon**
+
+```bash
+scp ~/zynth-docs/tools/maschine-jack-connect.sh root@$PI:/usr/local/bin/maschine-jack-connect.sh
+ssh root@$PI 'chmod +x /usr/local/bin/maschine-jack-connect.sh && systemctl reset-failed maschine-mk2.service && systemctl restart maschine-mk2.service'
+ssh root@$PI 'journalctl -u maschine-mk2.service --no-pager -n 10'
+```
+
+Expected in the log: `Connected: a2j:maschine rs [...] (capture): Pads MIDI` followed by `Alias set: ['USB:maschine.rs/Maschine MK2 Pads']`.
+
+- [ ] **Step 4: Verify the derived device id**
+
+```bash
+ssh root@$PI 'python3 -c "
+import jack
+c = jack.Client(\"verify\", no_start_server=True)
+for p in c.get_ports(is_midi=True):
+    if \"maschine rs\" in p.name and \"capture\" in p.name:
+        print(\"aliases:\", p.aliases)
+        print(\"devid  :\", p.aliases[0].split(\"/\", 1)[1] if p.aliases else None)
+c.close()
+"'
+```
+
+Expected: `devid  : Maschine MK2 Pads`.
+
+- [ ] **Step 5: Confirm Zynthian picks the id up**
+
+The ctrldev manager reads the id when it detects an input device, which may already have happened before the alias existed. Restart Zynthian and confirm the MIDI Input Device menu now opens for the port:
+
+```bash
+ssh root@$PI 'systemctl restart zynthian.service'
+```
+
+**Verify:** on the touchscreen, the MIDI input device list shows the Maschine daemon port, and opening its menu succeeds (it previously failed silently on the missing alias).
+
+Note the boot-order race for later: if `zynthian.service` scans devices before this script has set the alias, the id is missed until something triggers a rescan. Record whether that happens in practice; a `systemctl` ordering directive is the fix if it does.
+
+- [ ] **Step 6: Commit the script**
+
+```bash
+cd ~/zynth-docs
+git add tools/maschine-jack-connect.sh
+git commit -m "tools: set a stable JACK alias on the Maschine daemon MIDI port
+
+Zynthian derives a ctrldev device id from the alias text after the first
+'/'. a2j leaves user-client ports alias-less, so the drum-rig driver had
+no id to bind to and the MIDI Input Device menu raised on aliases[0]."
 ```
 
 ---
@@ -743,8 +857,9 @@ COLOR_STEP_OFF = 0x101010
 BRIGHT_ON = 0.9
 BRIGHT_OFF = 0.05
 
-# Task 1 findings
-DEV_ID = "DEV_ID_FROM_TASK_1"
+# Set by Task 1b's alias helper: uid "USB:maschine.rs/Maschine MK2 Pads",
+# and Zynthian's device id is everything after the first '/'.
+DEV_ID = "Maschine MK2 Pads"
 
 
 class zynthian_ctrldev_maschine_mk2(zynthian_ctrldev_base):
