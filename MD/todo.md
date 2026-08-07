@@ -8,16 +8,25 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
 
 ## Active
 
-- [~] **Maschine MK2 Drum Rig — implementation plan** (paused 2026-08-07, resume at task 8)
+- [~] **Maschine MK2 Drum Rig — implementation plan** (2026-08-07, resume at task 10)
   - Read first: `~/zynth/zynthian-ui/.superpowers/sdd/2026-08-06-maschine-drum-rig/progress.md` (ledger), then the plan and spec in `docs/superpowers/`
-  - [ ] User hardware-test of task 7: per-group pad colours, full-brightness active steps, group buttons 50/100%, white playhead, Play starting all 8 groups
-  - [ ] Task 8 — euclid encoders 1-3 (hits / division / rotation)
-  - [ ] Task 9 — mutes F1-F8, filter enc 4/5, pad preview, Erase clears group
+  - [x] Task 7 — hardware-verified 2026-08-07 after four bug fixes plus the `external_pad_leds` daemon flag; Play button LED added on request
+  - [x] Task 8 — euclid encoders — hardware-verified. Enc 1 = hits, enc 2 = rotation, enc 3 = division (all five divisions, triplets included)
+  - [x] Task 9 — hardware-verified. F1-F8 mutes (selection-independent), pad preview via `libseq.playNote`, Erase, enc 8 = volume, group buttons coloured to match their pads
+  - [x] Group button colour now matches its pads — report 0x81 group buttons are full RGB, 3 contiguous bytes each (starts 1, 7, 13, 22, 25, 34, 37, 46)
   - [ ] Task 10 — snapshot round-trip, tutorial page, tracking-file updates
-  - [ ] Map the group-button RGB layout (report 0x81) by byte-probing with the user; buttons are RGB but the daemon writes one byte each
-  - [ ] Cold-boot ordering race: check whether `zynthian.service` scans MIDI before the JACK alias exists; fix is `After=maschine-mk2.service`
+  - [ ] Unset `ZYNTHIAN_LOG_LEVEL` on the Pi once task 10 is done: `systemctl unset-environment ZYNTHIAN_LOG_LEVEL`
+  - [x] Cold-boot ordering race — survived a real cold boot 2026-08-07: alias present, `Pads MIDI → ZynMidiRouter:dev2_in` bound. One sample only; still worth `After=maschine-mk2.service` if it ever recurs
+  - [ ] Filter control needs an LV2 filter in each chain — FluidSynth's CC 74/71 are unipolar and `FluidDrums.sf2` ships wide open, so they can never be audible
+  - [ ] `light_buf2` bytes 17-31 unverified (17-24 Scene/Pattern/Pad Mode row, 25-31 master section); `Shift`, `Erase`, `Rec`, `Grid`, `Stepleft/right`, `Restart` in `light_buf3` unverified. Map with `/maschine/rawled` if any needs to light
   - [ ] Re-run `tools/patch-autoconnect-maschine.py` after any Zynthian update, or the driver silently stops binding
   - [ ] Sub-project 2 — two Turing-machine voices on the SMC-PAD: needs its own spec and plan
+
+  **Hard rules learned 2026-08-07 — do not relearn:**
+  - Any zynseq access added to the driver MUST take `self.lock`. libzynseq is not thread-safe and unsynchronised access from the poll thread segfaulted the whole UI (exit 139) ~95s into a jam
+  - Never drive anything step-rate-sensitive from `SS_SEQ_PROGRESS` — it is 5 Hz (`slow_thread_task`, 0.2s sleep) and aliases against the step rate
+  - `TOGGLE_PLAY` is not a sequencer transport; it resolves to `cuia_toggle_audio_play()`. Use `setPlayState` directly
+  - `external_pad_leds: true` must stay in the daemon's `maschine.json` or pad colours die on first touch
 
 - [~] **Complete Dub Techno Performance Loop tutorial**
   - [~] Test Part 1 on Pi — load snapshot `dub-techno-p1`, build patterns, verify playback
