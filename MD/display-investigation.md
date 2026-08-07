@@ -119,3 +119,78 @@ src/display.rs:1              — WIDTH, HEIGHT, STRIDE constants
 src/display.rs:32             — draw_text()
 src/font.rs:1                 — FONT5X8 glyph data
 ```
+
+---
+
+## Session 2026-08-08 — geometry measured, not guessed
+
+A live test rig replaced the rebuild-per-guess loop. Three new OSC paths on the
+daemon (commit `e20e560` onward):
+
+| Path | Args | Does |
+|---|---|---|
+| `/maschine/display/test` | pattern:int | draw a built-in calibration pattern |
+| `/maschine/display/opts` | col, reverse, bands | change framing without a rebuild |
+| `/maschine/display/calib` | on:int | interactive line calibration on encoders 1-4 |
+| `/maschine/display/clear` | — | blank both screens |
+
+Helper scripts on the Pi: `/root/disp.py`, `/root/disp_sweep.py`,
+`/root/disp_bands.py`, `/root/disp_tiles.py`.
+
+### Confirmed by experiment
+
+- **Each screen is 512 px wide, not 128.** One report is a 128x32 tile. Painting
+  at column offsets 0, 8, 16, 24 took the lit area from a quarter to a half to
+  the whole screen with no seam or gap. `WIDTH` was corrected to 512 and
+  `send_display_bits` now cuts 8 tiles (4 columns x 2 row bands) out of a full
+  framebuffer. This is what "readable but too big" was: text filled a quarter of
+  the panel and looked magnified.
+- **Header byte 1 is a column offset in 16-pixel units.** Eight offsets
+  (0, 4 ... 28) tile the width; 7 steps to cross.
+- **Header byte 3 is a row offset.** One band = half the height, two = full.
+- **Row 0 across the full width renders solid, edge to edge, on both screens.**
+  Horizontal geometry is correct.
+- **A single text row at y=0 renders correctly and legibly.** Photographed:
+  four labels `A KICK / B SNARE / C HAT / D CLAP` across the width, well
+  proportioned, aligned under the four buttons. **This is usable now.**
+
+### Interactive calibration result
+
+Lines dialled to the last visible position gave **x 0..446, y 0..47**.
+
+### Still unresolved — the vertical mapping
+
+Contradictory observations that no single linear scaling explains:
+
+- A 1-row horizontal line renders **2 px tall**.
+- A 1-column vertical line renders **dotted, every other row**.
+- The row ruler (lines every 8 rows) shows only **4 lines**, evenly spaced, the
+  5th just past the bottom edge — implying ~32 usable rows.
+- But the band test showed one band = half height, two = full — implying 64.
+- Content below y~8 is **partially dropped**: 8px glyphs at y=12 render as
+  fragments, and 8px-tall bar outlines collapse to thin lines. The lower half of
+  the panel stays unused.
+
+Working theory: framebuffer rows do not map 1:1 to physical rows past the first
+band, possibly interleaved, so consecutive rows land 2 apart and tall elements
+smear and overlap. Not yet proven.
+
+### Next steps
+
+1. Draw single rows one at a time (y=0, then 1, 2, 3, 8, 9) and record where each
+   lands. That maps the row order directly and settles interleaving.
+2. Until then, **use only the top text row** — it is verified working. Labels
+   under the F buttons are deliverable; multi-row layouts and bars are not.
+3. `usbmon` capture remains the fallback for the row mapping.
+
+### Note
+
+`write_display()` is still not wired to anything, and normal rendering stays off
+in `ev_loop` (it issued ~180 writes/s of 521-byte reports). Calibration redraws
+are rate-limited to the existing 100ms display timer. Redrawing per input report
+starved the input reader and tripped the hidraw watchdog.
+
+Two bugs worth remembering: `encoder_step` receives the encoder's **absolute
+counter byte**, not a delta (`mikro.rs:415` passes `byte as i32`) - treating it
+as a delta pinned every calibration line instantly. And `send_encoder_cc`
+divides that raw value by 4, so 4 counts is one pixel.
