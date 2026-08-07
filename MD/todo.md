@@ -14,7 +14,11 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
   - [x] Task 8 — euclid encoders — hardware-verified. Enc 1 = hits, enc 2 = rotation, enc 3 = division (all five divisions, triplets included)
   - [x] Task 9 — hardware-verified. F1-F8 mutes (selection-independent), pad preview via `libseq.playNote`, Erase, enc 8 = volume, group buttons coloured to match their pads
   - [x] Group button colour now matches its pads — report 0x81 group buttons are full RGB, 3 contiguous bytes each (starts 1, 7, 13, 22, 25, 34, 37, 46)
+  - [ ] **First: user hardware-tests `2fc6a837`** — enc 4 pattern length + polyrhythm (A at 12 steps vs B at 16 should drift and realign every 4 bars), Page left/right sample switching (hand edits must survive), enc 5/6/7 pan/expression/release (release unverified — drop it if the decay does not change)
   - [ ] Task 10 — snapshot round-trip, tutorial page, tracking-file updates
+  - [ ] Display: map the row order by drawing single rows one at a time (y=0,1,2,3,8,9). Screens are 512x64 and a text row at y=0 works; rows past ~8 drop content. Full notes in `MD/display-investigation.md`. Do not build a multi-row layout first
+  - [ ] Display: wire the working top text row to the driver — group labels under F1-F8 (deliverable now)
+  - [ ] Per-group kit switching across the 42 drum-machine SFZ kits in `/zynthian/zynthian-data/soundfonts/sfz/Drum Machines/` — bigger sonic win than any CC
   - [ ] Unset `ZYNTHIAN_LOG_LEVEL` on the Pi once task 10 is done: `systemctl unset-environment ZYNTHIAN_LOG_LEVEL`
   - [x] Cold-boot ordering race — survived a real cold boot 2026-08-07: alias present, `Pads MIDI → ZynMidiRouter:dev2_in` bound. One sample only; still worth `After=maschine-mk2.service` if it ever recurs
   - [ ] Filter control needs an LV2 filter in each chain — FluidSynth's CC 74/71 are unipolar and `FluidDrums.sf2` ships wide open, so they can never be audible

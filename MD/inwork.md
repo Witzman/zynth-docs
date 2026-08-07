@@ -25,7 +25,7 @@ Status: `[~]` drafting · `[t]` user testing · `[>]` ready to publish · `[ ]` 
 
 ---
 
-- [~] **Maschine MK2 Drum Rig** — 8 groups x 16 steps euclidean drum sequencer via a new ctrldev driver; zynseq holds the patterns. NOT a tutorial yet — implementation plan in progress, see the RESUME HERE section of CLAUDE.md. Tasks 1-7 done, resume at task 8.
+- [~] **Maschine MK2 Drum Rig** — 8 groups x 16 steps euclidean drum sequencer via a new ctrldev driver; zynseq holds the patterns. NOT a tutorial yet — implementation plan in progress, see the RESUME HERE section of CLAUDE.md. Tasks 1-9 done and hardware-verified (2026-08-08); **resume at task 10** (snapshot round-trip, tutorial page, tracking files). First action: user hardware-tests `2fc6a837` — pattern length/polyrhythm, sample switching, encoders 5-7.
 
 ---
 

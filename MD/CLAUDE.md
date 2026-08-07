@@ -27,9 +27,25 @@ Active work is **not** a tutorial. It is an implementation plan being executed t
 
 Task briefs and per-task reports: `~/zynth/MaschineMK2_linux/.superpowers/sdd/2026-08-06-maschine-drum-rig/`
 
-**State:** tasks 1, 1b, 2, 3, 4, 5, 6, 7 complete. **Next: task 8** (euclid encoders 1-3), then 9 (mutes F1-F8, filter enc 4/5, pad preview, Erase), then 10 (snapshot round-trip, tutorial page, tracking files).
+**State (2026-08-08):** tasks 1, 1b, 2, 3, 4, 5, 6, 7, 8, 9 complete and **all hardware-verified by the user**. Only **task 10** remains (snapshot round-trip, tutorial page, tracking files).
 
-**First action next session:** the user must hardware-test task 7 — per-group pad colours, active steps at full brightness, group buttons 50%/100%, white playhead sweeping while Play runs, Play starting/stopping all 8 groups. It is deployed and the driver loads, but nobody has pressed a pad since.
+Deployed HEADs — everything is committed and pushed:
+
+| Repo | Branch | HEAD |
+|---|---|---|
+| `MaschineMK2_linux` | main | `fba1de0` |
+| `zynthian-ui` | vangelis | `2fc6a837` |
+| `zynth-docs` | master | `3a9b848` |
+
+**First action next session: the user must hardware-test `2fc6a837`.** It is deployed and loading but untested:
+
+1. **Encoder 4 = pattern length** (4/8/12/16 steps) and the polyrhythm — set group A to 12 steps against B at 16; they should drift and re-align every 4 bars. If they stay locked, LOOP play mode did not take.
+2. **Page ◀ / ▶ = sample switching** on the selected group; hand-edited steps must survive the change.
+3. **Encoders 5 / 6 / 7 = pan / expression / release.** Pan and expression are certain; release is the unverified one — if the decay does not change, drop it.
+
+**Control layout as shipped** (differs from the plan — see the ledger for why): pads toggle steps · Group A-H select · enc 1 hits, 2 rotation, 3 division, 4 length, 5 pan, 6 expression, 7 release, 8 volume · F1-F8 mute groups A-H regardless of selection · Play toggles all 8 · Restart to step 0 · Erase clears the selected group · Page ◀▶ change sample. Group buttons carry their group's colour with brightness showing its volume.
+
+**Display — partly solved, see `MD/display-investigation.md`.** Each screen is **512x64**, not 128x64; that one wrong constant was the whole "readable but too big" mystery. A **single text row at y=0 renders correctly and legibly** (photographed: four group labels across the width, aligned under the four buttons) — so labels under F1-F8 are deliverable now. Rows past ~8 still drop content and the evidence is contradictory; next step is drawing single rows one at a time (y=0,1,2,3,8,9) to map the row order. Do not build a multi-row layout until that is understood.
 
 **Hard-won facts — do not relearn these:**
 
@@ -41,9 +57,20 @@ Task briefs and per-task reports: `~/zynth/MaschineMK2_linux/.superpowers/sdd/20
 - `~/zynth-docs/tools/patch-autoconnect-maschine.py` must be **re-run after any Zynthian update**, or Zynthian never gives the daemon's virtual port a zmip slot and the driver is "Found" but never "Loaded" — the rig then does nothing at all, with no error.
 - MK2 input dying after seconds was a kernel hidraw fault, fixed by a close-then-reopen watchdog in the daemon (`MaschineMK2_linux` `0b36cd9`). Full diagnosis and everything already ruled out: `htmldoku/project-midi-reference.md`, "Conflict 12". Journal lines `watchdog: input stalled, reopened ...` every ~8s are healthy.
 - Step 0 is the **top-left** pad. LED index for a step is `PAD_OFFSETS[step]` with `PAD_OFFSETS = [12,13,14,15,8,9,10,11,4,5,6,7,0,1,2,3]` (its own inverse). The daemon's `set_rgb_light` halves brightness, so the driver passes 2.0 for full.
+- **Every zynseq call the driver makes must hold `self.lock`.** `libzynseq` is not thread-safe and the driver reaches it from three threads (MIDI handler, zynsigman queued handler, 30 Hz playhead poll). Without the lock the whole Zynthian UI died with SIGSEGV, exit 139, about 95s into a jam.
+- **Never drive anything step-rate-sensitive from `SS_SEQ_PROGRESS`** — it is 5 Hz (`slow_thread_task`, 0.2s sleep) and aliases against the step rate, which skipped playhead pads unpredictably. Poll in your own thread and cache clocks-per-step so the hot path never calls `selectPattern()` (that writes zynseq's single global pattern selection and fights the pattern editor for it).
+- **`TOGGLE_PLAY` is not a sequencer transport** — it resolves to `cuia_toggle_audio_play()`, which toggles the audio file player, or just the one pattern if the pattern editor is on screen. Use `setPlayState` on every sequence; it starts JACK transport itself.
+- **`"external_pad_leds": true` must stay in the daemon's `maschine.json`** or the daemon repaints pads on press/release in its own global colour and the first touch destroys the per-group picture. It is not in git on the Pi — `git reset --hard` there wipes it, so re-set it after every deploy.
+- `chain_manager.get_chain_ids_by_midi_chan()` **does not exist** on the Pi. Use `chain_manager.midi_chan_2_chain_ids[chan]`, as its own pattern editor does.
+- **Filter control on FluidSynth drum kits is a dead end** — CC 74/71 are unipolar SoundFont modulators that only *add* to `initialFilterFc`, and `FluidDrums.sf2` ships wide open at 13500 cents. There is no pitch/tune controller either. Real filtering needs an LV2 filter per chain.
+- `encoder_step` in the daemon receives the encoder's **absolute counter byte**, not a delta (`mikro.rs:415` passes `byte as i32`); `send_encoder_cc` divides it by 4. Treating it as a delta pins anything driven by it instantly.
+- Redrawing the display per input report starves the input reader and trips the hidraw watchdog. Rate-limit to the existing 100ms display timer.
+- LED report byte layout is now measured, not guessed — see `MD/display-investigation.md` and the ledger. `/maschine/rawled` and `/maschine/display/test|opts|calib|clear` exist for mapping more of it.
 - `ZYNTHIAN_LOG_LEVEL=20` is currently set on the Pi so ctrldev load lines are visible. Clear it with `systemctl unset-environment ZYNTHIAN_LOG_LEVEL` once debugging is done.
 
-**Open items not yet in the plan:** group-button RGB layout is unmapped (needs a byte-probing experiment with the user — the buttons *are* RGB, but the daemon writes one byte each); cold-boot ordering race between `zynthian.service` and `maschine-mk2.service`; and sub-project 2 (two Turing-machine voices on the SMC-PAD) has no spec yet.
+**Open items not yet in the plan:** the display's vertical row mapping (above); per-group *kit* switching across the 42 drum-machine SFZ kits in `/zynthian/zynthian-data/soundfonts/sfz/Drum Machines/`, which would beat any CC for character; `light_buf2` bytes 17-31 and several `light_buf3` transport bytes still unverified; and sub-project 2 (two Turing-machine voices on the SMC-PAD) has no spec yet.
+
+**Closed 2026-08-08:** group-button RGB layout is mapped (full RGB triplets, starts 1, 7, 13, 22, 25, 34, 37, 46) and the cold-boot ordering race survived a real power cycle with the alias present and bound. One sample only — if it recurs, the fix is `After=maschine-mk2.service`.
 
 ---
 
