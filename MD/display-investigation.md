@@ -194,3 +194,58 @@ Two bugs worth remembering: `encoder_step` receives the encoder's **absolute
 counter byte**, not a delta (`mikro.rs:415` passes `byte as i32`) - treating it
 as a delta pinned every calibration line instantly. And `send_encoder_cc`
 divides that raw value by 4, so 4 counts is one pixel.
+
+---
+
+## 2026-08-09 — the screens now render a real UI, geometry still one step from done
+
+**Read this before touching the display again.** Several things that were "known" in the earlier notes were wrong; they are corrected here.
+
+### What was built
+
+An **OSC drawing API in the daemon** so the layout lives in the Zynthian driver instead of being hardcoded in Rust:
+
+| Path | Args | Effect |
+|---|---|---|
+| `/maschine/display/fbclear` | `screen` | blank one screen's framebuffer |
+| `/maschine/display/text` | `screen x y scale invert "STR"` | text, scale 1 = 5x8, 2 = 10x16, invert = dark-on-light |
+| `/maschine/display/rect` | `screen x y w h style` | 0 outline · 1 filled · 2 dashed · 3 dotted rule · 4 invert region |
+| `/maschine/display/raw` | `0\|1` | diagnostic: skip the row mapping, address transfer rows directly |
+
+Screen 0 = left (report `0xE0`), 1 = right (`0xE1`). Nothing reaches the hardware until the **100 ms display timer** flushes — drawing from the OSC handler puts HID writes on the fd the input arrives on and trips the hidraw watchdog.
+
+`display.rs` gained scaled text, filled/outline/dashed rects, a dotted rule and region inversion.
+
+### The layout, photographed and readable
+
+Modelled on Maschine's own screens (reference photos from the user): boxed group tabs along the top under the eight buttons, a dotted rule, then one column per encoder with a small caps name above a double-height value.
+
+- Left `0xE0` = groups **A-D** + pattern encoders (HITS · ROT · DIV · LEN)
+- Right `0xE1` = groups **E-H** + sound encoders (PAN · EXPR · VOL)
+- Selected group = **inverted** tab · muted group = **dashed** box
+
+Columns align to the **encoders** (4 per screen) and tabs to the **buttons** (4 per screen). That is NI's own grammar and it fits our 8 groups / 8 encoders exactly.
+
+**Do not fill a box and then draw inverted text into it** — the two cancel and leave an unreadable white block. Draw the text normally, then invert the whole tab (style 4).
+
+### Geometry — corrected
+
+Everything below was measured by drawing a shape and reading the panel.
+
+- **512x64 per screen, x is 1:1.** A 128-px bar covers a quarter of a screen, 256 px covers half.
+- **A report is a 128x32 tile: 16 bytes per row, 32 rows, 512 bytes.** This was the original geometry and it is right. Feeding the panel 8-byte rows made every two of our rows land in one of its rows — text drawn past x=64 reappeared at x=0, and only the first 32 px of each 64-px strip survived. 4-byte rows fragmented it further.
+- **Both row bands must be sent per tile.** Header byte 7 is `0x20`, so one report only ever covers 32 rows. Sending one band per tile left rows 32-63 holding whatever was on the panel before — which is why values laid out below row 32 never appeared and stale text survived a full redraw.
+- So: 4 column tiles (byte 1 = 0, 8, 16, 24 in 16-px units) x 2 bands (byte 3 = 0, 32) = **8 reports per screen**.
+- **The font was never the problem.** A render-dump unit test (`display::render_dump::dump_text_layout`, prints ASCII art) shows `draw_text_scaled` laying out `AB C` correctly at 6-px pitch. Every garbled screen was the transfer.
+
+**Superseded — do not trust these from the earlier notes:** "rows past ~8 drop content", "the panel is a 512x32 logical canvas", "each row is 2 px tall", "transfer rows 16-31 are discarded", "glyphs need 2x horizontal scaling". All were artefacts of the wrong row stride. `LOGICAL_H`/`logical_row()` and `X_SCALE` survive as identities.
+
+### State at session end
+
+`MaschineMK2_linux` `0e2b60b` on main, **not pushed**. The Pi runs this exact `display.rs` (md5 verified identical), rebuilt and the daemon restarted.
+
+**The 128x32 + both-bands combination is NOT hardware-verified** — the session ended before the check. First action next time: send the three-line test (short text at y=2, double-height at y=24, and a line at y=48) and confirm all three appear complete and in the right place. If they do, the geometry is closed; wire the layout into the driver.
+
+Helpers on the Pi: `/root/disp2.py` (clear · row · rows · text · rect · mock), `/root/mock2.py` (the full rig layout). Both talk to the OSC API above.
+
+**Watch out:** `git reset --hard` on the Pi wipes `external_pad_leds` from `maschine.json` every time. It was restored this session; check it after any deploy.
