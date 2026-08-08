@@ -14,15 +14,15 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
   - [x] Task 8 — euclid encoders — hardware-verified. Enc 1 = hits, enc 2 = rotation, enc 3 = division (all five divisions, triplets included)
   - [x] Task 9 — hardware-verified. F1-F8 mutes (selection-independent), pad preview via `libseq.playNote`, Erase, enc 8 = volume, group buttons coloured to match their pads
   - [x] Group button colour now matches its pads — report 0x81 group buttons are full RGB, 3 contiguous bytes each (starts 1, 7, 13, 22, 25, 34, 37, 46)
-  - [x] **`2fc6a837` hardware-tested 2026-08-08** — five defects found, all fixed and re-verified. Driver now at `d5d3636a`:
+  - [x] **`2fc6a837` hardware-tested 2026-08-08** — five defects found, all fixed and re-verified. Driver now at `8c4e9f70`:
     - `21912769` sample switching listened on CC 48/47 (page buttons, which the daemon swallows); the arrows beside the display send CC 5/6
     - `1caa427c` polyrhythm: LOOP mode was forced only in `init()`, and a snapshot load restores LOOPALL — a short LOOPALL sequence goes silent until the next bar sync. Re-forced on write and transport start. 12 vs 16 realigns every **3** bars, not 4
-    - `7e11d26e` encoder 7 (release) dropped — inaudible, same unipolar-modulator dead end as the filter
-    - `7c6313bb` length changes now preserve hand-edited steps (shrink keeps what fits; growing back does not restore what was dropped)
-    - `d5d3636a` F1-F8 mute the mixer strip, not the zynseq track — zynseq's format has no mute field, so mutes never survived a save; plus LEDs now repaint on `SS_LOAD_SNAPSHOT`
+    - `07b8d41b` encoder 7 (release) dropped — inaudible, same unipolar-modulator dead end as the filter
+    - `48361eba` length changes now preserve hand-edited steps (shrink keeps what fits; growing back does not restore what was dropped)
+    - `8c4e9f70` F1-F8 mute the mixer strip, not the zynseq track — zynseq's format has no mute field, so mutes never survived a save; plus LEDs now repaint on `SS_LOAD_SNAPSHOT`
     - Phantom extra drum sounds on every pad tap were a stale manual `jack_connect` to `dev3_in`, not code. `zynautoconnect` only removes routes it made itself, and jackd outlives a zynthian restart
-  - [~] Task 10 — snapshot round-trip **done and verified**; tutorial page and tracking-file updates remain
-  - [ ] Nothing pushed to GitHub this session — 5 commits sit on `zynthian-ui` vangelis
+  - [~] Task 10 — snapshot round-trip and tracking files **done**; **tutorial page remains** (user deferred it)
+  - [x] Pushed 2026-08-08 — `zynthian-ui` vangelis `8c4e9f70`, `zynth-docs` master
   - [ ] Pattern length is quantised to whole beats and cannot be otherwise (`getLength() = beats * PPQN`, no `setSequenceLength` in the installed API). Step counts 1, 5, 7, 11, 13 are unreachable; a 1/4 division (spb 1) would unlock them at quarter-note steps — deferred by the user
   - [ ] Test snapshot `000/015-212121.zss` on the Pi — delete it or keep it as the round-trip fixture
   - [ ] Display: map the row order by drawing single rows one at a time (y=0,1,2,3,8,9). Screens are 512x64 and a text row at y=0 works; rows past ~8 drop content. Full notes in `MD/display-investigation.md`. Do not build a multi-row layout first

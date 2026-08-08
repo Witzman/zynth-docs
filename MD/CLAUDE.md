@@ -34,10 +34,10 @@ Deployed HEADs:
 | Repo | Branch | HEAD | Pushed? |
 |---|---|---|---|
 | `MaschineMK2_linux` | main | `fba1de0` | yes |
-| `zynthian-ui` | vangelis | `d5d3636a` | **no — 5 commits local only** |
-| `zynth-docs` | master | `3a9b848` + local edits | no |
+| `zynthian-ui` | vangelis | `8c4e9f70` | yes |
+| `zynth-docs` | master | `e602522` | yes |
 
-**First action next session: push, then write the tutorial page.**
+**First action next session: the tutorial page** — everything else in task 10 is done and pushed.
 
 **Control layout as shipped** (differs from the plan — see the ledger for why): pads toggle steps · Group A-H select · enc 1 hits, 2 rotation, 3 division, 4 length, 5 pan, 6 expression, 7 **unused**, 8 volume · F1-F8 mute groups A-H regardless of selection (mixer strip mute) · Play toggles all 8 · Restart to step 0 · Erase clears the selected group · **the arrows beside the display** change sample. Group buttons carry their group's colour with brightness showing its volume.
 
