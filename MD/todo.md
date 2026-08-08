@@ -25,8 +25,12 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
   - [x] Pushed 2026-08-08 — `zynthian-ui` vangelis `8c4e9f70`, `zynth-docs` master
   - [ ] Pattern length is quantised to whole beats and cannot be otherwise (`getLength() = beats * PPQN`, no `setSequenceLength` in the installed API). Step counts 1, 5, 7, 11, 13 are unreachable; a 1/4 division (spb 1) would unlock them at quarter-note steps — deferred by the user
   - [ ] Test snapshot `000/015-212121.zss` on the Pi — delete it or keep it as the round-trip fixture
-  - [ ] Display: map the row order by drawing single rows one at a time (y=0,1,2,3,8,9). Screens are 512x64 and a text row at y=0 works; rows past ~8 drop content. Full notes in `MD/display-investigation.md`. Do not build a multi-row layout first
-  - [ ] Display: wire the working top text row to the driver — group labels under F1-F8 (deliverable now)
+  - [x] Display: row-order puzzle **solved** 2026-08-09 — it was a wrong row stride, not dropped rows. A report is a 128x32 tile (16 bytes/row) and both row bands must be sent per tile. The "512x32 canvas / 2-px rows / discarded rows" model is dead
+  - [x] Display: OSC drawing API built (`fbclear`/`text`/`rect`/`raw`) + Maschine-style layout photographed and readable — tabs, dotted rule, encoder columns with double-height values
+  - [ ] **First next session: verify the 128x32 + both-bands geometry** — three-line test (y=2 small, y=24 double, y=48 small), all three complete and correctly placed. Shipped untested
+  - [ ] Wire the layout into the ctrldev driver (it currently lives in `/root/mock2.py` on the Pi)
+  - [ ] Encoder indicator bars in rows 52-63 — unipolar fill (HITS/LEN/EXPR/VOL), bipolar from centre (PAN), segments (DIV/ROT). Designed with the user, not built
+  - [ ] `MaschineMK2_linux` `0e2b60b` is **not pushed**
   - [ ] Per-group kit switching across the 42 drum-machine SFZ kits in `/zynthian/zynthian-data/soundfonts/sfz/Drum Machines/` — bigger sonic win than any CC
   - [ ] Unset `ZYNTHIAN_LOG_LEVEL` on the Pi once task 10 is done: `systemctl unset-environment ZYNTHIAN_LOG_LEVEL`
   - [x] Cold-boot ordering race — survived a real cold boot 2026-08-07: alias present, `Pads MIDI → ZynMidiRouter:dev2_in` bound. One sample only; still worth `After=maschine-mk2.service` if it ever recurs

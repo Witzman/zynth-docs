@@ -51,7 +51,13 @@ Deployed HEADs:
 - **Phantom drum sounds on pad taps = a stale JACK route.** `zynautoconnect` only tears down connections it made itself, and jackd outlives a zynthian restart, so a manual `jack_connect` from a debugging session lives forever. Check `jack_lsp -c | grep -A3 "Pads MIDI"` — it must show exactly **one** `devN_in`.
 - **In webconf's Snapshots page, the Name field + checkmark RENAMES THE SELECTED BANK.** It does not save a snapshot; it renamed bank `000`. Save from the touchscreen: inside a bank, the first entry is **"Save as new snapshot"**.
 
-**Display — partly solved, see `MD/display-investigation.md`.** Each screen is **512x64**, not 128x64; that one wrong constant was the whole "readable but too big" mystery. A **single text row at y=0 renders correctly and legibly** (photographed: four group labels across the width, aligned under the four buttons) — so labels under F1-F8 are deliverable now. Rows past ~8 still drop content and the evidence is contradictory; next step is drawing single rows one at a time (y=0,1,2,3,8,9) to map the row order. Do not build a multi-row layout until that is understood.
+**Display — the screens now render a real UI. Full writeup: `MD/display-investigation.md` (read it before touching this).**
+
+The daemon exposes an OSC drawing API (`/maschine/display/fbclear|text|rect|raw`) so the layout lives in the driver, not in Rust. Screen 0 = left `0xE0`, 1 = right `0xE1`; flushed on the 100 ms timer, never from the OSC handler. A Maschine-style layout is photographed and readable: boxed group tabs under the buttons, dotted rule, one column per encoder with a small caps name over a double-height value. Left = A-D + HITS/ROT/DIV/LEN, right = E-H + PAN/EXPR/VOL.
+
+Geometry, measured: **512x64 per screen, x 1:1, a report is a 128x32 tile (16 bytes per row), and BOTH row bands must be sent per tile** (byte 7 is `0x20`, so one report covers only 32 rows). **Superseded — do not trust these older claims:** "rows past ~8 drop content", "512x32 logical canvas", "rows are 2 px tall", "transfer rows 16-31 discarded", "glyphs need 2x horizontal scaling". All were artefacts of a wrong row stride.
+
+**Not yet verified:** the 128x32 + both-bands combination shipped untested. First action: send the three-line test (y=2 small, y=24 double-height, y=48 small) and confirm all three are complete and correctly placed. Then wire the layout into the driver, then add the encoder indicator bars (designed, in the ledger).
 
 **Hard-won facts — do not relearn these:**
 
