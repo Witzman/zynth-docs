@@ -27,23 +27,29 @@ Active work is **not** a tutorial. It is an implementation plan being executed t
 
 Task briefs and per-task reports: `~/zynth/MaschineMK2_linux/.superpowers/sdd/2026-08-06-maschine-drum-rig/`
 
-**State (2026-08-08):** tasks 1, 1b, 2, 3, 4, 5, 6, 7, 8, 9 complete and **all hardware-verified by the user**. Only **task 10** remains (snapshot round-trip, tutorial page, tracking files).
+**State (2026-08-08):** tasks 1-9 complete and hardware-verified. `2fc6a837` was tested on 2026-08-08 and **five defects were found, fixed and re-verified** — details in the ledger. **Task 10 is half done**: the snapshot round-trip passes; the **tutorial page and tracking files remain**.
 
-Deployed HEADs — everything is committed and pushed:
+Deployed HEADs:
 
-| Repo | Branch | HEAD |
-|---|---|---|
-| `MaschineMK2_linux` | main | `fba1de0` |
-| `zynthian-ui` | vangelis | `2fc6a837` |
-| `zynth-docs` | master | `3a9b848` |
+| Repo | Branch | HEAD | Pushed? |
+|---|---|---|---|
+| `MaschineMK2_linux` | main | `fba1de0` | yes |
+| `zynthian-ui` | vangelis | `d5d3636a` | **no — 5 commits local only** |
+| `zynth-docs` | master | `3a9b848` + local edits | no |
 
-**First action next session: the user must hardware-test `2fc6a837`.** It is deployed and loading but untested:
+**First action next session: push, then write the tutorial page.**
 
-1. **Encoder 4 = pattern length** (4/8/12/16 steps) and the polyrhythm — set group A to 12 steps against B at 16; they should drift and re-align every 4 bars. If they stay locked, LOOP play mode did not take.
-2. **Page ◀ / ▶ = sample switching** on the selected group; hand-edited steps must survive the change.
-3. **Encoders 5 / 6 / 7 = pan / expression / release.** Pan and expression are certain; release is the unverified one — if the decay does not change, drop it.
+**Control layout as shipped** (differs from the plan — see the ledger for why): pads toggle steps · Group A-H select · enc 1 hits, 2 rotation, 3 division, 4 length, 5 pan, 6 expression, 7 **unused**, 8 volume · F1-F8 mute groups A-H regardless of selection (mixer strip mute) · Play toggles all 8 · Restart to step 0 · Erase clears the selected group · **the arrows beside the display** change sample. Group buttons carry their group's colour with brightness showing its volume.
 
-**Control layout as shipped** (differs from the plan — see the ledger for why): pads toggle steps · Group A-H select · enc 1 hits, 2 rotation, 3 division, 4 length, 5 pan, 6 expression, 7 release, 8 volume · F1-F8 mute groups A-H regardless of selection · Play toggles all 8 · Restart to step 0 · Erase clears the selected group · Page ◀▶ change sample. Group buttons carry their group's colour with brightness showing its volume.
+**Lessons from the 2026-08-08 test round — do not relearn:**
+
+- **The daemon swallows its Page ◀▶ buttons** (CC 48/47) for its own page indicators and never emits them. The arrow buttons beside the display are `step_left`/`step_right`, **CC 5/6**. Dump `a2j:...Pads MIDI` with `jack_midi_dump` before binding any button.
+- **LOOP play mode must be re-forced, not set once.** Restoring a snapshot rewrites every sequence's play mode from the `.zss`, and the prepared snapshot carries LOOPALL. A LOOPALL sequence shorter than the bar goes RESTARTING at its own end, which the next non-sync clock turns into STARTING, and STARTING does not clock its tracks — the group falls silent until the next bar sync instead of looping.
+- **zynseq cannot persist a mute.** Its track record stores type, chain id, channel, output, map and the pattern list, nothing else. Mute the **mixer strip** instead; that is in the snapshot and shows on the touchscreen mixer.
+- **Nothing repaints the LEDs after a snapshot load** unless the driver registers `SS_LOAD_SNAPSHOT`, re-derives its cached params and **clears the LED cache** — otherwise the repaint is suppressed as unchanged.
+- **Pattern length is quantised to whole beats and always will be**: `getLength() = beats * PPQN`, and there is no `setSequenceLength` in the installed C API. Reachable step counts are `beats * steps_per_beat`; 1, 5, 7, 11, 13 are unreachable with the current five divisions.
+- **Phantom drum sounds on pad taps = a stale JACK route.** `zynautoconnect` only tears down connections it made itself, and jackd outlives a zynthian restart, so a manual `jack_connect` from a debugging session lives forever. Check `jack_lsp -c | grep -A3 "Pads MIDI"` — it must show exactly **one** `devN_in`.
+- **In webconf's Snapshots page, the Name field + checkmark RENAMES THE SELECTED BANK.** It does not save a snapshot; it renamed bank `000`. Save from the touchscreen: inside a bank, the first entry is **"Save as new snapshot"**.
 
 **Display — partly solved, see `MD/display-investigation.md`.** Each screen is **512x64**, not 128x64; that one wrong constant was the whole "readable but too big" mystery. A **single text row at y=0 renders correctly and legibly** (photographed: four group labels across the width, aligned under the four buttons) — so labels under F1-F8 are deliverable now. Rows past ~8 still drop content and the evidence is contradictory; next step is drawing single rows one at a time (y=0,1,2,3,8,9) to map the row order. Do not build a multi-row layout until that is understood.
 
