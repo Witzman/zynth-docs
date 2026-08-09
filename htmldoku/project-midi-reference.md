@@ -234,6 +234,31 @@ Preset 2 (DAW): **Shift + Pad 2** — transport buttons send Mackie Control; use
 
 Presets: `1. NiFox Color+` · `1.2 Extra Color+` (banks C/D) · `2. NiFox FX+Control` · `3. DAW Control` · `EXTRA - YARG`.
 
+#### Pad LEDs cannot be driven over MIDI — tested 2026-08-09
+
+The SMC-PAD exposes two ALSA sequencer ports that accept input (`32:0 SINCO
+SMC-PAD-Private`, `32:1 SINCO SMC-PAD-Master`), but **nothing sent to either of
+them changes a pad's colour**. Tested on the hardware with the NiFox pack
+installed:
+
+| Sent | Result |
+|---|---|
+| NoteOn notes 36-51, velocity 127, **all 16 channels**, both ports | no response |
+| Program Change 1-5 (would switch device preset), both ports | no response |
+| Every CC 0-127 at value 127, channels 1 and 10, both ports | no response |
+
+So pad colours are baked into the flashed `.spc` preset and are static at run
+time. A Zynthian-side driver can read the pads but cannot light them, and
+cannot switch the device's preset either.
+
+**Note the trap:** `amidi -p hw:4,0,N` fails with "Device or resource busy"
+because Zynthian holds the rawmidi device. It also fails *silently* if stderr
+is discarded, which looks exactly like "the device ignored it". Send through
+the sequencer instead — `aplaymidi -p 32:N file.mid`.
+
+The only untested path is vendor SysEx, which is what `MidiSuite.exe` uses to
+flash presets. Finding it needs a USB capture of that tool under Windows.
+
 Map in `1. NiFox Color+`, from the Koala JSON:
 
 | Control | MIDI message | Ch |
