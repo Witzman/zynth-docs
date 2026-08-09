@@ -33,9 +33,9 @@ Deployed HEADs:
 
 | Repo | Branch | HEAD | Pushed? |
 |---|---|---|---|
-| `MaschineMK2_linux` | main | `fba1de0` | yes |
-| `zynthian-ui` | vangelis | `8c4e9f70` | yes |
-| `zynth-docs` | master | `e602522` | yes |
+| `MaschineMK2_linux` | main | `b567fb0` | yes |
+| `zynthian-ui` | vangelis | `1ad9c8f0` | yes |
+| `zynth-docs` | master | `336cf49`+ | yes |
 
 **First action next session: the tutorial page** — everything else in task 10 is done and pushed.
 

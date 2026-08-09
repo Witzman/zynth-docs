@@ -36,7 +36,7 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
     - Tightening the guard alone made it **worse**: rejection skipped `set_roller_status`, so the baseline stayed stale by ~38, every later delta measured the wrap too and the encoder went dead. The baseline must resync on a rejected wrap
     - `zynthian_controller._set_value()` **truncates** integer controls (`:469`), so adding span/128 = 0.992 to pan never moved it - jumpy and uneven. Chain controls step in whole controller units with the remainder carried
     - Sensitivity: hits/rot = 128/(steps+1) - the sweep the absolute mapping used; div and length use a flat 8 units per step, because spreading their few settings over the sweep cost 26 and 32 units and read as sticky
-  - [ ] `MaschineMK2_linux` `0e2b60b`..`bbf2a62` is **not pushed**
+  - [x] Pushed 2026-08-09 — `MaschineMK2_linux` main `b567fb0`, `zynthian-ui` vangelis `1ad9c8f0`, `zynth-docs` master
   - [ ] Per-group kit switching across the 42 drum-machine SFZ kits in `/zynthian/zynthian-data/soundfonts/sfz/Drum Machines/` — bigger sonic win than any CC
   - [ ] Unset `ZYNTHIAN_LOG_LEVEL` on the Pi once task 10 is done: `systemctl unset-environment ZYNTHIAN_LOG_LEVEL`
   - [x] Cold-boot ordering race — survived a real cold boot 2026-08-07: alias present, `Pads MIDI → ZynMidiRouter:dev2_in` bound. One sample only; still worth `After=maschine-mk2.service` if it ever recurs
