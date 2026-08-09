@@ -1,7 +1,8 @@
 # Per-Group SFZ Drum Kits — Design
 
 **Date:** 2026-08-09
-**Status:** design agreed, not implemented
+**Status:** implemented and hardware-verified 2026-08-09 — see
+`docs/superpowers/plans/2026-08-09-maschine-sfz-kits.md` and the results below
 **Builds on:** `2026-08-06-maschine-drum-rig-design.md` (the rig this extends)
 
 ---
@@ -20,7 +21,9 @@ character of a sound, and every remaining avenue for doing so is closed:
 - There is no pitch or tune controller.
 
 Zynthian ships 41 drum-machine kits as SFZ in
-`/zynthian/zynthian-data/soundfonts/sfz/Drum Machines/` — TR808, TR909,
+`/zynthian/zynthian-data/soundfonts/sfz/Drum Machines/` (40 `.sfz` files plus
+`DYNOSAUR-808.sfz`, which is a directory holding its own `.sfz` — Zynthian
+resolves that to the file inside) — TR808, TR909,
 LINN9000, SP1200, Simmons, CR78, HR16, RX11 and more. Letting each group choose
 its own kit changes the character of the sound rather than tweaking it, and it
 is the largest sonic gain available to this rig.
@@ -103,7 +106,9 @@ hikey=36
 From that, a kit yields its own `[(note, name)]` list:
 
 - one entry per distinct `lokey`, deduped across velocity layers (several
-  `<region>` blocks share a key with `lovel`/`hivel` splits)
+  `<region>` blocks share a key with `lovel`/`hivel` splits). Match the key
+  opcode EXACTLY: `hikey=` contains `key=` as a substring, and 13 of the kits
+  have a region where `hikey != lokey`, so a substring test fabricates notes
 - the name is the sample's filename without directory or extension, with the
   kit's own prefix stripped and underscores turned to spaces:
   `808 Kick_short` → `KICK SHORT`
@@ -134,8 +139,10 @@ today disappears. Group tabs keep showing the group's sample name, now sourced
 from the kit rather than from `keymaps.json`.
 
 The double-height value cell fits 4 characters, so kits need a short form:
-`TR808`, `LN90`, `SP12`. Kit names are abbreviated by a pure function with a
+`TR808`, `LN90`, `1200`. Kit names are abbreviated by a pure function with a
 hand-checked table for the machines whose names do not abbreviate mechanically.
+The table must keep every label distinct: `SP 12` and `SP1200 1` both reduce to
+`SP12` mechanically, so the SP-1200 banks are labelled `1200` and `1201`.
 
 ### Testing
 
@@ -150,17 +157,18 @@ is playing**, checked for audio glitches and for xruns.
 
 ## Risks and open questions
 
-- **`set_preset` on a live chain is untested.** The spike drove LSCP directly,
-  not Zynthian's processor layer, so it proved the sampler can do it but not
-  that Zynthian's wrapper does it without stalling the UI or glitching audio.
-  **This is the first thing the implementation must verify**; if it stalls, the
-  fallback is to commit kit changes only while the transport is stopped.
+- ~~**`set_preset` on a live chain is untested.**~~ **RESOLVED.** Measured
+  through Zynthian's own processor layer with a pattern playing: five
+  consecutive kit changes at 0.005-0.043 s, no audio glitch, no UI stall. The
+  stopped-transport fallback was not needed. Kit switching while jamming was
+  later confirmed by the owner in normal use.
 - **The 4-character kit cell is tight.** If the abbreviations read badly on the
   panel, the fix is a wider KIT column at the expense of its neighbour, or a
   name that scrolls while the encoder moves.
-- **LinuxSampler streams samples from disk.** The measured RSS understates I/O.
-  Drum one-shots are the easy case for streaming, but eight groups hitting the
-  SD card on the same 16th has not been tested.
+- ~~**LinuxSampler streams samples from disk.**~~ **Largely resolved.** A 180 s
+  jam on the finished rig: 6.2% system CPU (peak 15% of 400%), 249.5 MB sampler
+  RSS — within 1.5 MB of the spike's prediction — 3.0 GB RAM free and **zero
+  xruns**. Eight kits cost about 6% of this Pi.
 
 ## Rejected alternatives
 
