@@ -583,6 +583,34 @@ The dead encoder CCs are a separate matter: the filter rule does not fix them, s
 
 ---
 
+## Section 4 — Zynthian MIDI Feature Map
+
+What Zynthian can receive and respond to. Check here before assigning a device control to avoid collisions.
+
+| Feature | MIDI trigger | Ch scope | Configure via |
+|---|---|---|---|
+| Play note on chain | Note On | per-chain MIDI ch | Chain Options → MIDI Channel |
+| Route all to active chain | Note On (any ch) | any | SINGLE_ACTIVE_CHANNEL=ON (currently ON) |
+| CC → synth engine parameter | CC 0–119 | per-chain ch | CC Learn: long-press param knob ~600 ms |
+| CC → screen knob (absolute) | CC 16 / 17 / 18 / 30 | any | ctrldev driver active on SINCO IN 2 |
+| Volume | CC 7 | any | always active |
+| Sustain | CC 64 | any | always active |
+| Modulation | CC 1 | any | always active |
+| Preset recall | Program Change | active chain ch | standard |
+| ZS3 subsnapshot recall | Program Change | active chain ch | PROG_CHANGE_ZS3=ON *(currently ON)* |
+| Bank select | CC 0 (MSB) + CC 32 (LSB) + PC | active chain ch | MIDI_BANK_CHANGE setting |
+| Launcher slot toggle | Note On on master ch (6) | ch 6 only | webconf → MIDI Options → Master Key Actions |
+| Any CUIA action | Note On on master ch (6) | ch 6 only | webconf → MIDI Options → Master Key Actions |
+| Drum kit cycle (via ctrldev) | CC 25 / CC 26 press on ch 1 | ch 1 only | ctrldev driver active |
+| Channel aftertouch | Channel Pressure | per-chain ch | if engine supports |
+| Poly aftertouch | Poly Pressure | per-chain ch | if engine supports |
+| Pitch bend | Pitch Bend | per-chain ch | standard |
+| Panic | CC 123 (All Notes Off) | any | standard |
+| Pitch bend range | RPN 0 | standard | standard |
+| Fine tuning | RPN 1 / RPN 2 | standard | standard |
+
+---
+
 ## Section 5 — Maschine MK2 drum rig, as built
 
 The rig running today, for reference when extending it. Driver:
@@ -634,32 +662,6 @@ combinations.
   zero xruns.
 
 ---
-
-## Section 4 — Zynthian MIDI Feature Map
-
-What Zynthian can receive and respond to. Check here before assigning a device control to avoid collisions.
-
-| Feature | MIDI trigger | Ch scope | Configure via |
-|---|---|---|---|
-| Play note on chain | Note On | per-chain MIDI ch | Chain Options → MIDI Channel |
-| Route all to active chain | Note On (any ch) | any | SINGLE_ACTIVE_CHANNEL=ON (currently ON) |
-| CC → synth engine parameter | CC 0–119 | per-chain ch | CC Learn: long-press param knob ~600 ms |
-| CC → screen knob (absolute) | CC 16 / 17 / 18 / 30 | any | ctrldev driver active on SINCO IN 2 |
-| Volume | CC 7 | any | always active |
-| Sustain | CC 64 | any | always active |
-| Modulation | CC 1 | any | always active |
-| Preset recall | Program Change | active chain ch | standard |
-| ZS3 subsnapshot recall | Program Change | active chain ch | PROG_CHANGE_ZS3=ON *(currently ON)* |
-| Bank select | CC 0 (MSB) + CC 32 (LSB) + PC | active chain ch | MIDI_BANK_CHANGE setting |
-| Launcher slot toggle | Note On on master ch (6) | ch 6 only | webconf → MIDI Options → Master Key Actions |
-| Any CUIA action | Note On on master ch (6) | ch 6 only | webconf → MIDI Options → Master Key Actions |
-| Drum kit cycle (via ctrldev) | CC 25 / CC 26 press on ch 1 | ch 1 only | ctrldev driver active |
-| Channel aftertouch | Channel Pressure | per-chain ch | if engine supports |
-| Poly aftertouch | Poly Pressure | per-chain ch | if engine supports |
-| Pitch bend | Pitch Bend | per-chain ch | standard |
-| Panic | CC 123 (All Notes Off) | any | standard |
-| Pitch bend range | RPN 0 | standard | standard |
-| Fine tuning | RPN 1 / RPN 2 | standard | standard |
 
 ---
 
