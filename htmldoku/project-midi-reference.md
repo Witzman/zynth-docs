@@ -71,6 +71,80 @@ Row 3: C3  C#3  D3  D#3   (MIDI 48–51)
 
 ---
 
+### Maschine MK2 — control surface and UI grammar
+
+The full physical inventory, and what the device is *capable* of — established from
+the Controller Editor layout and from how NI's own Windows software drives it.
+Useful when deciding what a Zynthian driver could do, as opposed to what it does
+today.
+
+**Controls**
+
+| Group | Controls |
+|---|---|
+| Pads | 16, velocity + aftertouch, with pad **pages** |
+| Encoders | 8 small, **smooth and endless** (no detents), with **knob pages** |
+| Big encoder | 1, **detented** (one click = one step) **and pushable** |
+| Above the screens | F1–F8, each with a white LED |
+| Screens | 2 × 255x64 monochrome |
+| Groups | A–H, full RGB LEDs |
+| Transport | Restart, ◀, ▶, Grid, Play, Rec, Erase, Shift |
+| Master | Volume, Swing, Tempo, ◀, ▶, Enter, Note Repeat |
+| Pads section | Scene, Pattern, Pad Mode, Navigate, Duplicate, Select, Solo, Mute |
+| Left column | Control, Step, Browse, Sampling, All, Auto Write |
+
+Roughly 20 of those buttons carry white LEDs and are unused by our rig.
+
+**Naming used in this project** — the MK2 has three separate ◀ ▶ pairs, so they
+need distinct names:
+
+| Name | Where |
+|---|---|
+| **TL / TR** | the transport section's arrows |
+| **ML / MR** | the master section's arrows |
+| **EL / ER** | SHIFT+Browse / SHIFT+Sampling — "encoder page left/right" in NI's software |
+
+> **[low] Which physical pair maps to the daemon's `step_left`/`step_right`
+> (CC 5/6) versus `nav_left`/`nav_right` (CC 13/14) is not confirmed.** The rig
+> binds CC 5/6 for sample switching and they are described as "the arrows beside
+> the display". Dump the port and press each pair before binding another.
+
+**The UI grammar NI's Windows software uses.** None of this is done by the
+device — it is dumb hardware with buttons, LEDs and two screens, and the host
+draws everything. So it is all reproducible by a Zynthian driver given the same
+primitives. Shift is emitted to the host (our daemon already tracks it as a
+modifier), so even Shift combinations are ours to use.
+
+- **Paged controls.** EL/ER page the 8 encoders **and** the 8 F buttons together,
+  so one page is 16 controls, with the screens labelling both.
+- **Held-button modal screens.** Holding a button turns the screens into a
+  temporary context: hold Mute and the screens show instrument names under the F
+  buttons while F1–F8 become channel mutes. Momentary — releasing restores the
+  previous view.
+- **Select → dial → confirm.** A button opens a screen of fields; ML/MR move the
+  selection; the big detented encoder changes the selected value; its push
+  confirms. Whether a value applies live while dialling or only on confirm is a
+  design choice, not a device constraint — both are possible.
+- **Control as escape** out of any menu.
+- **Capacitive touch on the encoder row.** The device senses a finger resting on
+  the encoders *before* anything is turned. It is a single global signal, not per
+  knob, and its only job is contextual display: touching the row snaps the screens
+  back to showing what the encoders and F buttons currently do. It exists so you
+  can leave a menu without nudging a value.
+
+**What our daemon exposes today**
+
+| Capability | State |
+|---|---|
+| Buttons, pads, 8 encoders, LEDs, both screens | working |
+| Shift | received, tracked as a modifier |
+| Encoder **touch** | **not implemented.** `read_buttons` consumes 24 bytes — 8 of button bits, the rest encoder counters. Touch is either in a byte we ignore or in a report ID we drop unparsed. Unknown whether it is in the stream at all |
+| Big encoder | **unverified.** `roller_state` is sized 9, so it is plausibly roller index 8 |
+| Big encoder push | **unverified.** The button enum has an `Encoder` entry that is probably it |
+| Page ◀▶ (CC 47/48) | **swallowed by the daemon** for its own page indicators — never emitted |
+
+---
+
 ### Maschine MK2 — factory MIDI mode (Native Instruments Controller Editor)
 
 **This map is not what the Pi sees.** It documents what the MK2 firmware emits in NI's stand-alone MIDI mode, configured by Controller Editor on Windows/macOS. The `MaschineMK2_linux` daemon bypasses MIDI mode entirely and reads raw USB HID, so the daemon's own map (above) is what applies on Zynthian. This section exists as a compatibility reference — matching it would make the daemon drop-in compatible with DAW templates written for a stock MK2.
@@ -506,6 +580,58 @@ The dead encoder CCs are a separate matter: the filter rule does not fix them, s
 - `readable()` drains until `EAGAIN` rather than taking one report per poll iteration (drain rate ~220/s → ~1400/s), `write_lights()` writes only on change, and the display writes are disabled.
 
 **Result:** sustained input, ~14 transparent reopens per 110 s, roughly 0.6 % dead time.
+
+---
+
+## Section 5 — Maschine MK2 drum rig, as built
+
+The rig running today, for reference when extending it. Driver:
+`zyngine/ctrldev/zynthian_ctrldev_maschine_mk2.py` with pure logic in
+`maschine_mk2_lib.py`. Snapshot `021-maschine-drum-rig-sfz`; `020-maschine-drum-rig`
+is the FluidSynth predecessor, kept as a fallback.
+
+**Structure.** Eight groups on MIDI channels 1–8, one chain each, all on
+LinuxSampler with their own SFZ drum-machine kit. Each group is one sound: a kit
+plus a note within it. All sequencing lives in zynseq, so patterns persist in
+snapshots and the touchscreen pattern editor mirrors them.
+
+**Bound controls**
+
+| Control | Function |
+|---|---|
+| 16 pads | toggle steps of the selected group; a white playhead sweeps while playing |
+| Group A–H | select group; LED carries the group's colour, brightness shows its volume |
+| Encoder 1–4 | hits · rotation · division · length (euclidean pattern) |
+| Encoder 5 | pan — **mixer strip balance** |
+| Encoder 6 | sample within the kit |
+| Encoder 7 | kit — 40 SFZ drum machines |
+| Encoder 8 | volume — **mixer strip level** |
+| F1–F8 | mute groups A–H, independent of selection (mixer strip mute) |
+| Play | start/stop all eight sequences |
+| Restart | jump every group to step 0 |
+| Erase | clear the selected group |
+| Arrows beside the display (CC 5/6) | step the group's sample through its kit |
+| Both screens | group tabs with sample names, dotted rule, one column per encoder with name, double-height value and an indicator bar |
+
+**Free for future use:** roughly 20 LED buttons (Scene, Pattern, Pad Mode,
+Navigate, Duplicate, Select, Solo, Mute, Step, Control, Browse, Sampling, All,
+Auto Write, Grid, Enter, Note Repeat, Tempo, Swing, Volume), the big detented
+encoder and its push, both master arrows, pad pages, knob pages, and Shift
+combinations.
+
+**Behaviour worth knowing when extending**
+
+- Encoders are **relative**: the daemon holds each encoder's CC value as device
+  state and moves it by the hardware delta, so every group keeps its own values.
+  Sensitivity is derived from the 128-unit sweep; division and length use a flat
+  8 units per step.
+- Volume and pan are on the **mixer**, not the engine, because LinuxSampler
+  exposes no controllers at all. This is engine-independent and survives in
+  snapshots.
+- Kit and sample names are parsed from the `.sfz` files; Zynthian's `keymaps.json`
+  cannot match an SFZ kit.
+- Measured cost of the whole rig, eight kits live: ~6% of the Pi's CPU, ~250 MB,
+  zero xruns.
 
 ---
 
