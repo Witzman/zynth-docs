@@ -34,14 +34,26 @@ Deployed HEADs:
 | Repo | Branch | HEAD | Pushed? |
 |---|---|---|---|
 | `MaschineMK2_linux` | main | `b567fb0` | yes |
-| `zynthian-ui` | vangelis | `1ad9c8f0` | yes |
+| `zynthian-ui` | vangelis | `75572577` | yes |
 | `zynth-docs` | master | `336cf49`+ | yes |
 
 **First action next session: the tutorial page** — everything else in task 10 is done and pushed.
 
+**Per-group SFZ drum kits shipped (2026-08-09).** All eight groups run
+LinuxSampler from snapshot `021-maschine-drum-rig-sfz`; each picks its own
+drum machine on encoder 7 and its sound within that kit on encoder 6. Kit
+notes and names are parsed from the `.sfz` files - Zynthian's `keymaps.json`
+resolves on the synth's preset path and cannot match an SFZ kit. **Volume and
+pan moved to the MIXER STRIP** because `zynthian_engine_linuxsampler` defines
+no controllers at all (`_ctrls = []`), so reading them off the engine dies the
+moment a group runs a kit; expression is gone with no equivalent. Measured on
+the rig: 6.2% system CPU, 249.5 MB sampler RSS for all eight kits, zero xruns,
+kit switching mid-jam with no glitch, and kits survive a restart. `020` is kept
+as the FluidSynth fallback. Spec and plan: `docs/superpowers/{specs,plans}/2026-08-09-maschine-sfz-kits*`.
+
 **Encoders are relative (2026-08-09).** The daemon holds each encoder's CC value as device state (`roller_value`) and moves it by the hardware delta; `/maschine/encoder idx value` re-centres it. A knob's *position* cannot serve eight groups - mapping it straight onto a parameter made every group share one value. Measured facts, do not re-derive: real movement is **0-4 units per report**, counter wraps are **-38 to -40**, so the wrap guard is 8; a rejected wrap must still resync `roller_status` or the encoder goes dead; and `zynthian_controller._set_value()` **truncates** integer controls, so chain controls must step in whole controller units with the remainder carried, never in fractions of the range.
 
-**Control layout as shipped** (differs from the plan — see the ledger for why): pads toggle steps · Group A-H select · enc 1 hits, 2 rotation, 3 division, 4 length, 5 pan, 6 expression, 7 **unused**, 8 volume · F1-F8 mute groups A-H regardless of selection (mixer strip mute) · Play toggles all 8 · Restart to step 0 · Erase clears the selected group · **the arrows beside the display** change sample. Group buttons carry their group's colour with brightness showing its volume.
+**Control layout as shipped** (differs from the plan — see the ledger for why): pads toggle steps · Group A-H select · enc 1 hits, 2 rotation, 3 division, 4 length, 5 pan (**mixer balance**), 6 **sample within the kit**, 7 **kit**, 8 volume (**mixer level**) · F1-F8 mute groups A-H regardless of selection (mixer strip mute) · Play toggles all 8 · Restart to step 0 · Erase clears the selected group · **the arrows beside the display** change sample. Group buttons carry their group's colour with brightness showing its volume.
 
 **Lessons from the 2026-08-08 test round — do not relearn:**
 

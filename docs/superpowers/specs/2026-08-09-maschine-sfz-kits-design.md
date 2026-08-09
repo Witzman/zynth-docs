@@ -109,9 +109,9 @@ From that, a kit yields its own `[(note, name)]` list:
   `<region>` blocks share a key with `lovel`/`hivel` splits). Match the key
   opcode EXACTLY: `hikey=` contains `key=` as a substring, and 13 of the kits
   have a region where `hikey != lokey`, so a substring test fabricates notes
-- the name is the sample's filename without directory or extension, with the
-  kit's own prefix stripped and underscores turned to spaces:
-  `808 Kick_short` → `KICK SHORT`
+- the name is the sample's filename without directory or extension, with
+  underscores turned to spaces and uppercased: `808 Kick_short` →
+  `808 KICK SHORT`
 
 This replaces the `keymaps.json` / `.midnam` lookup, which resolves on the
 synth's preset path and cannot match any SFZ kit — without it every group tab
