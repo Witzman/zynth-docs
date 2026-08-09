@@ -13,21 +13,50 @@
 
 ---
 
-## RESUME HERE — Maschine MK2 Drum Rig (paused 2026-08-07)
+## RESUME HERE — Techno Machine prototype (paused 2026-08-10)
 
-Active work is **not** a tutorial. It is an implementation plan being executed task-by-task with the `superpowers:subagent-driven-development` skill. Pick it up exactly here.
+**The live thread is the techno-machine prototype spec, not the drum rig.** The
+drum rig itself (tasks 1-9, plus per-group SFZ kits) is done and hardware-verified.
+Its only remaining debt — the oldest outstanding item in this project — is the
+**tutorial page**, deferred since 2026-08-08; pick that up if the techno-machine
+gates are blocked or as a break from them, but the techno-machine work is what
+this session should drive.
 
-**Read these three before doing anything on it:**
+**Read before doing anything on the techno machine:**
 
 | What | Where |
 |---|---|
-| Progress ledger — authoritative, read first | `~/zynth/zynthian-ui/.superpowers/sdd/2026-08-06-maschine-drum-rig/progress.md` |
-| Plan (tasks, code, verification steps) | `docs/superpowers/plans/2026-08-06-maschine-drum-rig.md` |
-| Spec (design + rejected alternatives) | `docs/superpowers/specs/2026-08-06-maschine-drum-rig-design.md` |
+| Prototype spec — the live document | `docs/superpowers/specs/2026-08-10-techno-machine-prototype-design.md` |
+| Design synthesis | `docs/superpowers/techno-machine/2026-08-09-techno-machine-design.md` |
+| PO / dev debate positions | `docs/superpowers/techno-machine/po-position.md`, `dev-position.md` |
+| Drum rig progress ledger (context, not the active task) | `~/zynth/zynthian-ui/.superpowers/sdd/2026-08-06-maschine-drum-rig/progress.md` |
 
-Task briefs and per-task reports: `~/zynth/MaschineMK2_linux/.superpowers/sdd/2026-08-06-maschine-drum-rig/`
+**State (2026-08-10):** the prototype is designed and six contested decisions are
+ratified by the owner (Turing lock incremental-not-rewrite with 4-deep undo; sends
+are ganged per-channel post-fader inserts, cheapest plugins first; big encoder
+dropped for verb-button + the eight small encoders; F1-F8 = MUTE / SOLO button,
+**no daemon work needed**; Lock snapshots deferred to pass two; `setPlayChance`/
+`setSwingAmount` ship, `setStutterCount` is pass two, `setNotePlayChance`/
+`addControl` refused). **No implementation plan exists yet** — the spec defines
+three gates that must run first:
 
-**State (2026-08-08):** tasks 1-9 complete and hardware-verified. `2fc6a837` was tested on 2026-08-08 and **five defects were found, fixed and re-verified** — details in the ledger. **Task 10 is half done**: the snapshot round-trip passes; the **tutorial page and tracking files remain**.
+1. **Gate G1 — FX cost** (16 new plugin processes: RSS, JACK graph nodes, snapshot
+   load time). **Blocked on the jackd/soundcard bug below** — measuring on the
+   wrong card makes G1 meaningless.
+2. **Gate G2 — voice engines' controller lists.** LinuxSampler already taught this
+   project that "enabled" says nothing about what a chain exposes; verify before
+   designing the voice CONTROL page.
+3. **Gate G3 — wet parameter.** Each FX plugin's wet control must be a true wet
+   level, not a dry/wet crossfade (that would break the encoders-7/8-are-sends
+   contract).
+
+**First action next session: fix the jackd/soundcard mismatch, then run Gate G1.**
+`jackd` on the Pi runs `-d alsa -d hw:Headphones -r 48000 ...` (the Pi's built-in
+PWM output) and `zynthian_envars.sh` has `SOUNDCARD_NAME="RBPi Headphones"` — not
+the Sound Blaster Play! 2 (`hw:S2`, 44.1 kHz) this project's hardware notes
+describe. The 2026-08-09 SFZ-kit measurement (6.2% CPU, zero xruns) is real but
+was taken on the wrong card, so it cannot be trusted for FX headroom. Fix the
+soundcard in webconf, re-measure, then run G1.
 
 Deployed HEADs:
 
@@ -35,9 +64,7 @@ Deployed HEADs:
 |---|---|---|---|
 | `MaschineMK2_linux` | main | `b567fb0` | yes |
 | `zynthian-ui` | vangelis | `75572577` | yes |
-| `zynth-docs` | master | `336cf49`+ | yes |
-
-**First action next session: the tutorial page** — everything else in task 10 is done and pushed.
+| `zynth-docs` | master | `dc6cd5c`+ | yes |
 
 **Per-group SFZ drum kits shipped (2026-08-09).** All eight groups run
 LinuxSampler from snapshot `021-maschine-drum-rig-sfz`; each picks its own

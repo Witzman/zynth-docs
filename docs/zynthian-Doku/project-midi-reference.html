@@ -299,7 +299,7 @@ off = (hue/2, min(sat/2 + 15, 127), max(bright/2 - 90, 5))</code></pre>
 <ul><li>Kit and sample names are parsed from the <code>.sfz</code> files; Zynthian's <code>keymaps.json</code></li></ul>
 <p>cannot match an SFZ kit.</p>
 <ul><li>Measured cost of the whole rig, eight kits live: ~6% of the Pi's CPU, ~250 MB,</li></ul>
-<p>zero xruns.</p>
+<p>zero xruns. <strong>Caveat found 2026-08-09:</strong> this was measured with <code>jackd</code> on <code>hw:Headphones</code> at 48000 (<code>-P 70 -s -S -d alsa -d hw:Headphones -r 48000 -p 512 -n 3 -o 2 -X raw</code>) — the Pi's built-in PWM output — not on the Sound Blaster Play! 2 (<code>hw:S2</code>, 44.1 kHz) this project's hardware notes describe. <code>/zynthian/config/zynthian_envars.sh</code> has <code>SOUNDCARD_NAME="RBPi Headphones"</code>. The number is real but not representative of the documented rig; re-measure after switching the soundcard back before trusting it for FX headroom decisions.</p>
 <hr>
 <hr>
 <h2 id="going-further">Going Further</h2>

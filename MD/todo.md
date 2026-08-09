@@ -43,6 +43,7 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
     - Remaining work is mapping, not resources: (a) sample NAMES — tabs resolve via `keymaps.json` on the preset path, which no SFZ kit matches, so parse the `.sfz` (`key=`/`lokey=` + `sample=`) and build each kit's own note list; (b) a group's current note may not exist in the new kit, so pick a sensible landing note; (c) encoder **7 is free and its screen column is already blank** — natural home for kit select, with the load debounced off the MIDI thread
     - Kits persist for free: engine + preset live in the `.zss`
   - [ ] Unset `ZYNTHIAN_LOG_LEVEL` on the Pi once task 10 is done: `systemctl unset-environment ZYNTHIAN_LOG_LEVEL`
+  - [ ] **jackd is on the wrong soundcard (found 2026-08-09).** `jackd` runs `-d alsa -d hw:Headphones -r 48000 ...` and `zynthian_envars.sh` has `SOUNDCARD_NAME="RBPi Headphones"` — the Pi's built-in PWM output, not the documented Sound Blaster Play! 2 (`hw:S2`, 44.1 kHz). The SFZ kit rig's 6.2% CPU / zero-xrun measurement is real but taken on the wrong card, so it is not representative. Fix the soundcard in webconf, then re-measure before trusting it for FX headroom (this blocks techno-machine Gate G1 below)
   - [x] Cold-boot ordering race — survived a real cold boot 2026-08-07: alias present, `Pads MIDI → ZynMidiRouter:dev2_in` bound. One sample only; still worth `After=maschine-mk2.service` if it ever recurs
   - [ ] Filter control needs an LV2 filter in each chain — FluidSynth's CC 74/71 are unipolar and `FluidDrums.sf2` ships wide open, so they can never be audible
   - [ ] `light_buf2` bytes 17-31 unverified (17-24 Scene/Pattern/Pad Mode row, 25-31 master section); `Shift`, `Erase`, `Rec`, `Grid`, `Stepleft/right`, `Restart` in `light_buf3` unverified. Map with `/maschine/rawled` if any needs to light
@@ -54,6 +55,16 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
   - Never drive anything step-rate-sensitive from `SS_SEQ_PROGRESS` — it is 5 Hz (`slow_thread_task`, 0.2s sleep) and aliases against the step rate
   - `TOGGLE_PLAY` is not a sequencer transport; it resolves to `cuia_toggle_audio_play()`. Use `setPlayState` directly
   - `external_pad_leds: true` must stay in the daemon's `maschine.json` or pad colours die on first touch
+
+- [~] **Techno Machine — 5 euclidean drums + 3 Turing-machine synth voices, played from the Maschine (designed 2026-08-09/10)**
+  - Sub-project of the Maschine rig; the drum-rig SFZ work above is complete and this is now the live thread
+  - Debated by three agents (product owner, Zynthian developer, project manager); positions at `docs/superpowers/techno-machine/po-position.md` and `dev-position.md`, synthesis at `docs/superpowers/techno-machine/2026-08-09-techno-machine-design.md`
+  - Owner ratified six contested decisions 2026-08-09/10: Turing lock is free from rewrite-on-wrap (incremental mutation on a persistent register, 4-deep undo in the prototype); sends are per-channel post-fader inserts, ganged, **cheapest plugins first, upgrade only if headroom allows**; the big encoder is dropped, replaced by verb-button + the eight small encoders; F1-F8 = MUTE with solo on the SOLO button (**no daemon work needed for the prototype**); Lock snapshots are pass two; `setPlayChance`/`setSwingAmount` ship, `setStutterCount` is pass two, `setNotePlayChance`/`addControl` refused
+  - Prototype spec: `docs/superpowers/specs/2026-08-10-techno-machine-prototype-design.md` — defines three gates that must run **before any driver code**:
+    - [ ] Gate G1 — FX cost (16 new plugin processes: RSS, JACK graph nodes, snapshot load time). **Precondition: fix the jackd/soundcard item above first** — G1 is meaningless measured on the wrong card
+    - [ ] Gate G2 — voice engines' actual controller lists (LinuxSampler taught us "enabled" says nothing about what a chain exposes)
+    - [ ] Gate G3 — wet parameter per FX plugin (must be a true wet level, not a dry/wet crossfade — fails the encoders-7/8-are-sends contract)
+  - [ ] After the three gates pass: write the implementation plan (spec exists, plan does not yet)
 
 - [~] **Complete Dub Techno Performance Loop tutorial**
   - [~] Test Part 1 on Pi — load snapshot `dub-techno-p1`, build patterns, verify playback

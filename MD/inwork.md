@@ -25,7 +25,9 @@ Status: `[~]` drafting · `[t]` user testing · `[>]` ready to publish · `[ ]` 
 
 ---
 
-- [~] **Maschine MK2 Drum Rig** — 8 groups x 16 steps euclidean drum sequencer via a new ctrldev driver; zynseq holds the patterns. NOT a tutorial yet — implementation plan in progress, see the RESUME HERE section of CLAUDE.md. Tasks 1-9 done and hardware-verified. `2fc6a837` tested 2026-08-08: five defects found, fixed and re-verified (driver now `d5d3636a`) — see `MD/todo.md`. Snapshot round-trip verified. **Remaining: the tutorial page and tracking files**, then push.
+- [~] **Maschine MK2 Drum Rig** — 8 groups x 16 steps euclidean drum sequencer via a new ctrldev driver; zynseq holds the patterns. NOT a tutorial yet. Tasks 1-9 done and hardware-verified; per-group SFZ drum kits shipped and hardware-verified 2026-08-09 (this part is now complete). **Remaining debt, oldest outstanding: the tutorial page and tracking files** — everything else in task 10 is done and pushed. See RESUME HERE in CLAUDE.md.
+
+- [~] **Techno Machine** — sub-project of the drum rig: 5 euclidean drum channels + 3 Turing-machine synth voices (bass/lead/pads), per-channel reverb/delay sends, played entirely from the Maschine. NOT a tutorial yet. Designed 2026-08-09/10 (three-agent debate + owner ratification of six decisions); prototype spec written at `docs/superpowers/specs/2026-08-10-techno-machine-prototype-design.md`. This is now the **live thread** — next action is running its three gates (FX cost, engine controllers, wet parameter), see `MD/todo.md`.
 
 ---
 
