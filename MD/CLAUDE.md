@@ -39,6 +39,8 @@ Deployed HEADs:
 
 **First action next session: the tutorial page** — everything else in task 10 is done and pushed.
 
+**Encoders are relative (2026-08-09).** The daemon holds each encoder's CC value as device state (`roller_value`) and moves it by the hardware delta; `/maschine/encoder idx value` re-centres it. A knob's *position* cannot serve eight groups - mapping it straight onto a parameter made every group share one value. Measured facts, do not re-derive: real movement is **0-4 units per report**, counter wraps are **-38 to -40**, so the wrap guard is 8; a rejected wrap must still resync `roller_status` or the encoder goes dead; and `zynthian_controller._set_value()` **truncates** integer controls, so chain controls must step in whole controller units with the remainder carried, never in fractions of the range.
+
 **Control layout as shipped** (differs from the plan — see the ledger for why): pads toggle steps · Group A-H select · enc 1 hits, 2 rotation, 3 division, 4 length, 5 pan, 6 expression, 7 **unused**, 8 volume · F1-F8 mute groups A-H regardless of selection (mixer strip mute) · Play toggles all 8 · Restart to step 0 · Erase clears the selected group · **the arrows beside the display** change sample. Group buttons carry their group's colour with brightness showing its volume.
 
 **Lessons from the 2026-08-08 test round — do not relearn:**
@@ -51,13 +53,9 @@ Deployed HEADs:
 - **Phantom drum sounds on pad taps = a stale JACK route.** `zynautoconnect` only tears down connections it made itself, and jackd outlives a zynthian restart, so a manual `jack_connect` from a debugging session lives forever. Check `jack_lsp -c | grep -A3 "Pads MIDI"` — it must show exactly **one** `devN_in`.
 - **In webconf's Snapshots page, the Name field + checkmark RENAMES THE SELECTED BANK.** It does not save a snapshot; it renamed bank `000`. Save from the touchscreen: inside a bank, the first entry is **"Save as new snapshot"**.
 
-**Display — the screens now render a real UI. Full writeup: `MD/display-investigation.md` (read it before touching this).**
+**Display geometry is SOLVED and hardware-verified (2026-08-09, `bbf2a62`).** 255x64 per screen, 1bpp row-major, MSB leftmost, 32 bytes per row. One screen = 8 reports, each a full-width band of 8 rows: header `[0xE0|s, 0, 0, chunk*8, 0, 0x20, 0, 0x08, 0]` + 256 payload bytes sliced straight out of the framebuffer. Header bytes 5 and 7 were **swapped** in this driver - byte 5 is bytes-per-row, byte 7 is rows - which is why every screen garbled. Byte 1 is an x offset in **bytes**, which is where the wrong "512 wide" came from. Source of truth: cabl `src/devices/ni/MaschineMK2.cpp`. The layout is wired into the ctrldev driver: group tabs with sample names, dotted rule, encoder columns with double-height values and indicator bars.
 
-The daemon exposes an OSC drawing API (`/maschine/display/fbclear|text|rect|raw`) so the layout lives in the driver, not in Rust. Screen 0 = left `0xE0`, 1 = right `0xE1`; flushed on the 100 ms timer, never from the OSC handler. A Maschine-style layout is photographed and readable: boxed group tabs under the buttons, dotted rule, one column per encoder with a small caps name over a double-height value. Left = A-D + HITS/ROT/DIV/LEN, right = E-H + PAN/EXPR/VOL.
-
-Geometry, measured: **512x64 per screen, x 1:1, a report is a 128x32 tile (16 bytes per row), and BOTH row bands must be sent per tile** (byte 7 is `0x20`, so one report covers only 32 rows). **Superseded — do not trust these older claims:** "rows past ~8 drop content", "512x32 logical canvas", "rows are 2 px tall", "transfer rows 16-31 discarded", "glyphs need 2x horizontal scaling". All were artefacts of a wrong row stride.
-
-**Not yet verified:** the 128x32 + both-bands combination shipped untested. First action: send the three-line test (y=2 small, y=24 double-height, y=48 small) and confirm all three are complete and correctly placed. Then wire the layout into the driver, then add the encoder indicator bars (designed, in the ledger).
+Full writeup: `MD/display-investigation.md`, first section — read it before touching the display. The daemon exposes an OSC drawing API (`/maschine/display/fbclear|text|rect|raw`) so the layout lives in the driver, not in Rust. Screen 0 = left `0xE0`, 1 = right `0xE1`; flushed on the 100 ms timer, never from the OSC handler — drawing from the handler puts HID writes on the fd input arrives on and trips the hidraw watchdog. Left = A-D + HITS/ROT/DIV/LEN, right = E-H + PAN/EXPR/VOL. **Do not fill a box and then draw inverted text into it** — the two cancel; draw the text, then invert the whole tab.
 
 **Hard-won facts — do not relearn these:**
 

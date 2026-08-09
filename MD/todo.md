@@ -27,10 +27,16 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
   - [ ] Test snapshot `000/015-212121.zss` on the Pi — delete it or keep it as the round-trip fixture
   - [x] Display: row-order puzzle **solved** 2026-08-09 — it was a wrong row stride, not dropped rows. A report is a 128x32 tile (16 bytes/row) and both row bands must be sent per tile. The "512x32 canvas / 2-px rows / discarded rows" model is dead
   - [x] Display: OSC drawing API built (`fbclear`/`text`/`rect`/`raw`) + Maschine-style layout photographed and readable — tabs, dotted rule, encoder columns with double-height values
-  - [ ] **First next session: verify the 128x32 + both-bands geometry** — three-line test (y=2 small, y=24 double, y=48 small), all three complete and correctly placed. Shipped untested
-  - [ ] Wire the layout into the ctrldev driver (it currently lives in `/root/mock2.py` on the Pi)
-  - [ ] Encoder indicator bars in rows 52-63 — unipolar fill (HITS/LEN/EXPR/VOL), bipolar from centre (PAN), segments (DIV/ROT). Designed with the user, not built
-  - [ ] `MaschineMK2_linux` `0e2b60b` is **not pushed**
+  - [x] **Display geometry SOLVED and hardware-verified 2026-08-09** (`bbf2a62`) — 255x64 row-major, 8 reports of a full-width 8-row band. Header bytes 5 and 7 were **swapped**: byte 5 is bytes-per-row (0x20), byte 7 is rows (0x08). Byte 1 is an x offset in **bytes**, which is where "512 wide" came from. Taken from cabl's `MaschineMK2.cpp`, which had the answer all along. Full writeup: `MD/display-investigation.md`, first section
+  - [x] Encoder indicator bars — built and verified in the mock: unipolar fill (HITS/LEN/EXPR/VOL), bipolar from centre (PAN), segments (ROT/DIV), y 52-61
+  - [x] Layout wired into the ctrldev driver 2026-08-09 — group tabs with sample names, encoder columns, values and bars, all diffed so only changes go on the wire. Verified on hardware
+  - [x] **Encoders are relative now, verified 2026-08-09** — per-group memory works. Three real defects found by measuring the CC stream, not guessing:
+    - The daemon reported an absolute knob **position**, so one position served all eight groups: selecting another group and turning made its value jump to the previous group's. The value is now device state (`roller_value`) moved by deltas, with `/maschine/encoder` to re-centre it
+    - The wrap guard `delta.abs() < 40` was too loose. Measured on the wire: real movement is **0-4 units per report**, counter wraps are **-38 to -40**, so wraps reached the host as real backwards movement. Threshold is 8 now
+    - Tightening the guard alone made it **worse**: rejection skipped `set_roller_status`, so the baseline stayed stale by ~38, every later delta measured the wrap too and the encoder went dead. The baseline must resync on a rejected wrap
+    - `zynthian_controller._set_value()` **truncates** integer controls (`:469`), so adding span/128 = 0.992 to pan never moved it - jumpy and uneven. Chain controls step in whole controller units with the remainder carried
+    - Sensitivity: hits/rot = 128/(steps+1) - the sweep the absolute mapping used; div and length use a flat 8 units per step, because spreading their few settings over the sweep cost 26 and 32 units and read as sticky
+  - [ ] `MaschineMK2_linux` `0e2b60b`..`bbf2a62` is **not pushed**
   - [ ] Per-group kit switching across the 42 drum-machine SFZ kits in `/zynthian/zynthian-data/soundfonts/sfz/Drum Machines/` — bigger sonic win than any CC
   - [ ] Unset `ZYNTHIAN_LOG_LEVEL` on the Pi once task 10 is done: `systemctl unset-environment ZYNTHIAN_LOG_LEVEL`
   - [x] Cold-boot ordering race — survived a real cold boot 2026-08-07: alias present, `Pads MIDI → ZynMidiRouter:dev2_in` bound. One sample only; still worth `After=maschine-mk2.service` if it ever recurs
