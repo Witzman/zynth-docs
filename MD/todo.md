@@ -56,15 +56,18 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
   - `TOGGLE_PLAY` is not a sequencer transport; it resolves to `cuia_toggle_audio_play()`. Use `setPlayState` directly
   - `external_pad_leds: true` must stay in the daemon's `maschine.json` or pad colours die on first touch
 
-- [~] **Techno Machine — 5 euclidean drums + 3 Turing-machine synth voices, played from the Maschine (designed 2026-08-09/10)**
-  - Sub-project of the Maschine rig; the drum-rig SFZ work above is complete and this is now the live thread
-  - Debated by three agents (product owner, Zynthian developer, project manager); positions at `docs/superpowers/techno-machine/po-position.md` and `dev-position.md`, synthesis at `docs/superpowers/techno-machine/2026-08-09-techno-machine-design.md`
-  - Owner ratified six contested decisions 2026-08-09/10: Turing lock is free from rewrite-on-wrap (incremental mutation on a persistent register, 4-deep undo in the prototype); sends are per-channel post-fader inserts, ganged, **cheapest plugins first, upgrade only if headroom allows**; the big encoder is dropped, replaced by verb-button + the eight small encoders; F1-F8 = MUTE with solo on the SOLO button (**no daemon work needed for the prototype**); Lock snapshots are pass two; `setPlayChance`/`setSwingAmount` ship, `setStutterCount` is pass two, `setNotePlayChance`/`addControl` refused
-  - Prototype spec: `docs/superpowers/specs/2026-08-10-techno-machine-prototype-design.md` — defines three gates that must run **before any driver code**:
-    - [ ] Gate G1 — FX cost (16 new plugin processes: RSS, JACK graph nodes, snapshot load time). **Precondition: fix the jackd/soundcard item above first** — G1 is meaningless measured on the wrong card
-    - [ ] Gate G2 — voice engines' actual controller lists (LinuxSampler taught us "enabled" says nothing about what a chain exposes)
-    - [ ] Gate G3 — wet parameter per FX plugin (must be a true wet level, not a dry/wet crossfade — fails the encoders-7/8-are-sends contract)
-  - [ ] After the three gates pass: write the implementation plan (spec exists, plan does not yet)
+- [~] **Techno Machine — 5 euclidean drums + 3 Turing voices, played from the Maschine (built 2026-08-10)**
+  - Sub-project of the Maschine rig. **All three gates passed and the prototype is implemented; only the twenty-minute jam remains.**
+  - [x] **Gate G1 — FX cost.** Re-baselined: the spec's "10% of one core for sixteen inserts" is unreachable, because sixteen jalv processes cost **16.5% of a core doing nothing**. Measured in the real topology with the rig sounding: **20.7% JACK DSP load, zero xruns**, MemAvailable −177 MB, 3.8 s warm start for the sixteen. Owner waived the `hw:S2` precondition — every number is on `hw:Headphones` at 48 kHz and must be re-measured when the Sound Blaster is connected
+  - [x] **Gate G2 — engines.** JC303, Obxd and padthv1 all expose all four CONTROL columns; symbol table recorded and wired into `techno_lib.VOICE_SYMBOLS`
+  - [x] **Gate G3 — wet parameter.** **MDA Ambience and MDA DubDelay, the spec's own starting choice, are both dry/wet crossfades**, as are PlateX2, MDA Delay, lcrDelay and bolliedelay. Chosen instead: **TAP Reverberator + TAP Stereo Echo**, true wet levels, stereo in and out, verified on hardware — the dry survives a full sweep
+  - [x] Prepared snapshot **`016-techno_maschine`**: 5 LinuxSampler drums + JC303/Obxd/padthv1, sixteen post-fader inserts, dry at unity and wet at −70 dB, strips 0.19 / main 0.80 for headroom
+  - [x] Driver: state dict with one `apply()` path, per-channel FX handles, three latched pages, drum STEP page, the Turing voices, voice CONTROL page, ALL page with ganged FX, mute/solo/erase, snapshot persistence of the registers
+  - [ ] **Task 14 — the twenty-minute jam.** Not optional: the last bug of this shape took 95 seconds to appear. Watch for SIGSEGV, UI stalls, xruns, and `watchdog: input stalled, reopened` above the healthy ~8 s baseline
+  - [ ] Re-measure G1 on `hw:S2` at 44.1 kHz once the external soundcard is connected
+  - [ ] Tutorial page for the techno machine (and the older drum-rig tutorial debt still stands)
+  - Plan: `docs/superpowers/plans/2026-08-10-techno-machine-prototype.md` · Gates: `docs/superpowers/techno-machine/2026-08-10-gates-g1-g2-g3-results.md`
+  - **Retracted finding, do not re-derive:** JC303 and Obxd are **omni**. The claim that they answer only on MIDI channel 1 came from a probe that was not reset between channel rounds, plus the fact that an unconfigured `ZynMidiRouter:devN_in` routes to the **active chain** rather than per channel. No channel translation is needed
 
 - [~] **Complete Dub Techno Performance Loop tutorial**
   - [~] Test Part 1 on Pi — load snapshot `dub-techno-p1`, build patterns, verify playback
