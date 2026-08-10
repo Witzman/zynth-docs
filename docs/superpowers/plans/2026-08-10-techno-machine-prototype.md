@@ -861,6 +861,46 @@ ssh root@192.168.2.123 'jack_lsp | grep -c TAP'
 
 Expected: 64 TAP audio ports (16 instances × 4) and no traceback.
 
+- [ ] **Step 4b: Set the gain staging, and measure it — this is not optional**
+
+Both inserts pass dry at **unity**, as an insert must. The TAP defaults were
+−4 dB each, so before this change every channel was quietly losing ~8 dB, and
+that attenuation was hiding how hot the mix already was. Measured on the shipped
+kits: **a single sampler channel peaks at 1.24 before the mixer**, and eight of
+them summed to **2.92** on the main bus — nearly three times full scale.
+
+The LinuxSampler `volume` controller in the snapshot is **not** the fix: taking
+it from 96 to 40 moved the bus peak only from 1.88 to 1.59, about 1.5 dB. Use
+the **mixer strips**, which is where this rig keeps volume anyway, over the OSC
+mixer API — `/MIXER/FADER<n> f`, strip 16 being main:
+
+```bash
+ssh root@192.168.2.123 'python3 -c "
+import liblo, time
+t = liblo.Address(\"localhost\", 1370, liblo.UDP)
+for ch in range(8):
+    liblo.send(t, \"/MIXER/FADER%d\" % ch, 0.19)
+    time.sleep(0.05)
+liblo.send(t, \"/MIXER/FADER16\", 0.8)"'
+```
+
+The faders are **linear in amplitude** — 0.6 → 0.38 produced exactly a 0.633×
+change in peak — so gain can be moved between strips and master freely. Put the
+attenuation on the strips and leave **master at 0.8**, so the player's MASTER
+knob has travel in both directions.
+
+**Verify:** main bus peak lands near **0.69**, roughly 3 dB of headroom, and it
+must stay under 1.0 with the wets still at −70 dB — opening reverb and delay adds
+level on top. Measure it, do not eyeball a meter:
+
+```bash
+scp <scratchpad>/peak.py root@192.168.2.123:/root/ && ssh root@192.168.2.123 'python3 /root/peak.py'
+```
+
+Then save from the touchscreen. The mixer state only appears in the `.zss` once
+it differs from the default, as `zs3/zs3-0/mixer/chan_NN/level`; a snapshot with
+no such block is one whose faders were never touched.
+
 - [ ] **Step 5: Add the three voice chains**
 
 Still on the touchscreen: add three chains on MIDI channels 6, 7 and 8 with
@@ -993,6 +1033,49 @@ Add `from collections import deque` to the imports.
 ```
 
 Note `chain_manager.get_chain_ids_by_midi_chan()` **does not exist** on the Pi — `midi_chan_2_chain_ids[chan]` is the pattern the pattern editor itself uses.
+
+- [ ] **Step 3b: Translate the MIDI channel for the voice chains — without this, two of the three voices are silent**
+
+Measured on hardware 2026-08-10: fed straight into their own MIDI inputs,
+**JC303 and Obxd respond on MIDI channel 1 and ignore every other channel.**
+`ZynMidiRouter:chN_out` forwards events on their original channel, so a voice
+chain on MIDI 6 or 7 never sounds. padthv1 is omni, which is why PADS worked and
+masked the problem.
+
+Zynthian already has the mechanism and applies it only to a hard-coded list —
+`zynthian_engine_jalv.set_midi_chan()` calls it for `dsp56300_plugins`
+(`Osirus`, `OsTIrus`, `Vavra`, `Xenia`, `JE8086`, `NodalRed2x`) and for nothing
+else. Rather than diverge from upstream, the driver does it for its own voice
+chains at init:
+
+```python
+from zyncoder import lib_zyncore
+
+    def _translate_voice_channels(self):
+        """JC303 and Obxd listen on MIDI channel 1 only. Each chain has its own
+        zmop, so translating every voice chain's channel to 0 is safe - the
+        engines cannot hear each other."""
+        for idx, ch in enumerate(tlib.CHANNELS):
+            if ch[2] != "voice":
+                continue
+            chain_ids = self.chain_manager.midi_chan_2_chain_ids[ch[5]]
+            if not chain_ids:
+                continue
+            chain = self.chain_manager.chains.get(chain_ids[0])
+            if chain is None or chain.zmop_index is None:
+                continue
+            lib_zyncore.zmop_set_midi_chan_trans(chain.zmop_index, ch[5], 0)
+            for proc in chain.get_processors():
+                proc.midi_chan_engine = 0
+```
+
+`zmop_set_midi_chan_trans` is **audited and present** in the installed
+`/zynthian/zyncoder/build/libzyncore.so`. Call it from `init()` and again on
+`SS_LOAD_SNAPSHOT`, because a snapshot restore rebuilds the chains.
+
+**Verify:** feed a note on MIDI channel 6, 7 and 8 and hear BASS, LEAD and PADS.
+The measurement harness for this is `voice_check.py` — it registers its own JACK
+MIDI port, so its connection dies with it and leaves no stale route.
 
 - [ ] **Step 4: Deploy and verify the plumbing without any UI change**
 

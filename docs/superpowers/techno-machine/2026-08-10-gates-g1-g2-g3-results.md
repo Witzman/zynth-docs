@@ -205,6 +205,27 @@ are long enough to be a liability in a 4-character value cell.
 processes land on top of G1's sixteen, and startup time is already the tight
 number.
 
+### G2 addendum, found on hardware — a controller list is still not enough
+
+The gate asked what each engine *exposes*. Building the snapshot exposed a second
+question it did not ask: **what channel does the engine listen on?**
+
+With all three voice chains built and correctly routed — audio into their mixer
+strips, `ZynMidiRouter:ch5/6/7_out` into their MIDI inputs — **BASS and LEAD were
+silent and only PADS sounded.** Feeding each engine's own MIDI input directly
+showed why: JC303 and Obxd produce their full output on **MIDI channel 1** and
+ignore every other channel; padthv1 is omni. `chN_out` forwards events on their
+original channel, so a chain on MIDI 6 or 7 is silent by construction.
+
+Zynthian has the mechanism — `zmop_set_midi_chan_trans` — and
+`zynthian_engine_jalv.set_midi_chan()` applies it only to a hard-coded list of
+six DSP56300 plugins. The driver therefore does it for its own voice chains; the
+symbol is audited and present in the installed `libzyncore.so`.
+
+**The lesson is the same one LinuxSampler taught, one level further out:** a chain
+that is enabled, loaded, routed and publishing controllers can still make no
+sound. Verify with a note and a level measurement, never with a port list.
+
 ---
 
 ## The FX → ALL-page mapping the gates settled
