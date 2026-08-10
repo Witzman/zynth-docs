@@ -172,7 +172,9 @@ drum STEP page are thin and honest; a knob that lies is not.
 
 **L5 — One channel, one cursor. The inverted tab is authoritative.** The Group
 LED carries identity (hue), level (brightness) and silence (dark). Selection is
-not on the LED; it is the inverted tab on the display.
+not on the LED; it is the inverted tab on the display. A **dashed** tab means
+the channel is not sounding — muted at the mixer, or silenced by its own
+generator (play chance 0 on a voice, HITS 0 on a drum).
 
 **L6 — RANDOM → 0 keeps the loop you are hearing, bit-identical, forever.** Not
 approximately. RANDOM at 0 means *skip the next rewrite*, so nothing rewrites the
@@ -815,6 +817,7 @@ write. Press **Play** once after a load to be certain.
 | Symptom | Cause | Fix |
 |---|---|---|
 | Buttons do nothing, displays blank, but Zynthian is up | The driver is **"Found" but never "Loaded"** — Zynthian gave the daemon's virtual port no zmip slot. Happens after any Zynthian system update. | Re-run `~/zynth-docs/tools/patch-autoconnect-maschine.py`, then restart Zynthian. Confirm with `journalctl -u zynthian \| grep -i ctrldev` — you want **Loaded**, not just Found. |
+| A voice goes quiet and looks broken; the engine is fine | Three causes, in the order to check them. **Play chance 0** — set by ERASE + Group, which on a voice is a toggle; its tab draws **dashed**. **GATE too short for the division** — at 1/32 a 5% gate is a few milliseconds, and a pad patch never gets loud. **A preset with no output** — some padthv1 bank entries are silent. | Press ERASE + that Group again. Raise GATE and slow DIVIDE. Step the preset with encoder 1. To tell them apart: hold a note into the engine's own MIDI input and watch its output — if it sounds there, the engine is not the problem. |
 | First pad touch destroys the per-channel colours; pads go dark red | The daemon's `"external_pad_leds": true` flag is missing, so the daemon repaints pads itself on press and release. | Restore it in the daemon's `maschine.json` and restart the daemon. **It is not in git on the Pi** — a `git reset --hard` there wipes it, so re-set it after every deploy that touches the daemon. |
 | A channel is silent after a snapshot load, then comes back on the next bar | LOOP play mode was rewritten from the `.zss`. A LOOPALL sequence shorter than the bar goes RESTARTING at its own end, then STARTING — and STARTING does not clock its tracks. | Press **Play** — the driver re-forces LOOP on every transport start. If it recurs, check the snapshot's stored play modes. |
 | Phantom drum sounds when you tap pads, on top of the real ones | A **stale JACK route** left by an earlier debugging session. `zynautoconnect` only tears down connections it made itself, and jackd outlives a Zynthian restart. | `jack_lsp -c \| grep -A3 "Pads MIDI"` — it must show exactly **one** `devN_in`. Disconnect the extra. |
