@@ -174,10 +174,21 @@ to `read_buttons`, not a reverse-engineering exercise.
 enum; `Main` (raw byte 3, bit 7 — our `Nav`) is the likeliest candidate. Test by pushing
 the encoder and watching that bit.
 
-**Encoder capacitive touch: almost certainly does not exist on the MK2.** cabl implements
-no touch for this device and declares `kMASMK2_nEncoders = 9` (8 small + 1 big) with
-nothing else. Touch-sensitive encoders are a Maschine Studio / MK3 feature. Any design
-that assumed MK2 touch should drop it.
+**Encoder capacitive touch: UNRESOLVED, with a strong hypothesis and a named test.**
+cabl implements no touch for the MK2 and declares `kMASMK2_nEncoders = 9` (8 small + 1
+big), but that is weak evidence — cabl's MK2 support is admittedly partial (its
+`processPads` is a bare `//!\todo`). The owner is confident the hardware has it and that
+NI's Windows driver uses it, which is the better evidence.
+
+The hypothesis: **raw byte 7** — the byte cabl calls `NotUsed1-4` and our daemon calls
+`R1-R8` — carries eight bits for eight encoders. Those bits already reach our button
+decoder, so touch would be arriving today and being silently dropped, exactly as the big
+encoder's counter was.
+
+The test: print raw byte 7 on change only, touch each encoder without turning it, and see
+which bit sets. **Print on change only** — at ~750 reports/s an unthrottled print starves
+the input reader and trips the hidraw watchdog, which looks precisely like "the encoder
+killed the daemon".
 
 Local clone for reference: `~/zynth/cabl`.
 
