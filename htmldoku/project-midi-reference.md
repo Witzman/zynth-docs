@@ -132,6 +132,55 @@ modifier), so even Shift combinations are ours to use.
   back to showing what the encoders and F buttons currently do. It exists so you
   can leave a menu without nudging a value.
 
+#### Input report 0x01 decoded against cabl — 2026-08-10
+
+`shaduzlabs/cabl` (`src/devices/ni/MaschineMK2.cpp`) is a known-working MK2 driver and
+settles the layout of the button/encoder report. cabl indexes the RAW report (ID at byte
+0); our daemon strips the ID, so **our index = cabl's raw index - 1**.
+
+| raw byte | our row | Contents (cabl's own enum order) |
+|---|---|---|
+| 1 | 0 | DisplayButton1-8 → F1-F8 |
+| 2 | 1 | Control · Step · Browse · Sampling · **BrowseLeft · BrowseRight** · All · AutoWrite |
+| 3 | 2 | Volume · Swing · Tempo · **MasterLeft · MasterRight** · Enter · NoteRepeat · **Main** |
+| 4 | 3 | Group A-H |
+| 5 | 4 | Restart · **TransportLeft · TransportRight** · Grid · Play · Rec · Erase · Shift |
+| 6 | 5 | Scene · Pattern · PadMode · Navigate · Duplicate · Select · Solo · Mute |
+| 7 | 6 | **NotUsed1-4** — our `R1-R8` are phantom names for unused bits |
+| 8 | 7 | **THE BIG ENCODER'S VALUE** — our `A1-A8` are phantom names for a counter |
+| 9-24 | 8-23 | the 8 small encoders, 16-bit little-endian pairs (low byte first) |
+
+This resolves the three-arrow-pairs question definitively:
+
+| Project name | cabl name | our daemon | CC |
+|---|---|---|---|
+| **TL / TR** (transport) | TransportLeft/Right | `step_left`/`step_right` | **5 / 6** |
+| **ML / MR** (master) | MasterLeft/Right | `nav_left`/`nav_right` | **13 / 14** |
+| **EL / ER** (left column) | BrowseLeft/Right | `page_left`/`page_right` | **47 / 48 — swallowed by the daemon** |
+
+So the rig's sample-switch arrows are the TRANSPORT pair, and the left-column pair exists
+and is reachable as soon as the daemon stops consuming it for its own page indicators.
+
+**The big encoder is in the stream and always has been.** Raw byte 8 is a 4-bit wrapping
+counter (0x00-0x0F, hence detented with 16 positions). Our `read_buttons` treats that byte
+as eight button bits named `A1-A8`, so **turning the big encoder currently fires spurious
+button events** — harmless only because nothing binds them. Emitting it is a small change
+to `read_buttons`, not a reverse-engineering exercise.
+
+**Our small-encoder parsing agrees with cabl:** value = low | high<<8, which is what
+`normalize_encoder`'s `raw/4 + state*64` approximates.
+
+**The big encoder's PUSH is unresolved.** It is not a separate entry in cabl's 48-button
+enum; `Main` (raw byte 3, bit 7 — our `Nav`) is the likeliest candidate. Test by pushing
+the encoder and watching that bit.
+
+**Encoder capacitive touch: almost certainly does not exist on the MK2.** cabl implements
+no touch for this device and declares `kMASMK2_nEncoders = 9` (8 small + 1 big) with
+nothing else. Touch-sensitive encoders are a Maschine Studio / MK3 feature. Any design
+that assumed MK2 touch should drop it.
+
+Local clone for reference: `~/zynth/cabl`.
+
 **What our daemon exposes today**
 
 | Capability | State |
