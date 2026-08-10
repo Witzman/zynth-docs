@@ -176,6 +176,13 @@ Expected: FAIL with `ModuleNotFoundError: No module named 'techno_lib'`
 
 - [ ] **Step 3: Write the minimal implementation**
 
+**`dev_ids = []` is mandatory, not decoration.** `zynthian_ctrldev_manager`
+globs every `*.py` in `zyngine/ctrldev/`, takes `getattr(module, module_name)`
+as a driver class and reads `.dev_ids` off it. A new module in that directory
+without the attribute **crash-loops the entire Zynthian UI on startup** —
+`AttributeError: type object 'techno_lib' has no attribute 'dev_ids'`, every
+14 seconds, forever. `maschine_mk2_lib` already carries the same guard.
+
 ```python
 # zyngine/ctrldev/techno_lib.py
 """Pure functions for the techno machine. No Zynthian imports, no I/O, no state.
@@ -188,6 +195,8 @@ import random
 
 
 class techno_lib:
+
+    dev_ids = []      # see above - the ctrldev manager reads this off every module
 
     # ---------------------------------------------------------------- Turing
 
@@ -1034,48 +1043,24 @@ Add `from collections import deque` to the imports.
 
 Note `chain_manager.get_chain_ids_by_midi_chan()` **does not exist** on the Pi — `midi_chan_2_chain_ids[chan]` is the pattern the pattern editor itself uses.
 
-- [ ] **Step 3b: Translate the MIDI channel for the voice chains — without this, two of the three voices are silent**
+- [ ] **Step 3b: Do NOT add MIDI channel translation — and know why the test that suggested it lied**
 
-Measured on hardware 2026-08-10: fed straight into their own MIDI inputs,
-**JC303 and Obxd respond on MIDI channel 1 and ignore every other channel.**
-`ZynMidiRouter:chN_out` forwards events on their original channel, so a voice
-chain on MIDI 6 or 7 never sounds. padthv1 is omni, which is why PADS worked and
-masked the problem.
+An injected note reached only PADS while BASS and LEAD stayed silent, which
+looked like JC303 and Obxd being channel-1-only. **They are not: all three voice
+engines are omni.** Two measurement faults produced the false reading — a probe
+that was not reset between channel rounds, so the previous channel's tail was
+counted; and the fact that **Zynthian routes an unconfigured `ZynMidiRouter:devN_in`
+to the active chain, not per channel.** Tracing all three `chN_out` ports at once
+showed all eighteen events, from three channels, arriving at one zmop.
 
-Zynthian already has the mechanism and applies it only to a hard-coded list —
-`zynthian_engine_jalv.set_midi_chan()` calls it for `dsp56300_plugins`
-(`Osirus`, `OsTIrus`, `Vavra`, `Xenia`, `JE8086`, `NodalRed2x`) and for nothing
-else. Rather than diverge from upstream, the driver does it for its own voice
-chains at init:
+`zmop_set_midi_chan_trans` exists and works — a translated zmop emits
+`902d64`, channel 1 — but using it here narrows the zmop to a single channel to
+solve a problem that does not exist. **Do not add it.**
 
-```python
-from zyncoder import lib_zyncore
-
-    def _translate_voice_channels(self):
-        """JC303 and Obxd listen on MIDI channel 1 only. Each chain has its own
-        zmop, so translating every voice chain's channel to 0 is safe - the
-        engines cannot hear each other."""
-        for idx, ch in enumerate(tlib.CHANNELS):
-            if ch[2] != "voice":
-                continue
-            chain_ids = self.chain_manager.midi_chan_2_chain_ids[ch[5]]
-            if not chain_ids:
-                continue
-            chain = self.chain_manager.chains.get(chain_ids[0])
-            if chain is None or chain.zmop_index is None:
-                continue
-            lib_zyncore.zmop_set_midi_chan_trans(chain.zmop_index, ch[5], 0)
-            for proc in chain.get_processors():
-                proc.midi_chan_engine = 0
-```
-
-`zmop_set_midi_chan_trans` is **audited and present** in the installed
-`/zynthian/zyncoder/build/libzyncore.so`. Call it from `init()` and again on
-`SS_LOAD_SNAPSHOT`, because a snapshot restore rebuilds the chains.
-
-**Verify:** feed a note on MIDI channel 6, 7 and 8 and hear BASS, LEAD and PADS.
-The measurement harness for this is `voice_check.py` — it registers its own JACK
-MIDI port, so its connection dies with it and leaves no stale route.
+When a voice appears silent, check in this order: is the note reaching the
+chain's zmop at all (trace `chN_out` with your own JACK MIDI input port —
+`jack_midi_dump` shows nothing on these ports); is the mixer strip up; is the
+insert's dry level unity.
 
 - [ ] **Step 4: Deploy and verify the plumbing without any UI change**
 

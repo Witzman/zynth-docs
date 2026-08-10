@@ -205,26 +205,36 @@ are long enough to be a liability in a 4-character value cell.
 processes land on top of G1's sixteen, and startup time is already the tight
 number.
 
-### G2 addendum, found on hardware — a controller list is still not enough
+### G2 addendum — a measurement trap, and the false conclusion it produced
 
-The gate asked what each engine *exposes*. Building the snapshot exposed a second
-question it did not ask: **what channel does the engine listen on?**
+With all three voice chains built and correctly routed, an injected note made
+**only PADS sound; BASS and LEAD stayed silent.** Feeding each engine's own MIDI
+input directly appeared to explain it: JC303 and Obxd seemed to answer on MIDI
+channel 1 only, padthv1 being omni. A driver change was written and deployed to
+translate each voice chain's channel with `zmop_set_midi_chan_trans`.
 
-With all three voice chains built and correctly routed — audio into their mixer
-strips, `ZynMidiRouter:ch5/6/7_out` into their MIDI inputs — **BASS and LEAD were
-silent and only PADS sounded.** Feeding each engine's own MIDI input directly
-showed why: JC303 and Obxd produce their full output on **MIDI channel 1** and
-ignore every other channel; padthv1 is omni. `chN_out` forwards events on their
-original channel, so a chain on MIDI 6 or 7 is silent by construction.
+**That conclusion was wrong, and the change has been reverted.** Two faults in
+the measurement produced it:
 
-Zynthian has the mechanism — `zmop_set_midi_chan_trans` — and
-`zynthian_engine_jalv.set_midi_chan()` applies it only to a hard-coded list of
-six DSP56300 plugins. The driver therefore does it for its own voice chains; the
-symbol is audited and present in the installed `libzyncore.so`.
+1. **The probe did not reset between channels.** The peak from the channel-1
+   round was still ringing when the channel-6 round was measured, so "channel 6
+   adds nothing" was read as "channel 6 is ignored". With a peak reset and a
+   settle between rounds, **JC303 and Obxd both sound on their own channel and
+   on channel 1 — they are omni**, like padthv1.
+2. **An unconfigured device input does not route by channel.** Tracing all three
+   `chN_out` ports at once showed **all eighteen injected events — from three
+   different channels — arriving at one zmop**, the active chain's. Zynthian
+   routes an unconfigured `devN_in` to the active chain, not per channel, so the
+   test could never have reached BASS or LEAD whatever their channel behaviour.
 
-**The lesson is the same one LinuxSampler taught, one level further out:** a chain
-that is enabled, loaded, routed and publishing controllers can still make no
-sound. Verify with a note and a level measurement, never with a port list.
+Sequenced notes are unaffected: zynseq routes per channel, which is exactly what
+the eight drum channels demonstrate every time the rig plays.
+
+**The lesson stands even though the finding did not:** a chain that is enabled,
+loaded, routed and publishing controllers can still make no sound, so verify with
+a note and a level measurement. But the harness needs the same scepticism as the
+system under test — reset the meter, settle between runs, and confirm the signal
+path carries what you think it carries before drawing a conclusion from silence.
 
 ---
 
