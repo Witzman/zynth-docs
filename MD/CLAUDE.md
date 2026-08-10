@@ -13,14 +13,51 @@
 
 ---
 
-## RESUME HERE — Techno Machine prototype (paused 2026-08-10)
+## RESUME HERE — Techno Machine prototype SHIPPED (2026-08-11)
 
-**The live thread is the techno-machine prototype spec, not the drum rig.** The
-drum rig itself (tasks 1-9, plus per-group SFZ kits) is done and hardware-verified.
-Its only remaining debt — the oldest outstanding item in this project — is the
-**tutorial page**, deferred since 2026-08-08; pick that up if the techno-machine
-gates are blocked or as a break from them, but the techno-machine work is what
-this session should drive.
+**The techno machine is built, hardware-verified and documented.** Five euclidean
+drum channels, three Turing-machine voices, sixteen post-fader inserts, three
+latched pages, played entirely from the Maschine MK2. **No daemon work was
+needed — no Rust, no `git bundle` dance.**
+
+**Read the manual first if you are playing it, not building it:**
+`~/zynth/TECHNO-MACHINE-MANUAL.md` (→ `docs/superpowers/techno-machine/2026-08-10-techno-machine-manual.md`).
+
+**The twenty-minute jam passed, 2026-08-11:** JACK DSP load mean 21.1% / p95 37%,
+**zero xruns, zero segfaults, zero tracebacks**, memory flat over twenty minutes,
+watchdog reopens one per 22.6 s against a healthy baseline of ~8 s. Three Turing
+voices rewriting a pattern every ~0.6 s is exactly the load that killed the UI
+with SIGSEGV before the lock existed, so this retires risks R1 and R6.
+
+| What | Where |
+|---|---|
+| Snapshot in use | `016-techno_maschine` (bank 000). `021-maschine-drum-rig-sfz` is kept as the drum-only fallback |
+| Driver | `zyngine/ctrldev/zynthian_ctrldev_maschine_mk2.py` + `techno_lib.py`, 118 unit tests |
+| Manual | `docs/superpowers/techno-machine/2026-08-10-techno-machine-manual.md` |
+| Gate results | `docs/superpowers/techno-machine/2026-08-10-gates-g1-g2-g3-results.md` |
+| Plan | `docs/superpowers/plans/2026-08-10-techno-machine-prototype.md` |
+
+**Still open, in priority order:**
+
+1. **The two SOLO gestures** are the only surface behaviour never verified. `zynmixer.toggle_solo` is **additive**, not exclusive, with a special case at `MAX_NUM_CHANNELS - 1` that clears every solo — check that first.
+2. **Re-measure on `hw:S2` at 44.1 kHz.** Every number in this project is on `hw:Headphones` at 48 kHz; the owner waived the precondition while the Sound Blaster is disconnected.
+3. **The tutorial page** — the oldest debt in this project, now covering both the drum rig and the techno machine.
+4. Pass two, in order: Lock snapshots on SCENE · the verb layer (one ~10-line daemon patch emitting SHIFT 49, SWING 50, VOLUME 51) · RATCHET via `setStutterCount` · voice CHANCE back on the surface.
+
+**Hard-won during the build — do not relearn:**
+
+- **Never load a preset or a preset list on the MIDI thread.** `midi_event` holds `self.lock` for the whole event, and an engine load blocks on a socket for seconds. It froze the entire instrument and needed a restart. Defer it to the poll thread, as `_commit_kit` and now `_commit_preset` do.
+- **`_kit_list()` retries must be rate-limited.** On a chain with no kits it ran `set_bank_by_name` + `load_preset_list` at render rate, under the lock.
+- **Any new module in `zyngine/ctrldev/` needs `dev_ids = []`.** The manager globs every `*.py`, takes `getattr(module, module_name)` as a driver class and reads `.dev_ids` — without it the whole UI crash-loops every 14 seconds.
+- **`_verb` must branch on channel kind.** Sending a voice's LENGTH or DIVIDE to the drum handler wrote a euclidean single-note pattern over the melodic line, permanently while the voice was at LOCK.
+- **A silent channel must say why.** Play chance 0 on a voice emits nothing and had no surface indication; it read as a hang and cost a jam. The tab row now draws it dashed.
+- **JC303 and Obxd are omni.** An earlier claim that they answer only on channel 1 was a measurement artefact — an unconfigured `ZynMidiRouter:devN_in` routes to the **active chain**, not per channel, and the probe was not reset between rounds. No channel translation is needed.
+- **MDA Ambience, MDA DubDelay, MDA Delay, CAPS PlateX2, lcrDelay and bolliedelay are all dry/wet crossfades**, measured with an impulse through `lv2apply`. TAP Reverberator and TAP Stereo Echo are true wet levels and are what shipped.
+- **Sixteen jalv processes cost 16.5% of a core doing nothing.** Any "N% of a core" budget for plugin instances has to account for the host, not just the DSP.
+
+---
+
+**Older context — the drum rig this extends:**
 
 **Read before doing anything on the techno machine:**
 
@@ -31,40 +68,27 @@ this session should drive.
 | PO / dev debate positions | `docs/superpowers/techno-machine/po-position.md`, `dev-position.md` |
 | Drum rig progress ledger (context, not the active task) | `~/zynth/zynthian-ui/.superpowers/sdd/2026-08-06-maschine-drum-rig/progress.md` |
 
-**State (2026-08-10):** the prototype is designed and six contested decisions are
-ratified by the owner (Turing lock incremental-not-rewrite with 4-deep undo; sends
-are ganged per-channel post-fader inserts, cheapest plugins first; big encoder
-dropped for verb-button + the eight small encoders; F1-F8 = MUTE / SOLO button,
-**no daemon work needed**; Lock snapshots deferred to pass two; `setPlayChance`/
-`setSwingAmount` ship, `setStutterCount` is pass two, `setNotePlayChance`/
-`addControl` refused). **No implementation plan exists yet** — the spec defines
-three gates that must run first:
+**All three gates ran and passed, 2026-08-10/11** — results in
+`docs/superpowers/techno-machine/2026-08-10-gates-g1-g2-g3-results.md`. Two of
+them changed the design: G3 disqualified the spec's own FX choice (MDA Ambience
+and MDA DubDelay are dry/wet crossfades), and G1 found the spec's CPU threshold
+unreachable by architecture, since sixteen jalv hosts cost 16.5% of a core doing
+nothing. Both were re-decided with the owner rather than worked around.
 
-1. **Gate G1 — FX cost** (16 new plugin processes: RSS, JACK graph nodes, snapshot
-   load time). **Blocked on the jackd/soundcard bug below** — measuring on the
-   wrong card makes G1 meaningless.
-2. **Gate G2 — voice engines' controller lists.** LinuxSampler already taught this
-   project that "enabled" says nothing about what a chain exposes; verify before
-   designing the voice CONTROL page.
-3. **Gate G3 — wet parameter.** Each FX plugin's wet control must be a true wet
-   level, not a dry/wet crossfade (that would break the encoders-7/8-are-sends
-   contract).
-
-**First action next session: fix the jackd/soundcard mismatch, then run Gate G1.**
-`jackd` on the Pi runs `-d alsa -d hw:Headphones -r 48000 ...` (the Pi's built-in
-PWM output) and `zynthian_envars.sh` has `SOUNDCARD_NAME="RBPi Headphones"` — not
-the Sound Blaster Play! 2 (`hw:S2`, 44.1 kHz) this project's hardware notes
-describe. The 2026-08-09 SFZ-kit measurement (6.2% CPU, zero xruns) is real but
-was taken on the wrong card, so it cannot be trusted for FX headroom. Fix the
-soundcard in webconf, re-measure, then run G1.
+**The jackd/soundcard mismatch is still open, by the owner's ruling.** `jackd`
+runs `-d alsa -d hw:Headphones -r 48000`, not the Sound Blaster Play! 2
+(`hw:S2`, 44.1 kHz) the hardware notes describe, because the external card is
+not connected. Every measurement in this project therefore describes the Pi's
+headphone jack. Relative costs — plugin against plugin — are card-independent
+and are what the plugin choice rests on; the absolute headroom figures are not.
 
 Deployed HEADs:
 
 | Repo | Branch | HEAD | Pushed? |
 |---|---|---|---|
 | `MaschineMK2_linux` | main | `b567fb0` | yes |
-| `zynthian-ui` | vangelis | `75572577` | yes |
-| `zynth-docs` | master | `dc6cd5c`+ | yes |
+| `zynthian-ui` | vangelis | `2658908b` | yes |
+| `zynth-docs` | master | `ff0ef39`+ | yes |
 
 **Per-group SFZ drum kits shipped (2026-08-09).** All eight groups run
 LinuxSampler from snapshot `021-maschine-drum-rig-sfz`; each picks its own
