@@ -42,6 +42,11 @@ unclamped build.
 
 ## Defects found
 
+**Four were fixed and re-verified on hardware the same session** — `212d886b`
+and `31b4f7a`-class follow-up, both deployed. Defect numbers 1, 6, 7 and 8
+below carry their verification. Defect 2 is snapshot data, 3 and 4 are recorded
+by the owner's ruling, and 5 is still open.
+
 ### 1. Play chance is invisible and unrecoverable after a snapshot load — **the silent-channel law, violated by a stale-state path**
 
 **Symptom:** channels G (LEAD) and H (PADS) were completely silent after loading
@@ -65,10 +70,12 @@ the failure the dashed tab exists to prevent.
 value and back — `apply()` early-returns when the value is unchanged, so only a
 real change writes through to zynseq.
 
-**Fix (not yet built):** on `SS_LOAD_SNAPSHOT`, read each channel's real
-`getPlayChance()` out of zynseq into the state dict, so the surface and the
-sequencer agree. Same argument applies to swing, which is also a per-pattern
-zynseq property the driver asserts rather than reads.
+**FIXED and VERIFIED.** `_derive_params` now reads `getPlayChance()` and
+`getSwingAmount()` back from zynseq into the state dict, guarded the same way
+the mixer's DPM is. Re-verified by loading `016` again: the G column now reads
+`0000` and the tab draws **dashed**. The channel is still silent — correctly,
+it really is at chance 0 — but the surface now says so instead of claiming
+health.
 
 ### 2. Snapshot `016-techno_maschine` ships with LEAD and PADS muted
 
@@ -145,10 +152,11 @@ it and occupy columns:
 | JC303 | `latency`, `freeWheeling`, `enabled` |
 | padthv1 | none — its `DCF1_ENABLED` / `LFO1_ENABLED` are **genuine musical toggles and must be kept** |
 
-**Fix:** a deny-list in `usable_ports` — drop symbols starting with `lv2_` or
-`unused`, plus exact (case-insensitive) matches for `latency`, `enabled`,
-`bypass`, `freewheel`, `freewheeling`. Exact matching is what keeps padthv1's
-`DCF1_ENABLED` alive.
+**FIXED and VERIFIED.** Deny-list in `usable_ports`: symbols starting with
+`lv2_` or `unused`, plus exact case-insensitive matches for `latency`,
+`enabled`, `bypass`, `freewheel`, `freewheeling`. Exact matching keeps
+padthv1's `DCF1_ENABLED` alive. `LV2_FREE` confirmed gone from the Obxd EXTRA
+page.
 
 ### 7. A small-range port on a generated page cannot be moved at all
 
@@ -161,9 +169,26 @@ port's range, giving 0.01 per step, and `zynthian_controller._set_value()`
 **truncates integer controls** — the identical trap this project hit with pan.
 Continuous ports are unaffected, which is why the delay page works.
 
-**Fix:** detect a small-range port and step it in whole units with the
-remainder carried, via the existing `_enc_steps_fixed`, rather than as a
-fraction of 0-100.
+**FIXED and VERIFIED, after one wrong cut.** The first attempt classified a
+port as discrete by **range width** (span ≤ 8). That caught the toggles and
+also caught Obxd's `volume`, a 0.0-1.0 **float**, which then moved only between
+0 and 100 — found on hardware within minutes.
+
+The real discriminator is **integer-ness**, because `_set_value()` truncates
+only integer controls. A port is discrete when it is integer **and** one percent
+of its range is smaller than one unit:
+
+```python
+port_is_discrete(lo, hi, is_integer) -> is_integer and (hi - lo) < 100
+```
+
+Verified both ways on hardware: the reverb toggles step 0 ↔ 100 (correct — they
+have two positions), and Obxd's volume moves smoothly again.
+
+**Worth keeping:** TAP Reverberator publishes exactly `decay drylevel wetlevel
+combs_en allps_en bandpass_en stereo_enh mode`. Four have hand-written homes, so
+the REV page is *supposed* to be four toggles and nothing else. There is no
+`volume` on the reverb — that column was on the Obxd page all along.
 
 ### 8. A voice's DIVIDE has never survived a snapshot load
 
@@ -181,9 +206,9 @@ why this has gone unnoticed.
 **Pre-existing**, independent of SP1 and SP5; the new `1/4` division merely made
 it visible.
 
-**Fix:** derive each voice's division from zynseq **before** rewriting its
-pattern in `set_state`, so the restored division is honoured rather than
-stamped over.
+**FIXED and VERIFIED.** `set_state` now derives each voice's division from
+zynseq *before* the rewrite. Verified by saving a voice at `1/16`, changing it
+to `1/4`, and reloading: it comes back `1/16`. Before the fix it stayed `1/4`.
 
 ---
 
