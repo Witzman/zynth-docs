@@ -29,9 +29,8 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
   - [x] **Pass-two driver DEPLOYED to the Pi 2026-08-11 16:16** — loaded clean, zero tracebacks, stable past the crash-loop window. Backups at `/root/ctrldev-backup-20260811/`. **The Pi's zynthian-ui runs upstream branch `oram-2601.1` and the three Maschine files are untracked drop-ins**, so deployment is a file copy, never a git operation
   - [ ] **The owner runs the testing plan** — `docs/superpowers/techno-machine/2026-08-11-sp1-testing-plan.md`, nine parts at the panel, nothing to install. Part 2 (DL/DR paging) is the likeliest failure; Part 8 is SOLO, never verified
   - [ ] **G4 step 5 (SOLO) folded into the testing plan as Part 8**
-  - [ ] ~~G4 steps 1, 2, 3, 5 still block deployment~~ — all four need someone pressing buttons on the panel. Steps 1/2/3 are the CC audit, step 5 the two SOLO gestures
-  - [ ] **Pre-flight FAIL found 2026-08-11, fix before any CC audit:** `jack_lsp -c | grep -A3 "Pads MIDI"` shows **two** routes — `dev3_in` **and** `dev2_in`. Both appeared after a clean boot, so this is not the 2026-08-08 stale-`jack_connect` cause; suspect a device re-enumeration after a watchdog reopen taking a second zmip slot. Every CC arrives twice until it is resolved
-  - [ ] `ZYNTHIAN_LOG_LEVEL` did not survive the reboot — re-set it to 20 before auditing, unset it after
+  - [x] **Pre-flight double route SOLVED** — `Pads MIDI` fed both `dev2_in` and `dev3_in`. Cause: **a daemon restart re-registers the a2j port and zynthian assigns it a new zmip slot, leaving the old route behind.** `systemctl restart zynthian` reconciles it. **Restart order is daemon first, UI second**, or the driver stays bound to a dead slot and the rig is silent with no error
+  - [ ] `ZYNTHIAN_LOG_LEVEL=20` is set on the Pi again — unset it once testing is done: `systemctl unset-environment ZYNTHIAN_LOG_LEVEL`
   - [ ] **SP1 addendum — voice DENSITY (specced 2026-08-11, not built).** Spec: `docs/superpowers/specs/2026-08-11-sp1-addendum-voice-density.md`. The Turing voices write one note per step unconditionally; density adds rests. Mechanism: a **gate tap** — the register rotated by half its length, read as its own rotation sequence, with the N lowest-valued steps sounding where `N = round(density/100 * steps)`. Rank not threshold, so 100 is exactly every step and 0 is exactly none, and turning down only removes notes. Freezes with LOCK because the mask is a function of the register. **Reduces** the write burst. Two tasks, both pure WSL work, neither needs the Pi:
     - [x] **Task A1** — `0b5f1770`. `rotate`/`gate_values`/`gate_mask`, DENSITY spread page, `SPREAD_SPECS` entry, voice channel page column. **187 tests passing**, up from 164
     - [x] **Task A2** — `7d9c3584`. Mask in `_write_voice_pattern`, `density=100` default, snapshot persistence, encoder range, `GENERATOR_PARAMS`, dashed tab at density 0. `py_compile` OK, suite still 187
@@ -39,9 +38,13 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
     - **No `_verb` rejection branch was needed for drums** — `param_get` returns `None` for a key their state never had, and the encoder tail already bails on `None`
     - [ ] Hardware-verify on the panel: rides G4, nothing extra needed
     - Rejected and recorded, do not re-litigate: per-note `setNotePlayChance` (re-rolls every pass, breaks LOCK), euclidean mask (turns the voice into a drum channel with pitches), forcing step 0 to sound
-  - 164 tests passing on WSL, **nothing pushed**, nothing on the Pi. SP1 code is complete; only hardware verification remains
+  - **187 tests passing on WSL. Still nothing pushed to any remote.** SP1 plus the density addendum are code-complete and deployed to the Pi; only the owner's testing pass remains
 
-- [ ] **Techno Machine pass two — SP2, SP3, SP4** — specced in §2 of the pass-two design, not built. SP2 live pad play + REC recording · SP3 the drum filter (**blocked on the Pi**) · SP4 channel type switching on SHIFT+GRID. Build order SP1 → SP2 → SP4, SP3 whenever the hardware returns
+- [ ] **Techno Machine pass two — SP2, SP3, SP4** — one-line scopes in §2 of the pass-two design, no detailed specs yet. SP2 live pad play + REC recording · SP4 channel type switching on SHIFT+GRID. Build order SP1 → SP2 → SP4
+  - [x] **SP3 is NO LONGER BLOCKED and its gate ran 2026-08-11** — `docs/superpowers/techno-machine/2026-08-11-sp3-filter-gate-results.md`. **MDA RezFilter** chosen: `freq` and `res` are already 0-100, the driver's own surface units, stereo in and out. Clean lowpass sweep measured, resonance genuine (2-8 kHz 16.13 → 54.27 at res 80). Five jalv hosts = **4.60% of a core idle, zero xruns**
+  - [ ] **SP3 trap to carry into its build: below `freq` 35 RezFilter emits exact digital silence.** The surface must map the encoder onto 35-100, or the bottom of the knob mutes the channel with nothing saying why — the same failure play chance 0 caused
+  - [ ] SP3 still needs its own spec and plan. Open: per-chain insert (5 hosts, ~5% of a core, affordable) versus one filter on a shared drum bus
+  - [ ] SP2 needs its own spec cycle; SP4's ownership rules depend on it
 
 - [~] **Maschine MK2 Drum Rig — implementation plan** (2026-08-07, resume at task 10)
   - Read first: `~/zynth/zynthian-ui/.superpowers/sdd/2026-08-06-maschine-drum-rig/progress.md` (ledger), then the plan and spec in `docs/superpowers/`
