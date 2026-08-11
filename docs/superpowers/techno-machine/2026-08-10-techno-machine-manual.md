@@ -140,7 +140,7 @@ Work down this list in order.
 | **Restart** | 7 | Every channel jumps to step 0, without stopping. |
 | **Erase** | 2 | **Hold only.** Hold + pad clears that step. Hold + Group silences that channel. A bare press does nothing. |
 | **Duplicate** | 29 | Undo for a voice: restore the previous Turing register, force RANDOM to 0, rewrite now. Up to 4 deep. Does nothing on a drum. |
-| **Arrows ◀ ▶ beside the display** | 5 / 6 | Previous / next **sample** for the selected channel. (Drums only in practice — see the warning in §5.) |
+| **Arrows ◀ ▶ beside the display** | 5 / 6 | Previous / next **sound** for the selected channel: a sample within the kit on a drum, an engine preset on a voice. |
 | Everything else | — | **Dark, deliberately.** A dark button is a promise that nothing surprising is behind it. |
 
 The **Page ◀▶** pair (CC 47/48) is deliberately unbound: the daemon consumes
@@ -155,10 +155,12 @@ and mutually exclusive — a momentary page is a page you cannot two-hand.
 
 **L2 — Timbre lands instantly, structure lands on the bar.** Level, wet, cutoff,
 resonance, envelope, decay, gate, velocity, RANDOM, CHANCE and SWING land the
-instant you turn them. **ROOT, SCALE, DIVIDE and LENGTH** wait: the value shows
-in angle brackets (`>1/8<`) until the channel's own next wrap takes it, so a
-structure change can never trip the groove mid-bar. KIT and PRESET still land
-immediately.
+instant you turn them. **ROOT and SCALE** wait, on both channel kinds, and so do
+**DIVIDE and LENGTH on a drum**: the value shows in angle brackets (`>1/8<`)
+until the channel's own next wrap takes it, so a structure change can never trip
+the groove mid-bar. KIT and PRESET land immediately, and so do DIVIDE and LENGTH
+**on a voice** — those rewrite the line from the register the voice already
+holds rather than regenerating it from euclid, so there is no groove to trip.
 
 **L3 — Nothing destructive happens on a single press.** ERASE is hold-and-target
 only. "Clear that channel" means *set the generator to silence*, not wipe the
@@ -399,8 +401,8 @@ Locked, the RANDOM cell reads:
 
 | Enc | Name | Range | What it does |
 |---|---|---|---|
-| 1 | `LENGTH` | displays 2-16 | **Do not use — see the warning below.** |
-| 2 | `DIVIDE` | `1/32 1/16 1/8 1/16T 1/8T` | **Do not use — see the warning below.** |
+| 1 | `LENGTH` | 2-16 | The **shift register's** length in bits, not the pattern's. See below. |
+| 2 | `DIVIDE` | `1/32 1/16 1/8 1/16T 1/8T` | The voice's step rate. The phrase survives the change of speed. See below. |
 | 3 | `RANDOM` | 0-100, `LOCK` at 0 | Per-bit flip probability per cycle. **The main knob on this page.** |
 | 4 | `GATE` | 5-100 | Note length as a percentage of one step. 5 = stab, 100 = full step. |
 | 5 | `OCTAVE` | −2 … +2 | Transpose in octaves. Bipolar bar. |
@@ -408,9 +410,9 @@ Locked, the RANDOM cell reads:
 | 7 | `SWING` | 50-75 | Same as on a drum, same caveat. |
 | 8 | `VELO` | 1-127 | Velocity written into generated notes. |
 
-RANDOM, GATE, OCTAVE, RANGE and VELO all behave as documented. GATE, OCTAVE,
-RANGE and VELO rewrite the line **from the unchanged register**, so they change
-how it sounds without changing which phrase it is.
+Every column on this page rewrites the line **from the unchanged register**, so
+all eight change how the phrase sounds without changing which phrase it is. That
+is what makes the whole page safe at `LOCK`.
 
 **LENGTH (encoder 1)** is the shift register's length in bits, 2 to 16 — not the
 pattern's length. A short register repeats sooner and drifts faster at a given
@@ -418,8 +420,13 @@ RANDOM; a long one takes many cycles to come round. It is the single most
 musical control on the page after RANDOM.
 
 **DIVIDE (encoder 2)** changes the voice's step rate and rewrites the line from
-the unchanged register, so the phrase survives the change of speed. Like every
-structure control it lands on the next wrap.
+the unchanged register, so the phrase survives the change of speed.
+
+Both **land immediately**, unlike their drum namesakes. Law L2 makes a drum's
+DIVIDE and LENGTH wait for the bar because they regenerate the pattern from
+euclid and a mid-bar regeneration trips the groove; a voice regenerates from the
+register it already has, so the same knob is not disruptive and does not need the
+wait. ROOT and SCALE do still wait — on a voice as on a drum.
 
 ### LOCK, in performance
 
@@ -501,7 +508,9 @@ by feel. The names come from the `.sfz` file itself — Zynthian's `keymaps.json
 resolves on a synth's preset path and cannot match an SFZ kit, so every tab would
 otherwise read "note 36".
 
-The **arrows beside the display** (◀ ▶) do the same job as encoder 2.
+The **arrows beside the display** (◀ ▶) do the same job as encoder 2. They follow
+the selected channel's kind: on a voice the same two buttons step the engine
+preset instead, exactly as encoder 1 does there.
 
 ### Voice CONTROL page
 
@@ -527,10 +536,13 @@ pad wants its front edge shaped, not its tail.
 These symbols were measured off the live chains, not read from a config flag. No
 column on the voice CONTROL page is greyed: all three engines publish all four.
 
-> ⚠ **Do not press the ◀ ▶ arrows while a voice is selected.** The arrows always
-> run the drum sample-stepper. On a voice they will collapse the entire melodic
-> line onto a single note. Recover the same way as for the DIVIDE knob: nudge
-> OCTAVE, GATE, RANGE or VELO. Use encoder 1 (PRESET) for voices.
+**PRESET is deferred by 200 ms**, and the ◀ ▶ arrows beside the display drive the
+same stepper on a voice. Both only move a number and arm a deadline; the load
+itself happens on the playhead thread. This is not a nicety — a preset load talks
+to the engine over a socket and can block for seconds, and doing it on the MIDI
+thread, which holds the driver's lock for the whole event, **froze the entire
+instrument** and needed a restart. The name on screen changes as you step, and
+only the value you stop on is loaded.
 
 ### The sends, and why the dry survives
 
@@ -823,8 +835,7 @@ write. Press **Play** once after a load to be certain.
 | Phantom drum sounds when you tap pads, on top of the real ones | A **stale JACK route** left by an earlier debugging session. `zynautoconnect` only tears down connections it made itself, and jackd outlives a Zynthian restart. | `jack_lsp -c \| grep -A3 "Pads MIDI"` — it must show exactly **one** `devN_in`. Disconnect the extra. |
 | Input dies after a few seconds, then recovers | Kernel hidraw fault. The daemon has a close-then-reopen watchdog for exactly this. | Nothing to do. `watchdog: input stalled, reopened …` in the journal every ~8 s is **healthy**. Much more often than that is a regression. |
 | Encoders feel dead or pinned at one end | An encoder ran into the daemon's 0-127 clamp. | Select a different channel and come back, or change page — both re-park every encoder at mid-travel. |
-| A voice suddenly plays one repeated note | Encoder 2 (DIVIDE) or the ◀ ▶ arrows were touched on a voice. | Nudge OCTAVE, GATE, RANGE or VELO by one step to rewrite the line from the register. Or turn RANDOM up and wait a cycle. |
-| A voice is silent and nothing on the surface brings it back | ERASE + Group set its play chance to 0. | Touchscreen pattern editor, or reload the snapshot. |
+| A voice suddenly plays one repeated note | **A regression.** Two paths used to do this — the voice's DIVIDE knob regenerating a euclidean drum pattern over the line, and the ◀ ▶ arrows resolving a GM percussion fallback — and both were fixed on 2026-08-11: `_verb` branches on channel kind, and the arrows step the preset on a voice. If it happens now, something reintroduced a drum write on a melodic channel. | Nudge OCTAVE, GATE, RANGE or VELO by one step to rewrite the line from the register, or turn RANDOM up and wait a cycle. Then report it — the surface should no longer be able to cause this. |
 | The whole Zynthian UI dies (SIGSEGV, exit 139) | Unsynchronised access to the sequencer library from multiple threads. Every path in this driver holds a lock; if this appears, something has regressed. | Restart Zynthian, and report it — this took 95 seconds to appear last time, so a short test will not reproduce it. |
 | Screens stutter, input feels laggy | Repaints starving the input reader. | Both displays are supposed to be one diffed repaint per tick. Watch the watchdog frequency in the journal. |
 | Mix is distorting with several wets open | Both inserts pass dry at unity and the wets add on top. | Pull MASTER down, or the channel strips. Design headroom is main at 0.80 with strips at 0.19. |
@@ -1130,7 +1141,7 @@ were fixed rather than documented. They are listed at the end for the record.
 | 4 | Snapshot is `022-techno-machine` | In use is **`016-techno_maschine.zss`**. | Naming only. |
 | 5 | Globals default to master 88, revsize 72, dlytime 1/4 | Code initialises master 80, revsize **25**, dlytime **1/8**, dlyfbk 35, bpm 132, root 9 (A), scale 0 (MIN). | Cosmetic — the snapshot's own values are what you hear. |
 | 6 | Pad LEDs are "bright, scaled by step velocity" | Active steps draw at full brightness; velocity is not reflected in the LED. | Cosmetic. |
-| 7 | KIT and PRESET land on the bar | They land immediately. DIVIDE, LENGTH, ROOT and SCALE do wait for the wrap. | A kit change mid-bar is audible but not disruptive. |
+| 7 | KIT and PRESET land on the bar | They land immediately (debounced 150 ms and 200 ms, but not bar-synced). ROOT and SCALE do wait for the wrap on both kinds; DIVIDE and LENGTH wait **only on a drum** — on a voice they rewrite from the existing register and land at once. | A kit change mid-bar is audible but not disruptive. |
 
 ### Fixed during this review, listed so nobody re-derives them
 
@@ -1157,14 +1168,19 @@ STEP          what it plays             enc 7     always SWING, both channel typ
 ALL           key, tempo, master, space left = time+key, right = ganged space
 PADS          the 16 steps              velocity on the tap = step accent
 PLAY all on/off   RESTART all to step 0   ERASE hold + pad/group only
-DUPLICATE     give the last line back   <  >  next sample - DRUMS ONLY
+DUPLICATE     give the last line back   <  >  next sound: sample on a drum,
+                                                  engine preset on a voice
 
 LAW  timbre lands instantly · ROOT and SCALE land on the bar
+     drum DIVIDE and LENGTH land on the bar too · on a voice they land at once
 LAW  tap = latch · hold = momentary · 250 ms
 LAW  nothing destructive on one press
 LAW  a knob with no source is greyed, shows ---- and does nothing
+LAW  one channel one cursor · the inverted tab is authoritative
+     a dashed tab means the channel is not sounding
 LAW  RANDOM -> 0 keeps the loop you are hearing, bit-identical, forever
 
-DO NOT TOUCH  voice STEP encoders 1 and 2 · the arrows on a voice
-              (see section 5 - both damage the melodic line)
+VOICE STEP    enc 1 = register bits (2-16) · enc 2 = step rate
+              every column rewrites from the unchanged register, so the whole
+              page is safe at LOCK
 ```
