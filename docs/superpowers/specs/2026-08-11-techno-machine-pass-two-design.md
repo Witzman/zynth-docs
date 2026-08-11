@@ -22,13 +22,16 @@ the boundaries are explicit, and each gets its own spec cycle.
 
 The panel silkscreen, the daemon's token names and the driver's constants
 disagree with each other. The owner's names are authoritative in all prose from
-here on:
+here on, and **the CCs below are measured** — gate G4, 2026-08-11, one press per
+button. Two of them were wrong in this document as first written, because the
+daemon's token names are attached to the **opposite** physical buttons from
+what they suggest:
 
 | Name | Panel location | Daemon token | CC |
 |---|---|---|---|
-| **DL / DR** | arrows under BROWSE/SAMPLING, beside the display | `step_left` / `step_right` | 5 / 6 |
+| **DL / DR** | arrows beside the display | `page_left` / `page_right` | **47 / 48** |
 | **ML / MR** | master section, beside the big encoder | `nav_left` / `nav_right` | 13 / 14 |
-| **TL / TR** | transport, ◀STEP / STEP▶ | `page_left` / `page_right` | 48 / 47 |
+| **TL / TR** | transport, ◀STEP / STEP▶ | `step_left` / `step_right` | **5 / 6** |
 
 Rule for all future docs: never name an arrow button without its section
 prefix, and any table naming a button carries panel label, daemon token and CC,
@@ -233,7 +236,7 @@ trip to the Pi.
 | VOLUME | 51 | mode → MIXER | new, needs patch |
 | AUTO | 37 | mode → FILTER | new, already emits |
 | CONTROL / STEP / ALL | 11 / 32 / 38 | mode | unchanged |
-| DL / DR | 5 / 6 | page − / + in the current ring, wrapping | **repurposed** |
+| DL / DR | **47 / 48** | page − / + in the current ring, wrapping | **repurposed** |
 | ML / MR | 13 / 14 | previous / next sound | **moved off DL/DR** |
 
 Five modes, mutually exclusive, one variable. The existing `_set_page` rule —
@@ -250,9 +253,10 @@ whether it emits that button's CC, so the LED half needs no patch.
 
 ### 5.4 Deliberately unbound
 
-TL/TR (47/48 — the daemon swallows them for its own page indicators and never
-emits them), MUTE (33, free and emitting), SWING (50, patched but unused),
-SHIFT (49, patched for SP4).
+TL/TR (**5/6 — free surface, and fully emitted**; the claim that the daemon
+swallowed them was retracted at G4), MUTE (33, free and emitting), SWING (50,
+patched but unused), SHIFT (49, patched for SP4), and the **big encoder**
+(turn 15, press 12), which G4 also measured and nothing uses.
 
 ---
 
@@ -300,7 +304,7 @@ connected:
    Record the CC for each and confirm each sends on **press and release**. This
    also settles which physical pair emits 5/6 — CLAUDE.md and the driver's
    constant name disagree about whether that pair is DL/DR or TL/TR.
-2. Confirm AUTO 37 reaches the driver and is not swallowed the way 47/48 are.
+2. Confirm AUTO 37 reaches the driver. (G4 result: it does.)
 3. After the daemon patch: confirm SHIFT 49, SWING 50 and VOLUME 51 emit, **and**
    that PAD MODE still behaves — SHIFT is a live internal modifier and the patch
    must not disturb it.

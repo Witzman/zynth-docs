@@ -1018,7 +1018,7 @@ Replace the `CC_PAGE_RIGHT = 6` / `CC_PAGE_LEFT = 5` pair with:
 # The owner's button names, fixed 2026-08-11. The panel silkscreen, the
 # daemon's token names and this driver's old constant names all disagreed with
 # each other; these are authoritative.
-#   DL / DR - arrows beside the display   (daemon step_left/step_right, CC 5/6)
+#   DL / DR - arrows beside the display (daemon page_left/page_right, CC 47/48 - MEASURED at G4)
 #   ML / MR - master section, beside the big encoder (daemon nav_*, CC 13/14)
 #   TL / TR - transport ◀STEP / STEP▶ (daemon page_*, CC 48/47) - SWALLOWED by
 #             the daemon for its own page indicators, never emitted, unbound.
