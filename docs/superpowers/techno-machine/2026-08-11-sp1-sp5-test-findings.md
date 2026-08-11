@@ -219,9 +219,37 @@ to `1/4`, and reloading: it comes back `1/16`. Before the fix it stayed `1/4`.
 
 ---
 
-## Still untested
+## The stability jam — PASSED 2026-08-11
 
-- **The twenty-minute stability jam** — the only thing left
+Nineteen minutes of playing against the full build, exercising modes, paging,
+density, gate, presets, mute and solo.
+
+| Measure | Result | Prototype baseline |
+|---|---|---|
+| xruns | **0** | 0 |
+| tracebacks | **0** | 0 |
+| segfaults | **0** | 0 |
+| driver reloads | **0** | — |
+| Maschine errors | **0** | — |
+| watchdog reopens | 40, one per **~30 s** | one per ~8 s healthy, 22.6 s in the prototype jam |
+| MemAvailable after | 2.64 GB | 2.63 GB |
+
+The watchdog cadence is the notable one: **~30 s between reopens against an
+~8 s healthy baseline**, so the hidraw path is behaving better under this build
+than it has before.
+
+**No mean DSP load figure was taken.** The window was timestamped but JACK's
+load was never sampled during the jam, so this run proves nothing failed
+without establishing what it cost. Deferred by the owner to a future
+measurement; the prototype's 21.1% mean remains the last real number.
+
+**A measurement trap worth remembering:** `journalctl --since "HH:MM"` reads the
+**Pi's local clock** (BST), while a baseline stamped with `date -u` on the
+development machine is UTC. Mixing them silently widened the first query by two
+hours and swallowed two of this session's own deploys, which then read as
+driver reloads during the jam. Stamp the baseline with the Pi's own `date`.
+
+## Still untested
 - Whether a note may safely cross the loop point — needs a deliberately
   unclamped build, so it is an experiment rather than a test
 - That the last step's note is audibly shorter than its neighbours — the
