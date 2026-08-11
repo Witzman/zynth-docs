@@ -205,13 +205,13 @@ not connected. Every measurement in this project therefore describes the Pi's
 headphone jack. Relative costs — plugin against plugin — are card-independent
 and are what the plugin choice rests on; the absolute headroom figures are not.
 
-Deployed HEADs:
+Deployed HEADs — all pushed 2026-08-11:
 
-| Repo | Branch | HEAD | Pushed? |
-|---|---|---|---|
-| `MaschineMK2_linux` | main | `b567fb0` | yes |
-| `zynthian-ui` | vangelis | `2658908b` deployed; **`1cbe5f95` local, pass two SP1 tasks 1-9** | deployed HEAD yes, pass two **no** |
-| `zynth-docs` | master | `ff0ef39`+ | yes |
+| Repo | Branch | HEAD | Pushed? | On the Pi |
+|---|---|---|---|---|
+| `MaschineMK2_linux` | main | `39c4503` | yes | **yes** — but the Pi's own HEAD is `7038f60`, an old display experiment, with the live code as *uncommitted working-tree changes*. Deploy by copying files, never with git |
+| `zynthian-ui` | vangelis | `eb26b00c` | yes | **yes** — the Pi runs upstream branch `oram-2601.1` and the three Maschine files are *untracked drop-ins*. Deploy by copying files |
+| `zynth-docs` | master | `9c24d32` | yes | n/a |
 
 **Per-group SFZ drum kits shipped (2026-08-09).** All eight groups run
 LinuxSampler from snapshot `021-maschine-drum-rig-sfz`; each picks its own
