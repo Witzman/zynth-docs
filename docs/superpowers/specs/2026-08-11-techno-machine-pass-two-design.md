@@ -159,7 +159,16 @@ page.
 
 **ALL** — shape `global`, page 1:
 
-`root`, `scale`, `bpm`, `master`, and four free slots.
+`root`, `scale`, `bpm`, `master`, `revsize`, `revtype`, `dlytime`, `dlyfbk` —
+all eight shipped globals, unchanged.
+
+An earlier draft of this section moved the four FX globals onto the generated
+pages and left four free slots here. That would be a regression: `dlytime` is a
+musical division resolved against live tempo by `_push_delay_time`, and
+`revtype` is an index into the plugin's 43 rooms with its own no-scaling
+special case in `_set_ganged`. Neither is a raw plugin port and neither
+survives being generated. The generated pages expose the ports that have **no**
+hand-written home, which is why the ring builder takes an `exclude` set.
 
 ### 4.2 Generated rings
 
