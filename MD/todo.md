@@ -8,6 +8,25 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
 
 ## Active
 
+- [~] **Techno Machine pass two — SP1 mode & page framework** (2026-08-11, **resume at Task 10**)
+  - Read first: `docs/superpowers/plans/2026-08-11-techno-machine-pass-two-sp1.md`, then its spec `docs/superpowers/specs/2026-08-11-techno-machine-pass-two-design.md`
+  - Five latched modes (CONTROL · STEP · ALL · MIXER on VOLUME · FILTER on AUTO), each a ring of parameter pages stepped with DL/DR
+  - [x] Task 1 — page shapes, descriptors, `PAGE_RINGS` keyed `(mode, kind)` — `22d217a3`
+  - [x] Task 2 — `columns()` renders all three shapes; `page_label()`, `quantise_frac()` — `287a3aa5`
+  - [x] Task 3 — generated pages built from a plugin's own ports, with a port filter — `ad20b000`
+  - [x] Task 4 — page-indicator row; **found and fixed a shadowing bug in shipped `screen_packets`** (a loop local named `label` clobbered the new parameter) — `7fc9372a`
+  - [x] Task 5 — `self.mode` + `self.page_idx`, snapshot round-trip, voices gain `chance` — `3928cbf6`
+  - [x] Task 6 — VOLUME/AUTO bound as modes, DL/DR paging, ML/MR sound stepping, five-mode LEDs — `6ebb20fb`
+  - [x] Task 7 — `_encoder_column` dispatches on shape; `COLUMN_VERBS` retired — `00c59b7a`
+  - [x] Task 8 — spread columns, page label, peak meters off the real `zynmixer.DPM` struct — `06cc3fc8`
+  - [x] Task 9 — generated ring cache, invalidated on snapshot/kit/preset — `1cbe5f95`
+  - [ ] **Task 10 — daemon patch**: emit SHIFT 49, SWING 50, VOLUME 51 in `MaschineMK2_linux/src/main.rs`. ~10 lines. Builds locally (`cargo 1.96.0`); **deploying needs the Pi**. Do NOT remove the `set_mod` block — SHIFT is a live internal modifier gating PAD MODE
+  - [ ] **Task 11 — the G4 runbook**. Documentation only, needs no Pi
+  - [ ] **G4 blocks deployment** — every CC in the plan is read out of source, not observed. Also folds in the two never-verified SOLO gestures
+  - 164 tests passing on WSL, **nothing pushed**, nothing on the Pi
+
+- [ ] **Techno Machine pass two — SP2, SP3, SP4** — specced in §2 of the pass-two design, not built. SP2 live pad play + REC recording · SP3 the drum filter (**blocked on the Pi**) · SP4 channel type switching on SHIFT+GRID. Build order SP1 → SP2 → SP4, SP3 whenever the hardware returns
+
 - [~] **Maschine MK2 Drum Rig — implementation plan** (2026-08-07, resume at task 10)
   - Read first: `~/zynth/zynthian-ui/.superpowers/sdd/2026-08-06-maschine-drum-rig/progress.md` (ledger), then the plan and spec in `docs/superpowers/`
   - [x] Task 7 — hardware-verified 2026-08-07 after four bug fixes plus the `external_pad_leds` daemon flag; Play button LED added on request

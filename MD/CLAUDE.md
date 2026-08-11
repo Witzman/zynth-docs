@@ -13,7 +13,72 @@
 
 ---
 
-## RESUME HERE — Techno Machine prototype SHIPPED (2026-08-11)
+## RESUME HERE — Pass two SP1: tasks 1-9 done on WSL, blocked on the Pi (2026-08-11)
+
+**Pick up at Task 10 of** `docs/superpowers/plans/2026-08-11-techno-machine-pass-two-sp1.md`.
+Read that plan and its spec (`docs/superpowers/specs/2026-08-11-techno-machine-pass-two-design.md`)
+before touching anything.
+
+Pass two turns the three latched pages into **five latched modes**, each carrying
+a **ring of parameter pages** stepped with the display arrows. Nine of eleven
+tasks are implemented, committed and green on WSL. **Nothing has reached the Pi.**
+
+| State | Detail |
+|---|---|
+| Tests | **164 passing** (118 baseline + 46), `python3 -m unittest discover -s tests -q` in `zyngine/ctrldev/` |
+| Commits | `22d217a3` … `1cbe5f95` on `zynthian-ui` branch `vangelis`, **not pushed** |
+| Done | Tasks 1-9 — rings, three column shapes, generated pages, page-label row, mode/page state, bindings, encoder dispatch, display + meters, ring cache |
+| Next | **Task 10** — ten-line Rust patch emitting SHIFT 49, SWING 50, VOLUME 51. Builds locally (`cargo 1.96.0`); deploying needs the Pi |
+| Then | **Task 11** — the G4 runbook. Pure documentation, needs no Pi at any point |
+| Blocked | **G4 blocks deployment.** Every CC in the plan is read out of source, not observed |
+
+**The owner's button names are now authoritative project-wide.** Never name an
+arrow button without its section prefix; the panel silkscreen, the daemon's
+token names and the driver's old constant names all disagreed with each other:
+
+| Name | Panel | Daemon token | CC |
+|---|---|---|---|
+| **DL / DR** | arrows beside the display | `step_left` / `step_right` | 5 / 6 |
+| **ML / MR** | master section, beside the big encoder | `nav_left` / `nav_right` | 13 / 14 |
+| **TL / TR** | transport ◀STEP / STEP▶ | `page_left` / `page_right` | 48 / 47 — swallowed by the daemon, never emitted |
+
+**Architecture, so the next session does not re-derive it:** a page descriptor
+carries a **shape**, and the shape is the whole trick — `channel` is eight verbs
+of the selected channel (the shipped layout), `spread` is one verb across all
+eight channels (mixer, filter, swing, chance), `global` is eight globals (ALL).
+`techno_lib.PAGE_RINGS` holds them, keyed `(mode, kind)`; `COLUMN_VERBS` is
+gone. `_encoder_column` is a three-way dispatch into the unchanged
+`_verb(verb, channel, …)`. CONTROL pages 2+ and ALL pages 2-3 are **generated**
+from whatever the chain publishes, so no table here needs to know JC303's or
+TAP Reverberator's ports.
+
+**Found during the build — do not relearn:**
+
+- **`screen_packets` had a shadowing bug in shipped code.** Its tab loop used a
+  local named `label`, which clobbered the new page-label parameter, so both
+  screens drew the last tab's text at the indicator row. Renamed `tab_label`.
+- **`_verb`'s first line asks the channel for its kind**, so a global page
+  cannot pass `channel=None` — it raises before the global branch is reached.
+  Globals pass the selected channel, exactly as the shipped ALL page did.
+- **`zynmixer.DPM` is `(a, b, a_hold, b_hold, mono)`**, not `peakA`. The meter
+  shows the louder of `a`/`b`. Both the meter and `enable_dpm` are guarded —
+  the Pi's `libzynmixer` is older and may export neither, in which case the bar
+  keeps showing fader position.
+- **The screen layout shifted** to make room for the page indicator: rule 13,
+  label 15, names 24, values 32, bars unchanged at 52. Not yet seen on glass.
+- **CC 5/6 is verified on the wire** as the arrows beside the display — the
+  driver's own comment says so. The old constant was misnamed `CC_PAGE_LEFT`.
+- **The driver cannot be imported on WSL** (`zynlibs.zynseq` is Pi-only), so
+  driver changes verify with `python3 -m py_compile` and nothing more. Push
+  logic into `techno_lib.py`, where it is unit tested.
+
+**SP2-SP4 are specced but not built:** SP2 live pad play + REC recording, SP3
+the drum filter (blocked on the Pi), SP4 channel type switching on SHIFT+GRID.
+Decisions already taken for them are in the spec — do not re-litigate.
+
+---
+
+## Techno Machine prototype SHIPPED (2026-08-11)
 
 **The techno machine is built, hardware-verified and documented.** Five euclidean
 drum channels, three Turing-machine voices, sixteen post-fader inserts, three
@@ -32,7 +97,7 @@ with SIGSEGV before the lock existed, so this retires risks R1 and R6.
 | What | Where |
 |---|---|
 | Snapshot in use | `016-techno_maschine` (bank 000). `021-maschine-drum-rig-sfz` is kept as the drum-only fallback |
-| Driver | `zyngine/ctrldev/zynthian_ctrldev_maschine_mk2.py` + `techno_lib.py`, 118 unit tests |
+| Driver | `zyngine/ctrldev/zynthian_ctrldev_maschine_mk2.py` + `techno_lib.py`. 118 unit tests as shipped; **164 on the unpushed pass-two work** |
 | Manual | `docs/superpowers/techno-machine/2026-08-10-techno-machine-manual.md` |
 | Gate results | `docs/superpowers/techno-machine/2026-08-10-gates-g1-g2-g3-results.md` |
 | Plan | `docs/superpowers/plans/2026-08-10-techno-machine-prototype.md` |
@@ -87,7 +152,7 @@ Deployed HEADs:
 | Repo | Branch | HEAD | Pushed? |
 |---|---|---|---|
 | `MaschineMK2_linux` | main | `b567fb0` | yes |
-| `zynthian-ui` | vangelis | `2658908b` | yes |
+| `zynthian-ui` | vangelis | `2658908b` deployed; **`1cbe5f95` local, pass two SP1 tasks 1-9** | deployed HEAD yes, pass two **no** |
 | `zynth-docs` | master | `ff0ef39`+ | yes |
 
 **Per-group SFZ drum kits shipped (2026-08-09).** All eight groups run

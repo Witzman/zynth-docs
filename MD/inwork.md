@@ -29,6 +29,8 @@ Status: `[~]` drafting · `[t]` user testing · `[>]` ready to publish · `[ ]` 
 
 - [~] **Techno Machine** — sub-project of the drum rig: 5 euclidean drum channels + 3 Turing-machine synth voices (bass/lead/pads), per-channel reverb and delay, played entirely from the Maschine. NOT a tutorial yet. Designed 2026-08-09/10, **all three gates passed and the prototype implemented and deployed 2026-08-10**. Prepared snapshot `016-techno_maschine`; driver in `zyngine/ctrldev/`. **The twenty-minute jam passed 2026-08-11 — zero xruns, zero segfaults, zero tracebacks.** Remaining: the two SOLO gestures, a re-measure on `hw:S2`, and the tutorial page. Manual at `~/zynth/TECHNO-MACHINE-MANUAL.md`. Spec, gates, plan and manual under `docs/superpowers/`
 
+- [~] **Techno Machine pass two — SP1 mode & page framework** — five latched modes, each a ring of parameter pages stepped with the display arrows (DL/DR); mixer and filter modes spread one parameter across all eight channels. NOT a tutorial yet. Designed and planned 2026-08-11 from the owner's ten-feature list; **tasks 1-9 of 11 built, committed and green on WSL (164 tests), nothing pushed, nothing on the Pi.** Resume at Task 10 (the Rust daemon patch) — see RESUME HERE in CLAUDE.md. Plan and spec dated 2026-08-11 under `docs/superpowers/`
+
 ---
 
 ## Future Tutorial Candidates
