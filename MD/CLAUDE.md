@@ -32,8 +32,9 @@ are implemented, committed and green on WSL. **Nothing has reached the Pi.**
 | Done | Tasks 1-11 — rings, three column shapes, generated pages, page-label row, mode/page state, bindings, encoder dispatch, display + meters, ring cache, the daemon patch, the G4 runbook |
 | Done | **Addendum tasks A1-A2 — voice DENSITY**, `0b5f1770` + `7d9c3584`. Spec: `docs/superpowers/specs/2026-08-11-sp1-addendum-voice-density.md`. The Turing voices could not produce a rest; density reads the register a second time, rotated by half its length, and sounds the N lowest-valued steps where `N = round(density/100 * steps)`. Rank not threshold, so 100 is exactly every step and 0 exactly none, and turning down only removes notes. Freezes with LOCK because the mask is a function of the register, and **shrinks** the write burst. Voice STEP encoder 7 traded `swing` → `density`; swing stays on the STEP spread page |
 | Done on the Pi | **G4 step 4, the symbol audit** — it needs no button presses. It caught a silent failure, see below |
-| Blocked | **G4 steps 1/2/3/5 block deployment.** Every CC in the plan is still read out of source, not observed, and the two SOLO gestures have never been verified |
-| Blocked | **Pre-flight fails right now:** `jack_lsp -c \| grep -A3 "Pads MIDI"` shows **two** routes, `dev3_in` and `dev2_in`. Both appeared after a clean boot, so this is *not* the 2026-08-08 stale-`jack_connect` cause — suspect a re-enumeration after a watchdog reopen taking a second zmip slot. Until it is one route, every CC arrives twice and the audit is worthless |
+| Done on the Pi | **G4 steps 0-3 PASSED 2026-08-11.** Route fixed, daemon patch deployed and verified on the wire, every button CC measured — and two of them were wrong in every document this project has. See the button table below |
+| Blocked | **G4 step 5, the SOLO gestures** — the only surface behaviour never verified. Needs held-button gestures at the panel |
+| Next | Deploy the pass-two driver, then the SP1 testing pass |
 
 **G4 step 4 caught a silent failure — the recurring Pi-is-older trap, again.**
 The Pi's mixer speaks a **different DPM API** than this checkout, and Task 8's
@@ -54,15 +55,40 @@ new API, fall back to the old one, then give up. Both report dBFS.
 `libzynseq.so`, along with `setPlayChance`, `setNotePlayChance`,
 `setSwingAmount` and `setSwingDiv`. `addNote` is 5-arg.
 
-**The owner's button names are now authoritative project-wide.** Never name an
-arrow button without its section prefix; the panel silkscreen, the daemon's
-token names and the driver's old constant names all disagreed with each other:
+**The button CC map is MEASURED now, gate G4, 2026-08-11** — one press per
+button with `aseqdump`. Raw log:
+`docs/superpowers/techno-machine/2026-08-11-g4-capture.log`.
 
-| Name | Panel | Daemon token | CC |
+| Name | Panel | Daemon token | **CC** |
 |---|---|---|---|
-| **DL / DR** | arrows beside the display | `step_left` / `step_right` | 5 / 6 |
+| **DL / DR** | arrows beside the display | `page_left` / `page_right` | **47 / 48** |
 | **ML / MR** | master section, beside the big encoder | `nav_left` / `nav_right` | 13 / 14 |
-| **TL / TR** | transport ◀STEP / STEP▶ | `page_left` / `page_right` | 48 / 47 — swallowed by the daemon, never emitted |
+| **TL / TR** | transport ◀STEP / STEP▶ | `step_left` / `step_right` | **5 / 6, fully emitted — free surface** |
+
+**The daemon's token names are attached to the opposite physical buttons from
+what they suggest.** Every earlier claim here was read out of those names, and
+two were wrong from 2026-08-08 until G4. **Retracted: "the display arrows send
+CC 5/6" and "TL/TR is swallowed by the daemon".** Both false. Fixed in the
+driver at `eb26b00c`. Never bind a button without a capture.
+
+Everything else measured, and unbound unless noted: GRID 4 · CONTROL 11 · big
+encoder **press 12** · big encoder **turn 15** (8 units per detent, wraps
+120 → 0) · SCENE 25 · PATTERN 26 · PAD MODE 27 · DUPLICATE 29 · SELECT 30 ·
+SOLO 31 · STEP 32 · MUTE 33 · NAVIGATE 34 · AUTO 37 · ALL 38 · SHIFT 49 ·
+SWING 50 · VOLUME 51. **There is no VIEW button on the MK2** — the 8-button
+block is scene, pattern, pad mode, navigate, duplicate, select, solo, mute.
+
+**Two deploy traps found while deploying the daemon patch:**
+
+- **The Pi's `MaschineMK2_linux` git HEAD is `7038f60`, an old display
+  experiment, and the running code exists only as uncommitted working-tree
+  changes** — byte-identical to WSL's `b567fb0`, verified file by file. A
+  `git reset --hard` or bundle checkout there **destroys the working daemon**.
+  Deploy by copying the changed file. Backup: `/root/main.rs.b567fb0.bak`.
+- **Restart order is daemon first, UI second.** Restarting `maschine-mk2` alone
+  makes a2j re-register the Pads port onto a *new* zmip slot while the ctrldev
+  driver stays bound to the dead one — the rig goes silent with no error. It is
+  also what leaves a second stale route behind.
 
 **Architecture, so the next session does not re-derive it:** a page descriptor
 carries a **shape**, and the shape is the whole trick — `channel` is eight verbs
