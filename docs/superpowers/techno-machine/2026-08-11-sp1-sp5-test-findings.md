@@ -27,6 +27,11 @@
 | DENSITY 0 silences the channel **and draws its tab dashed** | PASS |
 | Peak meters move with audio; a silent channel's bar does not flicker | PASS — confirms the mixer-API fix and the meter quantisation |
 | Drum sample stepping on ML/MR | PASS |
+| **SOLO, both gestures** | **PASS — fully characterised for the first time, see below** |
+| Generated CONTROL pages built from a plugin's own ports | PASS — page appears, continuous parameters change the sound |
+| Generated ALL pages (`REV`, `DLY`) | PARTIAL — delay works, reverb page is all toggles (defect 7) |
+| Snapshot round trip of DENSITY | PASS — 0060 saved, restored 0060 |
+| Snapshot round trip of GATE | PASS |
 
 **Note on the stuck-note gate:** it proves the *clamp* works. It does not prove
 a note may safely cross the loop point, because with the clamp in place none
@@ -113,10 +118,77 @@ CONTROL page.**
 
 ---
 
+### SOLO — specified by observation, 2026-08-11
+
+The oldest unverified behaviour in this project. Both gestures work:
+
+| Gesture | Behaviour |
+|---|---|
+| **Hold SOLO + Fn** | Momentary. Solos that channel; further Fn presses **accumulate** (LEAD, then LEAD+PADS); releasing SOLO restores everything |
+| **Tap SOLO** | Latches — the F row becomes solos instead of mutes |
+| **Tap SOLO again** | Exits; the F row returns to muting |
+
+`zynmixer`'s solo is additive, and the surface's momentary layer sits on top of
+it cleanly. No change needed. **This item is closed.**
+
+---
+
+### 6. Generated pages include ports no musician can use
+
+`usable_ports` filters on "numeric with a real range", which is not the same
+question as "a parameter a player can use". Host and infrastructure ports pass
+it and occupy columns:
+
+| Engine | Junk ports that take columns |
+|---|---|
+| Obxd | `lv2_freewheel` (drawn as `LV2_FREE`), `lv2_port_1`, `unused_1` |
+| JC303 | `latency`, `freeWheeling`, `enabled` |
+| padthv1 | none — its `DCF1_ENABLED` / `LFO1_ENABLED` are **genuine musical toggles and must be kept** |
+
+**Fix:** a deny-list in `usable_ports` — drop symbols starting with `lv2_` or
+`unused`, plus exact (case-insensitive) matches for `latency`, `enabled`,
+`bypass`, `freewheel`, `freewheeling`. Exact matching is what keeps padthv1's
+`DCF1_ENABLED` alive.
+
+### 7. A small-range port on a generated page cannot be moved at all
+
+The `REV1` page is `combs_en`, `allps_en`, `bandpass`, `stereo_E` — TAP
+Reverberator's on/off toggles, range 0-1. All four read `0100` (a toggle that is
+on really is 100% of its range) and none of them can be moved.
+
+**Cause:** the generated write path scales a 0-100 surface step back onto the
+port's range, giving 0.01 per step, and `zynthian_controller._set_value()`
+**truncates integer controls** — the identical trap this project hit with pan.
+Continuous ports are unaffected, which is why the delay page works.
+
+**Fix:** detect a small-range port and step it in whole units with the
+remainder carried, via the existing `_enc_steps_fixed`, rather than as a
+fraction of 0-100.
+
+### 8. A voice's DIVIDE has never survived a snapshot load
+
+**Symptom:** saved with a voice at `1/8`, changed it to `1/4`, reloaded — the
+voice stayed at `1/4`. GATE and DENSITY restored correctly in the same test.
+
+**Cause:** `set_state` restores the voice fields and then writes every voice's
+pattern with `_write_voice_pattern`, which calls `setStepsPerBeat` /
+`setBeatsInPattern` from **`self.div[channel]` — the division still in
+memory**. The snapshot's division loads and is immediately overwritten by
+whatever was last on the panel. `_derive_params` afterwards reads back the
+*stamped* value, so the driver and zynseq agree on the wrong answer, which is
+why this has gone unnoticed.
+
+**Pre-existing**, independent of SP1 and SP5; the new `1/4` division merely made
+it visible.
+
+**Fix:** derive each voice's division from zynseq **before** rewriting its
+pattern in `set_state`, so the restored division is honoured rather than
+stamped over.
+
+---
+
 ## Still untested
 
-- SOLO gestures (the oldest unverified behaviour in the project)
-- Snapshot round trip of the new division and gate
-- Generated CONTROL pages on a voice (`EXTRA` pages built from plugin ports)
-- ALL-page generated reverb/delay pages
 - The twenty-minute stability jam
+- Voice preset stepping on ML/MR, re-run from the CONTROL page (defect 5)
+- Whether a note may safely cross the loop point — needs an unclamped build
