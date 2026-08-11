@@ -13,34 +13,57 @@
 
 ---
 
-## RESUME HERE — SP1 + density DEPLOYED and pushed; SP2 is the open work (2026-08-11)
+## RESUME HERE — SP1 + SP5 are VERIFIED ON HARDWARE and shipped (2026-08-11)
 
-**Next action: the owner runs**
-`docs/superpowers/techno-machine/2026-08-11-sp1-testing-plan.md` at the panel —
-nine parts, nothing to install, everything already live on the Pi. Part 2
-(DL/DR paging) is the likeliest failure and Part 8 (SOLO) has never been
-verified on any pass.
+**Everything built in pass two is deployed, tested at the panel and pushed.**
+The twenty-minute jam passed. Nothing is waiting on the owner.
 
-**Then: SP2 — live pad play and record.** It has a one-line scope in §2 of the
-pass-two design and no detailed spec; that spec cycle is the open development
-work. SP4 depends on SP2's writer-ownership rules; SP3's gate has passed and it
-needs its own spec too.
-
-Pass two turned the three latched pages into **five latched modes**, each
-carrying a **ring of parameter pages** stepped with DL/DR. All eleven tasks
-plus the two density addendum tasks are built, **pushed, and running on the
-Pi**.
+**Next action: SP2 — live pad play and REC recording.** Its design decisions are
+already taken (see below); it needs a spec, then a plan, then a build. SP3's
+gate has passed and it needs its own spec too; SP4 depends on SP2's ownership
+rules.
 
 | State | Detail |
 |---|---|
-| Tests | **187 passing** (118 baseline + 69), `python3 -m unittest discover -s tests -q` in `zyngine/ctrldev/` |
-| Commits | **all pushed 2026-08-11** — `zynthian-ui` vangelis at `eb26b00c`, `MaschineMK2_linux` main at `39c4503`, `zynth-docs` master |
-| Done | Tasks 1-11 — rings, three column shapes, generated pages, page-label row, mode/page state, bindings, encoder dispatch, display + meters, ring cache, the daemon patch, the G4 runbook |
-| Done | **Addendum tasks A1-A2 — voice DENSITY**, `0b5f1770` + `7d9c3584`. Spec: `docs/superpowers/specs/2026-08-11-sp1-addendum-voice-density.md`. The Turing voices could not produce a rest; density reads the register a second time, rotated by half its length, and sounds the N lowest-valued steps where `N = round(density/100 * steps)`. Rank not threshold, so 100 is exactly every step and 0 exactly none, and turning down only removes notes. Freezes with LOCK because the mask is a function of the register, and **shrinks** the write burst. Voice STEP encoder 7 traded `swing` → `density`; swing stays on the STEP spread page |
-| Done on the Pi | **G4 step 4, the symbol audit** — it needs no button presses. It caught a silent failure, see below |
-| Done on the Pi | **G4 steps 0-3 PASSED 2026-08-11.** Route fixed, daemon patch deployed and verified on the wire, every button CC measured — and two of them were wrong in every document this project has. See the button table below |
-| **DEPLOYED** | **The pass-two driver is live on the Pi**, 2026-08-11 16:16. Loaded clean, zero tracebacks, UI stable past the 14 s crash-loop window, snapshot 016 up. Backups: `/root/ctrldev-backup-20260811/` |
-| Next | **The owner runs `docs/superpowers/techno-machine/2026-08-11-sp1-testing-plan.md`** — nine parts at the panel, nothing to install. Part 2 (DL/DR paging) is the check most likely to fail, and Part 8 is SOLO, never verified on any pass |
+| Tests | **217 passing**, `python3 -m unittest discover -s tests -q` in `zyngine/ctrldev/` |
+| Code | `zynthian-ui` vangelis, `MaschineMK2_linux` main, `zynth-docs` master — **all pushed** |
+| On the Pi | Driver and daemon deployed and verified. Snapshot `016` repaired |
+| Hardware test | **23 checks passed**, full record in `docs/superpowers/techno-machine/2026-08-11-sp1-sp5-test-findings.md` |
+| Jam | **PASSED, 19 min** — zero xruns, zero tracebacks, zero segfaults, zero driver reloads, watchdog one per ~30 s against an ~8 s healthy baseline. **No DSP load figure was sampled** — deferred |
+
+**Shipped and verified by hand:** five latched modes · DL/DR page rings with
+per-(mode,kind) memory · mixer and filter spread pages · voice CHANCE ·
+generated pages from plugin ports · peak meters · sound stepping on ML/MR ·
+voice DENSITY · the `1/4` division (four-bar patterns) · notes up to eight
+steps · SHIFT/SWING/VOLUME emitted by the daemon.
+
+**SOLO is closed** — specified by observation at last: hold + Fn is momentary
+and additive, tap latches the F row into solos, tap again exits.
+
+**Five defects were found by testing and four were fixed the same session**
+(`212d886b` and follow-up). The one worth carrying forward as a lesson:
+**CHANCE and SWING are per-pattern zynseq properties saved inside the
+snapshot's own riff.** The driver kept only its own copy and defaulted it to
+100 on load, so a channel saved at chance 0 came back silent while the surface
+read 100 and the tab drew SOLID — the one mechanism this instrument has for
+explaining silence was reporting the channel healthy. `_derive_params` now
+reads both back. **Any per-pattern zynseq property the driver mirrors must be
+read back on load, never assumed.**
+
+Also fixed: a voice's DIVIDE had never survived a snapshot load (`set_state`
+stamped the in-memory division over the restored one, then read its own stamp
+back); generated pages showed host ports (`lv2_freewheel`, `latency`,
+`enabled`); and a small-range port could not be moved at all.
+
+**Discreteness is integer-ness, not range width.** The first cut at that last
+fix classified ports by span and broke Obxd's 0.0-1.0 float volume within
+minutes. `_set_value()` truncates only INTEGER controls, so a port needs whole
+-unit stepping when it is integer **and** one percent of its range is under one
+unit.
+
+**Two recorded, not fixed, by the owner's ruling:** long notes with repeated
+pitches cut each other off (swing exposes it, and the swing behaviour at `1/4`
+is wanted as-is); and GATE at its floor is inaudible on slow-attack patches.
 
 **SP3's gate ran 2026-08-11 and it is no longer blocked** —
 `docs/superpowers/techno-machine/2026-08-11-sp3-filter-gate-results.md`.
