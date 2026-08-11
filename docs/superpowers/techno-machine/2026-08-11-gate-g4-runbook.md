@@ -35,14 +35,73 @@ ssh root@192.168.2.123 'systemctl set-environment ZYNTHIAN_LOG_LEVEL=20; systemc
 
 | Check | Result |
 |---|---|
-| a. Pads MIDI routing | **FAIL — two routes.** `Pads MIDI → ZynMidiRouter:dev3_in` **and** `→ ZynMidiRouter:dev2_in`. Both appeared after a clean boot (Pi up 14 min), so this is not the 2026-08-08 stale-`jack_connect` cause; suspect a device re-enumeration after a watchdog reopen giving the alias a second zmip slot. **Resolve before step 1** — a doubled route makes every CC arrive twice and would corrupt the whole audit |
+| a. Pads MIDI routing | **FAIL, then FIXED.** `Pads MIDI` fed both `dev3_in` and `dev2_in`. **Cause: a daemon restart re-registers the a2j port and zynthian assigns it a new zmip slot, leaving the old route behind.** A `systemctl restart zynthian` reconciles it — one route, `dev2_in`, driver reloaded. Check this after *every* daemon restart, not once |
 | b. `external_pad_leds` | PASS — `"external_pad_leds": true` present in `/root/zynth/MaschineMK2_linux/maschine.json` |
 | c. Daemon + watchdog | PASS — `maschine-mk2` active, reopens roughly one per 30-60 s against the ~8 s healthy baseline |
 | d. Log level | `ZYNTHIAN_LOG_LEVEL` is **unset** — it did not survive the reboot. Re-set it before auditing, and unset it afterwards |
 
 ---
 
-## Step 1 — Button audit `[pending — needs button presses]`
+## Step 1 — Button audit `[DONE 2026-08-11]`
+
+Ran with `aseqdump -p 129:0` under a systemd transient unit, one press per
+button, timestamped. Raw log kept at `/root/g4-capture.log` on the Pi.
+
+**Two of the numbers this project has carried since 2026-08-08 were wrong.**
+
+| Button | Panel location | Previously believed | **Measured** | Verdict |
+|---|---|---|---|---|
+| **DL / DR** | arrows beside the display | 5 / 6 | **47 / 48** | **WRONG before** |
+| **TL / TR** | transport ◀STEP / STEP▶ | 48 / 47, *swallowed by the daemon* | **5 / 6, fully emitted** | **WRONG before** |
+| **ML / MR** | master, beside the big encoder | 13 / 14 | 13 / 14 | correct |
+| CONTROL | | 11 | 11 | correct |
+| STEP | | 32 | 32 | correct |
+| ALL | | 38 | 38 | correct |
+| AUTO | | 37 | 37 | correct |
+| SHIFT | | 49 | **49** | patch verified |
+| SWING | | 50 | **50** | patch verified |
+| VOLUME | | 51 | **51** | patch verified |
+| GRID | | — | 4 | new |
+| SCENE | 8-block | — | 25 | new |
+| PATTERN | 8-block | — | 26 | new |
+| PAD MODE | 8-block | — | 27 | new |
+| NAVIGATE | 8-block | — | 34 | new |
+| DUPLICATE | 8-block | — | 29 | new |
+| SELECT | 8-block | — | 30 | new |
+| SOLO | 8-block | — | 31 | new |
+| MUTE | 8-block | — | 33 | new |
+| **Big encoder, turn** | master | — | **15**, 8 units per detent, wraps 120 → 0 | new |
+| **Big encoder, press** | master | — | **12** | new |
+
+Every button emits a clean press (127) and release (0) pair. Nothing is
+swallowed by the daemon — including TL/TR, which this project had written off
+as unusable.
+
+### Why source-reading could never have caught this
+
+The daemon's token names are attached to the opposite physical buttons from
+what they suggest: `step_left`/`step_right` (CC 5/6) are the **transport**
+arrows, and `page_left`/`page_right` (CC 47/48) are the arrows **beside the
+display**. Every previous conclusion in this project was derived from those
+names. The 2026-08-08 note that "sample switching listened on CC 48/47, which
+the daemon swallows; the display arrows send CC 5/6" is exactly backwards and
+is now retracted.
+
+### There is no VIEW button on the MK2
+
+The daemon defines a `view` token, but the panel's 8-button block is, top to
+bottom: **scene, pattern, pad mode, navigate, duplicate, select, solo, mute**.
+Confirmed against the hardware by the owner. Do not go looking for it again.
+
+### Fixed in code
+
+`zynthian-ui` `eb26b00c` — `CC_DL = 47`, `CC_DR = 48`, and `CC_TL`/`CC_TR` = 5/6
+recorded as free. Without this, paging was bound to buttons that are not where
+the driver thought they were.
+
+---
+
+## Step 1 (original procedure, retained for re-runs)
 
 Find the port, then dump it:
 
@@ -83,28 +142,41 @@ have all disagreed with each other before.
 
 ---
 
-## Step 2 — AUTO reachability `[pending — needs button presses]`
+## Step 2 — AUTO reachability `[DONE 2026-08-11]`
 
-Confirm CC 37 reaches the driver rather than being swallowed the way 47/48 are.
-The shipped daemon already has an `"auto"` arm, so this is expected to pass; it
-is checked separately because FILTER mode is unusable if it does not.
-
-- [ ] CC 37 appears in `jack_midi_dump` on press
-- [ ] CC 37 appears on release
-- [ ] The driver's FILTER mode LED lights
+- [x] CC 37 on press, CC 37 on release, clean single pair. FILTER mode has a
+      working button.
+- [ ] The FILTER mode LED lights — deferred to the SP1 testing pass, since the
+      driver that draws it is not deployed yet.
 
 ---
 
-## Step 3 — Post-patch check `[pending — needs button presses]`
+## Step 3 — Post-patch check `[mostly DONE 2026-08-11]`
 
-After deploying `MaschineMK2_linux` `39c4503` (Task 10):
+`MaschineMK2_linux` `39c4503` (Task 10) deployed to the Pi and rebuilt there.
 
-- [ ] SHIFT emits CC 49 on press **and** release
-- [ ] SWING emits CC 50 on press and release
-- [ ] VOLUME emits CC 51 on press and release
-- [ ] **PAD MODE still behaves.** SHIFT remains a live internal modifier — the
-      `set_mod` block runs before the emit arm and gates PAD MODE and the B6
-      encoder. If PAD MODE broke, the patch removed something it should not have
+- [x] SHIFT emits CC 49 on press and release
+- [x] SWING emits CC 50 on press and release
+- [x] VOLUME emits CC 51 on press and release
+- [ ] **PAD MODE still behaves.** Its CC (27) was captured, but whether SHIFT
+      still gates the daemon's own PAD MODE handling was not exercised. Carry
+      into the SP1 testing pass
+
+### Deployment notes learned doing it
+
+**The Pi's `MaschineMK2_linux` git HEAD is `7038f60`, an old display
+experiment, and the deployed code exists only as uncommitted working-tree
+changes** — byte-identical to WSL's `b567fb0`, verified file by file. A
+`git reset --hard` or a bundle fetch-and-checkout there would have destroyed
+the working daemon. **Deploy by copying the changed file, not through git**,
+until the Pi's repo is reconciled. The pre-patch `src/main.rs` is backed up at
+`/root/main.rs.b567fb0.bak`.
+
+**Restart order is daemon first, UI second.** Restarting `maschine-mk2` alone
+makes a2j re-register the Pads port, zynthian assigns it a *new* zmip slot, and
+the ctrldev driver stays bound to the dead one — the rig goes silent with no
+error. `systemctl restart zynthian` afterwards rebinds it. This is also what
+cleared the double-route in step 0a.
 
 ---
 
