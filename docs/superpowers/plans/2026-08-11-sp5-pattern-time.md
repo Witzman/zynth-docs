@@ -106,8 +106,7 @@ In `maschine_mk2_lib.py`, replace the `DIVISIONS` tuple with:
     #
     # APPEND ONLY. A snapshot stores the division as an INDEX into this tuple,
     # so inserting "1/4" in musical order would silently re-point every saved
-    # pattern at a different division, with no error anywhere. The knob wraps,
-    # so musical ordering buys nothing worth that risk.
+    # pattern at a different division, with no error anywhere.
     #
     # "1/4" is the slowest step this API can express: steps_per_beat is an
     # integer >= 1, so a step can never be longer than one beat. Sixteen of

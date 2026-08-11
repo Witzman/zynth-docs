@@ -93,7 +93,12 @@ Append to `maschine_mk2_lib.DIVISIONS` and to `techno_lib.DIVISION_LABELS`:
 **Appended, never inserted.** Snapshots persist the division as an **index**
 into this tuple. Inserting `1/4` in musical order would silently re-point every
 saved pattern at a different division — a data corruption with no error
-message. Musical order is not worth that; the ring wraps anyway.
+message. Musical order is not worth that.
+
+(An earlier draft of this section claimed the division knob wraps, so ordering
+cost nothing. It does not wrap — `_verb` clamps the division index with
+`min(len(DIVISIONS) - 1, max(0, ...))` at both call sites. Caught by the Task 1
+review before the false claim reached a code comment.)
 
 The 8-step `spb=1, beats=8` variant the probe found is **not** added. It was
 considered and declined: it is the same resolution over half the time, and one
