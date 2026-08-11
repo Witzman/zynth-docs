@@ -117,3 +117,22 @@ should never quietly narrow what you saved.
 For each of the six checks above, write down: pass / fail, and for a fail, the
 exact voice, control values, and what you heard. If check 1 fails, stop there
 — the remaining five are not meaningful until the stuck-note gate is closed.
+
+---
+
+## 7. Two things the final code review added
+
+**A tapped step now respects GATE.** The final whole-branch review found that a
+step toggled by hand on a pad wrote a fixed one-step note, while generated
+steps used GATE — so on a voice at `1/4` with GATE high, your own taps would
+have come out as stabs among two-bar notes. Fixed before deploy
+(`78c0659a`). Worth confirming by ear: on a voice, tap a step by hand and check
+it holds as long as the generated ones around it. Drums are deliberately
+unchanged — their samples are one-shots.
+
+**GATE's knob is coarser than it was.** Widening the range from 5-100 to 5-800
+spreads eight times as much range across the same encoder sweep, so gate now
+moves in jumps of roughly 6-24 per report and the old 5-100 region is a small
+part of the travel. This is a deliberate cost of the design, not a fault. If it
+proves annoying in practice, say so — the fix would be a coarse/fine split, not
+a narrower range.
