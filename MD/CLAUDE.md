@@ -33,8 +33,18 @@ are implemented, committed and green on WSL. **Nothing has reached the Pi.**
 | Done | **Addendum tasks A1-A2 — voice DENSITY**, `0b5f1770` + `7d9c3584`. Spec: `docs/superpowers/specs/2026-08-11-sp1-addendum-voice-density.md`. The Turing voices could not produce a rest; density reads the register a second time, rotated by half its length, and sounds the N lowest-valued steps where `N = round(density/100 * steps)`. Rank not threshold, so 100 is exactly every step and 0 exactly none, and turning down only removes notes. Freezes with LOCK because the mask is a function of the register, and **shrinks** the write burst. Voice STEP encoder 7 traded `swing` → `density`; swing stays on the STEP spread page |
 | Done on the Pi | **G4 step 4, the symbol audit** — it needs no button presses. It caught a silent failure, see below |
 | Done on the Pi | **G4 steps 0-3 PASSED 2026-08-11.** Route fixed, daemon patch deployed and verified on the wire, every button CC measured — and two of them were wrong in every document this project has. See the button table below |
-| Blocked | **G4 step 5, the SOLO gestures** — the only surface behaviour never verified. Needs held-button gestures at the panel |
-| Next | Deploy the pass-two driver, then the SP1 testing pass |
+| **DEPLOYED** | **The pass-two driver is live on the Pi**, 2026-08-11 16:16. Loaded clean, zero tracebacks, UI stable past the 14 s crash-loop window, snapshot 016 up. Backups: `/root/ctrldev-backup-20260811/` |
+| Next | **The owner runs `docs/superpowers/techno-machine/2026-08-11-sp1-testing-plan.md`** — nine parts at the panel, nothing to install. Part 2 (DL/DR paging) is the check most likely to fail, and Part 8 is SOLO, never verified on any pass |
+
+**SP3's gate ran 2026-08-11 and it is no longer blocked** —
+`docs/superpowers/techno-machine/2026-08-11-sp3-filter-gate-results.md`.
+**MDA RezFilter** is the drum filter: `freq` and `res` are already **0-100**,
+the driver's own surface units, and it is stereo. Measured a clean lowpass
+sweep with genuine resonance (2-8 kHz band 16.13 → 54.27 at res 80). Five jalv
+hosts cost **4.60% of a core idle, zero xruns**, exactly as G1 predicted.
+**The trap: below `freq` 35 it emits exact digital silence**, so SP3 must map
+the encoder onto 35-100 or the bottom of the knob mutes the channel with
+nothing saying why. SP3 still needs its own spec and build.
 
 **G4 step 4 caught a silent failure — the recurring Pi-is-older trap, again.**
 The Pi's mixer speaks a **different DPM API** than this checkout, and Task 8's
