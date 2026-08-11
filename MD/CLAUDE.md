@@ -27,9 +27,10 @@ are implemented, committed and green on WSL. **Nothing has reached the Pi.**
 
 | State | Detail |
 |---|---|
-| Tests | **164 passing** (118 baseline + 46), `python3 -m unittest discover -s tests -q` in `zyngine/ctrldev/` |
-| Commits | `22d217a3` … `f1c98493` on `zynthian-ui` branch `vangelis` · `39c4503` on `MaschineMK2_linux` main · `a181987` on `zynth-docs`. **None pushed** |
+| Tests | **187 passing** (118 baseline + 69), `python3 -m unittest discover -s tests -q` in `zyngine/ctrldev/` |
+| Commits | `22d217a3` … `7d9c3584` on `zynthian-ui` branch `vangelis` · `39c4503` on `MaschineMK2_linux` main · `45394f2` on `zynth-docs`. **None pushed** |
 | Done | Tasks 1-11 — rings, three column shapes, generated pages, page-label row, mode/page state, bindings, encoder dispatch, display + meters, ring cache, the daemon patch, the G4 runbook |
+| Done | **Addendum tasks A1-A2 — voice DENSITY**, `0b5f1770` + `7d9c3584`. Spec: `docs/superpowers/specs/2026-08-11-sp1-addendum-voice-density.md`. The Turing voices could not produce a rest; density reads the register a second time, rotated by half its length, and sounds the N lowest-valued steps where `N = round(density/100 * steps)`. Rank not threshold, so 100 is exactly every step and 0 exactly none, and turning down only removes notes. Freezes with LOCK because the mask is a function of the register, and **shrinks** the write burst. Voice STEP encoder 7 traded `swing` → `density`; swing stays on the STEP spread page |
 | Done on the Pi | **G4 step 4, the symbol audit** — it needs no button presses. It caught a silent failure, see below |
 | Blocked | **G4 steps 1/2/3/5 block deployment.** Every CC in the plan is still read out of source, not observed, and the two SOLO gestures have never been verified |
 | Blocked | **Pre-flight fails right now:** `jack_lsp -c \| grep -A3 "Pads MIDI"` shows **two** routes, `dev3_in` and `dev2_in`. Both appeared after a clean boot, so this is *not* the 2026-08-08 stale-`jack_connect` cause — suspect a re-enumeration after a watchdog reopen taking a second zmip slot. Until it is one route, every CC arrives twice and the audit is worthless |
