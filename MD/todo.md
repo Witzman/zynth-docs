@@ -20,10 +20,15 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
   - [x] Task 7 — `_encoder_column` dispatches on shape; `COLUMN_VERBS` retired — `00c59b7a`
   - [x] Task 8 — spread columns, page label, peak meters off the real `zynmixer.DPM` struct — `06cc3fc8`
   - [x] Task 9 — generated ring cache, invalidated on snapshot/kit/preset — `1cbe5f95`
-  - [ ] **Task 10 — daemon patch**: emit SHIFT 49, SWING 50, VOLUME 51 in `MaschineMK2_linux/src/main.rs`. ~10 lines. Builds locally (`cargo 1.96.0`); **deploying needs the Pi**. Do NOT remove the `set_mod` block — SHIFT is a live internal modifier gating PAD MODE
-  - [ ] **Task 11 — the G4 runbook**. Documentation only, needs no Pi
-  - [ ] **G4 blocks deployment** — every CC in the plan is read out of source, not observed. Also folds in the two never-verified SOLO gestures
-  - 164 tests passing on WSL, **nothing pushed**, nothing on the Pi
+  - [x] **Task 10 — daemon patch** — `MaschineMK2_linux` `39c4503`. Three RPN7 arms emitting SHIFT 49, SWING 50, VOLUME 51 after `page_left`. `cargo build --release` clean, no new warnings. The `set_mod` block above the match is untouched — SHIFT is still a live internal modifier gating PAD MODE and the B6 encoder
+  - [x] **Task 11 — the G4 runbook** — `zynth-docs` `a181987`, at `docs/superpowers/techno-machine/2026-08-11-gate-g4-runbook.md`
+  - [x] **G4 step 4 (symbol audit) RAN on the Pi 2026-08-11** — needs no button presses. Two findings:
+    - **The Pi's mixer speaks an older DPM API than this checkout, and Task 8 would have failed silently on it.** Pi: `get_dpm_states(start, end)` → `[[a, b, hold_a, hold_b, mono]]` and `enable_dpm(start, end, enable)`, living in `zyngine/zynthian_engine_audio_mixer.py`. WSL: `update_dpm_states()` + `mixer.dpm` and `enable_dpm(enable)`, in `zynlibs/zynmixer/zynmixer.py`. `updateDpmStates` does not exist on the Pi at all. The `hasattr` guard meant the meter would have degraded to fader position with no error. Fixed in `zynthian-ui` `f1c98493` — tries new, falls back to old. Both report dBFS
+    - **RATCHET is unblocked** — `setStutterCount`/`setStutterDur`/`changeStutterCountAll` are all in the installed `libzynseq.so`, along with `setPlayChance`, `setNotePlayChance`, `setSwingAmount`/`setSwingDiv`. `addNote` is 5-arg (`_ZN7Pattern7addNoteEjhhff`)
+  - [ ] **G4 steps 1, 2, 3, 5 still block deployment** — all four need someone pressing buttons on the panel. Steps 1/2/3 are the CC audit, step 5 the two SOLO gestures
+  - [ ] **Pre-flight FAIL found 2026-08-11, fix before any CC audit:** `jack_lsp -c | grep -A3 "Pads MIDI"` shows **two** routes — `dev3_in` **and** `dev2_in`. Both appeared after a clean boot, so this is not the 2026-08-08 stale-`jack_connect` cause; suspect a device re-enumeration after a watchdog reopen taking a second zmip slot. Every CC arrives twice until it is resolved
+  - [ ] `ZYNTHIAN_LOG_LEVEL` did not survive the reboot — re-set it to 20 before auditing, unset it after
+  - 164 tests passing on WSL, **nothing pushed**, nothing on the Pi. SP1 code is complete; only hardware verification remains
 
 - [ ] **Techno Machine pass two — SP2, SP3, SP4** — specced in §2 of the pass-two design, not built. SP2 live pad play + REC recording · SP3 the drum filter (**blocked on the Pi**) · SP4 channel type switching on SHIFT+GRID. Build order SP1 → SP2 → SP4, SP3 whenever the hardware returns
 

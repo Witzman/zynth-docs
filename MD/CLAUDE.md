@@ -13,24 +13,45 @@
 
 ---
 
-## RESUME HERE — Pass two SP1: tasks 1-9 done on WSL, blocked on the Pi (2026-08-11)
+## RESUME HERE — Pass two SP1 is CODE-COMPLETE, blocked on hands-on-panel (2026-08-11)
 
-**Pick up at Task 10 of** `docs/superpowers/plans/2026-08-11-techno-machine-pass-two-sp1.md`.
-Read that plan and its spec (`docs/superpowers/specs/2026-08-11-techno-machine-pass-two-design.md`)
-before touching anything.
+**Next action: run G4 steps 1, 2, 3 and 5 from**
+`docs/superpowers/techno-machine/2026-08-11-gate-g4-runbook.md`. **All four need
+someone pressing buttons on the Maschine** — nothing else stands in the way.
+The plan is `docs/superpowers/plans/2026-08-11-techno-machine-pass-two-sp1.md`,
+its spec `docs/superpowers/specs/2026-08-11-techno-machine-pass-two-design.md`.
 
 Pass two turns the three latched pages into **five latched modes**, each carrying
-a **ring of parameter pages** stepped with the display arrows. Nine of eleven
-tasks are implemented, committed and green on WSL. **Nothing has reached the Pi.**
+a **ring of parameter pages** stepped with the display arrows. All eleven tasks
+are implemented, committed and green on WSL. **Nothing has reached the Pi.**
 
 | State | Detail |
 |---|---|
 | Tests | **164 passing** (118 baseline + 46), `python3 -m unittest discover -s tests -q` in `zyngine/ctrldev/` |
-| Commits | `22d217a3` … `1cbe5f95` on `zynthian-ui` branch `vangelis`, **not pushed** |
-| Done | Tasks 1-9 — rings, three column shapes, generated pages, page-label row, mode/page state, bindings, encoder dispatch, display + meters, ring cache |
-| Next | **Task 10** — ten-line Rust patch emitting SHIFT 49, SWING 50, VOLUME 51. Builds locally (`cargo 1.96.0`); deploying needs the Pi |
-| Then | **Task 11** — the G4 runbook. Pure documentation, needs no Pi at any point |
-| Blocked | **G4 blocks deployment.** Every CC in the plan is read out of source, not observed |
+| Commits | `22d217a3` … `f1c98493` on `zynthian-ui` branch `vangelis` · `39c4503` on `MaschineMK2_linux` main · `a181987` on `zynth-docs`. **None pushed** |
+| Done | Tasks 1-11 — rings, three column shapes, generated pages, page-label row, mode/page state, bindings, encoder dispatch, display + meters, ring cache, the daemon patch, the G4 runbook |
+| Done on the Pi | **G4 step 4, the symbol audit** — it needs no button presses. It caught a silent failure, see below |
+| Blocked | **G4 steps 1/2/3/5 block deployment.** Every CC in the plan is still read out of source, not observed, and the two SOLO gestures have never been verified |
+| Blocked | **Pre-flight fails right now:** `jack_lsp -c \| grep -A3 "Pads MIDI"` shows **two** routes, `dev3_in` and `dev2_in`. Both appeared after a clean boot, so this is *not* the 2026-08-08 stale-`jack_connect` cause — suspect a re-enumeration after a watchdog reopen taking a second zmip slot. Until it is one route, every CC arrives twice and the audit is worthless |
+
+**G4 step 4 caught a silent failure — the recurring Pi-is-older trap, again.**
+The Pi's mixer speaks a **different DPM API** than this checkout, and Task 8's
+`hasattr` guard would have quietly degraded the mixer meter to fader position on
+the only machine that runs it, with no error anywhere:
+
+| | WSL checkout | The Pi |
+|---|---|---|
+| Module | `zynlibs/zynmixer/zynmixer.py` | `zyngine/zynthian_engine_audio_mixer.py` |
+| Read | `update_dpm_states()` fills `mixer.dpm` — `(a, b, a_hold, b_hold, mono)` | `get_dpm_states(start, end)` → `[[a, b, hold_a, hold_b, mono], …]` |
+| Enable | `enable_dpm(enable)` | `enable_dpm(start, end, enable)` |
+
+`updateDpmStates` does not exist on the Pi at all. Fixed in `f1c98493` — try the
+new API, fall back to the old one, then give up. Both report dBFS.
+
+**Also settled by step 4: RATCHET is unblocked.** `setStutterCount`,
+`setStutterDur` and `changeStutterCountAll` are all in the installed
+`libzynseq.so`, along with `setPlayChance`, `setNotePlayChance`,
+`setSwingAmount` and `setSwingDiv`. `addNote` is 5-arg.
 
 **The owner's button names are now authoritative project-wide.** Never name an
 arrow button without its section prefix; the panel silkscreen, the daemon's
