@@ -13,22 +13,28 @@
 
 ---
 
-## RESUME HERE — Pass two SP1 is CODE-COMPLETE, blocked on hands-on-panel (2026-08-11)
+## RESUME HERE — SP1 + density DEPLOYED and pushed; SP2 is the open work (2026-08-11)
 
-**Next action: run G4 steps 1, 2, 3 and 5 from**
-`docs/superpowers/techno-machine/2026-08-11-gate-g4-runbook.md`. **All four need
-someone pressing buttons on the Maschine** — nothing else stands in the way.
-The plan is `docs/superpowers/plans/2026-08-11-techno-machine-pass-two-sp1.md`,
-its spec `docs/superpowers/specs/2026-08-11-techno-machine-pass-two-design.md`.
+**Next action: the owner runs**
+`docs/superpowers/techno-machine/2026-08-11-sp1-testing-plan.md` at the panel —
+nine parts, nothing to install, everything already live on the Pi. Part 2
+(DL/DR paging) is the likeliest failure and Part 8 (SOLO) has never been
+verified on any pass.
 
-Pass two turns the three latched pages into **five latched modes**, each carrying
-a **ring of parameter pages** stepped with the display arrows. All eleven tasks
-are implemented, committed and green on WSL. **Nothing has reached the Pi.**
+**Then: SP2 — live pad play and record.** It has a one-line scope in §2 of the
+pass-two design and no detailed spec; that spec cycle is the open development
+work. SP4 depends on SP2's writer-ownership rules; SP3's gate has passed and it
+needs its own spec too.
+
+Pass two turned the three latched pages into **five latched modes**, each
+carrying a **ring of parameter pages** stepped with DL/DR. All eleven tasks
+plus the two density addendum tasks are built, **pushed, and running on the
+Pi**.
 
 | State | Detail |
 |---|---|
 | Tests | **187 passing** (118 baseline + 69), `python3 -m unittest discover -s tests -q` in `zyngine/ctrldev/` |
-| Commits | `22d217a3` … `7d9c3584` on `zynthian-ui` branch `vangelis` · `39c4503` on `MaschineMK2_linux` main · `45394f2` on `zynth-docs`. **None pushed** |
+| Commits | **all pushed 2026-08-11** — `zynthian-ui` vangelis at `eb26b00c`, `MaschineMK2_linux` main at `39c4503`, `zynth-docs` master |
 | Done | Tasks 1-11 — rings, three column shapes, generated pages, page-label row, mode/page state, bindings, encoder dispatch, display + meters, ring cache, the daemon patch, the G4 runbook |
 | Done | **Addendum tasks A1-A2 — voice DENSITY**, `0b5f1770` + `7d9c3584`. Spec: `docs/superpowers/specs/2026-08-11-sp1-addendum-voice-density.md`. The Turing voices could not produce a rest; density reads the register a second time, rotated by half its length, and sounds the N lowest-valued steps where `N = round(density/100 * steps)`. Rank not threshold, so 100 is exactly every step and 0 exactly none, and turning down only removes notes. Freezes with LOCK because the mask is a function of the register, and **shrinks** the write burst. Voice STEP encoder 7 traded `swing` → `density`; swing stays on the STEP spread page |
 | Done on the Pi | **G4 step 4, the symbol audit** — it needs no button presses. It caught a silent failure, see below |
