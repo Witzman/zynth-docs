@@ -8,39 +8,29 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
 
 ## Active
 
-- [~] **Techno Machine pass two — SP1 mode & page framework** (2026-08-11, **resume at Task 10**)
-  - Read first: `docs/superpowers/plans/2026-08-11-techno-machine-pass-two-sp1.md`, then its spec `docs/superpowers/specs/2026-08-11-techno-machine-pass-two-design.md`
-  - Five latched modes (CONTROL · STEP · ALL · MIXER on VOLUME · FILTER on AUTO), each a ring of parameter pages stepped with DL/DR
-  - [x] Task 1 — page shapes, descriptors, `PAGE_RINGS` keyed `(mode, kind)` — `22d217a3`
-  - [x] Task 2 — `columns()` renders all three shapes; `page_label()`, `quantise_frac()` — `287a3aa5`
-  - [x] Task 3 — generated pages built from a plugin's own ports, with a port filter — `ad20b000`
-  - [x] Task 4 — page-indicator row; **found and fixed a shadowing bug in shipped `screen_packets`** (a loop local named `label` clobbered the new parameter) — `7fc9372a`
-  - [x] Task 5 — `self.mode` + `self.page_idx`, snapshot round-trip, voices gain `chance` — `3928cbf6`
-  - [x] Task 6 — VOLUME/AUTO bound as modes, DL/DR paging, ML/MR sound stepping, five-mode LEDs — `6ebb20fb`
-  - [x] Task 7 — `_encoder_column` dispatches on shape; `COLUMN_VERBS` retired — `00c59b7a`
-  - [x] Task 8 — spread columns, page label, peak meters off the real `zynmixer.DPM` struct — `06cc3fc8`
-  - [x] Task 9 — generated ring cache, invalidated on snapshot/kit/preset — `1cbe5f95`
-  - [x] **Task 10 — daemon patch** — `MaschineMK2_linux` `39c4503`. Three RPN7 arms emitting SHIFT 49, SWING 50, VOLUME 51 after `page_left`. `cargo build --release` clean, no new warnings. The `set_mod` block above the match is untouched — SHIFT is still a live internal modifier gating PAD MODE and the B6 encoder
-  - [x] **Task 11 — the G4 runbook** — `zynth-docs` `a181987`, at `docs/superpowers/techno-machine/2026-08-11-gate-g4-runbook.md`
-  - [x] **G4 step 4 (symbol audit) RAN on the Pi 2026-08-11** — needs no button presses. Two findings:
-    - **The Pi's mixer speaks an older DPM API than this checkout, and Task 8 would have failed silently on it.** Pi: `get_dpm_states(start, end)` → `[[a, b, hold_a, hold_b, mono]]` and `enable_dpm(start, end, enable)`, living in `zyngine/zynthian_engine_audio_mixer.py`. WSL: `update_dpm_states()` + `mixer.dpm` and `enable_dpm(enable)`, in `zynlibs/zynmixer/zynmixer.py`. `updateDpmStates` does not exist on the Pi at all. The `hasattr` guard meant the meter would have degraded to fader position with no error. Fixed in `zynthian-ui` `f1c98493` — tries new, falls back to old. Both report dBFS
-    - **RATCHET is unblocked** — `setStutterCount`/`setStutterDur`/`changeStutterCountAll` are all in the installed `libzynseq.so`, along with `setPlayChance`, `setNotePlayChance`, `setSwingAmount`/`setSwingDiv`. `addNote` is 5-arg (`_ZN7Pattern7addNoteEjhhff`)
-  - [x] **G4 steps 0-3 PASSED 2026-08-11** — route fixed, daemon patch deployed and verified on the wire, every button CC measured. **Two were wrong everywhere: DL/DR are 47/48 (not 5/6) and TL/TR are 5/6 and fully emitted (not swallowed).** Driver fixed at `eb26b00c`. Raw capture committed at `docs/superpowers/techno-machine/2026-08-11-g4-capture.log`
-  - [x] **Pass-two driver DEPLOYED to the Pi 2026-08-11 16:16** — loaded clean, zero tracebacks, stable past the crash-loop window. Backups at `/root/ctrldev-backup-20260811/`. **The Pi's zynthian-ui runs upstream branch `oram-2601.1` and the three Maschine files are untracked drop-ins**, so deployment is a file copy, never a git operation
-  - [ ] **The owner runs the testing plan** — `docs/superpowers/techno-machine/2026-08-11-sp1-testing-plan.md`, nine parts at the panel, nothing to install. Part 2 (DL/DR paging) is the likeliest failure; Part 8 is SOLO, never verified
-  - [ ] **G4 step 5 (SOLO) folded into the testing plan as Part 8**
-  - [x] **Pre-flight double route SOLVED** — `Pads MIDI` fed both `dev2_in` and `dev3_in`. Cause: **a daemon restart re-registers the a2j port and zynthian assigns it a new zmip slot, leaving the old route behind.** `systemctl restart zynthian` reconciles it. **Restart order is daemon first, UI second**, or the driver stays bound to a dead slot and the rig is silent with no error
-  - [ ] `ZYNTHIAN_LOG_LEVEL=20` is set on the Pi again — unset it once testing is done: `systemctl unset-environment ZYNTHIAN_LOG_LEVEL`
-  - [ ] **SP1 addendum — voice DENSITY (specced 2026-08-11, not built).** Spec: `docs/superpowers/specs/2026-08-11-sp1-addendum-voice-density.md`. The Turing voices write one note per step unconditionally; density adds rests. Mechanism: a **gate tap** — the register rotated by half its length, read as its own rotation sequence, with the N lowest-valued steps sounding where `N = round(density/100 * steps)`. Rank not threshold, so 100 is exactly every step and 0 is exactly none, and turning down only removes notes. Freezes with LOCK because the mask is a function of the register. **Reduces** the write burst. Two tasks, both pure WSL work, neither needs the Pi:
-    - [x] **Task A1** — `0b5f1770`. `rotate`/`gate_values`/`gate_mask`, DENSITY spread page, `SPREAD_SPECS` entry, voice channel page column. **187 tests passing**, up from 164
-    - [x] **Task A2** — `7d9c3584`. Mask in `_write_voice_pattern`, `density=100` default, snapshot persistence, encoder range, `GENERATOR_PARAMS`, dashed tab at density 0. `py_compile` OK, suite still 187
-    - Verified with the real pure functions on a 16-step pattern: density 100/75/50/25/6/0 → 16/12/8/4/1/0 notes, and every mask is a subset of the one above it
-    - **No `_verb` rejection branch was needed for drums** — `param_get` returns `None` for a key their state never had, and the encoder tail already bails on `None`
-    - [ ] Hardware-verify on the panel: rides G4, nothing extra needed
-    - Rejected and recorded, do not re-litigate: per-note `setNotePlayChance` (re-rolls every pass, breaks LOCK), euclidean mask (turns the voice into a drum channel with pitches), forcing step 0 to sound
-  - **187 tests passing on WSL. Still nothing pushed to any remote.** SP1 plus the density addendum are code-complete and deployed to the Pi; only the owner's testing pass remains
+- [x] **Techno Machine pass two — SP1, the density addendum and SP5: BUILT, DEPLOYED, HARDWARE-VERIFIED, JAM PASSED (2026-08-11)**
+  - Record: `docs/superpowers/techno-machine/2026-08-11-sp1-sp5-test-findings.md` — 23 checks, five defects, the jam
+  - Specs and plans: `docs/superpowers/specs/2026-08-11-techno-machine-pass-two-design.md` · `…-sp1-addendum-voice-density.md` · `…-sp5-pattern-time-design.md`
+  - Shipped: five latched modes · DL/DR page rings with per-(mode,kind) memory · mixer and filter spread pages · voice CHANCE · generated pages from plugin ports · peak meters · ML/MR sound stepping · voice DENSITY · the `1/4` division (four-bar patterns) · notes up to eight steps · SHIFT 49 / SWING 50 / VOLUME 51 from the daemon
+  - **217 tests. All three repos pushed.** Driver and daemon deployed by file copy (never git — the Pi's `zynthian-ui` is on upstream `oram-2601.1` with the Maschine files as untracked drop-ins, and `MaschineMK2_linux`'s Pi HEAD is an old display experiment with the live code uncommitted)
+  - **Jam PASSED, 19 min:** zero xruns, zero tracebacks, zero segfaults, zero driver reloads, watchdog one per ~30 s against an ~8 s healthy baseline. **No DSP load figure was sampled** — deferred by the owner
+  - **SOLO CLOSED** — hold + Fn is momentary and additive; tap latches the F row into solos; tap again exits
+  - **Snapshot `016` REPAIRED** — it shipped with LEAD and PADS muted *and* at chance 0, so both were silent on every load, for as long as it has existed
+  - **G4 measured the button map and two entries were wrong everywhere since 2026-08-08:** DL/DR are **47/48**, TL/TR are **5/6 and fully emitted** (not swallowed). Raw capture: `docs/superpowers/techno-machine/2026-08-11-g4-capture.log`
+  - [x] `ZYNTHIAN_LOG_LEVEL` unset on the Pi again, 2026-08-11
+  - **Defects found by testing, four fixed the same day (`212d886b` + follow-up):**
+    - **CHANCE and SWING are per-pattern zynseq properties saved in the snapshot's own riff.** The driver mirrored them and defaulted to 100 on load, so a channel saved at chance 0 came back silent while the surface read 100 and the tab drew SOLID — the one mechanism for explaining silence, reporting health. `_derive_params` reads both back now. **Generalise it: any mirrored zynseq pattern property must be read back on load**
+    - **A voice's DIVIDE had never survived a snapshot load** — `set_state` stamped the in-memory division over the restored one, then read its own stamp back, so both sides agreed on the wrong answer. Derive before rewriting
+    - Generated pages showed host ports — `lv2_freewheel` (drawn `LV2_FREE`), `latency`, `enabled`, `unused_1`. Deny-list by exact name plus the `lv2_`/`unused` prefixes, which keeps padthv1's genuine `DCF1_ENABLED`
+    - A small-range port could not be moved at all. **Discreteness is integer-ness, not range width** — the first cut classified by span and broke Obxd's 0.0-1.0 float volume within minutes. `_set_value()` truncates only integer controls
+    - Voice preset stepping was **not** a defect: JC303's bass patches sound near-identical and the PRESET column is not drawn on the STEP page
+  - **Recorded, not fixed, by the owner's ruling:** long notes with repeated pitches cut each other off (swing exposes it; the `1/4` swing behaviour is wanted as-is), and GATE at its floor is inaudible on slow-attack patches
+  - [ ] Removing SP5's loop-point clamp needs a deliberately unclamped build — an experiment, not a test
+  - [ ] Re-run the jam with JACK DSP load sampled throughout
 
-- [ ] **Techno Machine pass two — SP2, SP3, SP4** — one-line scopes in §2 of the pass-two design, no detailed specs yet. SP2 live pad play + REC recording · SP4 channel type switching on SHIFT+GRID. Build order SP1 → SP2 → SP4
+- [~] **Techno Machine pass two — SP2 is NEXT, then SP3, then SP4** — one-line scopes in §2 of the pass-two design, no detailed specs yet. Build order SP2 → SP3 → SP4
+  - [ ] **SP2 — live pad play and REC recording.** Design decisions already taken with the owner, recorded in §8 of the SP5 spec — do not re-litigate: pads play the **kit's own notes on a drum** and a **scale run from ROOT/SCALE on a voice** · **REC held, overdub**, release ends the take · recording claims `writer_token` and forces the voice to **LOCK**, which is what makes ownership visible · **ERASE + Group clears the pattern outright on a player-owned channel**, where today it only silences via chance/hits
+  - [ ] **SP2's one open question, for the owner:** does a recorded note take its length from **how long the pad was held**, or from the **GATE** setting? Hold-time is the reason to record with hands at all, but needs note-off tracking per pad and collides with SP5's loop-point clamp; GATE has neither problem
   - [x] **SP3 is NO LONGER BLOCKED and its gate ran 2026-08-11** — `docs/superpowers/techno-machine/2026-08-11-sp3-filter-gate-results.md`. **MDA RezFilter** chosen: `freq` and `res` are already 0-100, the driver's own surface units, stereo in and out. Clean lowpass sweep measured, resonance genuine (2-8 kHz 16.13 → 54.27 at res 80). Five jalv hosts = **4.60% of a core idle, zero xruns**
   - [ ] **SP3 trap to carry into its build: below `freq` 35 RezFilter emits exact digital silence.** The surface must map the encoder onto 35-100, or the bottom of the knob mutes the channel with nothing saying why — the same failure play chance 0 caused
   - [ ] SP3 still needs its own spec and plan. Open: per-chain insert (5 hosts, ~5% of a core, affordable) versus one filter on a shared drum bus
