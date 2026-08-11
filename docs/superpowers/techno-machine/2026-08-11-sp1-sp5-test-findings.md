@@ -80,9 +80,14 @@ health.
 ### 2. Snapshot `016-techno_maschine` ships with LEAD and PADS muted
 
 `chan_06` and `chan_07` both carry `mute: 1` in the snapshot's `zs3-0` mixer
-state; every other channel has `mute: None`. Unrelated to this build — those two
-channels have been silent on every load of that snapshot. Unmuting works from
-the F row (F7, F8). **The snapshot should be re-saved unmuted.**
+state; every other channel has `mute: None`. It also carried **chance 0** on
+both, so they were silenced twice over. Unrelated to this build — those two
+channels have been silent on every load of that snapshot, however long it has
+been in use.
+
+**REPAIRED and VERIFIED 2026-08-11.** `016` re-saved with both channels unmuted
+and at chance 100; loading it fresh now brings LEAD and PADS in with no
+intervention.
 
 ### 3. Long notes plus repeated pitches cut each other off; swing exposes it
 
@@ -118,10 +123,12 @@ annoys in practice.
 
 Stepping presets on channel F appeared to do nothing audible. The journal shows
 `set_preset: Preset selected: BA 002 ng (9)` → `BA 003 ng (10)` → `BA 002 ng (9)`,
-so the mechanism fired. Two candidate explanations, neither confirmed: the JC303
-bass patches involved sound near-identical, and the `PRESET` column lives on the
-CONTROL page while the test was run from STEP. **Re-test on LEAD or PADS from the
-CONTROL page.**
+so the mechanism fired.
+
+**RESOLVED — not a defect.** Re-run on LEAD from the CONTROL page: the preset
+name changes and the sound changes with it. Both original suspicions were
+right at once — JC303's bass patches sound near-identical, and the `PRESET`
+column is not drawn on the STEP page where the first test was run.
 
 ---
 
@@ -214,6 +221,9 @@ to `1/4`, and reloading: it comes back `1/16`. Before the fix it stayed `1/4`.
 
 ## Still untested
 
-- The twenty-minute stability jam
-- Voice preset stepping on ML/MR, re-run from the CONTROL page (defect 5)
-- Whether a note may safely cross the loop point — needs an unclamped build
+- **The twenty-minute stability jam** — the only thing left
+- Whether a note may safely cross the loop point — needs a deliberately
+  unclamped build, so it is an experiment rather than a test
+- That the last step's note is audibly shorter than its neighbours — the
+  clamp's visible cost. Subtle, low value, skipped by agreement: the absence of
+  stuck notes already proves the clamp works
