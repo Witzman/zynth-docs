@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Techno Machine — Build the Rig — Zynthian Docs</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: {
+  primaryColor: '#0d2233', primaryTextColor: '#e0f0e0',
+  primaryBorderColor: '#3db87a', lineColor: '#3db87a',
+  secondaryColor: '#1a3a2a', tertiaryColor: '#0a2a1a',
+  actorBkg: '#0d2233', actorTextColor: '#e0f0e0',
+  actorBorder: '#3db87a', actorLineColor: '#3db87a',
+  activationBkgColor: '#1a4a3a', activationBorderColor: '#3db87a',
+  signalColor: '#3db87a', signalTextColor: '#0d2233',
+  labelBoxBkgColor: '#0d2233', labelBoxBorderColor: '#3db87a', labelTextColor: '#e0f0e0',
+  noteBkgColor: '#1a3a2a', noteTextColor: '#e0f0e0', noteBorderColor: '#3db87a',
+  titleColor: '#e0f0e0',
+  clusterBkg: '#1a3a2a', clusterBorder: '#3db87a', clusterTextColor: '#e0f0e0',
+  fillType0: '#0d2233', fillType1: '#1a3a2a', fillType2: '#0a2a1a'
+} });</script>
+</head>
+<body>
+<header id="site-header">
+  <a href="index.html">Zynthian</a> &mdash; User Documentation
+</header>
+<div id="layout">
+<nav id="sidebar" aria-label="Navigation">
+<input id="nav-search" type="search" placeholder="Search…" aria-label="Search documentation" autocomplete="off">
+<div id="search-results" style="display:none">
+<p id="search-no-results" style="display:none">No results found.</p>
+<ul id="search-results-list"></ul>
+</div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Get Started</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="readme.html">Overview</a></li>
+<li><a href="getting-started.html">Getting Started</a></li>
+<li><a href="faq.html">FAQ</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Using the UI</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="ui-navigation.html">UI Navigation</a></li>
+<li><a href="chain-management.html">Chains & Routing</a></li>
+<li><a href="control-screen.html">Control Screen</a></li>
+<li><a href="midi-cc-learn.html">MIDI CC Learning</a></li>
+<li><a href="zs3-guide.html">ZS3 Subsnapshots</a></li>
+<li><a href="pattern-editor.html">Pattern Editor</a></li>
+<li><a href="midi-recorder.html">MIDI Recorder</a></li>
+<li><a href="admin-guide.html">Admin & System</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Play & Create</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="userguide.html">User Guide</a></li>
+<li><a href="synth-engines.html">Synth Engines</a></li>
+<li><a href="snapshots.html">Snapshots</a></li>
+<li><a href="recipes.html">Common Setups</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Configure</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="audio.html">Audio Setup</a></li>
+<li><a href="midi.html">MIDI Controllers</a></li>
+<li><a href="hardware.html">Hardware Setup</a></li>
+<li><a href="webconf.html">Webconf Reference</a></li>
+<li><a href="configuration-reference.html">Config Reference</a></li>
+<li><a href="lv2-plugins.html">LV2 Plugins</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Troubleshoot</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="troubleshooting.html">Troubleshooting</a></li>
+<li><a href="performance-monitoring.html">Performance</a></li>
+</ul></div>
+<div class="track">
+<button class="track-header" aria-expanded="true"><span class="track-label">Personal Projects</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list">
+<li><a href="project-midi-reference.html">MIDI Reference</a></li>
+<li><a href="project-midi-mapping.html">Personal MIDI Mapping</a></li>
+<li><a href="project-drone-synth.html">Generative Drone Synth</a></li>
+<li><a href="project-maschine-mk2.html">Maschine MK2 Controller</a></li>
+<li><a href="project-techno-machine.html" aria-current="page"><strong>Techno Machine — Build the Rig</strong></a></li>
+<li><a href="project-midi-channel-routing.html">MIDI Channel Routing</a></li>
+<li><a href="project-emu-cc-learn.html">EMU CC Knob Mapping</a></li>
+<li><a href="project-smc-pad-launcher.html">SMC-PAD Launcher Control</a></li>
+<li><a href="project-drum-computer.html">SMC-PAD Drum Computer</a></li>
+<li><a href="project-u46dj-audio-setup.html">ESI U46DJ Audio Setup</a></li>
+<li><a href="project-modui-effects.html">Audio FX Chain with MOD-UI</a></li>
+<li><a href="project-multi-controller-rig.html">Multi-Controller Rig (rig-v1)</a></li>
+<li><a href="project-live-looper.html">Live Looper with SooperLooper</a></li>
+</ul></div>
+<div class="track" data-collapsed="true">
+<button class="track-header" aria-expanded="false"><span class="track-label">Under the Hood</span><span class="track-arrow" aria-hidden="true">&#9660;</span></button>
+<ul class="track-list" style="display:none">
+<li><a href="architecture.html">Architecture</a></li>
+<li><a href="glossary.html">Glossary</a></li>
+<li><a href="codevelop.html">Co-developing</a></li>
+<li><a href="status.html">Sprint Board</a></li>
+</ul></div>
+</nav>
+<main>
+<article>
+<h1 id="techno-machine--build-the-rig">Techno Machine — Build the Rig</h1>
+<p><strong>Goal:</strong> Reproduce the Techno Machine — an eight-channel generative groovebox played entirely from a Maschine MK2 — on your own Zynthian. <strong>Prerequisites:</strong></p>
+<ul><li><strong>Maschine MK2 Controller</strong> tutorial, Parts 1 and 3 verified. That page builds the Rust HID daemon, adds the udev rules, exports the daemon's port through <code>a2jmidid</code>, installs the JACK connect script and runs the daemon as a systemd service. This page does not repeat any of it.</li><li>Raspberry Pi 4 with ZynthianOS, touchscreen, SSH access.</li><li>The LV2 plugins the rig uses, already installed: <code>tap-echo.lv2</code> and <code>tap-reverb.lv2</code> (system path <code>/usr/lib/lv2</code>, from the <code>tap-plugins</code> package), plus <code>JC303.lv2</code>, <code>Obxd.lv2</code> and <code>padthv1.lv2</code> (Zynthian path <code>/zynthian/zynthian-plugins/lv2</code>).</li><li>The SFZ drum machine kits at <code>/zynthian/zynthian-data/soundfonts/sfz/Drum Machines</code> — 42 kits on a stock install.</li></ul>
+<p><strong>Access:</strong> SSH · touchscreen · webconf (LV2 cache only)</p>
+<p>This is a <strong>build</strong> tutorial: it gets the instrument standing up and proves each layer works. How to <em>play</em> it — the euclidean drums, the Turing voices, LOCK, the performance gestures — is the separate user manual, linked under <strong>Going Further</strong>.</p>
+<p>The order matters and is not the obvious one. The surface comes first, then the sound, then the space. Each part is verifiable on its own, and a fault in the later parts is much harder to read if you cannot trust the earlier ones.</p>
+<hr>
+<h2 id="part-1--make-the-surface-talk-to-zynthian-draft">Part 1 — Make the surface talk to Zynthian <code>[draft]</code></h2>
+<p>The Techno Machine is a <strong>ctrldev driver</strong> — Zynthian's plug-in point for a control surface. It is a Python class in <code>zyngine/ctrldev/</code> that Zynthian loads when it sees a matching MIDI device, and it reaches directly into the running instrument: the chain manager, the mixer, the sequencer library.</p>
+<p>At the end of this part the Maschine draws its own screens and lights its own buttons with <strong>no chains and no snapshot loaded at all</strong>. That is the point of doing it first.</p>
+<h3 id="step-1--confirm-the-daemon-is-running">Step 1 — Confirm the daemon is running</h3>
+<pre><code class="language-bash">ssh root@192.168.2.123 'systemctl is-active maschine-mk2'
+# → active</code></pre>
+<p>If it is not active, stop here and finish the <strong>Maschine MK2 Controller</strong> tutorial. Nothing below can work without it.</p>
+<p><strong>Verify:</strong> the MK2's two displays are lit and its buttons are not all dark. Blank displays plus dark buttons means the daemon is down.</p>
+<h3 id="step-2--turn-on-external-pad-leds">Step 2 — Turn on external pad LEDs</h3>
+<p>The driver owns the pad colours. If the daemon also repaints them, the first pad you touch destroys the per-channel picture.</p>
+<p>Edit <code>maschine.json</code> in the daemon's working directory and add the flag:</p>
+<pre><code class="language-bash">ssh root@192.168.2.123 'grep external_pad_leds /root/zynth/MaschineMK2_linux/maschine.json'
+# → "external_pad_leds": true</code></pre>
+<p>If the line is missing, add it inside the top-level object, then restart the daemon:</p>
+<pre><code class="language-bash">ssh root@192.168.2.123 'systemctl restart maschine-mk2'</code></pre>
+<p><strong>This flag is not in git.</strong> A <code>git reset --hard</code> in the daemon's repo wipes it, so re-set it after every deploy that touches the daemon.</p>
+<p><strong>Verify:</strong> the flag is present and the daemon restarted without error in <code>journalctl -u maschine-mk2 -n 20</code>.</p>
+<h3 id="step-3--patch-zynautoconnect">Step 3 — Patch zynautoconnect</h3>
+<p>Zynthian only hands a <strong>zmip slot</strong> to ports it considers hardware MIDI sources. The daemon's port is a virtual <code>a2j</code> client, so without a patch Zynthian sees it, lists the driver as <em>Found</em>, and never <em>Loads</em> it. The rig then does nothing at all, with no error anywhere.</p>
+<pre><code class="language-bash">scp ~/zynth-docs/tools/patch-autoconnect-maschine.py root@192.168.2.123:/root/
+ssh root@192.168.2.123 'python3 /root/patch-autoconnect-maschine.py'
+# → zynautoconnect patched: whitelist + stable uid</code></pre>
+<p>The patch does two things: it adds <code>maschine rs.*Pads MIDI</code> to the source whitelist, and it pins a stable uid — <code>virtual:maschine.rs/Maschine MK2 Pads</code> — because the ALSA client number embedded in the port name changes across boots and a ctrldev driver binds by device id.</p>
+<p><strong>Re-run this after every Zynthian system update.</strong> An update replaces <code>zynthian_autoconnect.py</code> and silently takes the binding with it. The script is idempotent and says <code>already patched, nothing to do</code> when it has nothing to do.</p>
+<p><strong>Verify:</strong> the script prints the patched message, or reports it was already patched.</p>
+<h3 id="step-4--copy-the-three-driver-files">Step 4 — Copy the three driver files</h3>
+<pre><code class="language-bash">cd ~/zynth/zynthian-ui/zyngine/ctrldev
+scp zynthian_ctrldev_maschine_mk2.py techno_lib.py maschine_mk2_lib.py \
+    root@192.168.2.123:/zynthian/zynthian-ui/zyngine/ctrldev/</code></pre>
+<p>Three files, and all three are required:</p>
+<table><thead><tr><th>File</th><th>What it is</th></tr></thead><tbody><tr><td><code>zynthian_ctrldev_maschine_mk2.py</code></td><td>The driver. Claims the pad port exclusively (<code>unroute_from_chains = True</code>) so pads never reach a chain by themselves.</td></tr><tr><td><code>techno_lib.py</code></td><td>All generative and presentational logic, with no Zynthian imports and no I/O. This is the unit-tested half.</td></tr><tr><td><code>maschine_mk2_lib.py</code></td><td>The screen framebuffer and the LED report layout.</td></tr></tbody></table>
+<p><strong>Copy files, never use git on the Pi.</strong> The Pi's <code>zynthian-ui</code> runs an upstream branch with these three files as untracked drop-ins; a <code>git reset --hard</code> or a bundle checkout there deletes them.</p>
+<p>The driver manager globs <strong>every</strong> <code>*.py</code> in that directory and reads a <code>dev_ids</code> attribute off each one. <code>techno_lib.py</code> and <code>maschine_mk2_lib.py</code> therefore carry <code>dev_ids = []</code> even though they are helpers. Remove it from either and the whole Zynthian UI crash-loops every 14 seconds.</p>
+<p><strong>Verify:</strong> all three files are present in <code>/zynthian/zynthian-ui/zyngine/ctrldev/</code>.</p>
+<h3 id="step-5--restart-in-the-right-order-daemon-first-ui-second">Step 5 — Restart in the right order: daemon first, UI second</h3>
+<pre><code class="language-bash">ssh root@192.168.2.123 'systemctl restart maschine-mk2 &amp;&amp; sleep 8 &amp;&amp; systemctl restart zynthian'</code></pre>
+<p>Restarting the UI alone is fine. Restarting the <strong>daemon</strong> alone is not: <code>a2j</code> re-registers the Pads port onto a <em>new</em> zmip slot while the ctrldev driver stays bound to the dead one. The rig goes silent with no error, and it leaves a second stale route behind.</p>
+<p><strong>Verify:</strong> Zynthian's UI comes back on the touchscreen.</p>
+<h3 id="step-6--confirm-the-driver-is-loaded-not-merely-found">Step 6 — Confirm the driver is Loaded, not merely Found</h3>
+<pre><code class="language-bash">ssh root@192.168.2.123 'journalctl -u zynthian --since -3min | grep -i ctrldev'</code></pre>
+<p>You want a line saying the driver was <strong>Loaded</strong>. <em>Found</em> on its own means Step 3 did not take effect.</p>
+<p>Then check the route is unique:</p>
+<pre><code class="language-bash">ssh root@192.168.2.123 'jack_lsp -c | grep -A3 "Pads MIDI"'</code></pre>
+<p>Exactly <strong>one</strong> <code>ZynMidiRouter:devN_in</code> connection. Two means a stale manual <code>jack_connect</code> from an earlier session is still alive — <code>zynautoconnect</code> only tears down connections it made itself, and <code>jackd</code> outlives a Zynthian restart. Extra routes make every pad tap fire twice.</p>
+<p><strong>Verify:</strong> the MK2's left display draws the tab row <code>A KICK</code>, <code>B SNAR</code>, <code>C CLAP</code>, <code>D CHAT</code> and the right draws <code>E OHAT</code>, <code>F BASS</code>, <code>G LEAD</code>, <code>H PADS</code>, with a dotted rule and four encoder columns under each. The Group buttons light in their channel colours — warm red through green for the five drums, blue through cyan for the three voices. The <strong>CONTROL</strong> button is lit. No chains exist yet, so the channels sit at a flat mid brightness and nothing makes sound.</p>
+<hr>
+<h2 id="part-2--the-eight-channels-draft">Part 2 — The eight channels <code>[draft]</code></h2>
+<p>The instrument is eight always-alive channels. Nothing is created, browsed for or torn down while you play, which is why the whole thing is a prepared snapshot rather than run-time construction.</p>
+<p>Build them on the touchscreen. The driver's channel table is fixed, and <strong>the MIDI channel is the contract</strong> — the driver resolves a channel to a chain through <code>midi_chan_2_chain_ids</code>, not by chain order or title.</p>
+<table><thead><tr><th>Group</th><th>Driver name</th><th>Kind</th><th>Engine</th><th>MIDI channel</th></tr></thead><tbody><tr><td>A</td><td>KICK</td><td>drum</td><td>LinuxSampler, an SFZ kit</td><td>1</td></tr><tr><td>B</td><td>SNAR</td><td>drum</td><td>LinuxSampler</td><td>2</td></tr><tr><td>C</td><td>CLAP</td><td>drum</td><td>LinuxSampler</td><td>3</td></tr><tr><td>D</td><td>CHAT</td><td>drum</td><td>LinuxSampler</td><td>4</td></tr><tr><td>E</td><td>OHAT</td><td>drum</td><td>LinuxSampler</td><td>5</td></tr><tr><td>F</td><td>BASS</td><td>voice</td><td>JC303</td><td>6</td></tr><tr><td>G</td><td>LEAD</td><td>voice</td><td>Obxd</td><td>7</td></tr><tr><td>H</td><td>PADS</td><td>voice</td><td>padthv1</td><td>8</td></tr></tbody></table>
+<h3 id="step-1--add-the-five-drum-chains">Step 1 — Add the five drum chains</h3>
+<p>In the touchscreen mixer, tap <strong>+</strong> to reach the Add Chain screen, then tap <strong>Instrument</strong>. Pick LinuxSampler, then a kit from the <strong>Drum Machines</strong> bank.</p>
+<p>Set each chain's MIDI channel in <strong>Chain Options</strong>. Chains one through five take MIDI channels 1 to 5.</p>
+<p>Chain titles are cosmetic — the shipped snapshot uses <code>Kick</code>, <code>Snare</code>, <code>Clap</code>, <code>Closed Hat</code>, <code>Open Hat</code> — because the four-character names on the MK2's display come from the driver's own table, not from the chain.</p>
+<p><strong>Verify:</strong> the touchscreen mixer shows five strips. On the MK2, the tab of a built channel is no longer at flat mid brightness.</p>
+<h3 id="step-2--add-the-three-voice-chains">Step 2 — Add the three voice chains</h3>
+<p>Same route — <strong>+</strong> → <strong>Instrument</strong> → LV2 Plugin — for <code>JC303</code>, <code>Obxd</code> and <code>padthv1</code>, on MIDI channels 6, 7 and 8 in that order.</p>
+<p>These three were chosen because all three publish the four control ports the voice CONTROL page needs, measured off live chains rather than read from a config flag: cutoff, resonance, filter-envelope amount and a decay-shaped control.</p>
+<p><strong>Verify:</strong> the mixer shows eight strips plus main. Play notes into each voice from any MIDI keyboard and hear it.</p>
+<h3 id="step-3--set-the-gain-staging">Step 3 — Set the gain staging</h3>
+<p>Set every channel strip to <strong>0.19</strong> and main to <strong>0.80</strong> on the touchscreen mixer.</p>
+<p>That is not arbitrary and it is not conservative. One sampler channel peaks at 1.24 before the mixer, and eight of them summed to <strong>2.92</strong> on the main bus — nearly three times full scale. The sampler's own volume control is not the fix; taking it from 96 to 40 moved the bus peak by about 1.5 dB. The mixer strips are the fix, and main at 0.80 leaves the MASTER knob travel in both directions.</p>
+<p>The reverb and delay you add in Part 3 both pass <strong>dry at unity</strong>, as an insert must, so they add level on top of this rather than replacing it.</p>
+<p><strong>Verify:</strong> eight strips near the bottom of their travel, main a little below the top.</p>
+<h3 id="step-4--save-the-snapshot">Step 4 — Save the snapshot</h3>
+<p>On the <strong>touchscreen</strong>: open Snapshots, go <strong>into</strong> bank <code>000</code>, and use the first entry, <strong>Save as new snapshot</strong>. The shipped name is <code>016-techno_maschine</code>.</p>
+<blockquote><p><strong>Do not save from webconf's Snapshots page.</strong> Its <strong>Name:</strong> field plus the checkmark icon <strong>renames the selected bank</strong>. It has destroyed bank <code>000</code> once already. A snapshot saved to the snapshots root rather than into a bank is invisible in the UI.</p></blockquote>
+<p><strong>Verify:</strong> the snapshot appears inside bank <code>000</code> and reloads without error.</p>
+<h3 id="step-5--prove-the-generator-writes">Step 5 — Prove the generator writes</h3>
+<p>On the MK2, press <strong>STEP</strong>, select Group <strong>A</strong>, and turn encoder 1 (<code>HITS</code>) to 4. Press <strong>Play</strong>.</p>
+<p>The driver writes the euclidean pattern into Zynthian's own sequencer, so the pads, the touchscreen pattern editor and what you hear are three views of one truth. A white pad sweeps the grid as the playhead moves.</p>
+<p><strong>Verify:</strong> four-on-the-floor from Group A, four bright pads on the beat, one white pad sweeping. Select <strong>F</strong> and the phrase from the BASS voice changes shape every cycle or so.</p>
+<hr>
+<h2 id="part-3--the-sixteen-post-fader-inserts-draft">Part 3 — The sixteen post-fader inserts <code>[draft]</code></h2>
+<p>Each of the eight channels carries its own reverb and its own delay — sixteen plugin instances. They are <strong>inserts fed from the mixer strip's output</strong>, verified on the wire:</p>
+<pre><code>LinuxSampler / synth → zynmixer strip (fader, pan, mute) → TAP Stereo Echo → TAP Reverberator → main</code></pre>
+<p>Post-fader is what makes them behave: an insert fed from the strip's output inherits the channel's fader <strong>and its mute</strong>, so muting a channel kills its reverb and delay tail with it instead of letting it ring out.</p>
+<p>Both plugins were chosen for one measured property: their wet control is a <strong>true wet level</strong>, not a dry/wet crossfade. Sweep the wet to maximum and the dry is still there at exactly the same level. That is what lets encoders 7 and 8 behave like sends on every channel forever. Every cheap candidate — MDA Ambience, MDA DubDelay, CAPS PlateX2, MDA Delay, <code>lcrDelay</code>, <code>bolliedelay</code> — turned out to be a crossfade and was rejected. The cheapest true sends, <code>gverb</code> and MaGigaverb, are <strong>mono in</strong>, and an insert placed after the strip's pan would collapse every channel to centre.</p>
+<p>Building sixteen instances by hand is sixteen chances to get one wrong, so build <strong>one channel</strong> and let a script replicate it.</p>
+<h3 id="step-1--add-both-inserts-to-one-channel">Step 1 — Add both inserts to one channel</h3>
+<p>Select the Kick chain. In <strong>Chain Options</strong> → <strong>Add Audio-FX processor</strong> → <strong>LV2 Plugin</strong>, add <strong>TAP Stereo Echo</strong>. Repeat for <strong>TAP Reverberator</strong>.</p>
+<p>Order matters: echo first, reverb second, so the reverb hears the echo's repeats. That is the order the shipped snapshot has on the wire.</p>
+<p><strong>Verify:</strong> the chain graph shows the sampler, then TAP Stereo Echo, then TAP Reverberator.</p>
+<h3 id="step-2--force-dry-to-unity-and-wet-to-off">Step 2 — Force dry to unity and wet to off</h3>
+<p>Open each insert's control screen and set:</p>
+<table><thead><tr><th>Plugin</th><th>Control</th><th>Value</th><th>Why</th></tr></thead><tbody><tr><td>TAP Stereo Echo</td><td><code>dryLevel</code></td><td><strong>0.0 dB</strong></td><td>Ships at −4 dB, which quietly costs every channel about 8 dB across the pair</td></tr><tr><td>TAP Stereo Echo</td><td><code>lecholevel</code>, <code>recholevel</code></td><td><strong>−70.0 dB</strong></td><td>Wet starts off; encoder 8 opens it</td></tr><tr><td>TAP Reverberator</td><td><code>drylevel</code></td><td><strong>0.0 dB</strong></td><td>Same reason</td></tr><tr><td>TAP Reverberator</td><td><code>wetlevel</code></td><td><strong>−70.0 dB</strong></td><td>Wet starts off; encoder 7 opens it</td></tr></tbody></table>
+<p>A default that happens to work is still a default. One candidate reverb defaults its dry port to near zero.</p>
+<p><strong>Verify:</strong> the channel sounds exactly as loud as it did before you added the inserts.</p>
+<h3 id="step-3--save-then-clone-the-pair-onto-the-other-seven-chains">Step 3 — Save, then clone the pair onto the other seven chains</h3>
+<p>Save the snapshot again from the touchscreen, then:</p>
+<pre><code class="language-bash">scp ~/zynth-docs/tools/build-techno-snapshot.py root@192.168.2.123:/root/
+ssh root@192.168.2.123 'python3 /root/build-techno-snapshot.py'</code></pre>
+<p>The script works offline on the <code>.zss</code> JSON: it finds the chain that carries both inserts, then appends the same two processors to every other chain with a MIDI channel, giving each a fresh processor id and copying the template's <code>fader_pos</code>. It backs the file up to <code>…​.zss.bak</code> first.</p>
+<p>It deliberately does <strong>not</strong> build the whole snapshot. There is no CUIA that executes code, so a script cannot reach Zynthian's live state manager from outside the UI process — and hand-maintaining <code>fader_pos</code> is exactly the kind of guess this project does not make. One channel is built by hand so that Zynthian, not the script, decides slots and processor state.</p>
+<p><strong>Verify:</strong> the script prints <code>inserts cloned</code> for seven chains and skips the template.</p>
+<h3 id="step-4--reload-and-re-save">Step 4 — Reload and re-save</h3>
+<p>Load the snapshot on the touchscreen, then save it again. What ends up on disk is then Zynthian's own output rather than the script's.</p>
+<p><strong>Verify:</strong></p>
+<pre><code class="language-bash">ssh root@192.168.2.123 'jack_lsp | grep -c TAP'
+# → 64      (16 instances x 4 ports)</code></pre>
+<p>Then, on the MK2, press <strong>CONTROL</strong>, select any channel and sweep encoder 7 (<code>REVERB</code>) from 0 to 100. The dry signal must still be there, at the same level, at the top of the sweep. If it fades out as the wet comes in, you have a crossfade plugin, not a wet level, and the instrument's whole send contract is broken.</p>
+<p>Expect the wet knobs to feel back-heavy: 0-100 maps onto −70 dB … +10 dB, so 25 is inaudible, 50 is barely there, 88 equals dry and the musically useful travel is roughly <strong>60 to 100</strong>.</p>
+<hr>
+<h2 id="part-4--commission-the-surface-draft">Part 4 — Commission the surface <code>[draft]</code></h2>
+<p>Everything is standing. This part walks the surface once so that the first fault you meet on stage is not also the first time you have used the control.</p>
+<h3 id="step-1--the-five-modes">Step 1 — The five modes</h3>
+<p>Exactly one mode is lit at any moment, and CONTROL is home. Pressing a lit mode button returns to CONTROL.</p>
+<table><thead><tr><th>Button on the panel</th><th>Mode</th><th>What the eight encoders become</th></tr></thead><tbody><tr><td><strong>CONTROL</strong></td><td>CONTROL</td><td>What the selected channel <em>sounds like</em>. Encoders 6, 7, 8 are LEVEL, REVERB, DELAY on every channel of both kinds — the one absolute muscle memory in the machine.</td></tr><tr><td><strong>STEP</strong></td><td>STEP</td><td>What the selected channel <em>plays</em>. Euclid on a drum; the Turing register on a voice.</td></tr><tr><td><strong>ALL</strong></td><td>ALL</td><td>The machine's globals: ROOT, SCALE, BPM, MASTER, and the four ganged space parameters.</td></tr><tr><td><strong>VOLUME</strong></td><td>MIXER</td><td>One verb across all eight channels: LEVEL, then REVERB, then DELAY on the next pages.</td></tr><tr><td><strong>AUTO</strong></td><td>FILTER</td><td>CUTOFF and RESO across all eight channels.</td></tr></tbody></table>
+<p><strong>Verify:</strong> each button lights alone, and the page label on the display changes with it.</p>
+<h3 id="step-2--the-page-rings">Step 2 — The page rings</h3>
+<p>The two arrows <strong>beside the display</strong> step through the pages <em>within</em> the current mode, wrapping. Each mode remembers its own page, per channel kind.</p>
+<table><thead><tr><th>Mode</th><th>Pages</th></tr></thead><tbody><tr><td>CONTROL</td><td>one page (plus generated pages built from whatever ports the chain publishes)</td></tr><tr><td>STEP, drum</td><td>STEP · SWING spread · CHANCE spread</td></tr><tr><td>STEP, voice</td><td>STEP · SWING spread · CHANCE spread · DENSITY spread</td></tr><tr><td>ALL</td><td>one page (plus generated pages)</td></tr><tr><td>MIXER</td><td>LEVEL · REVERB · DELAY</td></tr><tr><td>FILTER</td><td>CUTOFF · RESO</td></tr></tbody></table>
+<p><strong>Verify:</strong> on STEP with a voice selected, the arrows walk four pages and come back around.</p>
+<h3 id="step-3--read-the-filter-page-honestly">Step 3 — Read the FILTER page honestly</h3>
+<p>On the FILTER page, the <strong>five drum columns are dead</strong> and show <code>----</code>. This is correct, not a fault: the driver resolves CUTOFF and RESO through a table of measured control symbols, LinuxSampler publishes <strong>no controllers at all</strong>, so a drum channel has nothing behind those knobs and the driver leaves them dead rather than silently moving something else.</p>
+<p>FILTER therefore moves the three voices, on encoders 6, 7 and 8.</p>
+<p><strong>Verify:</strong> encoders 1-5 do nothing on the FILTER page; 6, 7 and 8 sweep the BASS, LEAD and PADS filters.</p>
+<h3 id="step-4--pads-are-the-instrument">Step 4 — Pads are the instrument</h3>
+<p>In every mode except STEP, the pads <strong>play</strong> the selected channel. On a drum all sixteen pads play that channel's own sound, because a drum channel <em>is</em> one sound. On a voice they play pitches.</p>
+<p>STEP stays the step editor: there a pad toggles a step.</p>
+<p><strong>Verify:</strong> on CONTROL, tapping pads sounds the selected channel. Press STEP and the same pads edit the pattern instead.</p>
+<h3 id="step-5--overdub-with-rec">Step 5 — Overdub with REC</h3>
+<p>Hold <strong>REC</strong> and play. Notes land in the same pattern the generator writes, quantised to the nearest step, and the note's length is <strong>how long you held the pad</strong>.</p>
+<p>Recording <strong>adds</strong>, it does not overwrite: the generated line freezes and your note goes on top, so a recorded step can hold two notes. A played-in step lights <strong>amber</strong>.</p>
+<p>Capturing a note makes the <strong>player</strong> the owner of that channel's pattern, and the generator stops writing it. Two routes hand it back, both destructive:</p>
+<ul><li><strong>ERASE + Group</strong> on that channel.</li><li>Turning any knob that rewrites the pattern — on a drum HITS, ROTATE or DIV; on a voice LENGTH, DIV or RANDOM. LENGTH on a drum is deliberately excluded, because shortening a pattern preserves the steps that fit.</li></ul>
+<p><strong>Verify:</strong> hold REC, tap a few pads on a voice, release. The pads you played light amber and repeat every cycle. Turn RANDOM and the take is replaced by the generator's line.</p>
+<h3 id="step-6--switch-a-channels-behaviour">Step 6 — Switch a channel's behaviour</h3>
+<p><strong>SHIFT + GRID</strong> switches the selected channel between drum and voice behaviour. The <strong>engine is not swapped</strong> — a drum kit gets the Turing generator, and a synth gets euclid.</p>
+<p>Two consequences worth knowing before you use it live:</p>
+<ul><li>On a sampler the register walks the <strong>kit's own note list</strong>, not ROOT and SCALE, because there a note selects a sample and scale quantising would land most steps on empty keys.</li><li>Euclid on a synth is a <strong>root pulse</strong>: ROOT plus that channel's OCTAVE.</li></ul>
+<p>Each kind keeps its own remembered parameters, but <code>div</code> and <code>beats</code> deliberately do not move — they are pattern time, not kind, and the groove must not jump on a switch. Hand-edited steps do not survive a switch, for the same reason turning HITS wipes them: switching rewrites the pattern from the generator.</p>
+<p>A voice switched to drum may come up silent, because its <code>hits</code> can read back as 0. Its tab draws <strong>dashed</strong> to say so. Turn HITS up.</p>
+<p><strong>Verify:</strong> SHIFT + GRID on a drum channel, then STEP — the page now shows the voice columns (LENGTH, DIVIDE, RANDOM, GATE…). SHIFT + GRID again returns it, and the override clears itself.</p>
+<h3 id="step-7--the-performance-gestures">Step 7 — The performance gestures</h3>
+<table><thead><tr><th>Gesture</th><th>Effect</th></tr></thead><tbody><tr><td><strong>Group A-H</strong></td><td>Select the channel. Pads, tabs and all eight encoders follow.</td></tr><tr><td><strong>F1-F8</strong></td><td>Mute channel A-H regardless of which is selected. <strong>Tap</strong> latches, <strong>hold</strong> past 250 ms is momentary. The mute is on the mixer strip, so it is saved in the snapshot, visible on the touchscreen, and it cuts the FX tail too.</td></tr><tr><td><strong>SOLO</strong> held + F</td><td>Momentary solo. Solo is <strong>additive</strong>, not exclusive.</td></tr><tr><td><strong>SOLO</strong> tapped</td><td>Latches solo mode: the F row <em>is</em> solo until you tap SOLO again.</td></tr><tr><td><strong>ERASE</strong> held + pad</td><td>Clears that step. A bare ERASE press does nothing at all.</td></tr><tr><td><strong>ERASE</strong> held + Group</td><td>Silences that channel — HITS → 0 on a drum, play chance → 0 on a voice, which toggles back on a second press. It sets the <em>generator</em> to silence rather than wiping the note list, because a wiped list is written straight back by the next generator move.</td></tr><tr><td><strong>Play</strong></td><td>Start or stop all eight sequences together.</td></tr><tr><td><strong>Restart</strong></td><td>Every channel jumps to step 0 without stopping.</td></tr><tr><td><strong>DUPLICATE</strong></td><td>Undo for a voice: restore the previous Turing register, force RANDOM to 0, rewrite now. Up to four deep. Nothing on a drum.</td></tr><tr><td>Arrows in the <strong>master section</strong></td><td>Step the selected channel's sound: a sample within the kit on a drum, an engine preset on a voice.</td></tr></tbody></table>
+<p><strong>Verify:</strong> F3 mutes CLAP from any selection and its Group button goes dark. ERASE alone does nothing.</p>
+<h3 id="step-8--health-check">Step 8 — Health check</h3>
+<pre><code class="language-bash">ssh root@192.168.2.123 'journalctl -u zynthian --since -3min | grep -iE "ctrldev|maschine|traceback|error"'
+ssh root@192.168.2.123 'jack_lsp | grep -c TAP'                                  # 64
+ssh root@192.168.2.123 'jack_lsp -c | grep -A3 "Pads MIDI"'                      # exactly one devN_in
+ssh root@192.168.2.123 'journalctl --since -20min | grep -c "watchdog: input stalled, reopened"'</code></pre>
+<p>The watchdog line is <strong>healthy</strong>. The MK2's input dies after a few seconds under a kernel hidraw fault, and the daemon closes and reopens the device to recover; one reopen per eight seconds or so is the normal baseline. Much more often than that is a regression.</p>
+<p><strong>Verify:</strong> no tracebacks, 64 TAP ports, one route.</p>
+<h3 id="step-9--save-the-commissioned-state">Step 9 — Save the commissioned state</h3>
+<p>Save the snapshot once more from the touchscreen. The driver's own state — every voice's Turing register, its four-deep undo ring, the globals, the current mode and selected channel, which channels the player owns — rides inside the snapshot under the MIDI device's <code>ctrldev_state</code>.</p>
+<p><strong>The registers are the part that matters.</strong> A snapshot without them restores a machine that plays <em>different music</em>. With them, a locked voice comes back playing the exact line it had.</p>
+<p>Press <strong>Play</strong> once after any load. Restoring a snapshot rewrites every sequence's play mode from the file, and a loop-all sequence shorter than the bar goes silent until the next bar sync; the driver re-forces LOOP on every transport start.</p>
+<p><strong>Verify:</strong> reload the snapshot and the instrument comes back playing the same music, with the same mode lit and the same channel selected.</p>
+<hr>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<table><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody><tr><td>Buttons do nothing, displays blank, Zynthian is up</td><td>The driver is <strong>Found but never Loaded</strong> — no zmip slot. Happens after any Zynthian update.</td><td>Re-run Part 1 Step 3, restart daemon then UI.</td></tr><tr><td>First pad touch destroys the pad colours</td><td><code>external_pad_leds</code> missing from <code>maschine.json</code>.</td><td>Part 1 Step 2. Re-set it after any daemon deploy — it is not in git.</td></tr><tr><td>Rig goes silent after restarting the daemon alone</td><td><code>a2j</code> re-registered the port on a new zmip slot; the driver is bound to the dead one.</td><td>Restart the UI too, then check the route is unique.</td></tr><tr><td>Phantom extra sounds on every pad tap</td><td>A stale JACK route from an earlier session.</td><td>`jack_lsp -c \</td><td>grep -A3 "Pads MIDI"<code> must show exactly <strong>one</strong> </code>devN_in`. Disconnect the extra.</td></tr><tr><td>A channel is silent, then returns on the next bar</td><td>LOOP play mode was rewritten from the <code>.zss</code>.</td><td>Press <strong>Play</strong> — LOOP is re-forced on every transport start.</td></tr><tr><td>A channel is silent and looks healthy</td><td>On a drum, HITS 0. On a voice, play chance 0 — set by ERASE + Group. Either way the tab draws <strong>dashed</strong>.</td><td>Turn HITS up, or press ERASE + that Group again.</td></tr><tr><td>Encoders feel dead or pinned at one end</td><td>An encoder ran into the daemon's 0-127 clamp.</td><td>Select another channel or change mode — both re-park every encoder at mid-travel.</td></tr><tr><td>The whole Zynthian UI dies, exit 139</td><td>Unsynchronised access to the sequencer library from several threads. Every path in this driver holds one lock, so this is a regression.</td><td>Restart Zynthian and report it. It took 95 seconds to appear last time, so a short test will not reproduce it.</td></tr><tr><td>Mix distorts with several wets open</td><td>Both inserts pass dry at unity and the wets add on top.</td><td>Pull MASTER or the strips down. Design headroom is main 0.80 with strips 0.19.</td></tr></tbody></table>
+<hr>
+<h2 id="two-divergences-from-the-user-manual">Two divergences from the user manual</h2>
+<p>Recorded here because the manual is dated 2026-08-10 and the rig has moved since.</p>
+<ul><li><strong>The manual's signal-flow diagram shows the reverb before the echo.</strong> On the wire it is the other way round: strip → TAP Stereo Echo → TAP Reverberator → main. This page follows the wire.</li><li><strong>The manual describes three pages, and pads that only toggle steps.</strong> The shipped surface has five modes with page rings, pads as the instrument, REC overdub and SHIFT + GRID kind switching. Part 4 above is the current surface.</li></ul>
+<hr>
+<h2 id="going-further">Going Further</h2>
+<ul><li><strong>The user manual</strong> — <code>docs/superpowers/techno-machine/2026-08-10-techno-machine-manual.md</code>. Everything about <em>playing</em> the instrument: the euclidean model, the Turing machine and LOCK, the reachable pattern lengths per division, gain staging, the LED language.</li><li><strong>Re-measure on your own soundcard.</strong> Every absolute figure in this project was taken on the Pi's built-in headphone output at 48 kHz. Relative plugin costs are card-independent; headroom figures are not.</li><li><strong>A shared reverb and delay bus</strong> is not possible in this shape. Zynthian's mixer has sixteen usable strips compiled in, and a correct send-tap topology needs twenty-six. Sixteen post-fader inserts is the answer to that constraint, not a preference.</li><li><strong>Per-channel FX character</strong> — reverb and delay parameters are ganged across all eight instances; only the wets differ. Identical character in eight boxes is most of the way to a coherent space.</li></ul>
+</article>
+</main>
+<div id="toc-column"></div>
+</div>
+<script src="search.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
