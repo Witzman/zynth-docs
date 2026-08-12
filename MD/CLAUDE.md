@@ -18,9 +18,18 @@
 **SP1, SP5 and SP2 are all deployed, tested at the panel and pushed.**
 Nothing is waiting on the owner.
 
-**Next action: SP3 — the drum filter.** Its gate passed 2026-08-11 (MDA
-RezFilter); it needs a spec, then a plan, then a build. SP4 comes after, and its
-ownership rules are now defined by SP2's `owner` flag.
+**SP3 — the drum filter — is SHELVED by the owner (2026-08-12).** Nothing was
+built. The owner has a different idea and will return to it. **Do not restart it
+without reading `docs/superpowers/techno-machine/2026-08-12-sp3-filter-countertest.md`**
+— it records the measurements, four decisions already taken, and two plugin
+traps (Calf corrupts the heap in `lv2apply`; **TAL Filter runs and writes audio
+while ignoring every control port**, so a "does it run" check passes it).
+
+**Next action: nothing is queued.** The remaining named work is **SP4** (channel
+type switching on SHIFT+GRID, ownership rules now defined by SP2's `owner` flag)
+and **SP6** (the big encoder as the current page's master — see `MD/todo.md`,
+including the G4 measurement that makes it non-trivial). Ask the owner before
+starting either.
 
 ### SP2, in one screen
 
