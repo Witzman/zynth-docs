@@ -212,9 +212,22 @@ channel's owner.
 The tab row is not touched. A dashed tab means "this channel is not sounding",
 and that meaning is not diluted with a second one.
 
-**Pad LEDs get no third colour.** A played-in note lights like any other step.
-The pattern is the pattern; ownership is on the display where there is room to
-say it in words.
+**A played-in step lights amber** (`0xFF8800`), where a generated step keeps the
+group colour. The playhead still wins on the pad it is standing on. Amber is
+free: the daemon uses it for its own selected step, the driver uses it nowhere.
+
+This overrides `_toggle_step`'s standing comment, "no hidden per-step override
+state, and no third LED colour to explain". That comment was written when there
+was no such state. Now there is, it survives a snapshot, and **the handback is
+destructive**: after a snapshot load, a player-owned channel that looks exactly
+like a generated one invites you to nudge HITS to try something, which silently
+eats the take. The display carries the ownership in words, but while playing you
+are looking at the pads. A colour that costs one line of explanation is cheaper
+than a lost take with no warning where you were looking.
+
+This makes the note map (§6.2) load-bearing for the grid, not only for
+`_step_note` — which is another reason it is rebuilt from the pattern on load
+rather than trusted.
 
 ---
 
@@ -254,8 +267,9 @@ imported):
 3. Record on a voice: held length audible, no hang at the loop point.
 4. ERASE + Group: the euclid pattern comes back.
 5. Turn HITS: the take is overwritten, as advertised.
-6. Snapshot save and load: the take returns, the map is rebuilt, the pads are
-   right.
+6. Snapshot save and load: the take returns, the map is rebuilt, and the
+   played-in steps come back **amber** — the map driving the grid is the check
+   that it was rebuilt rather than assumed.
 
 ---
 
