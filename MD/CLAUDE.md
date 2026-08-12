@@ -25,11 +25,22 @@ without reading `docs/superpowers/techno-machine/2026-08-12-sp3-filter-counterte
 traps (Calf corrupts the heap in `lv2apply`; **TAL Filter runs and writes audio
 while ignoring every control port**, so a "does it run" check passes it).
 
-**Next action: nothing is queued.** The remaining named work is **SP4** (channel
-type switching on SHIFT+GRID, ownership rules now defined by SP2's `owner` flag)
-and **SP6** (the big encoder as the current page's master — see `MD/todo.md`,
-including the G4 measurement that makes it non-trivial). Ask the owner before
-starting either.
+**SP4 shipped and was hardware-verified 2026-08-12.** **SHIFT + GRID** switches
+the selected channel between drum and voice behaviour. **The engine is not
+swapped** — a drum kit gets the Turing generator, and on a sampler the register
+walks the **kit's own note list** rather than ROOT/SCALE, because there a note
+selects a sample and scale quantising would land most steps on empty keys.
+Euclid on a synth is a **root pulse**: ROOT plus the channel's OCTAVE.
+`kind_override` is `None` until switched and **clears itself** when you switch
+back to the chain's own kind. Per-kind state memory lives in the snapshot under
+`kinds` and `stash`; `div` and `beats` deliberately do not move, because they
+are pattern time, not kind.
+
+**Next action: nothing is queued.** Three named ideas remain, all the owner's
+own and none started — **SP6** (the big encoder as the current page's master),
+**SP7** (spare chains, so a switch can change the engine too) and **SP8** (a
+range-limited kit walk). Details and the traps for each are in `MD/todo.md`. Ask
+the owner before starting any of them.
 
 ### SP2, in one screen
 
@@ -83,7 +94,7 @@ state that now survives a snapshot.
 
 | State | Detail |
 |---|---|
-| Tests | **248 passing**, `python3 -m unittest discover -s tests -q` in `zyngine/ctrldev/` |
+| Tests | **271 passing**, `python3 -m unittest discover -s tests -q` in `zyngine/ctrldev/` |
 | Code | `zynthian-ui` vangelis, `MaschineMK2_linux` main, `zynth-docs` master — **all pushed** |
 | On the Pi | Driver and daemon deployed and verified. Snapshot `016` repaired. Pre-SP2 backups at `/root/maschine_mk2.pre-sp2.bak` and `/root/techno_lib.pre-sp2.bak` |
 | Hardware test | SP2: **8 checks passed, zero defects** — `docs/superpowers/techno-machine/2026-08-12-sp2-test-findings.md`. SP1+SP5: **23 checks** — `…/2026-08-11-sp1-sp5-test-findings.md` |
