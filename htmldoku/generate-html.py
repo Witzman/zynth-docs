@@ -56,7 +56,6 @@ SIDEBAR = [
         ("Personal MIDI Mapping", "project-midi-mapping.html"),
         ("Generative Drone Synth", "project-drone-synth.html"),
         ("Maschine MK2 Controller", "project-maschine-mk2.html"),
-        ("Techno Machine — Build the Rig", "project-techno-machine.html"),
         ("MIDI Channel Routing", "project-midi-channel-routing.html"),
         ("EMU CC Knob Mapping", "project-emu-cc-learn.html"),
         ("SMC-PAD Launcher Control", "project-smc-pad-launcher.html"),
