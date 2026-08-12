@@ -344,6 +344,17 @@ Full writeup: `MD/display-investigation.md`, first section — read it before to
 
 **Hard-won facts — do not relearn these:**
 
+- **VERSIONS, measured 2026-08-12 — the Pi runs the CURRENT STABLE, not an old build.** It is not behind by neglect; it is behind because our own checkout is on the *development* train:
+
+  | | Version | Last moved |
+  |---|---|---|
+  | The Pi | ZynthianOS **`Oram-2601-1`**, image `2026-01-27-zynthianos-oram-2601-stable.img.xz` — byte-for-byte what `zynthianos-last-stable.img.xz` points at. `zynthian-ui` branch **`oram-2601.1`** | image built 2026-01-27, branch pinned 2026-01-22 |
+  | Upstream `oram` | finished train | `zynthian-ui` 2026-02-01, `zynthian-sys` 2026-03-24 |
+  | **Our checkout** `~/zynth/zynthian-ui` | branch **`vangelis`** — the active development train | daily; upstream 2026-08-11 |
+  | Newer images, **beta only** | `2026-07-30-…-vangelis-2607-beta`, `2026-06-18-…-vangelis-2606-test` | forum thread still says BETA; audio player hangs the system on MP3 |
+
+  So **"the Pi is old" is the wrong mental model** — the correct one is *stable versus development*. Do not propose upgrading the Pi to close the gap: that means moving a working instrument onto a beta. Image index: `https://os.zynthian.org/`
+
 - The Pi's installed Zynthian and `libzynseq.so` are **older** than the `~/zynth/zynthian-ui` checkout. Never write a `libseq.*` call from local headers; audit it first with
   `ssh root@192.168.2.123 'nm -D --defined-only /zynthian/zynthian-ui/zynlibs/zynseq/build/libzynseq.so | awk "\$2==\"T\"{print \$3}" | sort'`
   This has already broken three times (call arity, `clearPattern`, `getNoteAtIndex`).
@@ -393,6 +404,7 @@ Tutorial generator and teacher. Session rules, workflow, and writing rules in `M
 | What | Detail |
 |------|--------|
 | Hardware | Raspberry Pi 4, ZynthianOS |
+| OS version | **`Oram-2601-1`**, built 2026-01-27, RaspberryPiOS Bookworm aarch64 — the **current stable** image (`zynthianos-last-stable.img.xz`). `zynthian-ui` and `zynthian-sys` on branch `oram-2601.1`. Our WSL checkout is on `vangelis`, the development train — see "VERSIONS" under Hard-won facts |
 | Kit / encoders | None — no physical hardware kit |
 | Touchscreen | Elecrow ESP32 5" 800×480 — HDMI (video) + USB (touch). Working. |
 | Access methods | Touchscreen (V5 keypad active) · SSH · webconf (`http://zynthian.local`) · VNC |
