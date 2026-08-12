@@ -243,7 +243,7 @@ with SIGSEGV before the lock existed, so this retires risks R1 and R6.
 
 1. **The two SOLO gestures** are the only surface behaviour never verified. `zynmixer.toggle_solo` is **additive**, not exclusive, with a special case at `MAX_NUM_CHANNELS - 1` that clears every solo — check that first.
 2. **Re-measure on `hw:S2` at 44.1 kHz.** Every number in this project is on `hw:Headphones` at 48 kHz; the owner waived the precondition while the Sound Blaster is disconnected.
-3. **The tutorial page** — the oldest debt in this project, now covering both the drum rig and the techno machine.
+3. **The techno machine tutorial page** — the oldest debt in this project. **The separate drum-rig tutorial was dropped by the owner 2026-08-12**: the techno machine supersedes it, and `TECHNO-MACHINE-MANUAL.md` is the starting material.
 4. Pass two, in order: Lock snapshots on SCENE · the verb layer (one ~10-line daemon patch emitting SHIFT 49, SWING 50, VOLUME 51) · RATCHET via `setStutterCount` · voice CHANCE back on the surface.
 
 **Hard-won during the build — do not relearn:**

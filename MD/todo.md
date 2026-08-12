@@ -41,9 +41,9 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
   - [x] **SP3 is NO LONGER BLOCKED and its gate ran 2026-08-11** — `docs/superpowers/techno-machine/2026-08-11-sp3-filter-gate-results.md`. **MDA RezFilter** chosen: `freq` and `res` are already 0-100, the driver's own surface units, stereo in and out. Clean lowpass sweep measured, resonance genuine (2-8 kHz 16.13 → 54.27 at res 80). Five jalv hosts = **4.60% of a core idle, zero xruns**
   - [ ] **SP3 trap to carry into its build: below `freq` 35 RezFilter emits exact digital silence.** The surface must map the encoder onto 35-100, or the bottom of the knob mutes the channel with nothing saying why — the same failure play chance 0 caused
   - [ ] SP3 still needs its own spec and plan. Open: per-chain insert (5 hosts, ~5% of a core, affordable) versus one filter on a shared drum bus
-  - [ ] SP2 needs its own spec cycle; SP4's ownership rules depend on it
+  - [ ] SP4 still needs its own spec cycle. Its ownership rules are now defined — SP2's durable `owner` flag is the third writer's mechanism
 
-- [~] **Maschine MK2 Drum Rig — implementation plan** (2026-08-07, resume at task 10)
+- [x] **Maschine MK2 Drum Rig — implementation plan CLOSED 2026-08-12.** All ten tasks done and hardware-verified; the tutorial page, the last item, was dropped by the owner. Kept below as reference — the hard rules at the end of this section still govern the techno machine
   - Read first: `~/zynth/zynthian-ui/.superpowers/sdd/2026-08-06-maschine-drum-rig/progress.md` (ledger), then the plan and spec in `docs/superpowers/`
   - [x] Task 7 — hardware-verified 2026-08-07 after four bug fixes plus the `external_pad_leds` daemon flag; Play button LED added on request
   - [x] Task 8 — euclid encoders — hardware-verified. Enc 1 = hits, enc 2 = rotation, enc 3 = division (all five divisions, triplets included)
@@ -56,7 +56,7 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
     - `48361eba` length changes now preserve hand-edited steps (shrink keeps what fits; growing back does not restore what was dropped)
     - `8c4e9f70` F1-F8 mute the mixer strip, not the zynseq track — zynseq's format has no mute field, so mutes never survived a save; plus LEDs now repaint on `SS_LOAD_SNAPSHOT`
     - Phantom extra drum sounds on every pad tap were a stale manual `jack_connect` to `dev3_in`, not code. `zynautoconnect` only removes routes it made itself, and jackd outlives a zynthian restart
-  - [~] Task 10 — snapshot round-trip and tracking files **done**; **tutorial page remains** (user deferred it)
+  - [x] Task 10 — snapshot round-trip and tracking files done; **the tutorial page was dropped by the owner 2026-08-12**, so task 10 and the drum rig plan are closed
   - [x] Pushed 2026-08-08 — `zynthian-ui` vangelis `8c4e9f70`, `zynth-docs` master
   - [ ] Pattern length is quantised to whole beats and cannot be otherwise (`getLength() = beats * PPQN`, no `setSequenceLength` in the installed API). Step counts 1, 5, 7, 11, 13 are unreachable; a 1/4 division (spb 1) would unlock them at quarter-note steps — deferred by the user
   - [ ] Test snapshot `000/015-212121.zss` on the Pi — delete it or keep it as the round-trip fixture
@@ -102,7 +102,7 @@ Read this after `inwork.md` to see cross-cutting tasks and tutorial completion w
   - [x] **Task 14 — the twenty-minute jam PASSED 2026-08-11.** DSP load mean 21.1% / p95 37% / max 45%, **zero xruns, zero segfaults, zero tracebacks**, MemAvailable flat (2639 → 2631 MB), watchdog reopens one per 22.6 s against a healthy ~8 s baseline. Three Turing voices rewriting a pattern every ~0.6 s for twenty minutes retires risks R1 and R6
   - [x] Two defects the jam itself exposed, both fixed: a preset load ran on the MIDI thread under the lock and **froze the whole instrument** (deferred to the poll thread, as kit loads already were); and a voice silenced by play chance 0 had no surface indication and read as a hang (its tab now draws dashed)
   - [ ] Re-measure G1 on `hw:S2` at 44.1 kHz once the external soundcard is connected
-  - [ ] Tutorial page for the techno machine (and the older drum-rig tutorial debt still stands)
+  - [ ] Tutorial page for the techno machine. **The drum-rig tutorial was dropped 2026-08-12** — the techno machine supersedes it, and `TECHNO-MACHINE-MANUAL.md` is the starting material
   - Plan: `docs/superpowers/plans/2026-08-10-techno-machine-prototype.md` · Gates: `docs/superpowers/techno-machine/2026-08-10-gates-g1-g2-g3-results.md`
   - **Retracted finding, do not re-derive:** JC303 and Obxd are **omni**. The claim that they answer only on MIDI channel 1 came from a probe that was not reset between channel rounds, plus the fact that an unconfigured `ZynMidiRouter:devN_in` routes to the **active chain** rather than per channel. No channel translation is needed
 
