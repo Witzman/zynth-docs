@@ -13,22 +13,72 @@
 
 ---
 
-## RESUME HERE — SP1 + SP5 are VERIFIED ON HARDWARE and shipped (2026-08-11)
+## RESUME HERE — SP2 is VERIFIED ON HARDWARE and shipped (2026-08-12)
 
-**Everything built in pass two is deployed, tested at the panel and pushed.**
-The twenty-minute jam passed. Nothing is waiting on the owner.
+**SP1, SP5 and SP2 are all deployed, tested at the panel and pushed.**
+Nothing is waiting on the owner.
 
-**Next action: SP2 — live pad play and REC recording.** Its design decisions are
-already taken (see below); it needs a spec, then a plan, then a build. SP3's
-gate has passed and it needs its own spec too; SP4 depends on SP2's ownership
-rules.
+**Next action: SP3 — the drum filter.** Its gate passed 2026-08-11 (MDA
+RezFilter); it needs a spec, then a plan, then a build. SP4 comes after, and its
+ownership rules are now defined by SP2's `owner` flag.
+
+### SP2, in one screen
+
+Pads are the instrument in every mode but STEP; STEP stays the step editor.
+**REC held overdubs** into the same pattern the generator writes, and the note's
+length is **how long the pad was held**, clamped to the pattern remainder by
+SP5's existing clamp. Strikes quantise to the **nearest step**, wrapping — which
+is not a delay, because the loop wraps within one step.
+
+**Ownership is the real subject.** A captured note sets a durable
+`owner[channel]`, saved in the snapshot under its own **`owners`** key —
+*not* inside `voices`, which holds only the three voices, and a drum channel can
+be player-owned too. **It is not `writer_token`**: that token is the
+inter-thread mutex and clears itself after every write, so it cannot carry an
+ownership that survives a snapshot. `_write_voice_pattern` returns early when
+the owner is the player.
+
+**Two routes hand the pattern back**, both destructive: ERASE + Group, and
+turning any knob that rewrites the pattern. **The handback set is per kind** —
+drum: HITS, ROTATE, DIV (LENGTH is excluded, `_set_length` preserves the steps
+that fit); voice: LENGTH, DIV, RANDOM (a voice's LENGTH is the shift register,
+not the bar count). RANDOM hands back only when it moves **off** LOCK, or a
+recording would undo itself.
+
+**Played-in steps light amber.** This deliberately overrides `_toggle_step`'s
+old "no third LED colour to explain" comment, which predates per-step override
+state that now survives a snapshot.
+
+**Hard-won in SP2 — do not relearn:**
+
+- **Never test note-off on a drum channel.** A LinuxSampler one-shot plays its
+  sample to the end whether or not the note-off arrives, so the test cannot
+  distinguish a released note from a stuck one. Use a **voice**: a held note
+  stands indefinitely, and on release it decays. That difference is the proof.
+- **Amber cannot survive a reload on a drum channel.** A played drum note has
+  the same pitch as the generated one, so `_rebuild_notes` cannot separate them.
+  The notes survive — only the provenance is lost. Unlike CHANCE/SWING,
+  provenance has **no truth in zynseq to read back**, so persisting the
+  played-step indices *and validating them against the pattern* would not repeat
+  the 2026-08-11 mistake. Open decision, due before SP4.
+- **A handback must run only after a real encoder delta is known.** The first
+  cut ran it on any CC arrival, so brushing HITS without moving it one unit
+  would have destroyed a take with no value changing anywhere.
+- **Recording adds, it does not overwrite.** The generated line freezes and the
+  played note goes on top; the recorded step holds two notes. The pads prove it:
+  a step is "occupied" by its *generated* note, so an **amber** pad means the
+  generated note is still there. Dark-but-sounding would be the defect.
+- **CC 3 (REC) used to fall through unhandled** and something in Zynthian
+  answered it with a full encoder re-centre. Binding it fixed that; re-measured
+  and gone.
 
 | State | Detail |
 |---|---|
-| Tests | **217 passing**, `python3 -m unittest discover -s tests -q` in `zyngine/ctrldev/` |
+| Tests | **248 passing**, `python3 -m unittest discover -s tests -q` in `zyngine/ctrldev/` |
 | Code | `zynthian-ui` vangelis, `MaschineMK2_linux` main, `zynth-docs` master — **all pushed** |
-| On the Pi | Driver and daemon deployed and verified. Snapshot `016` repaired |
-| Hardware test | **23 checks passed**, full record in `docs/superpowers/techno-machine/2026-08-11-sp1-sp5-test-findings.md` |
+| On the Pi | Driver and daemon deployed and verified. Snapshot `016` repaired. Pre-SP2 backups at `/root/maschine_mk2.pre-sp2.bak` and `/root/techno_lib.pre-sp2.bak` |
+| Hardware test | SP2: **8 checks passed, zero defects** — `docs/superpowers/techno-machine/2026-08-12-sp2-test-findings.md`. SP1+SP5: **23 checks** — `…/2026-08-11-sp1-sp5-test-findings.md` |
+| SP2 gate G5 | `…/2026-08-12-sp2-g5-results.md`. **REC is CC 3** (free — `GROUP_CC_FIRST` is 80) · pad note-off arrives on release · `getNoteDuration` and `getNoteStart` both exist in the installed `.so` · pad velocity is `pressure^0.4 * 127`, so the usable range is ~**66-127**, not 1-127 |
 | Jam | **PASSED, 19 min** — zero xruns, zero tracebacks, zero segfaults, zero driver reloads, watchdog one per ~30 s against an ~8 s healthy baseline. **No DSP load figure was sampled** — deferred |
 
 **Shipped and verified by hand:** five latched modes · DL/DR page rings with
